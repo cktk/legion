@@ -1,4 +1,4 @@
-package com.esmooc.legion.base.serviceimpl;
+package com.esmooc.legion.base.service.impl;
 
 import com.esmooc.legion.base.dao.DictDao;
 import com.esmooc.legion.base.entity.Dict;

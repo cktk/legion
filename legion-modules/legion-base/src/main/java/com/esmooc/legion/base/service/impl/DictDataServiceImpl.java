@@ -1,4 +1,4 @@
-package com.esmooc.legion.base.serviceimpl;
+package com.esmooc.legion.base.service.impl;
 
 import cn.hutool.core.util.StrUtil;
 import com.esmooc.legion.base.dao.DictDataDao;

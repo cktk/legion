@@ -1,16 +1,15 @@
-package com.esmooc.legion.open.serviceimpl;
+package com.esmooc.legion.file.service.impl;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
 import com.esmooc.legion.core.common.vo.SearchVo;
-import com.esmooc.legion.open.dao.ClientDao;
-import com.esmooc.legion.open.entity.Client;
-import com.esmooc.legion.open.service.ClientService;
+import com.esmooc.legion.file.dao.FileDao;
+import com.esmooc.legion.file.entity.File;
+import com.esmooc.legion.file.service.FileService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,80 +25,79 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 客户端接口实现
+ * 文件管理接口实现
  *
  * @author Daimao
  */
 @Slf4j
 @Service
 @Transactional
-@CacheConfig(cacheNames = "client")
-public class ClientServiceImpl implements ClientService {
+@CacheConfig(cacheNames = "file")
+public class FileServiceImpl implements FileService {
 
     @Autowired
-    private ClientDao clientDao;
+    private FileDao fileDao;
 
     @Autowired
     private RedisTemplateHelper redisTemplate;
 
     @Override
-    public ClientDao getRepository() {
-        return clientDao;
+    public FileDao getRepository() {
+        return fileDao;
     }
 
     @Override
     @Cacheable(key = "#id")
-    public Client get(String id) {
+    public File get(String id) {
 
         // 避免缓存穿透
-        String result = redisTemplate.get("client::" + id);
+        String result = redisTemplate.get("file::" + id);
         if ("null".equals(result)) {
             return null;
         }
-        Client client = clientDao.findById(id).orElse(null);
-        if (client == null) {
-            redisTemplate.set("client::" + id, "null", 5L, TimeUnit.MINUTES);
+        File file = fileDao.findById(id).orElse(null);
+        if (file == null) {
+            redisTemplate.set("file::" + id, "null", 5L, TimeUnit.MINUTES);
         }
-        return client;
+        return file;
     }
 
     @Override
-    @CacheEvict(key = "#client.id")
-    public Client update(Client client) {
+    public Page<File> findByCondition(File file, SearchVo searchVo, Pageable pageable) {
 
-        return clientDao.saveAndFlush(client);
-    }
-
-    @Override
-    @CacheEvict(key = "#id")
-    public void delete(String id) {
-
-        clientDao.deleteById(id);
-    }
-
-    @Override
-    public Page<Client> findByCondition(Client client, SearchVo searchVo, Pageable pageable) {
-
-        return clientDao.findAll(new Specification<Client>() {
+        return fileDao.findAll(new Specification<File>() {
             @Nullable
             @Override
-            public Predicate toPredicate(Root<Client> root, CriteriaQuery<?> cq, CriteriaBuilder cb) {
+            public Predicate toPredicate(Root<File> root, CriteriaQuery<?> cq, CriteriaBuilder cb) {
 
                 Path<String> nameField = root.get("name");
-                Path<String> homeUriField = root.get("homeUri");
+                Path<String> fKeyField = root.get("fKey");
+                Path<String> typeField = root.get("type");
+                Path<String> createByField = root.get("createBy");
+                Path<Integer> locationField = root.get("location");
                 Path<Date> createTimeField = root.get("createTime");
 
                 List<Predicate> list = new ArrayList<>();
 
-                //模糊搜素
-                if (StrUtil.isNotBlank(client.getName())) {
-                    list.add(cb.like(nameField, '%' + client.getName() + '%'));
+                // 模糊搜素
+                if (StrUtil.isNotBlank(file.getName())) {
+                    list.add(cb.like(nameField, '%' + file.getName() + '%'));
                 }
-                if (StrUtil.isNotBlank(client.getHomeUri())) {
-                    list.add(cb.like(homeUriField, '%' + client.getHomeUri() + '%'));
+                if (StrUtil.isNotBlank(file.getFKey())) {
+                    list.add(cb.like(fKeyField, '%' + file.getFKey() + '%'));
+                }
+                if (StrUtil.isNotBlank(file.getType())) {
+                    list.add(cb.like(typeField, '%' + file.getType() + '%'));
+                }
+                if (StrUtil.isNotBlank(file.getCreateBy())) {
+                    list.add(cb.like(createByField, '%' + file.getCreateBy() + '%'));
                 }
 
-                //创建时间
+                if (file.getLocation() != null) {
+                    list.add(cb.equal(locationField, file.getLocation()));
+                }
+
+                // 创建时间
                 if (StrUtil.isNotBlank(searchVo.getStartDate()) && StrUtil.isNotBlank(searchVo.getEndDate())) {
                     Date start = DateUtil.parse(searchVo.getStartDate());
                     Date end = DateUtil.parse(searchVo.getEndDate());
@@ -112,5 +110,4 @@ public class ClientServiceImpl implements ClientService {
             }
         }, pageable);
     }
-
 }

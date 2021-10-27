@@ -44,11 +44,6 @@ public class UploadController {
     @Value("${legion.maxUploadFile}")
     private Integer maxUploadFile;
 
-    @Autowired
-    private RedisRaterLimiter redisRaterLimiter;
-
-    @Autowired
-    private IpInfoUtil ipInfoUtil;
 
     @Autowired
     private FileManageFactory fileManageFactory;
