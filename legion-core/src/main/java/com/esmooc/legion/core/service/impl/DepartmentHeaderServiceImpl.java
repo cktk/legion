@@ -1,4 +1,4 @@
-package com.esmooc.legion.core.serviceimpl;
+package com.esmooc.legion.core.service.impl;
 
 import com.esmooc.legion.core.dao.DepartmentHeaderDao;
 import com.esmooc.legion.core.dao.UserDao;

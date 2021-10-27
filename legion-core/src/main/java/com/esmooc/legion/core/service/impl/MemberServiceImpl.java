@@ -1,4 +1,4 @@
-package com.esmooc.legion.core.serviceimpl;
+package com.esmooc.legion.core.service.impl;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;

@@ -1,4 +1,4 @@
-package com.esmooc.legion.core.serviceimpl.mybatis;
+package com.esmooc.legion.core.service.impl.mybatis;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.esmooc.legion.core.dao.mapper.UserRoleMapper;

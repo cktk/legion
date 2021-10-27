@@ -1,4 +1,4 @@
-package com.esmooc.legion.core.serviceimpl;
+package com.esmooc.legion.core.service.impl;
 
 import com.esmooc.legion.core.dao.SettingDao;
 import com.esmooc.legion.core.entity.Setting;

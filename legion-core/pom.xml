@@ -98,8 +98,6 @@
             <groupId>com.aliyun.oss</groupId>
             <artifactId>aliyun-sdk-oss</artifactId>
         </dependency>
-
-
         <!-- 测试框架TestNG + 测试报告 -->
         <dependency>
             <groupId>com.aventstack</groupId>
