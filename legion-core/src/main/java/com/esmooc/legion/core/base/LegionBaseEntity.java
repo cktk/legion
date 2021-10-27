@@ -1,10 +1,10 @@
 package com.esmooc.legion.core.base;
 
+import com.esmooc.legion.core.common.constant.CommonConstant;
+import com.esmooc.legion.core.common.utils.SnowFlakeUtil;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.esmooc.legion.core.common.constant.CommonConstant;
-import com.esmooc.legion.core.common.utils.SnowFlakeUtil;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.annotations.ApiModelProperty;

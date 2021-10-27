@@ -8,14 +8,12 @@ import org.springframework.data.domain.Pageable;
 
 /**
  * 文件管理接口
- *
  * @author Daimao
  */
 public interface FileService extends LegionBaseService<File, String> {
 
     /**
      * 多条件获取列表
-     *
      * @param file
      * @param searchVo
      * @param pageable

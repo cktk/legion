@@ -15,7 +15,6 @@ import java.util.Iterator;
 /**
  * 权限管理决断器
  * 判断用户拥有的权限或角色是否有资源访问权限
- *
  * @author Daimao
  */
 @Slf4j

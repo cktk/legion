@@ -8,7 +8,6 @@ import org.springframework.cache.annotation.Cacheable;
 
 /**
  * 配置接口
- *
  * @author Daimao
  */
 @CacheConfig(cacheNames = "setting")
@@ -16,7 +15,6 @@ public interface SettingService {
 
     /**
      * 通过id获取
-     *
      * @param id
      * @return
      */
@@ -25,7 +23,6 @@ public interface SettingService {
 
     /**
      * 修改
-     *
      * @param setting
      * @return
      */

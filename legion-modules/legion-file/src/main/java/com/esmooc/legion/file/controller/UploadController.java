@@ -1,8 +1,8 @@
 package com.esmooc.legion.file.controller;
 
-import cn.hutool.core.util.StrUtil;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.constant.SettingConstant;
+import com.esmooc.legion.core.common.exception.LimitException;
 import com.esmooc.legion.core.common.limit.RedisRaterLimiter;
 import com.esmooc.legion.core.common.utils.Base64DecodeMultipartFile;
 import com.esmooc.legion.core.common.utils.CommonUtil;
@@ -15,6 +15,7 @@ import com.esmooc.legion.core.vo.OssSetting;
 import com.esmooc.legion.file.entity.File;
 import com.esmooc.legion.file.manage.FileManageFactory;
 import com.esmooc.legion.file.service.FileService;
+import cn.hutool.core.util.StrUtil;
 import com.google.gson.Gson;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -44,6 +45,11 @@ public class UploadController {
     @Value("${legion.maxUploadFile}")
     private Integer maxUploadFile;
 
+    @Autowired
+    private RedisRaterLimiter redisRaterLimiter;
+
+    @Autowired
+    private IpInfoUtil ipInfoUtil;
 
     @Autowired
     private FileManageFactory fileManageFactory;
@@ -67,6 +73,7 @@ public class UploadController {
         if (setting == null || StrUtil.isBlank(setting.getValue())) {
             return ResultUtil.error(501, "您还未配置OSS存储服务");
         }
+
 
 
         if (StrUtil.isNotBlank(base64)) {

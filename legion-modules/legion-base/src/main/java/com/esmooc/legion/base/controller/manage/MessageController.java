@@ -1,6 +1,5 @@
 package com.esmooc.legion.base.controller.manage;
 
-import cn.hutool.http.HtmlUtil;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.utils.PageUtil;
 import com.esmooc.legion.core.common.utils.ResultUtil;
@@ -13,6 +12,7 @@ import com.esmooc.legion.core.entity.User;
 import com.esmooc.legion.core.service.MessageSendService;
 import com.esmooc.legion.core.service.MessageService;
 import com.esmooc.legion.core.service.UserService;
+import cn.hutool.http.HtmlUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -55,7 +55,7 @@ public class MessageController {
                                                 PageVo pageVo) {
 
         Page<Message> page = messageService.findByCondition(message, searchVo, PageUtil.initPage(pageVo));
-        page.forEach(e -> {
+        page.forEach(e->{
             e.setContentText(HtmlUtil.cleanHtmlTag(e.getContent()));
         });
         return new ResultUtil<Page<Message>>().setData(page);

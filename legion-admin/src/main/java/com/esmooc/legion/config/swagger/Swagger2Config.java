@@ -4,6 +4,7 @@ import com.esmooc.legion.core.config.properties.IgnoredUrlsProperties;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -13,7 +14,7 @@ import springfox.documentation.service.*;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
+import springfox.documentation.swagger2.annotations.EnableSwagger2WebMvc;
 
 import java.util.Collections;
 import java.util.List;
@@ -27,8 +28,9 @@ import static springfox.documentation.builders.PathSelectors.regex;
  */
 @Slf4j
 @Configuration
-@EnableSwagger2
+@EnableSwagger2WebMvc
 public class Swagger2Config {
+
 
 
     @Autowired
@@ -58,17 +60,38 @@ public class Swagger2Config {
                 new ApiKey("Authorization", "accessToken", "header"));
 
         return new Docket(DocumentationType.SWAGGER_2)
-                .groupName("1.Lunara管理接口 v1.0")
+                .groupName("1.管理接口")
                 .apiInfo(apiInfo()).select()
                 // 扫描所有有注解的api，用这种方式更灵活
-                .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
+                .apis(RequestHandlerSelectors.basePackage("com.esmooc.legion"))
+//                .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
                 .paths(PathSelectors.any())
+//                .paths(regex(".*/app/.*").negate())
                 .build()
                 .securitySchemes(securitySchemes)
                 .securityContexts(securityContexts());
     }
 
 
+
+
+
+    @Bean
+    public Docket createAppRestApi() {
+
+        List<SecurityScheme> securitySchemes = Collections.singletonList(
+                new ApiKey("Authorization", "appToken", "header"));
+
+        return new Docket(DocumentationType.SWAGGER_2)
+                .groupName("业务接口")
+                .apiInfo(apiInfo()).select()
+                // 扫描所有有注解的api，用这种方式更灵活
+                .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
+                .paths(regex(".*/app/.*"))
+                .build()
+                .securitySchemes(securitySchemes)
+                .securityContexts(securityContexts());
+    }
 
 
     private ApiInfo apiInfo() {

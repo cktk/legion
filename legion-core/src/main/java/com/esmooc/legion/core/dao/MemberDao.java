@@ -6,14 +6,12 @@ import com.esmooc.legion.core.entity.Member;
 
 /**
  * 会员数据处理层
- *
  * @author Daimao
  */
 public interface MemberDao extends LegionBaseDao<Member, String> {
 
     /**
      * 通过用户名获取用户
-     *
      * @param username
      * @return
      */
@@ -21,7 +19,6 @@ public interface MemberDao extends LegionBaseDao<Member, String> {
 
     /**
      * 通过手机获取用户
-     *
      * @param mobile
      * @return
      */

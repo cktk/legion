@@ -11,14 +11,12 @@ import java.util.Map;
 
 /**
  * 消息发送接口
- *
  * @author Daimao
  */
 public interface MessageSendService extends LegionBaseService<MessageSend, String> {
 
     /**
      * 发送消息 带websock推送
-     *
      * @param messageSend
      * @return
      */
@@ -26,14 +24,12 @@ public interface MessageSendService extends LegionBaseService<MessageSend, Strin
 
     /**
      * 通过消息id删除
-     *
      * @param messageId
      */
     void deleteByMessageId(String messageId);
 
     /**
      * 多条件分页获取
-     *
      * @param messageSend
      * @param pageable
      * @return
@@ -42,7 +38,6 @@ public interface MessageSendService extends LegionBaseService<MessageSend, Strin
 
     /**
      * 批量更新消息状态
-     *
      * @param userId
      * @param status
      */
@@ -50,14 +45,12 @@ public interface MessageSendService extends LegionBaseService<MessageSend, Strin
 
     /**
      * 通过userId删除
-     *
      * @param userId
      */
     void deleteByUserId(String userId);
 
     /**
      * 获得填充变量后的消息
-     *
      * @param messageId
      * @param params
      * @return
@@ -66,7 +59,6 @@ public interface MessageSendService extends LegionBaseService<MessageSend, Strin
 
     /**
      * 发送模版消息
-     *
      * @param userIds   发送用户
      * @param messageId 消息ID
      * @param params    消息模版变量参数
@@ -75,7 +67,6 @@ public interface MessageSendService extends LegionBaseService<MessageSend, Strin
 
     /**
      * 发送模版消息
-     *
      * @param userId    发送给单个用户
      * @param messageId 消息ID
      * @param params    消息模版变量参数

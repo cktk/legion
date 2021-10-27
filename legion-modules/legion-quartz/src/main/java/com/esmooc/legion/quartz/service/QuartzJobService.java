@@ -10,14 +10,12 @@ import java.util.List;
 
 /**
  * 定时任务接口
- *
  * @author Daimao
  */
 public interface QuartzJobService extends LegionBaseService<QuartzJob, String> {
 
     /**
      * 通过类名获取
-     *
      * @param jobClassName
      * @return
      */
@@ -25,7 +23,6 @@ public interface QuartzJobService extends LegionBaseService<QuartzJob, String> {
 
     /**
      * 分页获取
-     *
      * @param key
      * @param pageable
      * @return

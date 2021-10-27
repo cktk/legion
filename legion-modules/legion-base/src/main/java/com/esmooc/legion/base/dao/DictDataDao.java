@@ -9,14 +9,12 @@ import java.util.List;
 
 /**
  * 字典数据数据处理层
- *
  * @author Daimao
  */
 public interface DictDataDao extends LegionBaseDao<DictData, String> {
 
     /**
      * 通过dictId和状态获取
-     *
      * @param dictId
      * @param status
      * @return
@@ -25,7 +23,6 @@ public interface DictDataDao extends LegionBaseDao<DictData, String> {
 
     /**
      * 通过dictId删除
-     *
      * @param dictId
      */
     @Modifying

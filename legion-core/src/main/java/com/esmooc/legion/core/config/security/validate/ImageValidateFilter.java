@@ -1,9 +1,9 @@
 package com.esmooc.legion.core.config.security.validate;
 
-import cn.hutool.core.util.StrUtil;
 import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
 import com.esmooc.legion.core.common.utils.ResponseUtil;
 import com.esmooc.legion.core.config.properties.CaptchaProperties;
+import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -18,7 +18,6 @@ import java.io.IOException;
 
 /**
  * 图形验证码过滤器
- *
  * @author Daimao
  */
 @Slf4j

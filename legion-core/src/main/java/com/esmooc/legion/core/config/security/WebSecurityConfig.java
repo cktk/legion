@@ -10,7 +10,10 @@ import com.esmooc.legion.core.config.security.jwt.AuthenticationSuccessHandler;
 import com.esmooc.legion.core.config.security.jwt.JWTAuthenticationFilter;
 import com.esmooc.legion.core.config.security.jwt.RestAccessDeniedHandler;
 import com.esmooc.legion.core.config.security.permission.MyFilterSecurityInterceptor;
+import com.esmooc.legion.core.config.security.validate.EmailValidateFilter;
 import com.esmooc.legion.core.config.security.validate.ImageValidateFilter;
+import com.esmooc.legion.core.config.security.validate.SmsValidateFilter;
+import com.esmooc.legion.core.config.security.validate.VaptchaValidateFilter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -27,7 +30,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 /**
  * Security 核心配置类
  * 开启注解控制权限至Controller
- *
  * @author Daimao
  */
 @Slf4j
@@ -62,6 +64,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private ImageValidateFilter imageValidateFilter;
 
+    @Autowired
+    private SmsValidateFilter smsValidateFilter;
+
+    @Autowired
+    private VaptchaValidateFilter vaptchaValidateFilter;
+
+    @Autowired
+    private EmailValidateFilter emailValidateFilter;
 
     @Autowired
     private RedisTemplateHelper redisTemplate;
@@ -121,6 +131,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 // 图形验证码过滤器
                 .addFilterBefore(imageValidateFilter, UsernamePasswordAuthenticationFilter.class)
+                // 短信验证码过滤器
+                .addFilterBefore(smsValidateFilter, UsernamePasswordAuthenticationFilter.class)
+                // vaptcha验证码过滤器
+                .addFilterBefore(vaptchaValidateFilter, UsernamePasswordAuthenticationFilter.class)
+                // email验证码过滤器
+                .addFilterBefore(emailValidateFilter, UsernamePasswordAuthenticationFilter.class)
                 // 添加自定义权限过滤器
                 .addFilterBefore(myFilterSecurityInterceptor, FilterSecurityInterceptor.class)
                 // 添加JWT认证过滤器

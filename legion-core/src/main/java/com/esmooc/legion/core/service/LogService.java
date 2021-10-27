@@ -9,14 +9,12 @@ import org.springframework.data.domain.Pageable;
 
 /**
  * 日志接口
- *
  * @author Daimao
  */
 public interface LogService extends LegionBaseService<Log, String> {
 
     /**
      * 分页搜索获取日志
-     *
      * @param type
      * @param key
      * @param searchVo

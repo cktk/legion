@@ -46,13 +46,14 @@ public class MessageSendController extends LegionBaseController<MessageSend, Str
 
     @Autowired
     private MessageSendService messageSendService;
-    @Autowired
-    private SecurityUtil securityUtil;
 
     @Override
     public MessageSendService getService() {
         return messageSendService;
     }
+
+    @Autowired
+    private SecurityUtil securityUtil;
 
     @RequestMapping(value = "/getByCondition", method = RequestMethod.GET)
     @ApiOperation(value = "多条件分页获取")

@@ -8,7 +8,6 @@ import java.util.regex.Pattern;
 
 /**
  * 用户名验证工具类
- *
  * @author Daimao
  */
 @Slf4j

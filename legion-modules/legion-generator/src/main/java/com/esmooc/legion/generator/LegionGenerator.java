@@ -1,9 +1,9 @@
 package com.esmooc.legion.generator;
 
-import cn.hutool.core.util.StrUtil;
 import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.generator.bean.Entity;
 import com.esmooc.legion.generator.bean.Item;
+import cn.hutool.core.util.StrUtil;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +24,6 @@ import java.util.List;
 
 /**
  * 代码生成器 JPA
- *
  * @author Daimao
  */
 @Slf4j
@@ -53,6 +52,7 @@ public class LegionGenerator {
      * 建议仅需修改
      */
     private static final Boolean IS_TREE = false;
+
 
 
     /**
@@ -115,7 +115,6 @@ public class LegionGenerator {
 
     /**
      * 运行该主函数即可生成代码
-     *
      * @param args
      * @throws IOException
      */
@@ -138,7 +137,6 @@ public class LegionGenerator {
 
     /**
      * 生成代码
-     *
      * @param gt
      * @throws IOException
      */
@@ -263,7 +261,6 @@ public class LegionGenerator {
 
     /**
      * 删除指定类代码
-     *
      * @param className
      * @throws IOException
      */
@@ -368,7 +365,6 @@ public class LegionGenerator {
 
     /**
      * 点转斜线
-     *
      * @param str
      * @return
      */
@@ -400,7 +396,6 @@ public class LegionGenerator {
 
     /**
      * 首字母是否大小写
-     *
      * @param name
      * @param isFirstUpper
      * @return

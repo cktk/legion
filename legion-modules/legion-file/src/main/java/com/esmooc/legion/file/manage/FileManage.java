@@ -12,14 +12,12 @@ public interface FileManage {
 
     /**
      * 获取配置
-     *
      * @return
      */
     OssSetting getOssSetting();
 
     /**
      * 文件流上传
-     *
      * @param inputStream
      * @param key
      * @param file
@@ -29,7 +27,6 @@ public interface FileManage {
 
     /**
      * 重命名文件
-     *
      * @param fromKey
      * @param toKey
      * @return
@@ -38,7 +35,6 @@ public interface FileManage {
 
     /**
      * 拷贝文件
-     *
      * @param fromKey
      * @param toKey
      * @return
@@ -47,7 +43,6 @@ public interface FileManage {
 
     /**
      * 删除文件
-     *
      * @param key
      */
     void deleteFile(String key);

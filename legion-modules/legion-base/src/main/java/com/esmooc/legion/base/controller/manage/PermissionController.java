@@ -1,6 +1,6 @@
 package com.esmooc.legion.base.controller.manage;
 
-import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONUtil;
 import com.esmooc.legion.base.utils.VoUtil;
 import com.esmooc.legion.base.vo.MenuVo;
 import com.esmooc.legion.core.common.constant.CommonConstant;
@@ -17,6 +17,7 @@ import com.esmooc.legion.core.entity.User;
 import com.esmooc.legion.core.service.PermissionService;
 import com.esmooc.legion.core.service.RolePermissionService;
 import com.esmooc.legion.core.service.mybatis.IPermissionService;
+import cn.hutool.core.util.StrUtil;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import io.swagger.annotations.Api;
@@ -29,6 +30,8 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -72,9 +75,7 @@ public class PermissionController {
         String key = "permission::userMenuList:" + u.getId();
         String v = redisTemplate.get(key);
         if (StrUtil.isNotBlank(v)) {
-            menuList = new Gson().fromJson(v, new TypeToken<List<MenuVo>>() {
-            }.getType());
-            return new ResultUtil<List<MenuVo>>().setData(menuList);
+            return new ResultUtil<List<MenuVo>>().setData(JSONUtil.toList(v,MenuVo.class));
         }
 
         // 用户所有权限 已排序去重
@@ -87,7 +88,7 @@ public class PermissionController {
 
         getMenuByRecursion(menuList, list);
         // 缓存
-        redisTemplate.set(key, new Gson().toJson(menuList), 15L, TimeUnit.DAYS);
+        redisTemplate.set(key, JSONUtil.toJsonStr(menuList), 15L, TimeUnit.DAYS);
         return new ResultUtil<List<MenuVo>>().setData(menuList);
     }
 

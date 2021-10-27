@@ -7,14 +7,12 @@ import java.util.List;
 
 /**
  * 部门接口
- *
  * @author Daimao
  */
 public interface DepartmentService extends LegionBaseService<Department, String> {
 
     /**
      * 通过父id获取 升序
-     *
      * @param parentId
      * @param openDataFilter 是否开启数据权限
      * @return
@@ -23,7 +21,6 @@ public interface DepartmentService extends LegionBaseService<Department, String>
 
     /**
      * 通过父id和状态获取
-     *
      * @param parentId
      * @param status
      * @return
@@ -32,7 +29,6 @@ public interface DepartmentService extends LegionBaseService<Department, String>
 
     /**
      * 部门名模糊搜索 升序
-     *
      * @param title
      * @param openDataFilter 是否开启数据权限
      * @return

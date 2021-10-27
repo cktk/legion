@@ -1,6 +1,6 @@
 package com.esmooc.legion.generator.vue;
 
-import cn.hutool.core.util.StrUtil;
+import com.esmooc.legion.core.common.exception.LimitException;
 import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.core.common.limit.RedisRaterLimiter;
 import com.esmooc.legion.core.common.utils.IpInfoUtil;
@@ -8,6 +8,7 @@ import com.esmooc.legion.core.common.utils.ResultUtil;
 import com.esmooc.legion.core.common.vo.Result;
 import com.esmooc.legion.generator.LegionGenerator;
 import com.esmooc.legion.generator.bean.Field;
+import cn.hutool.core.util.StrUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
@@ -47,6 +48,7 @@ public class LegionVueGenerator {
                                         HttpServletRequest request) throws IOException {
 
 
+
         String drawer = generate("tableDrawerIndex.btl", false, vueName, rowNum, fields);
         String drawerApi = generate("tableDrawerIndex.btl", true, vueName, rowNum, fields);
         String addEdit = generate("addEdit.btl", false, vueName, rowNum, fields);
@@ -84,6 +86,7 @@ public class LegionVueGenerator {
                                        @PathVariable Boolean enableTable,
                                        @RequestBody List<Field> fields,
                                        HttpServletRequest request) throws IOException {
+
 
 
         String drawer = generate("tree.btl", false, true, enableTable, vueName, rowNum, fields);

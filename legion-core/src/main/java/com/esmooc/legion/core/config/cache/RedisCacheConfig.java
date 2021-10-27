@@ -33,7 +33,6 @@ public class RedisCacheConfig extends CachingConfigurerSupport {
 
     /**
      * 自定义序列化方式
-     *
      * @param factory
      * @return
      */
@@ -63,7 +62,6 @@ public class RedisCacheConfig extends CachingConfigurerSupport {
 
     /**
      * 异常处理 当Redis缓存相关操作发生异常时 打印日志 程序正常走
-     *
      * @return
      */
     @Override

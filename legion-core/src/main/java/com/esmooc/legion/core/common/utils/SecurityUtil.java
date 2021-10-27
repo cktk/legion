@@ -1,7 +1,5 @@
 package com.esmooc.legion.core.common.utils;
 
-import cn.hutool.core.util.IdUtil;
-import cn.hutool.core.util.StrUtil;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.constant.SecurityConstant;
 import com.esmooc.legion.core.common.exception.LegionException;
@@ -20,6 +18,8 @@ import com.esmooc.legion.core.service.UserService;
 import com.esmooc.legion.core.service.mybatis.IUserRoleService;
 import com.esmooc.legion.core.vo.PermissionDTO;
 import com.esmooc.legion.core.vo.RoleDTO;
+import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.StrUtil;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import io.jsonwebtoken.Jwts;
@@ -131,7 +131,6 @@ public class SecurityUtil {
 
     /**
      * 获取当前登录用户
-     *
      * @return
      */
     public User getCurrUser() {
@@ -229,7 +228,6 @@ public class SecurityUtil {
 
     /**
      * 通过用户名获取用户拥有权限
-     *
      * @param username
      */
     public List<GrantedAuthority> getCurrUserPerms(String username) {
@@ -268,7 +266,6 @@ public class SecurityUtil {
 
     /**
      * 获取当前登录会员
-     *
      * @return
      */
     public Member getCurrMember() {
@@ -283,7 +280,6 @@ public class SecurityUtil {
 
     /**
      * 通过会员名获取其拥有权限
-     *
      * @param username
      */
     public List<GrantedAuthority> getCurrMemberPerms(String username) {

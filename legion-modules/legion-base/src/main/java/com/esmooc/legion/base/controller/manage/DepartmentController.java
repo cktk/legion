@@ -1,6 +1,5 @@
 package com.esmooc.legion.base.controller.manage;
 
-import cn.hutool.core.util.StrUtil;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
@@ -17,6 +16,7 @@ import com.esmooc.legion.core.service.DepartmentHeaderService;
 import com.esmooc.legion.core.service.DepartmentService;
 import com.esmooc.legion.core.service.RoleDepartmentService;
 import com.esmooc.legion.core.service.UserService;
+import cn.hutool.core.util.StrUtil;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;

@@ -7,14 +7,12 @@ import java.util.List;
 
 /**
  * 部门数据处理层
- *
  * @author Daimao
  */
 public interface DepartmentDao extends LegionBaseDao<Department, String> {
 
     /**
      * 通过父id获取 升序
-     *
      * @param parentId
      * @return
      */
@@ -22,7 +20,6 @@ public interface DepartmentDao extends LegionBaseDao<Department, String> {
 
     /**
      * 通过父id获取 升序 数据权限
-     *
      * @param parentId
      * @param departmentIds
      * @return
@@ -31,7 +28,6 @@ public interface DepartmentDao extends LegionBaseDao<Department, String> {
 
     /**
      * 通过父id和状态获取 升序
-     *
      * @param parentId
      * @param status
      * @return
@@ -40,7 +36,6 @@ public interface DepartmentDao extends LegionBaseDao<Department, String> {
 
     /**
      * 部门名模糊搜索 升序
-     *
      * @param title
      * @return
      */
@@ -48,7 +43,6 @@ public interface DepartmentDao extends LegionBaseDao<Department, String> {
 
     /**
      * 部门名模糊搜索 升序 数据权限
-     *
      * @param title
      * @param departmentIds
      * @return

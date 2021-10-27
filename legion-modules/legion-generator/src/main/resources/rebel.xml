@@ -4,15 +4,13 @@
   This is the JRebel configuration file. It maps the running application to your IDE workspace, enabling JRebel reloading for this project.
   Refer to https://manuals.jrebel.com/jrebel/standalone/config.html for more information.
 -->
-<application xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" generated-by="intellij"
-             xmlns="http://www.zeroturnaround.com"
-             xsi:schemaLocation="http://www.zeroturnaround.com http://update.zeroturnaround.com/jrebel/rebel-2_3.xsd">
+<application generated-by="intellij" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.zeroturnaround.com" xsi:schemaLocation="http://www.zeroturnaround.com http://update.zeroturnaround.com/jrebel/rebel-2_3.xsd">
 
-    <id>legion-generator</id>
+	<id>legion-generator</id>
 
-    <classpath>
-        <dir name="/Users/leiyanfu/IdeaProjects/My/脚手架/单体框架/多模块/legion/legion-modules/legion-generator/target/classes">
-        </dir>
-    </classpath>
+	<classpath>
+		<dir name="/Users/leiyanfu/IdeaProjects/My/脚手架/单体框架/多模块/legion/legion-modules/legion-generator/target/classes">
+		</dir>
+	</classpath>
 
 </application>

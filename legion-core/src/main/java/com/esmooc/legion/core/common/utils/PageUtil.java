@@ -1,10 +1,10 @@
 package com.esmooc.legion.core.common.utils;
 
+import com.esmooc.legion.core.common.exception.LegionException;
+import com.esmooc.legion.core.common.vo.PageVo;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.esmooc.legion.core.common.exception.LegionException;
-import com.esmooc.legion.core.common.vo.PageVo;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -26,7 +26,6 @@ public class PageUtil {
 
     /**
      * JPA分页封装
-     *
      * @param page
      * @return
      */
@@ -64,7 +63,6 @@ public class PageUtil {
 
     /**
      * Mybatis-Plus分页封装
-     *
      * @param page
      * @return
      */
@@ -113,7 +111,6 @@ public class PageUtil {
 
     /**
      * List 手动分页
-     *
      * @param page
      * @param list
      * @return
@@ -169,7 +166,6 @@ public class PageUtil {
 
     /**
      * 防Mybatis-Plus order by注入
-     *
      * @param param
      */
     public static void SQLInject(String param) {

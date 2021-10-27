@@ -9,14 +9,12 @@ import java.util.List;
 
 /**
  * 角色权限数据处理层
- *
  * @author Daimao
  */
 public interface RolePermissionDao extends LegionBaseDao<RolePermission, String> {
 
     /**
      * 通过permissionId获取
-     *
      * @param permissionId
      * @return
      */
@@ -24,14 +22,12 @@ public interface RolePermissionDao extends LegionBaseDao<RolePermission, String>
 
     /**
      * 通过roleId获取
-     *
      * @param roleId
      */
     List<RolePermission> findByRoleId(String roleId);
 
     /**
      * 通过roleId删除
-     *
      * @param roleId
      */
     @Modifying

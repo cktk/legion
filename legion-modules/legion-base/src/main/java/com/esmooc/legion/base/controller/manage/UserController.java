@@ -1,8 +1,9 @@
 package com.esmooc.legion.base.controller.manage;
 
-import cn.hutool.core.util.StrUtil;
 import com.esmooc.legion.base.async.AddMessage;
+import com.esmooc.legion.core.common.annotation.SystemLog;
 import com.esmooc.legion.core.common.constant.CommonConstant;
+import com.esmooc.legion.core.common.enums.LogType;
 import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
 import com.esmooc.legion.core.common.utils.PageUtil;
@@ -12,6 +13,7 @@ import com.esmooc.legion.core.common.utils.StopWordsUtil;
 import com.esmooc.legion.core.common.vo.PageVo;
 import com.esmooc.legion.core.common.vo.Result;
 import com.esmooc.legion.core.common.vo.SearchVo;
+import com.esmooc.legion.core.config.security.SecurityUserDetails;
 import com.esmooc.legion.core.dao.mapper.DeleteMapper;
 import com.esmooc.legion.core.entity.Department;
 import com.esmooc.legion.core.entity.Role;
@@ -20,6 +22,7 @@ import com.esmooc.legion.core.entity.UserRole;
 import com.esmooc.legion.core.service.*;
 import com.esmooc.legion.core.service.mybatis.IUserRoleService;
 import com.esmooc.legion.core.vo.RoleDTO;
+import cn.hutool.core.util.StrUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -28,6 +31,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -89,62 +94,62 @@ public class UserController {
     @PersistenceContext
     private EntityManager entityManager;
 
-//    @RequestMapping(value = "/smsLogin", method = RequestMethod.POST)
-//    @SystemLog(description = "短信登录", type = LogType.LOGIN)
-//    @ApiOperation(value = "短信登录接口")
-//    public Result<Object> smsLogin(@RequestParam String mobile,
-//                                   @RequestParam(required = false) Boolean saveLogin) {
-//
-//        User u = userService.findByMobile(mobile);
-//        if (u == null) {
-//            throw new LegionException("手机号不存在");
-//        }
-//        String accessToken = securityUtil.getToken(u.getUsername(), saveLogin);
-//        // 记录日志使用
-//        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(new SecurityUserDetails(u), null, null);
-//        SecurityContextHolder.getContext().setAuthentication(authentication);
-//        return ResultUtil.data(accessToken);
-//    }
+    @RequestMapping(value = "/smsLogin", method = RequestMethod.POST)
+    @SystemLog(description = "短信登录", type = LogType.LOGIN)
+    @ApiOperation(value = "短信登录接口")
+    public Result<Object> smsLogin(@RequestParam String mobile,
+                                   @RequestParam(required = false) Boolean saveLogin) {
 
-//    @RequestMapping(value = "/resetByMobile", method = RequestMethod.POST)
-//    @ApiOperation(value = "通过短信重置密码")
-//    public Result<Object> resetByMobile(@RequestParam String mobile,
-//                                        @RequestParam String password,
-//                                        @RequestParam String passStrength) {
-//
-//        User u = userService.findByMobile(mobile);
-//        String encryptPass = new BCryptPasswordEncoder().encode(password);
-//        u.setPassword(encryptPass).setPassStrength(passStrength);
-//        userService.update(u);
-//        // 删除缓存
-//        redisTemplate.delete(USER + u.getUsername());
-//        return ResultUtil.success("重置密码成功");
-//    }
+        User u = userService.findByMobile(mobile);
+        if (u == null) {
+            throw new LegionException("手机号不存在");
+        }
+        String accessToken = securityUtil.getToken(u.getUsername(), saveLogin);
+        // 记录日志使用
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(new SecurityUserDetails(u), null, null);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        return ResultUtil.data(accessToken);
+    }
 
-//    @RequestMapping(value = "/regist", method = RequestMethod.POST)
-//    @ApiOperation(value = "注册用户")
-//    public Result<Object> regist(@Valid User u) {
-//
-//        // 校验是否已存在
-//        checkUserInfo(u.getUsername(), u.getMobile(), u.getEmail());
-//
-//        String encryptPass = new BCryptPasswordEncoder().encode(u.getPassword());
-//        u.setPassword(encryptPass).setType(CommonConstant.USER_TYPE_NORMAL);
-//        User user = userService.save(u);
-//
-//        // 默认角色
-//        List<Role> roleList = roleService.findByDefaultRole(true);
-//        if (roleList != null && roleList.size() > 0) {
-//            for (Role role : roleList) {
-//                UserRole ur = new UserRole().setUserId(user.getId()).setRoleId(role.getId());
-//                userRoleService.save(ur);
-//            }
-//        }
-//        // 异步发送创建账号消息
-//        addMessage.addSendMessage(user.getId());
-//
-//        return ResultUtil.data(user);
-//    }
+    @RequestMapping(value = "/resetByMobile", method = RequestMethod.POST)
+    @ApiOperation(value = "通过短信重置密码")
+    public Result<Object> resetByMobile(@RequestParam String mobile,
+                                        @RequestParam String password,
+                                        @RequestParam String passStrength) {
+
+        User u = userService.findByMobile(mobile);
+        String encryptPass = new BCryptPasswordEncoder().encode(password);
+        u.setPassword(encryptPass).setPassStrength(passStrength);
+        userService.update(u);
+        // 删除缓存
+        redisTemplate.delete(USER + u.getUsername());
+        return ResultUtil.success("重置密码成功");
+    }
+
+    @RequestMapping(value = "/regist", method = RequestMethod.POST)
+    @ApiOperation(value = "注册用户")
+    public Result<Object> regist(@Valid User u) {
+
+        // 校验是否已存在
+        checkUserInfo(u.getUsername(), u.getMobile(), u.getEmail());
+
+        String encryptPass = new BCryptPasswordEncoder().encode(u.getPassword());
+        u.setPassword(encryptPass).setType(CommonConstant.USER_TYPE_NORMAL);
+        User user = userService.save(u);
+
+        // 默认角色
+        List<Role> roleList = roleService.findByDefaultRole(true);
+        if (roleList != null && roleList.size() > 0) {
+            for (Role role : roleList) {
+                UserRole ur = new UserRole().setUserId(user.getId()).setRoleId(role.getId());
+                userRoleService.save(ur);
+            }
+        }
+        // 异步发送创建账号消息
+        addMessage.addSendMessage(user.getId());
+
+        return ResultUtil.data(user);
+    }
 
     @RequestMapping(value = "/info", method = RequestMethod.GET)
     @ApiOperation(value = "获取当前登录用户接口")
@@ -157,17 +162,17 @@ public class UserController {
         return new ResultUtil<User>().setData(u);
     }
 
-//    @RequestMapping(value = "/changeMobile", method = RequestMethod.POST)
-//    @ApiOperation(value = "修改绑定手机")
-//    public Result<Object> changeMobile(@RequestParam String mobile) {
-//
-//        User u = securityUtil.getCurrUser();
-//        u.setMobile(mobile);
-//        userService.update(u);
-//        // 删除缓存
-//        redisTemplate.delete(USER + u.getUsername());
-//        return ResultUtil.success("修改手机号成功");
-//    }
+    @RequestMapping(value = "/changeMobile", method = RequestMethod.POST)
+    @ApiOperation(value = "修改绑定手机")
+    public Result<Object> changeMobile(@RequestParam String mobile) {
+
+        User u = securityUtil.getCurrUser();
+        u.setMobile(mobile);
+        userService.update(u);
+        // 删除缓存
+        redisTemplate.delete(USER + u.getUsername());
+        return ResultUtil.success("修改手机号成功");
+    }
 
     @RequestMapping(value = "/unlock", method = RequestMethod.POST)
     @ApiOperation(value = "解锁验证密码")
@@ -186,6 +191,10 @@ public class UserController {
 
         for (String id : ids) {
             User u = userService.get(id);
+            // 在线DEMO所需
+            if ("test".equals(u.getUsername()) || "test2".equals(u.getUsername()) || "admin".equals(u.getUsername())) {
+                throw new LegionException("测试账号及管理员账号不得重置");
+            }
             u.setPassword(new BCryptPasswordEncoder().encode("123456"));
             userService.update(u);
             redisTemplate.delete(USER + u.getUsername());
@@ -209,6 +218,7 @@ public class UserController {
     }
 
     /**
+     * 线上demo不允许测试账号改密码
      * @param password
      * @param newPass
      * @return
@@ -220,6 +230,14 @@ public class UserController {
                                      @ApiParam("密码强度") @RequestParam String passStrength) {
 
         User user = securityUtil.getCurrUser();
+        // 在线DEMO所需
+        if ("test".equals(user.getUsername()) || "test2".equals(user.getUsername())) {
+            return ResultUtil.error("演示账号不支持修改密码");
+        }
+
+        if (!new BCryptPasswordEncoder().matches(password, user.getPassword())) {
+            return ResultUtil.error("旧密码不正确");
+        }
 
         String newEncryptPass = new BCryptPasswordEncoder().encode(newPass);
         user.setPassword(newEncryptPass);
@@ -491,7 +509,6 @@ public class UserController {
 
     /**
      * 校验
-     *
      * @param username 用户名 不校验传空字符或null 下同
      * @param mobile   手机号
      * @param email    邮箱

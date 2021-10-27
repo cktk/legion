@@ -1,6 +1,5 @@
 package com.esmooc.legion.core.config.security.jwt;
 
-import cn.hutool.core.util.StrUtil;
 import com.esmooc.legion.core.common.constant.SecurityConstant;
 import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
 import com.esmooc.legion.core.common.utils.ResponseUtil;
@@ -9,6 +8,7 @@ import com.esmooc.legion.core.common.vo.TokenMember;
 import com.esmooc.legion.core.common.vo.TokenUser;
 import com.esmooc.legion.core.config.properties.LegionAppTokenProperties;
 import com.esmooc.legion.core.config.properties.LegionTokenProperties;
+import cn.hutool.core.util.StrUtil;
 import com.google.gson.Gson;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;

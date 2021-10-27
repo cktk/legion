@@ -7,14 +7,12 @@ import org.springframework.data.jpa.repository.Query;
 
 /**
  * 消息发送数据处理层
- *
  * @author Daimao
  */
 public interface MessageSendDao extends LegionBaseDao<MessageSend, String> {
 
     /**
      * 通过消息id删除
-     *
      * @param messageId
      */
     @Modifying
@@ -23,7 +21,6 @@ public interface MessageSendDao extends LegionBaseDao<MessageSend, String> {
 
     /**
      * 批量更新消息状态
-     *
      * @param userId
      * @param status
      */
@@ -33,7 +30,6 @@ public interface MessageSendDao extends LegionBaseDao<MessageSend, String> {
 
     /**
      * 通过userId删除
-     *
      * @param userId
      * @param status
      */

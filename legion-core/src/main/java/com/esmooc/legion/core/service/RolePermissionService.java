@@ -7,14 +7,12 @@ import java.util.List;
 
 /**
  * 角色权限接口
- *
  * @author Daimao
  */
 public interface RolePermissionService extends LegionBaseService<RolePermission, String> {
 
     /**
      * 通过permissionId获取
-     *
      * @param permissionId
      * @return
      */
@@ -22,7 +20,6 @@ public interface RolePermissionService extends LegionBaseService<RolePermission,
 
     /**
      * 通过roleId获取
-     *
      * @param roleId
      * @return
      */
@@ -30,7 +27,6 @@ public interface RolePermissionService extends LegionBaseService<RolePermission,
 
     /**
      * 通过roleId删除
-     *
      * @param roleId
      */
     void deleteByRoleId(String roleId);

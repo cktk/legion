@@ -1,12 +1,11 @@
 package com.esmooc.legion.base.entity;
 
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.esmooc.legion.core.base.LegionBaseEntity;
 import com.esmooc.legion.core.common.constant.CommonConstant;
+import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -18,7 +17,6 @@ import java.math.BigDecimal;
 /**
  * @author Daimao
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
 @Entity
 @DynamicInsert

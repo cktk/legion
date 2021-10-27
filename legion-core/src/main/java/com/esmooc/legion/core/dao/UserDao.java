@@ -9,14 +9,12 @@ import java.util.List;
 
 /**
  * 用户数据处理层
- *
  * @author Daimao
  */
 public interface UserDao extends LegionBaseDao<User, String> {
 
     /**
      * 通过用户名获取用户
-     *
      * @param username
      * @return
      */
@@ -24,7 +22,6 @@ public interface UserDao extends LegionBaseDao<User, String> {
 
     /**
      * 通过手机获取用户
-     *
      * @param mobile
      * @return
      */
@@ -32,7 +29,6 @@ public interface UserDao extends LegionBaseDao<User, String> {
 
     /**
      * 通过邮件获取用户
-     *
      * @param email
      * @return
      */
@@ -40,7 +36,6 @@ public interface UserDao extends LegionBaseDao<User, String> {
 
     /**
      * 通过部门id获取
-     *
      * @param departmentId
      * @return
      */
@@ -48,7 +43,6 @@ public interface UserDao extends LegionBaseDao<User, String> {
 
     /**
      * 通过用户名模糊搜索
-     *
      * @param key
      * @param status
      * @return
@@ -58,7 +52,6 @@ public interface UserDao extends LegionBaseDao<User, String> {
 
     /**
      * 更新部门名称
-     *
      * @param departmentId
      * @param departmentTitle
      */

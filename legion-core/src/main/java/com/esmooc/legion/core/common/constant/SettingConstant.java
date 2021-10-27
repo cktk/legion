@@ -111,11 +111,16 @@ public interface SettingConstant {
     String SMS_RESET_PASS = "SMS_RESET_PASS";
 
 
+
     /**
      * 邮箱配置
      */
     String EMAIL_SETTING = "EMAIL_SETTING";
 
+    /**
+     * vapthca验证码配置
+     */
+    String VAPTCHA_SETTING = "VAPTCHA_SETTING";
 
     /**
      * 其他配置
@@ -131,6 +136,21 @@ public interface SettingConstant {
      * 公告配置
      */
     String NOTICE_SETTING = "NOTICE_SETTING";
+
+    /**
+     * VAPTCHA验证链接
+     */
+    String VAPTCHA_URL = "http://0.vaptcha.com/verify";
+
+    /**
+     * 验证离线模式
+     */
+    String CHANNEL_URL = "https://channel2.vaptcha.com/config/";
+
+    /**
+     * 离线验证
+     */
+    String VALIDATE_URL = "https://offline.vaptcha.com/";
 
     /**
      * 成功状态码

@@ -6,6 +6,7 @@ import cn.hutool.http.HttpUtil;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -24,10 +25,11 @@ public class IpInfoUtil {
     @Value("${legion.qqlbs.key}")
     private String key;
 
+    @Autowired
+    private AsyncUtil asyncUtil;
 
     /**
      * 获取客户端IP地址
-     *
      * @param request 请求
      * @return
      */
@@ -67,7 +69,6 @@ public class IpInfoUtil {
 
     /**
      * 获取IP返回地理信息
-     *
      * @param
      * @return
      */

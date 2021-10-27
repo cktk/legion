@@ -11,7 +11,6 @@ import java.util.Optional;
 
 /**
  * 审计记录创建或修改用户
- *
  * @author Daimao
  */
 @Configuration
@@ -23,7 +22,7 @@ public class UserAuditor implements AuditorAware<String> {
 
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            if (authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken)) {
+            if(authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken)){
                 return Optional.ofNullable(authentication.getName());
             }
             return Optional.empty();

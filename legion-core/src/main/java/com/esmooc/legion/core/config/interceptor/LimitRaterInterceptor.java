@@ -1,6 +1,5 @@
 package com.esmooc.legion.core.config.interceptor;
 
-import cn.hutool.core.util.StrUtil;
 import com.esmooc.legion.core.common.annotation.RateLimiter;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.constant.SettingConstant;
@@ -12,6 +11,7 @@ import com.esmooc.legion.core.config.properties.LegionLimitProperties;
 import com.esmooc.legion.core.entity.Setting;
 import com.esmooc.legion.core.service.SettingService;
 import com.esmooc.legion.core.vo.OtherSetting;
+import cn.hutool.core.util.StrUtil;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,6 @@ import java.lang.reflect.Method;
 
 /**
  * 限流拦截器
- *
  * @author Daimao
  */
 @Slf4j
@@ -105,7 +104,7 @@ public class LimitRaterInterceptor extends HandlerInterceptorAdapter {
                 String name = rateLimiter.name();
                 Long limit = rateLimiter.rate();
                 Long timeout = rateLimiter.rateInterval();
-                if (StrUtil.isBlank(name)) {
+                if(StrUtil.isBlank(name)){
                     name = StrUtil.subBefore(bean.toString(), "@", false) + "_" + method.getName();
                 }
                 if (rateLimiter.ipLimit()) {

@@ -17,6 +17,9 @@ public class CaptchaProperties {
 
     private List<String> image = new ArrayList<>();
 
+    private List<String> sms = new ArrayList<>();
+
+    private List<String> vaptcha = new ArrayList<>();
 
     private List<String> email = new ArrayList<>();
 }

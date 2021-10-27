@@ -10,14 +10,12 @@ import java.util.List;
 
 /**
  * 角色接口
- *
  * @author Daimao
  */
 public interface RoleService extends LegionBaseService<Role, String> {
 
     /**
      * 获取默认角色
-     *
      * @param defaultRole
      * @return
      */
@@ -25,7 +23,6 @@ public interface RoleService extends LegionBaseService<Role, String> {
 
     /**
      * 分页获取
-     *
      * @param key
      * @param pageable
      * @return

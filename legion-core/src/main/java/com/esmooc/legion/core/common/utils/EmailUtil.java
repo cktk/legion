@@ -1,11 +1,11 @@
 package com.esmooc.legion.core.common.utils;
 
-import cn.hutool.core.util.StrUtil;
 import com.esmooc.legion.core.common.constant.SettingConstant;
 import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.core.entity.Setting;
 import com.esmooc.legion.core.service.SettingService;
 import com.esmooc.legion.core.vo.EmailSetting;
+import cn.hutool.core.util.StrUtil;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,11 +44,10 @@ public class EmailUtil {
 
     /**
      * 异步发送邮件
-     *
      * @param sendTo       接收者邮箱
      * @param title        邮件标题
      * @param templateName 邮件模板
-     * @param variables    模板替换变量Map
+     * @param variables            模板替换变量Map
      */
     @Async
     public void sendTemplateEmailByMap(String sendTo, String title, String templateName, Map<String, Object> variables) {
@@ -58,7 +57,6 @@ public class EmailUtil {
 
     /**
      * 异步发送邮件
-     *
      * @param sendTo       接收者邮箱
      * @param title        邮件标题
      * @param templateName 邮件模板

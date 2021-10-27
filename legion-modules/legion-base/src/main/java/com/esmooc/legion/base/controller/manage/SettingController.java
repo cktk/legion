@@ -1,12 +1,13 @@
 package com.esmooc.legion.base.controller.manage;
 
-import cn.hutool.core.util.StrUtil;
 import com.esmooc.legion.core.common.constant.SettingConstant;
+import com.esmooc.legion.core.common.sms.SmsUtil;
 import com.esmooc.legion.core.common.utils.ResultUtil;
 import com.esmooc.legion.core.common.vo.Result;
 import com.esmooc.legion.core.entity.Setting;
 import com.esmooc.legion.core.service.SettingService;
 import com.esmooc.legion.core.vo.*;
+import cn.hutool.core.util.StrUtil;
 import com.google.gson.Gson;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -45,6 +46,8 @@ public class SettingController {
             result = new Gson().fromJson(setting.getValue(), SmsSetting.class).getSecretKey();
         } else if (settingName.equals(SettingConstant.EMAIL_SETTING)) {
             result = new Gson().fromJson(setting.getValue(), EmailSetting.class).getPassword();
+        } else if (settingName.equals(SettingConstant.VAPTCHA_SETTING)) {
+            result = new Gson().fromJson(setting.getValue(), VaptchaSetting.class).getSecretKey();
         }
         return ResultUtil.data(result);
     }
@@ -60,6 +63,16 @@ public class SettingController {
         return ResultUtil.data(setting.getValue());
     }
 
+    @RequestMapping(value = "/sms/check", method = RequestMethod.GET)
+    @ApiOperation(value = "检查短信配置")
+    public Result<Object> smsCheck() {
+
+        Setting setting = settingService.get(SettingConstant.SMS_USED);
+        if (setting == null || StrUtil.isBlank(setting.getValue())) {
+            return ResultUtil.error(501, "您还未配置第三方短信服务");
+        }
+        return ResultUtil.data(setting.getValue());
+    }
 
     @RequestMapping(value = "/oss/{serviceName}", method = RequestMethod.GET)
     @ApiOperation(value = "查看OSS配置")
@@ -79,6 +92,53 @@ public class SettingController {
         return new ResultUtil<OssSetting>().setData(ossSetting);
     }
 
+    @RequestMapping(value = "/sms/{serviceName}", method = RequestMethod.GET)
+    @ApiOperation(value = "查看短信配置")
+    public Result<SmsSetting> sms(@PathVariable String serviceName) {
+
+        Setting setting = new Setting();
+        if (serviceName.equals(SettingConstant.ALI_SMS) || serviceName.equals(SettingConstant.TENCENT_SMS)) {
+            setting = settingService.get(serviceName);
+        }
+        if (setting == null || StrUtil.isBlank(setting.getValue())) {
+            return new ResultUtil<SmsSetting>().setData(null);
+        }
+        SmsSetting smsSetting = new Gson().fromJson(setting.getValue(), SmsSetting.class);
+        smsSetting.setSecretKey("**********");
+        if (smsSetting.getType() != null) {
+            Setting code = settingService.get(serviceName + "_" + SmsUtil.getTemplateSuffix(smsSetting.getType()));
+            smsSetting.setTemplateCode(code.getValue());
+        }
+        return new ResultUtil<SmsSetting>().setData(smsSetting);
+    }
+
+    @RequestMapping(value = "/sms/templateCode/{serviceName}/{type}", method = RequestMethod.GET)
+    @ApiOperation(value = "查看短信模板配置")
+    public Result<String> smsTemplateCode(@PathVariable String serviceName,
+                                          @PathVariable Integer type) {
+
+        String templateCode = "";
+        if (type != null) {
+            Setting setting = settingService.get(serviceName + "_" + SmsUtil.getTemplateSuffix(type));
+            if (StrUtil.isNotBlank(setting.getValue())) {
+                templateCode = setting.getValue();
+            }
+        }
+        return new ResultUtil<String>().setData(templateCode);
+    }
+
+    @RequestMapping(value = "/vaptcha", method = RequestMethod.GET)
+    @ApiOperation(value = "查看vaptcha配置")
+    public Result<VaptchaSetting> vaptcha() {
+
+        Setting setting = settingService.get(SettingConstant.VAPTCHA_SETTING);
+        if (setting == null || StrUtil.isBlank(setting.getValue())) {
+            return new ResultUtil<VaptchaSetting>().setData(null);
+        }
+        VaptchaSetting vaptchaSetting = new Gson().fromJson(setting.getValue(), VaptchaSetting.class);
+        vaptchaSetting.setSecretKey("**********");
+        return new ResultUtil<VaptchaSetting>().setData(vaptchaSetting);
+    }
 
     @RequestMapping(value = "/email", method = RequestMethod.GET)
     @ApiOperation(value = "查看email配置")
@@ -105,6 +165,17 @@ public class SettingController {
         return new ResultUtil<OtherSetting>().setData(otherSetting);
     }
 
+    @RequestMapping(value = "/autoChat", method = RequestMethod.GET)
+    @ApiOperation(value = "机器人配置")
+    public Result<AutoChatSetting> autoChat() {
+
+        Setting setting = settingService.get(SettingConstant.CHAT_SETTING);
+        if (setting == null || StrUtil.isBlank(setting.getValue())) {
+            return new ResultUtil<AutoChatSetting>().setData(null);
+        }
+        AutoChatSetting chatSetting = new Gson().fromJson(setting.getValue(), AutoChatSetting.class);
+        return new ResultUtil<AutoChatSetting>().setData(chatSetting);
+    }
 
     @RequestMapping(value = "/notice", method = RequestMethod.GET)
     @ApiOperation(value = "查看公告配置")
@@ -142,6 +213,32 @@ public class SettingController {
         return ResultUtil.data(null);
     }
 
+    @RequestMapping(value = "/sms/set", method = RequestMethod.POST)
+    @ApiOperation(value = "短信配置")
+    public Result<Object> smsSet(SmsSetting smsSetting) {
+
+        String name = smsSetting.getServiceName();
+        Setting setting = settingService.get(name);
+        if (name.equals(SettingConstant.ALI_SMS) || name.equals(SettingConstant.TENCENT_SMS)) {
+            // 判断是否修改secrectKey 保留原secrectKey 避免保存***加密字符
+            if (StrUtil.isNotBlank(setting.getValue()) && !smsSetting.getChanged()) {
+                String secrectKey = new Gson().fromJson(setting.getValue(), SmsSetting.class).getSecretKey();
+                smsSetting.setSecretKey(secrectKey);
+            }
+        }
+        if (smsSetting.getType() != null) {
+            Setting codeSetting = settingService.get(name + "_" + SmsUtil.getTemplateSuffix(smsSetting.getType()));
+            codeSetting.setValue(smsSetting.getTemplateCode());
+            settingService.saveOrUpdate(codeSetting);
+        }
+        setting.setValue(new Gson().toJson(smsSetting.setType(null).setTemplateCode(null)));
+        settingService.saveOrUpdate(setting);
+        // 保存启用的短信服务商
+        Setting used = settingService.get(SettingConstant.SMS_USED);
+        used.setValue(name);
+        settingService.saveOrUpdate(used);
+        return ResultUtil.data(null);
+    }
 
     @RequestMapping(value = "/email/set", method = RequestMethod.POST)
     @ApiOperation(value = "email配置")
@@ -157,6 +254,19 @@ public class SettingController {
         return ResultUtil.data(null);
     }
 
+    @RequestMapping(value = "/vaptcha/set", method = RequestMethod.POST)
+    @ApiOperation(value = "vaptcha配置")
+    public Result<Object> vaptchaSet(VaptchaSetting vaptchaSetting) {
+
+        Setting setting = settingService.get(SettingConstant.VAPTCHA_SETTING);
+        if (StrUtil.isNotBlank(setting.getValue()) && !vaptchaSetting.getChanged()) {
+            String key = new Gson().fromJson(setting.getValue(), VaptchaSetting.class).getSecretKey();
+            vaptchaSetting.setSecretKey(key);
+        }
+        setting.setValue(new Gson().toJson(vaptchaSetting));
+        settingService.saveOrUpdate(setting);
+        return ResultUtil.data(null);
+    }
 
     @RequestMapping(value = "/other/set", method = RequestMethod.POST)
     @ApiOperation(value = "其他配置")
@@ -168,6 +278,15 @@ public class SettingController {
         return ResultUtil.data(null);
     }
 
+    @RequestMapping(value = "/autoChat/set", method = RequestMethod.POST)
+    @ApiOperation(value = "机器人配置")
+    public Result<Object> autoChatSet(AutoChatSetting chatSetting) {
+
+        Setting setting = settingService.get(SettingConstant.CHAT_SETTING);
+        setting.setValue(new Gson().toJson(chatSetting));
+        settingService.saveOrUpdate(setting);
+        return ResultUtil.data(null);
+    }
 
     @RequestMapping(value = "/notice/set", method = RequestMethod.POST)
     @ApiOperation(value = "公告配置")

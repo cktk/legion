@@ -1,3 +1,8 @@
+# 配置文件加密key 生产环境中可通过环境变量、命令行等形式进行设置
+jasypt:
+  encryptor:
+    password: leiyanfu   # Jasypt加密 可到common-utils中找到JasyptUtil加解密工具类生成加密结果 格式为  ENC(加密结果)
+
 server:
   port: 8888
   servlet:
@@ -11,6 +16,7 @@ server:
     max-swallow-size: -1
   # 优雅停机 关闭容器后默认等待30秒继续执行没处理完的任务 避免数据不一致
   shutdown: graceful
+
 spring:
   lifecycle:
     # 配置优雅停机后的缓冲器 最大等待时间
@@ -18,6 +24,7 @@ spring:
   autoconfigure:
     exclude:
       - com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure
+      - org.springframework.boot.autoconfigure.data.elasticsearch.ReactiveElasticsearchRestClientAutoConfiguration
   # 数据源
   datasource:
     druid:
@@ -65,22 +72,34 @@ spring:
         master:
           url: jdbc:mysql://cc.c0c0.cc:3306/legion?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2B8
           username: root
-          password: 169efa78ed428B
+          password:
           driver-class-name: com.mysql.cj.jdbc.Driver
+
   redis:
-    host: 192.168.1.8
+    host: 127.0.0.1
     #   password: leiyanfu
     # 数据库索引 默认0
     database: 1
     port: 6379
     # 超时时间 Duration类型 3秒
     timeout: 3S
+
   jpa:
     # 显示sql
     show-sql: true
     # 自动生成表结构 关闭设为  none create
     hibernate:
       ddl-auto: none
+  # Elasticsearch
+  data:
+    elasticsearch:
+      # 暂未使用ES 关闭其持久化存储
+      repositories:
+        enabled: false
+  elasticsearch:
+    rest:
+      # 要连接的ES客户端Rest Uri 多个逗号分隔
+      uris: http://localhost:9200
   # 定时任务
   quartz:
     # 任务信息存储至数据库
@@ -124,6 +143,7 @@ spring:
         cachecontrol:
           # 静态资源缓存30天
           max-age: 30D
+
 legion:
   # 全局限流
   ratelimit:
@@ -167,11 +187,58 @@ legion:
   cache:
     # 缓存过期时间 Duration类型 D–天 H小时 M–分钟 S–秒 永久不过期设为非正值
     timeToLive: 15D
+  # 日志记录方式 true使用Elasticsearch记录 false记录至数据库中
+  logRecord:
+    es: false
   # 文件大小上传配置 单位MB
   maxUploadFile: 5
   # 腾讯位置服务key配置 腾讯位置服务官网注册添加key
   qqlbs:
     key: 7QPBZ-5TXKO-HADWR-SSJ5R-F5HIE-FJFN6
+  # 第三方社交登录配置
+  social:
+    # 前端回调登录地址
+    callbackFeUrl: http://127.0.0.1:9999/login
+    # 前端绑定账号回调地址
+    callbackFeRelateUrl: http://127.0.0.1:9999/relate
+    # github
+    github:
+      clientId: 8fa14bd32a0f73c74627
+      clientSecret: cbd204bf8f390af6ee5bb1fa4b051e0275334f22
+      callbackUrl: http://escort.esmooc.com/api/social/github/callback
+    # qq
+    qq:
+      appId: 101953791
+      appKey: a8a54f76ffd94552cd8388dee3e933d4
+      callbackUrl: http://escort.esmooc.com/api/social/qq/callback
+    # weibo
+    weibo:
+      appKey: 1974961732
+      appSecret: 89a4a4ae675cec8f76e0244a8002d349
+      callbackUrl: http://escort.esmooc.com/api/social/weibo/callback
+    # wechat
+    wechat:
+      appId: 你的appId
+      appSecret: 你的appSecret
+      callbackUrl: http://escort.esmooc.com/api/social/wechat/callback
+    # 钉钉
+    dingding:
+      # 扫码登录应用
+      appId: dingoaswmfaffvk7w2jwi9
+      appSecret: I67-1um9wYQRI8In3yY6x-9MPGnAOAWYV48R9WpfLaUJjKt5UYqMuAE3FrNFsYJr
+      callbackUrl: http://escort.esmooc.com/api/social/dingding/callback
+    # 企业微信
+    workwechat:
+      appId: 你的appId 企业的CorpID
+      agentId: 你的应用ID
+      appSecret: 你的应用Secret
+      callbackUrl: http://escort.esmooc.com/api/social/workwechat/callback
+    # 小程序
+    smallprogram:
+      appid: wx5f28339f5302b65e
+      secret: 26987873ecc97d58f34959d9567161a9
+      granttype: authorization_code
+      callbackUrl: http://escort.esmooc.com/api/social/workwechat/callback
 
 # 需要验证码校验的接口路径 支持通配符 自动过滤拦截校验 无需开发人员再次校验
 captcha:
@@ -179,21 +246,47 @@ captcha:
   image:
     - /legion/login # 登录接口
     - /legion/oauth2/authorize # 认证接口
+  # 短信验证码验证
+  sms:
+    - /legion/user/regist # 注册接口
+    - /legion/user/smsLogin # 短信登录接口
+    - /legion/user/resetByMobile # 手机重置密码
+    - /legion/user/changeMobile # 更换绑定手机
+    - /legion/app/v1/member/quickLogin # 会员快捷登录注册接口
+  # Vaptcha验证码验证
+  vaptcha:
+    - /legion/common/captcha/sendRegistSms/** # 发送注册短信
+    - /legion/common/captcha/sendResetSms/** # 发送重置密码短信
+    - /legion/email/sendResetCode/** # 发送重置密码邮件
+    - /legion/social/relate # 绑定第三方账号
+  email:
+    - /legion/email/resetByEmail # 邮件重置密码
+    - /legion/email/editEmail # 修改绑定邮箱
+
 # 忽略url
 ignored:
   # 无需登录认证的请求
   urls:
     - /legion/oauth2/**
     - /legion/actuator/**
+    - /legion/admin/**
+    - /legion/chat/**
+    - /legion/dictData/getByType/**
+    - /legion/email/sendResetCode/**
+    - /legion/email/resetByEmail
     - /legion/file/view/**
     - /legion/social/**
     - /legion/ws/**
+    - /legion/setting/notice
+    - /legion/user/regist
+    - /legion/user/smsLogin
+    - /legion/user/resetByMobile
     - /legion/common/**
     - /druid/**
     - /doc.html
-    - /v2/api-docs
     - /swagger-ui.html
-    - /**/swagger-resources/**
+    - /swagger-resources/**
+    - /v2/api-docs
     - /**/*.js
     - /**/*.css
     - /**/*.png
@@ -205,13 +298,19 @@ ignored:
     - /**/*.css
     - /**/*.png
     - /**/*.ico
+
+
 # 接口文档增强UI Swagger界面内容配置
 knife4j:
   enable: true
+
+
+
 # Mybatis-plus
 mybatis-plus:
   mapper-locations: classpath*:mapper/**/*.xml
   configuration:
+  #  这个是干嘛的
     map-underscore-to-camel-case: false
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   global-config:
@@ -232,4 +331,4 @@ logging:
       # 最大保存天数
       max-history: 7
       # 每个文件最大大小
-      max-file-size: 500MB
+      max-file-size: 5MB

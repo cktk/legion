@@ -10,7 +10,6 @@ import org.springframework.data.domain.Pageable;
 
 /**
  * 会员接口
- *
  * @author Daimao
  */
 @CacheConfig(cacheNames = "member")
@@ -18,7 +17,6 @@ public interface MemberService extends LegionBaseService<Member, String> {
 
     /**
      * 多条件分页获取
-     *
      * @param member
      * @param searchVo
      * @param pageable
@@ -28,7 +26,6 @@ public interface MemberService extends LegionBaseService<Member, String> {
 
     /**
      * 通过用户名获取用户
-     *
      * @param username
      * @return
      */
@@ -37,7 +34,6 @@ public interface MemberService extends LegionBaseService<Member, String> {
 
     /**
      * 通过手机获取用户
-     *
      * @param mobile
      * @return
      */
