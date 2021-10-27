@@ -1,0 +1,6 @@
+${AnsiColor.BRIGHT_BLUE}
+山东知秋软件科技有限公司
+${AnsiColor.BRIGHT_GREEN}
+TSMDC  Boot Version: 1.0.0
+Spring Boot Version: ${spring-boot.version}${spring-boot.formatted-version}
+${AnsiColor.BLACK}
