@@ -191,10 +191,6 @@ public class UserController {
 
         for (String id : ids) {
             User u = userService.get(id);
-            // 在线DEMO所需
-            if ("test".equals(u.getUsername()) || "test2".equals(u.getUsername()) || "admin".equals(u.getUsername())) {
-                throw new LegionException("测试账号及管理员账号不得重置");
-            }
             u.setPassword(new BCryptPasswordEncoder().encode("123456"));
             userService.update(u);
             redisTemplate.delete(USER + u.getUsername());
@@ -218,7 +214,6 @@ public class UserController {
     }
 
     /**
-     * 线上demo不允许测试账号改密码
      * @param password
      * @param newPass
      * @return
@@ -230,10 +225,6 @@ public class UserController {
                                      @ApiParam("密码强度") @RequestParam String passStrength) {
 
         User user = securityUtil.getCurrUser();
-        // 在线DEMO所需
-        if ("test".equals(user.getUsername()) || "test2".equals(user.getUsername())) {
-            return ResultUtil.error("演示账号不支持修改密码");
-        }
 
         if (!new BCryptPasswordEncoder().matches(password, user.getPassword())) {
             return ResultUtil.error("旧密码不正确");

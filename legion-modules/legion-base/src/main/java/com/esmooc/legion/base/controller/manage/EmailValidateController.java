@@ -147,10 +147,6 @@ public class EmailValidateController {
 
         User u = userService.findByEmail(email);
 
-        // 在线DEMO所需
-        if ("test".equals(u.getUsername()) || "test2".equals(u.getUsername())) {
-            return ResultUtil.error("演示账号不支持重置密码");
-        }
 
         String encryptPass = new BCryptPasswordEncoder().encode(password);
         u.setPassword(encryptPass);
