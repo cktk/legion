@@ -5,7 +5,6 @@ import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
 import com.esmooc.legion.core.common.utils.CommonUtil;
-import com.esmooc.legion.core.common.utils.HibernateProxyTypeAdapter;
 import com.esmooc.legion.core.common.utils.ResultUtil;
 import com.esmooc.legion.core.common.utils.SecurityUtil;
 import com.esmooc.legion.core.common.vo.Result;
@@ -19,8 +18,6 @@ import com.esmooc.legion.core.service.RoleDepartmentService;
 import com.esmooc.legion.core.service.UserService;
 import cn.hutool.core.util.StrUtil;
 
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -83,7 +80,7 @@ public class DepartmentController {
         list = departmentService.findByParentIdOrderBySortOrder(parentId, openDataFilter);
         setInfo(list);
         redisTemplate.set(key,
-                new GsonBuilder().registerTypeAdapterFactory(HibernateProxyTypeAdapter.FACTORY).create().toJson(list), 15L, TimeUnit.DAYS);
+               JSONUtil.toJsonStr(list) , 15L, TimeUnit.DAYS);
         return new ResultUtil<List<Department>>().setData(list);
     }
 

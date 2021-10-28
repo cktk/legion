@@ -3,10 +3,9 @@ package com.esmooc.legion.system.entity;
 /**
  * 系统文件相关信息
  * 
- * @author LeiYanFu
+ * @author ruoyi
  */
-public class SysFile
-{
+public class SysFile {
     /**
      * 盘符路径
      */

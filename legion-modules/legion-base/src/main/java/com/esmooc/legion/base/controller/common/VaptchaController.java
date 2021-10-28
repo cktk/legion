@@ -1,5 +1,6 @@
 package com.esmooc.legion.base.controller.common;
 
+import cn.hutool.json.JSONUtil;
 import com.esmooc.legion.core.common.constant.SettingConstant;
 import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
 import cn.hutool.core.util.IdUtil;
@@ -7,7 +8,6 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.digest.DigestAlgorithm;
 import cn.hutool.crypto.digest.Digester;
 import cn.hutool.http.HttpUtil;
-import com.google.gson.JsonParser;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -45,11 +45,11 @@ public class VaptchaController {
         if (StrUtil.isBlank(offline_key)) {
             // 校验是否进入离线模式
             String offCheck = HttpUtil.get(SettingConstant.CHANNEL_URL + vid);
-            int offline_state = JsonParser.parseString(offCheck).getAsJsonObject().get("offline_state").getAsInt();
+            int offline_state = JSONUtil.parseObj(offCheck).getInt("offline_state");
             if (offline_state == 0) {
                 return "Vapthca未进入离线模式";
             } else {
-                offline_key = JsonParser.parseString(offCheck).getAsJsonObject().get("offline_key").getAsString();
+                offline_key = JSONUtil.parseObj(offCheck).getStr("offline_key");
                 redisTemplate.set(vid, offline_key, 3L, TimeUnit.MINUTES);
             }
         }
@@ -73,7 +73,7 @@ public class VaptchaController {
             }
             String validatekey = new Digester(DigestAlgorithm.MD5).digestHex(v + imageId);
             String offValidate = HttpUtil.get(SettingConstant.VALIDATE_URL + offline_key + "/" + validatekey);
-            Boolean validateResult = JsonParser.parseString(offValidate).getAsJsonObject().get("result").getAsBoolean();
+            Boolean validateResult = JSONUtil.parseObj(offValidate).getBool("result");
             String token, result;
             if (validateResult) {
                 // 校验成功则生成token

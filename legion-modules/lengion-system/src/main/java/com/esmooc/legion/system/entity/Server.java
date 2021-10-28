@@ -1,5 +1,9 @@
 package com.esmooc.legion.system.entity;
 
+import java.net.UnknownHostException;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Properties;
 
 import com.esmooc.legion.system.util.Arith;
 import com.esmooc.legion.system.util.IpUtils;
@@ -13,20 +17,15 @@ import oshi.software.os.OSFileStore;
 import oshi.software.os.OperatingSystem;
 import oshi.util.Util;
 
-import java.net.UnknownHostException;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Properties;
-
 /**
  * 服务器相关信息
  * 
- * @author LeiYanFu
+ * @author ruoyi
  */
 public class Server
 {
     private static final int OSHI_WAIT_SECOND = 1000;
-    
+
     /**
      * CPU相关信息
      */
@@ -186,7 +185,7 @@ public class Server
     private void setSysFiles(OperatingSystem os)
     {
         FileSystem fileSystem = os.getFileSystem();
-        OSFileStore[] fsArray = fileSystem.getFileStores();
+        List<OSFileStore> fsArray = fileSystem.getFileStores();
         for (OSFileStore fs : fsArray)
         {
             long free = fs.getUsableSpace();

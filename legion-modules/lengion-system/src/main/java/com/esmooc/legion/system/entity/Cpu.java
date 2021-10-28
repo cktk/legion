@@ -6,7 +6,7 @@ import com.esmooc.legion.system.util.Arith;
 /**
  * CPU相关信息
  * 
- * @author LeiYanFu
+ * @author ruoyi
  */
 public class Cpu
 {

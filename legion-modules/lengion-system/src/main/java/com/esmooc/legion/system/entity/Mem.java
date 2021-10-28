@@ -6,10 +6,9 @@ import com.esmooc.legion.system.util.Arith;
 /**
  * 內存相关信息
  * 
- * @author LeiYanFu
+ * @author ruoyi
  */
-public class Mem
-{
+public class Mem {
     /**
      * 内存总量
      */

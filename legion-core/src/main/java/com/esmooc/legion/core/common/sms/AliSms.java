@@ -1,5 +1,6 @@
 package com.esmooc.legion.core.common.sms;
 
+import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.esmooc.legion.core.common.constant.SettingConstant;
 import com.esmooc.legion.core.common.exception.LegionException;
@@ -15,8 +16,6 @@ import com.aliyuncs.exceptions.ClientException;
 import com.aliyuncs.http.MethodType;
 import com.aliyuncs.profile.DefaultProfile;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -68,9 +67,9 @@ public class AliSms implements Sms {
             log.error(e.getMessage());
             throw new LegionException("请求发送短信验证码失败，" + e.getErrMsg());
         }
-        JsonObject result = JsonParser.parseString(response.getData()).getAsJsonObject();
-        String code = result.get("Code").getAsString();
-        String message = result.get("Message").getAsString();
+        JSONObject result = JSONUtil.parseObj(response.getData());
+        String code = result.getStr("Code");
+        String message = result.getStr("Message");
         if (!"OK".equals(code) && !"OK".equals(message)) {
             throw new LegionException("请求发送验证码失败，" + message);
         }

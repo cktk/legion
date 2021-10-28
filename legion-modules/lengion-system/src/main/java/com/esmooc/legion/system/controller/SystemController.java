@@ -1,10 +1,10 @@
 package com.esmooc.legion.system.controller;
 
-import com.esmooc.legion.core.common.annotation.SystemLog;
-import com.esmooc.legion.core.common.enums.LogType;
 import com.esmooc.legion.core.common.utils.ResultUtil;
 import com.esmooc.legion.core.common.vo.Result;
 import com.esmooc.legion.system.entity.Server;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,11 +14,14 @@ import org.springframework.web.bind.annotation.RestController;
  * @date： 2020/5/30 12:46
  * @About：
  */
+
 @RestController
+@Api(tags = "获取系统信息")
 @RequestMapping("/legion/system")
 public class SystemController {
+
     @GetMapping("/info")
-    @SystemLog(description = "获取系统信息", type = LogType.OPERATION)
+    @ApiOperation(value = "获取系统信息")
     public Result delAllByIds() {
         Server server = new Server();
         try {

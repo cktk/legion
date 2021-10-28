@@ -3,7 +3,7 @@ package com.esmooc.legion.system.entity;
 /**
  * 系统相关信息
  * 
- * @author LeiYanFu
+ * @author ruoyi
  */
 public class Sys
 {
