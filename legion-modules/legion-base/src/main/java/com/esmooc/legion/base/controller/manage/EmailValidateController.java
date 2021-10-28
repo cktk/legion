@@ -1,5 +1,6 @@
 package com.esmooc.legion.base.controller.manage;
 
+import cn.hutool.json.JSONUtil;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.constant.SettingConstant;
 import com.esmooc.legion.core.common.exception.LegionException;
@@ -13,7 +14,7 @@ import com.esmooc.legion.core.service.SettingService;
 import com.esmooc.legion.core.service.UserService;
 import com.esmooc.legion.core.vo.OtherSetting;
 import cn.hutool.core.util.StrUtil;
-import com.google.gson.Gson;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -59,7 +60,7 @@ public class EmailValidateController {
         if (StrUtil.isBlank(setting.getValue())) {
             throw new LegionException("系统未配置访问域名，请联系管理员");
         }
-        return new Gson().fromJson(setting.getValue(), OtherSetting.class);
+        return JSONUtil.toBean(setting.getValue(), OtherSetting.class);
     }
 
     @RequestMapping(value = "/sendEditCode/{email}", method = RequestMethod.GET)
@@ -118,7 +119,7 @@ public class EmailValidateController {
         e.setCode(code);
         e.setEmail(email);
         e.setFullUrl(getOtherSetting().getDomain());
-        redisTemplate.set(CommonConstant.PRE_EMAIL + email, new Gson().toJson(e, EmailValidate.class), 10L, TimeUnit.MINUTES);
+        redisTemplate.set(CommonConstant.PRE_EMAIL + email, JSONUtil.toJsonStr(e), 10L, TimeUnit.MINUTES);
 
         emailUtil.sendTemplateEmail(email, title, template, e);
         // 请求成功 标记限流

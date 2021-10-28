@@ -1,5 +1,6 @@
 package com.esmooc.legion.core.common.utils;
 
+import cn.hutool.json.JSONUtil;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.constant.SecurityConstant;
 import com.esmooc.legion.core.common.exception.LegionException;
@@ -20,7 +21,7 @@ import com.esmooc.legion.core.vo.PermissionDTO;
 import com.esmooc.legion.core.vo.RoleDTO;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
-import com.google.gson.Gson;
+
 import com.google.gson.reflect.TypeToken;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -106,10 +107,10 @@ public class SecurityUtil {
             }
             if (saved) {
                 redisTemplate.set(SecurityConstant.USER_TOKEN + u.getUsername(), token, tokenProperties.getSaveLoginTime(), TimeUnit.DAYS);
-                redisTemplate.set(SecurityConstant.TOKEN_PRE + token, new Gson().toJson(user), tokenProperties.getSaveLoginTime(), TimeUnit.DAYS);
+                redisTemplate.set(SecurityConstant.TOKEN_PRE + token, JSONUtil.toJsonStr(user), tokenProperties.getSaveLoginTime(), TimeUnit.DAYS);
             } else {
                 redisTemplate.set(SecurityConstant.USER_TOKEN + u.getUsername(), token, tokenProperties.getTokenExpireTime(), TimeUnit.MINUTES);
-                redisTemplate.set(SecurityConstant.TOKEN_PRE + token, new Gson().toJson(user), tokenProperties.getTokenExpireTime(), TimeUnit.MINUTES);
+                redisTemplate.set(SecurityConstant.TOKEN_PRE + token, JSONUtil.toJsonStr(user), tokenProperties.getTokenExpireTime(), TimeUnit.MINUTES);
             }
         } else {
             // JWT不缓存权限 避免JWT长度过长
@@ -119,7 +120,7 @@ public class SecurityUtil {
                     //主题 放入用户名
                     .setSubject(u.getUsername())
                     //自定义属性 放入用户拥有请求权限
-                    .claim(SecurityConstant.AUTHORITIES, new Gson().toJson(list))
+                    .claim(SecurityConstant.AUTHORITIES, JSONUtil.toJsonStr(list))
                     //失效时间
                     .setExpiration(new Date(System.currentTimeMillis() + tokenProperties.getTokenExpireTime() * 60 * 1000))
                     //签名算法和密钥
@@ -154,8 +155,7 @@ public class SecurityUtil {
         String key = "userRole::depIds:" + u.getId();
         String v = redisTemplate.get(key);
         if (StrUtil.isNotBlank(v)) {
-            deparmentIds = new Gson().fromJson(v, new TypeToken<List<String>>() {
-            }.getType());
+            deparmentIds = JSONUtil.toList(v, String.class);
             return deparmentIds;
         }
         // 当前用户拥有角色
@@ -209,7 +209,7 @@ public class SecurityUtil {
         deparmentIds.clear();
         deparmentIds.addAll(set);
         // 缓存
-        redisTemplate.set(key, new Gson().toJson(deparmentIds), 15L, TimeUnit.DAYS);
+        redisTemplate.set(key, JSONUtil.toJsonStr(deparmentIds), 15L, TimeUnit.DAYS);
         return deparmentIds;
     }
 
@@ -260,7 +260,7 @@ public class SecurityUtil {
             }
         }
         redisTemplate.set(key, token, appTokenProperties.getTokenExpireTime(), TimeUnit.DAYS);
-        redisTemplate.set(SecurityConstant.TOKEN_MEMBER_PRE + token, new Gson().toJson(member), appTokenProperties.getTokenExpireTime(), TimeUnit.DAYS);
+        redisTemplate.set(SecurityConstant.TOKEN_MEMBER_PRE + token, JSONUtil.toJsonStr(member), appTokenProperties.getTokenExpireTime(), TimeUnit.DAYS);
         return token;
     }
 

@@ -1,5 +1,6 @@
 package com.esmooc.legion.base.controller.manage;
 
+import cn.hutool.json.JSONUtil;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
@@ -17,7 +18,7 @@ import com.esmooc.legion.core.service.DepartmentService;
 import com.esmooc.legion.core.service.RoleDepartmentService;
 import com.esmooc.legion.core.service.UserService;
 import cn.hutool.core.util.StrUtil;
-import com.google.gson.Gson;
+
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import io.swagger.annotations.Api;
@@ -76,8 +77,7 @@ public class DepartmentController {
         String key = "department::" + parentId + ":" + u.getId() + "_" + openDataFilter;
         String v = redisTemplate.get(key);
         if (StrUtil.isNotBlank(v)) {
-            list = new Gson().fromJson(v, new TypeToken<List<Department>>() {
-            }.getType());
+            list = JSONUtil.toList(v, Department.class);
             return new ResultUtil<List<Department>>().setData(list);
         }
         list = departmentService.findByParentIdOrderBySortOrder(parentId, openDataFilter);

@@ -1,5 +1,7 @@
 package com.esmooc.legion.social.controller;
 
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import com.esmooc.legion.core.common.annotation.SystemLog;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.constant.SecurityConstant;
@@ -16,9 +18,6 @@ import com.esmooc.legion.social.vo.WechatUserInfo;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -130,13 +129,12 @@ public class WechatController {
         if (!result.contains("access_token")) {
             return "redirect:" + callbackFeUrl + "?error=" + URLEncoder.encode("获取access_token失败", "utf-8");
         }
-
-        JsonObject jsonObject = JsonParser.parseString(result).getAsJsonObject();
-        String accessToken = jsonObject.get("access_token").getAsString();
-        String openId = jsonObject.get("openid").getAsString();
+        JSONObject jsonObject = JSONUtil.parseObj(result);
+        String accessToken = jsonObject.getStr("access_token");
+        String openId = jsonObject.getStr("openid");
         // 获取用户信息
         String userInfo = HttpUtil.get(GET_USERINFO_URL + "?access_token=" + accessToken + "&openid=" + openId);
-        WechatUserInfo wu = new Gson().fromJson(userInfo, WechatUserInfo.class);
+        WechatUserInfo wu = JSONUtil.toBean(userInfo, WechatUserInfo.class);
         // 存入数据库
         Social wechat = socialService.findByOpenIdAndPlatform(wu.getOpenid(), TYPE);
         if (wechat == null) {

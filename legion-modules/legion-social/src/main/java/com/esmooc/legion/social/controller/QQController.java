@@ -1,5 +1,6 @@
 package com.esmooc.legion.social.controller;
 
+import cn.hutool.json.JSONUtil;
 import com.esmooc.legion.core.common.annotation.SystemLog;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.constant.SecurityConstant;
@@ -16,7 +17,7 @@ import com.esmooc.legion.social.vo.QQUserInfo;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
-import com.google.gson.Gson;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -134,7 +135,7 @@ public class QQController {
         String userInfoUrl = GET_USERINFO_URL + "?access_token=" + accessToken + "&oauth_consumer_key=" + appId
                 + "&openid=" + openId;
         String userInfo = HttpUtil.get(userInfoUrl);
-        QQUserInfo q = new Gson().fromJson(userInfo, QQUserInfo.class);
+        QQUserInfo q = JSONUtil.toBean(userInfo, QQUserInfo.class);
         // 存入数据库
         Social qq = socialService.findByOpenIdAndPlatform(openId, TYPE);
         if (qq == null) {

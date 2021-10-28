@@ -1,15 +1,13 @@
 package com.esmooc.legion.core.common.sms;
 
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONUtil;
 import com.esmooc.legion.core.common.constant.SettingConstant;
 import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.core.common.utils.NameUtil;
 import com.esmooc.legion.core.entity.Setting;
 import com.esmooc.legion.core.service.SettingService;
 import com.esmooc.legion.core.vo.SmsSetting;
-import cn.hutool.core.util.StrUtil;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 import com.tencentcloudapi.common.Credential;
 import com.tencentcloudapi.common.exception.TencentCloudSDKException;
 import com.tencentcloudapi.sms.v20190711.SmsClient;
@@ -39,7 +37,7 @@ public class TencentSms implements Sms {
         if (setting == null || StrUtil.isBlank(setting.getValue())) {
             throw new LegionException("您还未配置腾讯云短信服务");
         }
-        return new Gson().fromJson(setting.getValue(), SmsSetting.class);
+        return JSONUtil.toBean(setting.getValue(), SmsSetting.class);
     }
 
     @Override
@@ -88,15 +86,9 @@ public class TencentSms implements Sms {
     }
 
     public static String[] getParams(String params) {
-
-        Set<Map.Entry<String, JsonElement>> entries = JsonParser.parseString(params).getAsJsonObject().entrySet();
+        Set<Map.Entry<String, Object>> entries = JSONUtil.parseObj(params).entrySet();
         String[] templateParams = new String[entries.size()];
-        int i = 0;
-        for (Map.Entry<String, JsonElement> entry : entries) {
-            String value = entry.getValue().getAsString();
-            templateParams[i] = value;
-            i++;
-        }
+        log.info("模板参数==>{}", entries);
         return templateParams;
     }
 }

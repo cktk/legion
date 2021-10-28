@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @About：
  */
 @RestController
-@RequestMapping("/system")
+@RequestMapping("/legion/system")
 public class SystemController {
     @GetMapping("/info")
     @SystemLog(description = "获取系统信息", type = LogType.OPERATION)

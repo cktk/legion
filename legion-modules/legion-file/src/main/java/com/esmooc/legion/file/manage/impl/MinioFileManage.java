@@ -1,5 +1,6 @@
 package com.esmooc.legion.file.manage.impl;
 
+import cn.hutool.json.JSONUtil;
 import com.esmooc.legion.core.common.constant.SettingConstant;
 import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.core.entity.Setting;
@@ -7,7 +8,6 @@ import com.esmooc.legion.core.service.SettingService;
 import com.esmooc.legion.core.vo.OssSetting;
 import com.esmooc.legion.file.manage.FileManage;
 import cn.hutool.core.util.StrUtil;
-import com.google.gson.Gson;
 import io.minio.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +33,7 @@ public class MinioFileManage implements FileManage {
         if (setting == null || StrUtil.isBlank(setting.getValue())) {
             throw new LegionException("您还未配置MinIO存储");
         }
-        return new Gson().fromJson(setting.getValue(), OssSetting.class);
+        return  JSONUtil.toBean(setting.getValue(), OssSetting.class);
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.esmooc.legion.core.config.security.validate;
 
+import cn.hutool.json.JSONUtil;
 import com.esmooc.legion.core.common.constant.SettingConstant;
 import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
 import com.esmooc.legion.core.common.utils.IpInfoUtil;
@@ -10,8 +11,6 @@ import com.esmooc.legion.core.service.SettingService;
 import com.esmooc.legion.core.vo.VaptchaSetting;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
-import com.google.gson.Gson;
-import com.google.gson.JsonParser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -85,12 +84,13 @@ public class VaptchaValidateFilter extends OncePerRequestFilter {
                     ResponseUtil.out(response, ResponseUtil.resultMap(false, 500, "系统还未配置Vaptcha验证码，请联系管理员"));
                     return;
                 }
-                VaptchaSetting vs = new Gson().fromJson(setting.getValue(), VaptchaSetting.class);
+                VaptchaSetting vs = JSONUtil.toBean(setting.getValue(), VaptchaSetting.class);
                 // 验证vaptcha验证码
                 String params = "id=" + vs.getVid() + "&secretkey=" + vs.getSecretKey() + "&token=" + token
                         + "&ip=" + ipInfoUtil.getIpAddr(request);
                 String result = HttpUtil.post(SettingConstant.VAPTCHA_URL, params);
-                int success = JsonParser.parseString(result).getAsJsonObject().get("success").getAsInt();
+                int success = JSONUtil.parseObj(result).getInt("success");
+
                 if (success != 1) {
                     ResponseUtil.out(response, ResponseUtil.resultMap(false, 500, "Vaptcha验证码验证失败"));
                     return;

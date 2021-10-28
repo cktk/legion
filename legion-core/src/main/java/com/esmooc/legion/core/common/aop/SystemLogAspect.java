@@ -1,16 +1,13 @@
 package com.esmooc.legion.core.common.aop;
 
+import cn.hutool.http.useragent.UserAgent;
+import cn.hutool.http.useragent.UserAgentUtil;
 import cn.hutool.json.JSONUtil;
 import com.esmooc.legion.core.common.annotation.SystemLog;
 import com.esmooc.legion.core.common.utils.IpInfoUtil;
-import com.esmooc.legion.core.common.utils.ObjectUtil;
 import com.esmooc.legion.core.common.utils.ThreadPoolUtil;
 import com.esmooc.legion.core.entity.Log;
-import com.esmooc.legion.core.entity.elasticsearch.EsLog;
 import com.esmooc.legion.core.service.LogService;
-import com.esmooc.legion.core.service.elasticsearch.EsLogService;
-import cn.hutool.http.useragent.UserAgent;
-import cn.hutool.http.useragent.UserAgentUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -42,11 +39,6 @@ public class SystemLogAspect {
 
     private static final ThreadLocal<Date> THREAD_LOCAL_BEGIN_TIME = new NamedThreadLocal<>("ThreadLocal beginTime");
 
-    @Value("${legion.logRecord.es:false}")
-    private Boolean esRecord;
-
-    @Autowired
-    private EsLogService esLogService;
 
     @Autowired
     private LogService logService;
@@ -113,46 +105,8 @@ public class SystemLogAspect {
                         + " " + ua.getOs().toString() + " | " + isMobile;
             }
 
-            if (esRecord) {
-                EsLog esLog = new EsLog();
 
-                // 请求用户
-                esLog.setUsername(username);
-                // 日志标题
-                esLog.setName(description);
-                // 日志类型
-                esLog.setLogType(type);
-                // 日志请求url
-                esLog.setRequestUrl(request.getRequestURI());
-                // 请求方式
-                esLog.setRequestType(request.getMethod());
-                // 请求参数
-
-
-                // 请求参数
-                if (logParams == null || logParams.size() < 1) {
-                    esLog.setRequestParam(JSONUtil.toJsonStr(joinPoint.getArgs()));
-                }else {
-                    esLog.setMapToParams(logParams);
-                }
-
-                // 请求IP
-                esLog.setIp(ipInfoUtil.getIpAddr(request));
-                // IP地址
-                esLog.setIpInfo(ipInfoUtil.getIpCity(request));
-                // 设备信息
-                esLog.setDevice(device);
-                // 请求开始时间
-                long beginTime = THREAD_LOCAL_BEGIN_TIME.get().getTime();
-                long endTime = System.currentTimeMillis();
-                // 请求耗时
-                Long logElapsedTime = endTime - beginTime;
-                esLog.setCostTime(logElapsedTime.intValue());
-
-                // 调用线程保存至ES
-                ThreadPoolUtil.getPool().execute(new SaveEsSystemLogThread(esLog, esLogService));
-            } else {
-                Log log = new Log();
+            Log log = new Log();
 
                 // 请求用户
                 log.setUsername(username);
@@ -184,33 +138,13 @@ public class SystemLogAspect {
                 log.setCostTime(logElapsedTime.intValue());
                 // 调用线程保存至DB
                 ThreadPoolUtil.getPool().execute(new SaveSystemLogThread(log, logService));
-
-            }
             THREAD_LOCAL_BEGIN_TIME.remove();
         } catch (Exception e) {
             log.error("AOP后置通知异常", e);
         }
     }
 
-    /**
-     * 保存日志至ES
-     */
-    private static class SaveEsSystemLogThread implements Runnable {
 
-        private EsLog esLog;
-        private EsLogService esLogService;
-
-        public SaveEsSystemLogThread(EsLog esLog, EsLogService esLogService) {
-            this.esLog = esLog;
-            this.esLogService = esLogService;
-        }
-
-        @Override
-        public void run() {
-
-            esLogService.saveLog(esLog);
-        }
-    }
 
     /**
      * 保存日志至数据库

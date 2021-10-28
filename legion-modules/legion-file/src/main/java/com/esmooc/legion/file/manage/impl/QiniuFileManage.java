@@ -1,5 +1,6 @@
 package com.esmooc.legion.file.manage.impl;
 
+import cn.hutool.json.JSONUtil;
 import com.esmooc.legion.core.common.constant.SettingConstant;
 import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.core.entity.Setting;
@@ -7,7 +8,7 @@ import com.esmooc.legion.core.service.SettingService;
 import com.esmooc.legion.core.vo.OssSetting;
 import com.esmooc.legion.file.manage.FileManage;
 import cn.hutool.core.util.StrUtil;
-import com.google.gson.Gson;
+
 import com.qiniu.common.QiniuException;
 import com.qiniu.http.Response;
 import com.qiniu.storage.BucketManager;
@@ -41,7 +42,7 @@ public class QiniuFileManage implements FileManage {
         if (setting == null || StrUtil.isBlank(setting.getValue())) {
             throw new LegionException("您还未配置七牛云对象存储");
         }
-        return new Gson().fromJson(setting.getValue(), OssSetting.class);
+        return JSONUtil.toBean(setting.getValue(), OssSetting.class);
     }
 
     public Configuration getConfiguration(Integer zone) {
@@ -77,7 +78,7 @@ public class QiniuFileManage implements FileManage {
         String upToken = auth.uploadToken(os.getBucket());
         try {
             Response response = getUploadManager(getConfiguration(os.getZone())).put(inputStream, key, upToken, null, null);
-            DefaultPutRet putRet = new Gson().fromJson(response.bodyString(), DefaultPutRet.class);
+            DefaultPutRet putRet = JSONUtil.toBean(response.bodyString(), DefaultPutRet.class);
             return os.getHttp() + os.getEndpoint() + "/" + putRet.key;
         } catch (QiniuException ex) {
             Response r = ex.response;

@@ -1,5 +1,6 @@
 package com.esmooc.legion.core.config.security.jwt;
 
+import cn.hutool.json.JSONUtil;
 import com.esmooc.legion.core.common.annotation.SystemLog;
 import com.esmooc.legion.core.common.constant.SecurityConstant;
 import com.esmooc.legion.core.common.enums.LogType;
@@ -10,7 +11,6 @@ import com.esmooc.legion.core.common.vo.TokenUser;
 import com.esmooc.legion.core.config.properties.LegionTokenProperties;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
-import com.google.gson.Gson;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
@@ -85,10 +85,10 @@ public class AuthenticationSuccessHandler extends SavedRequestAwareAuthenticatio
             }
             if (saved) {
                 redisTemplate.set(SecurityConstant.USER_TOKEN + username, token, tokenProperties.getSaveLoginTime(), TimeUnit.DAYS);
-                redisTemplate.set(SecurityConstant.TOKEN_PRE + token, new Gson().toJson(user), tokenProperties.getSaveLoginTime(), TimeUnit.DAYS);
+                redisTemplate.set(SecurityConstant.TOKEN_PRE + token, JSONUtil.toJsonStr(user), tokenProperties.getSaveLoginTime(), TimeUnit.DAYS);
             } else {
                 redisTemplate.set(SecurityConstant.USER_TOKEN + username, token, tokenProperties.getTokenExpireTime(), TimeUnit.MINUTES);
-                redisTemplate.set(SecurityConstant.TOKEN_PRE + token, new Gson().toJson(user), tokenProperties.getTokenExpireTime(), TimeUnit.MINUTES);
+                redisTemplate.set(SecurityConstant.TOKEN_PRE + token, JSONUtil.toJsonStr(user), tokenProperties.getTokenExpireTime(), TimeUnit.MINUTES);
             }
         } else {
             // JWT不缓存权限 避免JWT长度过长
@@ -98,7 +98,7 @@ public class AuthenticationSuccessHandler extends SavedRequestAwareAuthenticatio
                     // 主题 放入用户名
                     .setSubject(username)
                     // 自定义属性 放入用户拥有请求权限
-                    .claim(SecurityConstant.AUTHORITIES, new Gson().toJson(list))
+                    .claim(SecurityConstant.AUTHORITIES, JSONUtil.toJsonStr(list))
                     // 失效时间
                     .setExpiration(new Date(System.currentTimeMillis() + tokenProperties.getTokenExpireTime() * 60 * 1000))
                     // 签名算法和密钥

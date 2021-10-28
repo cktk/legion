@@ -1,5 +1,6 @@
 package com.esmooc.legion.base.controller.manage;
 
+import cn.hutool.json.JSONUtil;
 import com.esmooc.legion.core.base.LegionBaseController;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.utils.PageUtil;
@@ -13,7 +14,7 @@ import com.esmooc.legion.core.entity.User;
 import com.esmooc.legion.core.service.MessageSendService;
 import com.esmooc.legion.core.service.MessageService;
 import com.esmooc.legion.core.service.UserService;
-import com.google.gson.Gson;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -70,7 +71,7 @@ public class MessageSendController extends LegionBaseController<MessageSend, Str
             if (m != null) {
                 if (m.getIsTemplate()) {
                     Message message = messageSendService.getTemplateMessage(item.getMessageId(),
-                            new Gson().fromJson(item.getParams(), HashMap.class));
+                            JSONUtil.toBean(item.getParams(), HashMap.class));
                     item.setTitle(message.getTitle()).setContent(message.getContent()).setType(m.getType());
                 } else {
                     item.setTitle(m.getTitle()).setContent(m.getContent()).setType(m.getType());

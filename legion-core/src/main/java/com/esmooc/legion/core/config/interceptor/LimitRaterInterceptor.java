@@ -1,5 +1,6 @@
 package com.esmooc.legion.core.config.interceptor;
 
+import cn.hutool.json.JSONUtil;
 import com.esmooc.legion.core.common.annotation.RateLimiter;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.constant.SettingConstant;
@@ -12,7 +13,7 @@ import com.esmooc.legion.core.entity.Setting;
 import com.esmooc.legion.core.service.SettingService;
 import com.esmooc.legion.core.vo.OtherSetting;
 import cn.hutool.core.util.StrUtil;
-import com.google.gson.Gson;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -53,7 +54,7 @@ public class LimitRaterInterceptor extends HandlerInterceptorAdapter {
         if (StrUtil.isBlank(setting.getValue())) {
             return null;
         }
-        return new Gson().fromJson(setting.getValue(), OtherSetting.class);
+        return JSONUtil.toBean(setting.getValue(), OtherSetting.class);
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.esmooc.legion.core.common.utils;
 
-import com.google.gson.Gson;
+
+import cn.hutool.json.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.http.HttpServletResponse;
@@ -23,7 +24,7 @@ public class ResponseUtil {
         try {
             response.setCharacterEncoding("UTF-8");
             response.setContentType("application/json;charset=UTF-8");
-            response.getOutputStream().write(new Gson().toJson(resultMap).getBytes());
+            response.getOutputStream().write(JSONUtil.toJsonStr(resultMap).getBytes());
         } catch (Exception e) {
             log.error(e + "，输出JSON出错");
         }

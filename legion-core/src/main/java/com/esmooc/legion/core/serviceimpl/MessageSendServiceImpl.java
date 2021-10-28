@@ -1,5 +1,6 @@
 package com.esmooc.legion.core.serviceimpl;
 
+import cn.hutool.json.JSONUtil;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.core.dao.MessageDao;
@@ -8,7 +9,6 @@ import com.esmooc.legion.core.entity.Message;
 import com.esmooc.legion.core.entity.MessageSend;
 import com.esmooc.legion.core.service.MessageSendService;
 import cn.hutool.core.util.StrUtil;
-import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -132,7 +132,7 @@ public class MessageSendServiceImpl implements MessageSendService {
             // 放入变量
             ms.setTitle(changeParams(message.getTitle(), params));
             ms.setContent(changeParams(message.getContent(), params));
-            ms.setParams(new Gson().toJson(params));
+            ms.setParams(JSONUtil.toJsonStr(params));
             messageSends.add(ms);
             messagingTemplate.convertAndSendToUser(userId, "/queue/subscribe", "您收到了新的消息");
         }

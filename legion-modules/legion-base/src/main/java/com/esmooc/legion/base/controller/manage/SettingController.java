@@ -1,5 +1,6 @@
 package com.esmooc.legion.base.controller.manage;
 
+import cn.hutool.json.JSONUtil;
 import com.esmooc.legion.core.common.constant.SettingConstant;
 import com.esmooc.legion.core.common.sms.SmsUtil;
 import com.esmooc.legion.core.common.utils.ResultUtil;
@@ -8,7 +9,6 @@ import com.esmooc.legion.core.entity.Setting;
 import com.esmooc.legion.core.service.SettingService;
 import com.esmooc.legion.core.vo.*;
 import cn.hutool.core.util.StrUtil;
-import com.google.gson.Gson;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -41,13 +41,13 @@ public class SettingController {
         }
         if (settingName.equals(SettingConstant.QINIU_OSS) || settingName.equals(SettingConstant.ALI_OSS)
                 || settingName.equals(SettingConstant.TENCENT_OSS) || settingName.equals(SettingConstant.MINIO_OSS)) {
-            result = new Gson().fromJson(setting.getValue(), OssSetting.class).getSecretKey();
+            result = JSONUtil.toBean(setting.getValue(), OssSetting.class).getSecretKey();
         } else if (settingName.equals(SettingConstant.ALI_SMS) || settingName.equals(SettingConstant.TENCENT_SMS)) {
-            result = new Gson().fromJson(setting.getValue(), SmsSetting.class).getSecretKey();
+            result = JSONUtil.toBean(setting.getValue(), SmsSetting.class).getSecretKey();
         } else if (settingName.equals(SettingConstant.EMAIL_SETTING)) {
-            result = new Gson().fromJson(setting.getValue(), EmailSetting.class).getPassword();
+            result = JSONUtil.toBean(setting.getValue(), EmailSetting.class).getPassword();
         } else if (settingName.equals(SettingConstant.VAPTCHA_SETTING)) {
-            result = new Gson().fromJson(setting.getValue(), VaptchaSetting.class).getSecretKey();
+            result = JSONUtil.toBean(setting.getValue(), VaptchaSetting.class).getSecretKey();
         }
         return ResultUtil.data(result);
     }
@@ -87,7 +87,7 @@ public class SettingController {
         if (setting == null || StrUtil.isBlank(setting.getValue())) {
             return new ResultUtil<OssSetting>().setData(null);
         }
-        OssSetting ossSetting = new Gson().fromJson(setting.getValue(), OssSetting.class);
+        OssSetting ossSetting = JSONUtil.toBean(setting.getValue(), OssSetting.class);
         ossSetting.setSecretKey("**********");
         return new ResultUtil<OssSetting>().setData(ossSetting);
     }
@@ -103,7 +103,7 @@ public class SettingController {
         if (setting == null || StrUtil.isBlank(setting.getValue())) {
             return new ResultUtil<SmsSetting>().setData(null);
         }
-        SmsSetting smsSetting = new Gson().fromJson(setting.getValue(), SmsSetting.class);
+        SmsSetting smsSetting = JSONUtil.toBean(setting.getValue(), SmsSetting.class);
         smsSetting.setSecretKey("**********");
         if (smsSetting.getType() != null) {
             Setting code = settingService.get(serviceName + "_" + SmsUtil.getTemplateSuffix(smsSetting.getType()));
@@ -135,7 +135,7 @@ public class SettingController {
         if (setting == null || StrUtil.isBlank(setting.getValue())) {
             return new ResultUtil<VaptchaSetting>().setData(null);
         }
-        VaptchaSetting vaptchaSetting = new Gson().fromJson(setting.getValue(), VaptchaSetting.class);
+        VaptchaSetting vaptchaSetting = JSONUtil.toBean(setting.getValue(), VaptchaSetting.class);
         vaptchaSetting.setSecretKey("**********");
         return new ResultUtil<VaptchaSetting>().setData(vaptchaSetting);
     }
@@ -148,7 +148,7 @@ public class SettingController {
         if (setting == null || StrUtil.isBlank(setting.getValue())) {
             return new ResultUtil<EmailSetting>().setData(null);
         }
-        EmailSetting emailSetting = new Gson().fromJson(setting.getValue(), EmailSetting.class);
+        EmailSetting emailSetting = JSONUtil.toBean(setting.getValue(), EmailSetting.class);
         emailSetting.setPassword("**********");
         return new ResultUtil<EmailSetting>().setData(emailSetting);
     }
@@ -161,7 +161,7 @@ public class SettingController {
         if (setting == null || StrUtil.isBlank(setting.getValue())) {
             return new ResultUtil<OtherSetting>().setData(null);
         }
-        OtherSetting otherSetting = new Gson().fromJson(setting.getValue(), OtherSetting.class);
+        OtherSetting otherSetting = JSONUtil.toBean(setting.getValue(), OtherSetting.class);
         return new ResultUtil<OtherSetting>().setData(otherSetting);
     }
 
@@ -173,7 +173,7 @@ public class SettingController {
         if (setting == null || StrUtil.isBlank(setting.getValue())) {
             return new ResultUtil<AutoChatSetting>().setData(null);
         }
-        AutoChatSetting chatSetting = new Gson().fromJson(setting.getValue(), AutoChatSetting.class);
+        AutoChatSetting chatSetting = JSONUtil.toBean(setting.getValue(), AutoChatSetting.class);
         return new ResultUtil<AutoChatSetting>().setData(chatSetting);
     }
 
@@ -185,7 +185,7 @@ public class SettingController {
         if (setting == null || StrUtil.isBlank(setting.getValue())) {
             return new ResultUtil<NoticeSetting>().setData(null);
         }
-        NoticeSetting noticeSetting = new Gson().fromJson(setting.getValue(), NoticeSetting.class);
+        NoticeSetting noticeSetting = JSONUtil.toBean(setting.getValue(), NoticeSetting.class);
         return new ResultUtil<NoticeSetting>().setData(noticeSetting);
     }
 
@@ -200,11 +200,11 @@ public class SettingController {
 
             // 判断是否修改secrectKey 保留原secrectKey 避免保存***加密字符
             if (StrUtil.isNotBlank(setting.getValue()) && !ossSetting.getChanged()) {
-                String secrectKey = new Gson().fromJson(setting.getValue(), OssSetting.class).getSecretKey();
+                String secrectKey = JSONUtil.toBean(setting.getValue(), OssSetting.class).getSecretKey();
                 ossSetting.setSecretKey(secrectKey);
             }
         }
-        setting.setValue(new Gson().toJson(ossSetting));
+        setting.setValue(JSONUtil.toJsonStr(ossSetting));
         settingService.saveOrUpdate(setting);
         // 保存启用的OSS服务商
         Setting used = settingService.get(SettingConstant.OSS_USED);
@@ -222,7 +222,7 @@ public class SettingController {
         if (name.equals(SettingConstant.ALI_SMS) || name.equals(SettingConstant.TENCENT_SMS)) {
             // 判断是否修改secrectKey 保留原secrectKey 避免保存***加密字符
             if (StrUtil.isNotBlank(setting.getValue()) && !smsSetting.getChanged()) {
-                String secrectKey = new Gson().fromJson(setting.getValue(), SmsSetting.class).getSecretKey();
+                String secrectKey = JSONUtil.toBean(setting.getValue(), SmsSetting.class).getSecretKey();
                 smsSetting.setSecretKey(secrectKey);
             }
         }
@@ -231,7 +231,7 @@ public class SettingController {
             codeSetting.setValue(smsSetting.getTemplateCode());
             settingService.saveOrUpdate(codeSetting);
         }
-        setting.setValue(new Gson().toJson(smsSetting.setType(null).setTemplateCode(null)));
+        setting.setValue(JSONUtil.toJsonStr(smsSetting.setType(null).setTemplateCode(null)));
         settingService.saveOrUpdate(setting);
         // 保存启用的短信服务商
         Setting used = settingService.get(SettingConstant.SMS_USED);
@@ -246,10 +246,10 @@ public class SettingController {
 
         Setting setting = settingService.get(SettingConstant.EMAIL_SETTING);
         if (StrUtil.isNotBlank(setting.getValue()) && !emailSetting.getChanged()) {
-            String password = new Gson().fromJson(setting.getValue(), EmailSetting.class).getPassword();
+            String password = JSONUtil.toBean(setting.getValue(), EmailSetting.class).getPassword();
             emailSetting.setPassword(password);
         }
-        setting.setValue(new Gson().toJson(emailSetting));
+        setting.setValue(JSONUtil.toJsonStr(emailSetting));
         settingService.saveOrUpdate(setting);
         return ResultUtil.data(null);
     }
@@ -260,10 +260,10 @@ public class SettingController {
 
         Setting setting = settingService.get(SettingConstant.VAPTCHA_SETTING);
         if (StrUtil.isNotBlank(setting.getValue()) && !vaptchaSetting.getChanged()) {
-            String key = new Gson().fromJson(setting.getValue(), VaptchaSetting.class).getSecretKey();
+            String key = JSONUtil.toBean(setting.getValue(), VaptchaSetting.class).getSecretKey();
             vaptchaSetting.setSecretKey(key);
         }
-        setting.setValue(new Gson().toJson(vaptchaSetting));
+        setting.setValue(JSONUtil.toJsonStr(vaptchaSetting));
         settingService.saveOrUpdate(setting);
         return ResultUtil.data(null);
     }
@@ -273,7 +273,7 @@ public class SettingController {
     public Result<Object> otherSet(OtherSetting otherSetting) {
 
         Setting setting = settingService.get(SettingConstant.OTHER_SETTING);
-        setting.setValue(new Gson().toJson(otherSetting));
+        setting.setValue(JSONUtil.toJsonStr(otherSetting));
         settingService.saveOrUpdate(setting);
         return ResultUtil.data(null);
     }
@@ -283,7 +283,7 @@ public class SettingController {
     public Result<Object> autoChatSet(AutoChatSetting chatSetting) {
 
         Setting setting = settingService.get(SettingConstant.CHAT_SETTING);
-        setting.setValue(new Gson().toJson(chatSetting));
+        setting.setValue(JSONUtil.toJsonStr(chatSetting));
         settingService.saveOrUpdate(setting);
         return ResultUtil.data(null);
     }
@@ -293,7 +293,7 @@ public class SettingController {
     public Result<Object> noticeSet(NoticeSetting noticeSetting) {
 
         Setting setting = settingService.get(SettingConstant.NOTICE_SETTING);
-        setting.setValue(new Gson().toJson(noticeSetting));
+        setting.setValue(JSONUtil.toJsonStr(noticeSetting));
         settingService.saveOrUpdate(setting);
         return ResultUtil.data(null);
     }

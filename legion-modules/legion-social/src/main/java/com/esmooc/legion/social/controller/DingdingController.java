@@ -1,5 +1,7 @@
 package com.esmooc.legion.social.controller;
 
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import com.esmooc.legion.core.common.annotation.SystemLog;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.constant.SecurityConstant;
@@ -17,8 +19,6 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.digest.HMac;
 import cn.hutool.crypto.digest.HmacAlgorithm;
 import cn.hutool.http.HttpUtil;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -119,9 +119,9 @@ public class DingdingController {
         }
 
         // 获取unionid
-        JsonObject userJson = JsonParser.parseString(result).getAsJsonObject().get("user_info").getAsJsonObject();
-        String nick = userJson.get("nick").getAsString();
-        String openid = userJson.get("openid").getAsString();
+        JSONObject userJson = JSONUtil.parseObj(result).getJSONObject("user_info");
+        String nick = userJson.getStr("nick");
+        String openid = userJson.getStr("openid");
 
         // 存入数据库
         Social dingding = socialService.findByOpenIdAndPlatform(openid, TYPE);

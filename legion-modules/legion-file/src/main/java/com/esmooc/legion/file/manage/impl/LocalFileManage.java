@@ -1,5 +1,6 @@
 package com.esmooc.legion.file.manage.impl;
 
+import cn.hutool.json.JSONUtil;
 import com.esmooc.legion.core.common.constant.SettingConstant;
 import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.core.entity.Setting;
@@ -10,7 +11,6 @@ import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
-import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -36,7 +36,7 @@ public class LocalFileManage implements FileManage {
         if (setting == null || StrUtil.isBlank(setting.getValue())) {
             throw new LegionException("您还未配置本地存储");
         }
-        return new Gson().fromJson(setting.getValue(), OssSetting.class);
+        return  JSONUtil.toBean(setting.getValue(), OssSetting.class);
     }
 
     /**

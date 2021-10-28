@@ -1,5 +1,6 @@
 package com.esmooc.legion.open.controller;
 
+import cn.hutool.json.JSONUtil;
 import com.esmooc.legion.core.common.annotation.SystemLog;
 import com.esmooc.legion.core.common.constant.OAuthConstant;
 import com.esmooc.legion.core.common.constant.SecurityConstant;
@@ -18,7 +19,6 @@ import com.esmooc.legion.open.service.ClientService;
 import com.esmooc.legion.open.vo.Oauth2TokenInfo;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
-import com.google.gson.Gson;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -103,7 +103,7 @@ public class Oauth2Controller {
         String code = IdUtil.simpleUUID();
         // 存入用户及clientId信息
         redisTemplate.set(OAuthConstant.OAUTH_CODE_PRE + code,
-                new Gson().toJson(new Oauth2TokenInfo(client_id, user.getUsername())), 5L, TimeUnit.MINUTES);
+                JSONUtil.toJsonStr(new Oauth2TokenInfo(client_id, user.getUsername())), 5L, TimeUnit.MINUTES);
         Map<String, Object> map = new HashMap<>(16);
         map.put("code", code);
         map.put("redirect_uri", redirect_uri);
@@ -142,7 +142,7 @@ public class Oauth2Controller {
             if (StrUtil.isBlank(codeValue)) {
                 return ResultUtil.error("code已过期");
             }
-            tokenInfo = new Gson().fromJson(codeValue, Oauth2TokenInfo.class);
+            tokenInfo = JSONUtil.toBean(codeValue, Oauth2TokenInfo.class);
             if (!tokenInfo.getClientId().equals(client_id)) {
                 return ResultUtil.error("code不正确");
             }
@@ -152,7 +152,7 @@ public class Oauth2Controller {
             if (StrUtil.isBlank(refreshTokenValue)) {
                 return ResultUtil.error("refresh_token已过期");
             }
-            tokenInfo = new Gson().fromJson(refreshTokenValue, Oauth2TokenInfo.class);
+            tokenInfo =  JSONUtil.toBean(refreshTokenValue, Oauth2TokenInfo.class);
             if (!tokenInfo.getClientId().equals(client_id)) {
                 return ResultUtil.error("refresh_token不正确");
             }
@@ -180,8 +180,8 @@ public class Oauth2Controller {
                 redisTemplate.set(tokenKey, newToken, 30L, TimeUnit.DAYS);
                 redisTemplate.set(refreshKey, newRefreshToken, 30L, TimeUnit.DAYS);
                 // 新token中存入用户信息
-                redisTemplate.set(OAuthConstant.OAUTH_TOKEN_INFO_PRE + newToken, new Gson().toJson(tokenInfo), 30L, TimeUnit.DAYS);
-                redisTemplate.set(OAuthConstant.OAUTH_TOKEN_INFO_PRE + newRefreshToken, new Gson().toJson(tokenInfo), 30L, TimeUnit.DAYS);
+                redisTemplate.set(OAuthConstant.OAUTH_TOKEN_INFO_PRE + newToken, JSONUtil.toJsonStr(tokenInfo), 30L, TimeUnit.DAYS);
+                redisTemplate.set(OAuthConstant.OAUTH_TOKEN_INFO_PRE + newRefreshToken, JSONUtil.toJsonStr(tokenInfo), 30L, TimeUnit.DAYS);
                 token = newToken;
                 refreshToken = newRefreshToken;
                 expiresIn = redisTemplate.getExpire(OAuthConstant.OAUTH_TOKEN_INFO_PRE + token, TimeUnit.SECONDS);
@@ -193,8 +193,8 @@ public class Oauth2Controller {
             redisTemplate.set(tokenKey, newToken, 30L, TimeUnit.DAYS);
             redisTemplate.set(refreshKey, newRefreshToken, 30L, TimeUnit.DAYS);
             // 新token中存入用户信息
-            redisTemplate.set(OAuthConstant.OAUTH_TOKEN_INFO_PRE + newToken, new Gson().toJson(tokenInfo), 30L, TimeUnit.DAYS);
-            redisTemplate.set(OAuthConstant.OAUTH_TOKEN_INFO_PRE + newRefreshToken, new Gson().toJson(tokenInfo), 30L, TimeUnit.DAYS);
+            redisTemplate.set(OAuthConstant.OAUTH_TOKEN_INFO_PRE + newToken, JSONUtil.toJsonStr(tokenInfo), 30L, TimeUnit.DAYS);
+            redisTemplate.set(OAuthConstant.OAUTH_TOKEN_INFO_PRE + newRefreshToken, JSONUtil.toJsonStr(tokenInfo), 30L, TimeUnit.DAYS);
             token = newToken;
             refreshToken = newRefreshToken;
             expiresIn = redisTemplate.getExpire(OAuthConstant.OAUTH_TOKEN_INFO_PRE + token, TimeUnit.SECONDS);
@@ -227,7 +227,7 @@ public class Oauth2Controller {
         // 生成code 5分钟内有效
         String code = IdUtil.simpleUUID();
         redisTemplate.set(OAuthConstant.OAUTH_CODE_PRE + code,
-                new Gson().toJson(new Oauth2TokenInfo(client_id, user.getUsername())), 5L, TimeUnit.MINUTES);
+                JSONUtil.toJsonStr(new Oauth2TokenInfo(client_id, user.getUsername())), 5L, TimeUnit.MINUTES);
         Map<String, Object> map = new HashMap<>(16);
         map.put("code", code);
         map.put("redirect_uri", redirect_uri);
@@ -259,7 +259,7 @@ public class Oauth2Controller {
         if (StrUtil.isBlank(tokenValue)) {
             return ResultUtil.error("access_token已过期失效");
         }
-        Oauth2TokenInfo tokenInfo = new Gson().fromJson(tokenValue, Oauth2TokenInfo.class);
+        Oauth2TokenInfo tokenInfo =  JSONUtil.toBean(tokenValue, Oauth2TokenInfo.class);
         User user = userService.findByUsername(tokenInfo.getUsername());
         if (user == null) {
             return ResultUtil.error("用户信息不存在");

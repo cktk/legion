@@ -1,12 +1,13 @@
 package com.esmooc.legion.core.config.security.validate;
 
+import cn.hutool.json.JSONUtil;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
 import com.esmooc.legion.core.common.utils.ResponseUtil;
 import com.esmooc.legion.core.common.vo.EmailValidate;
 import com.esmooc.legion.core.config.properties.CaptchaProperties;
 import cn.hutool.core.util.StrUtil;
-import com.google.gson.Gson;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -60,7 +61,7 @@ public class EmailValidateFilter extends OncePerRequestFilter {
                 ResponseUtil.out(response, ResponseUtil.resultMap(false, 500, "验证码已过期，请重新获取"));
                 return;
             }
-            EmailValidate e = new Gson().fromJson(v, EmailValidate.class);
+            EmailValidate e = JSONUtil.toBean(v, EmailValidate.class);
             if (!code.equals(e.getCode())) {
                 log.info("验证码错误：code:" + code + "，redisCode:" + e.getCode());
                 ResponseUtil.out(response, ResponseUtil.resultMap(false, 500, "邮件验证码输入错误"));

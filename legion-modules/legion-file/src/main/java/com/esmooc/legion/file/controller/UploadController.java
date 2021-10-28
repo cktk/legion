@@ -1,5 +1,6 @@
 package com.esmooc.legion.file.controller;
 
+import cn.hutool.json.JSONUtil;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.constant.SettingConstant;
 import com.esmooc.legion.core.common.exception.LimitException;
@@ -16,7 +17,6 @@ import com.esmooc.legion.file.entity.File;
 import com.esmooc.legion.file.manage.FileManageFactory;
 import com.esmooc.legion.file.service.FileService;
 import cn.hutool.core.util.StrUtil;
-import com.google.gson.Gson;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -96,7 +96,7 @@ public class UploadController {
             return ResultUtil.error(e.toString());
         }
         if (setting.getValue().equals(SettingConstant.LOCAL_OSS)) {
-            OssSetting os = new Gson().fromJson(settingService.get(SettingConstant.LOCAL_OSS).getValue(), OssSetting.class);
+            OssSetting os =  JSONUtil.toBean(settingService.get(SettingConstant.LOCAL_OSS).getValue(), OssSetting.class);
             result = os.getHttp() + os.getEndpoint() + "/" + f.getId();
         }
         return ResultUtil.data(result);

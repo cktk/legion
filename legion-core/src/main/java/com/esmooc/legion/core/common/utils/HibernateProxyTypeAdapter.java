@@ -1,5 +1,7 @@
 package com.esmooc.legion.core.common.utils;
 
+
+
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 import com.google.gson.TypeAdapterFactory;

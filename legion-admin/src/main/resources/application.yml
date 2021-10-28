@@ -4,7 +4,7 @@ jasypt:
     password: leiyanfu   # Jasypt加密 可到common-utils中找到JasyptUtil加解密工具类生成加密结果 格式为  ENC(加密结果)
 
 server:
-  port: 8888
+  port: 8881
   servlet:
     context-path: /api
   tomcat:
@@ -24,7 +24,6 @@ spring:
   autoconfigure:
     exclude:
       - com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure
-      - org.springframework.boot.autoconfigure.data.elasticsearch.ReactiveElasticsearchRestClientAutoConfiguration
   # 数据源
   datasource:
     druid:
@@ -72,9 +71,8 @@ spring:
         master:
           url: jdbc:mysql://cc.c0c0.cc:3306/legion?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2B8
           username: root
-          password:
+          password: pwjEqyVVjFKoiEEJIRrnGQoX4MjTVF
           driver-class-name: com.mysql.cj.jdbc.Driver
-
   redis:
     host: 127.0.0.1
     #   password: leiyanfu
@@ -83,23 +81,12 @@ spring:
     port: 6379
     # 超时时间 Duration类型 3秒
     timeout: 3S
-
   jpa:
     # 显示sql
     show-sql: true
     # 自动生成表结构 关闭设为  none create
     hibernate:
       ddl-auto: none
-  # Elasticsearch
-  data:
-    elasticsearch:
-      # 暂未使用ES 关闭其持久化存储
-      repositories:
-        enabled: false
-  elasticsearch:
-    rest:
-      # 要连接的ES客户端Rest Uri 多个逗号分隔
-      uris: http://localhost:9200
   # 定时任务
   quartz:
     # 任务信息存储至数据库
@@ -187,9 +174,6 @@ legion:
   cache:
     # 缓存过期时间 Duration类型 D–天 H小时 M–分钟 S–秒 永久不过期设为非正值
     timeToLive: 15D
-  # 日志记录方式 true使用Elasticsearch记录 false记录至数据库中
-  logRecord:
-    es: false
   # 文件大小上传配置 单位MB
   maxUploadFile: 5
   # 腾讯位置服务key配置 腾讯位置服务官网注册添加key
