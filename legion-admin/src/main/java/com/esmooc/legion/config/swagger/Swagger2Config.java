@@ -14,6 +14,7 @@ import springfox.documentation.service.*;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 import springfox.documentation.swagger2.annotations.EnableSwagger2WebMvc;
 
 import java.util.Collections;
@@ -28,7 +29,7 @@ import static springfox.documentation.builders.PathSelectors.regex;
  */
 @Slf4j
 @Configuration
-@EnableSwagger2WebMvc
+@EnableSwagger2
 public class Swagger2Config {
 
 
@@ -60,13 +61,11 @@ public class Swagger2Config {
                 new ApiKey("Authorization", "accessToken", "header"));
 
         return new Docket(DocumentationType.SWAGGER_2)
-                .groupName("1.管理接口")
+                .groupName("1.基础接口")
                 .apiInfo(apiInfo()).select()
-                // 扫描所有有注解的api，用这种方式更灵活
-                .apis(RequestHandlerSelectors.basePackage("com.esmooc.legion"))
-//                .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
+                .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
                 .paths(PathSelectors.any())
-//                .paths(regex(".*/app/.*").negate())
+                .paths(regex(".*/legion/.*"))
                 .build()
                 .securitySchemes(securitySchemes)
                 .securityContexts(securityContexts());
@@ -83,11 +82,10 @@ public class Swagger2Config {
                 new ApiKey("Authorization", "appToken", "header"));
 
         return new Docket(DocumentationType.SWAGGER_2)
-                .groupName("业务接口")
+                .groupName("2业务接口")
                 .apiInfo(apiInfo()).select()
-                // 扫描所有有注解的api，用这种方式更灵活
                 .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
-                .paths(regex(".*/app/.*"))
+                .paths(regex(".*/legion/.*").negate())
                 .build()
                 .securitySchemes(securitySchemes)
                 .securityContexts(securityContexts());
