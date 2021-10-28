@@ -28,10 +28,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -44,7 +41,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Api(tags = "钉钉登录接口")
 @RequestMapping("/legion/social/dingding")
-@Controller
+@RestController
 public class DingdingController {
 
     private static final String STATE = SecurityConstant.DINGDING_STATE;
@@ -76,7 +73,6 @@ public class DingdingController {
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     @ApiOperation(value = "获取企业微信认证链接")
-    @ResponseBody
     public Result<Object> login() {
 
         // 生成并保存state 忽略该参数有可能导致CSRF攻击

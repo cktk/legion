@@ -42,7 +42,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Api(tags = "微信登录接口")
 @RequestMapping("/legion/social/wechat")
-@Controller
+@RestController
 public class WechatController {
 
     @Value("${legion.social.wechat.appId}")
@@ -90,7 +90,6 @@ public class WechatController {
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     @ApiOperation(value = "获取wechat认证链接")
-    @ResponseBody
     public Result<Object> login() throws UnsupportedEncodingException {
 
         // 生成并保存state 忽略该参数有可能导致CSRF攻击

@@ -41,7 +41,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Api(tags = "企业微信登录接口")
 @RequestMapping("/legion/social/workwechat")
-@Controller
+@RestController
 public class WorkWechatController {
 
     @Value("${legion.social.workwechat.appId}")
@@ -97,7 +97,6 @@ public class WorkWechatController {
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     @ApiOperation(value = "获取企业微信认证链接")
-    @ResponseBody
     public Result<Object> login() {
 
         // 生成并保存state 忽略该参数有可能导致CSRF攻击

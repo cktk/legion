@@ -42,7 +42,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Api(tags = "QQ登录接口")
 @RequestMapping("/legion/social/qq")
-@Controller
+@RestController
 public class QQController {
 
     private static final String STATE = SecurityConstant.QQ_STATE;
@@ -82,7 +82,6 @@ public class QQController {
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     @ApiOperation(value = "获取qq认证链接")
-    @ResponseBody
     public Result<Object> login() {
 
         // 生成并保存state 忽略该参数有可能导致CSRF攻击

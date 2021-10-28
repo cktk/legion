@@ -25,7 +25,6 @@ public abstract class LegionBaseController<E, ID extends Serializable> {
     public abstract LegionBaseService<E, ID> getService();
 
     @RequestMapping(value = "/get/{id}", method = RequestMethod.GET)
-    @ResponseBody
     @ApiOperation(value = "通过id获取")
     public Result<E> get(@PathVariable ID id) {
 
@@ -34,7 +33,6 @@ public abstract class LegionBaseController<E, ID extends Serializable> {
     }
 
     @RequestMapping(value = "/getAll", method = RequestMethod.GET)
-    @ResponseBody
     @ApiOperation(value = "获取全部数据")
     public Result<List<E>> getAll() {
 
@@ -43,7 +41,6 @@ public abstract class LegionBaseController<E, ID extends Serializable> {
     }
 
     @RequestMapping(value = "/getByPage", method = RequestMethod.GET)
-    @ResponseBody
     @ApiOperation(value = "分页获取")
     public Result<Page<E>> getByPage(PageVo page) {
 
@@ -52,7 +49,6 @@ public abstract class LegionBaseController<E, ID extends Serializable> {
     }
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)
-    @ResponseBody
     @ApiOperation(value = "保存数据")
     public Result<E> save(E entity) {
 
@@ -61,7 +57,6 @@ public abstract class LegionBaseController<E, ID extends Serializable> {
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.PUT)
-    @ResponseBody
     @ApiOperation(value = "更新数据")
     public Result<E> update(E entity) {
 
@@ -70,7 +65,6 @@ public abstract class LegionBaseController<E, ID extends Serializable> {
     }
 
     @RequestMapping(value = "/delByIds", method = RequestMethod.POST)
-    @ResponseBody
     @ApiOperation(value = "批量通过id删除")
     public Result<Object> delByIds(ID[] ids) {
 

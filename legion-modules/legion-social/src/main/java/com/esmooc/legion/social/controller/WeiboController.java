@@ -28,7 +28,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -41,7 +41,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Api(tags = "微博登录接口")
 @RequestMapping("/legion/social/weibo")
-@Controller
+@RestController
 public class WeiboController {
 
     @Value("${legion.social.weibo.appKey}")
@@ -94,7 +94,6 @@ public class WeiboController {
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     @ApiOperation(value = "获取微博认证链接")
-    @ResponseBody
     public Result<Object> login() {
 
         // 生成并保存state 忽略该参数有可能导致CSRF攻击

@@ -43,7 +43,7 @@ import java.util.Map;
  * @author Daimao
  */
 @Slf4j
-@Controller
+@RestController
 @Api(tags = "文件管理管理接口")
 @RequestMapping("/legion/file")
 @Transactional
@@ -70,7 +70,6 @@ public class FileController {
 
     @RequestMapping(value = "/getByCondition", method = RequestMethod.GET)
     @ApiOperation(value = "多条件分页获取")
-    @ResponseBody
     public Result<Page<File>> getFileList(File file,
                                           SearchVo searchVo,
                                           PageVo pageVo) {
@@ -103,7 +102,6 @@ public class FileController {
 
     @RequestMapping(value = "/copy", method = RequestMethod.POST)
     @ApiOperation(value = "文件复制")
-    @ResponseBody
     public Result<Object> copy(@RequestParam String id,
                                @RequestParam String key) throws Exception {
 
@@ -126,7 +124,6 @@ public class FileController {
 
     @RequestMapping(value = "/rename", method = RequestMethod.POST)
     @ApiOperation(value = "文件重命名")
-    @ResponseBody
     @CacheEvict(key = "#id")
     public Result<Object> upload(@RequestParam String id,
                                  @RequestParam String newKey,
@@ -155,7 +152,6 @@ public class FileController {
 
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     @ApiOperation(value = "文件删除")
-    @ResponseBody
     public Result<Object> delete(@RequestParam String[] ids) {
 
         for (String id : ids) {
