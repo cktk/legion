@@ -19,7 +19,7 @@ import java.util.List;
 @Slf4j
 @Service
 @Transactional
-public class I${entity.className}ServiceImpl extends ServiceImpl<${entity.className}Mapper, ${entity.className}> implements I${entity.className}Service {
+public class ${entity.className}ServiceImpl extends ServiceImpl<${entity.className}Mapper, ${entity.className}> implements I${entity.className}Service {
 
     @Autowired
     private ${entity.className}Mapper ${entity.classNameLowerCase}Mapper;

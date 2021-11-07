@@ -1,9 +1,10 @@
 package ${entity.controllerPackage};
 
-import PageUtil;
-import ResultUtil;
-import PageVo;
-import Result;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.esmooc.legion.core.common.utils.PageUtil;
+import com.esmooc.legion.core.common.utils.ResultUtil;
+import com.esmooc.legion.core.common.vo.PageVo;
+import com.esmooc.legion.core.common.vo.Result;
 import ${entity.entityPackage}.${entity.className};
 import ${entity.servicePackage}.I${entity.className}Service;
 import cn.hutool.core.util.StrUtil;
@@ -31,7 +32,7 @@ public class ${entity.className}Controller {
     @Autowired
     private I${entity.className}Service i${entity.className}Service;
 
-    @RequestMapping(value = "/get/{id}", method = RequestMethod.GET)
+    @GetMapping("/get/{id}")
     @ApiOperation(value = "通过id获取")
     public Result<${entity.className}> get(@PathVariable ${entity.primaryKeyType} id) {
 
@@ -39,7 +40,7 @@ public class ${entity.className}Controller {
         return new ResultUtil<${entity.className}>().setData(${entity.classNameLowerCase});
     }
 
-    @RequestMapping(value = "/getAll", method = RequestMethod.GET)
+    @GetMapping("/getAll")
     @ApiOperation(value = "获取全部数据")
     public Result<List<${entity.className}>> getAll() {
 
@@ -47,7 +48,7 @@ public class ${entity.className}Controller {
         return new ResultUtil<List<${entity.className}>>().setData(list);
     }
 
-    @RequestMapping(value = "/getByPage", method = RequestMethod.GET)
+    @GetMapping("/getByPage")
     @ApiOperation(value = "分页获取")
     public Result<IPage<${entity.className}>> getByPage(PageVo page) {
 
@@ -55,7 +56,7 @@ public class ${entity.className}Controller {
         return new ResultUtil<IPage<${entity.className}>>().setData(data);
     }
 
-    @RequestMapping(value = "/insertOrUpdate", method = RequestMethod.POST)
+    @PostMapping("/insertOrUpdate")
     @ApiOperation(value = "编辑或更新数据")
     public Result<${entity.className}> saveOrUpdate(${entity.className} ${entity.classNameLowerCase}) {
 
@@ -65,7 +66,27 @@ public class ${entity.className}Controller {
         return new ResultUtil<${entity.className}>().setErrorMsg("操作失败");
     }
 
-    @RequestMapping(value = "/delByIds", method = RequestMethod.POST)
+    @PostMapping("/save")
+    @ApiOperation(value = "添加数据")
+    public Result<${entity.className}> save(${entity.className} ${entity.classNameLowerCase}) {
+
+        if (i${entity.className}Service.saveOrUpdate(${entity.classNameLowerCase})) {
+            return new ResultUtil<${entity.className}>().setData(${entity.classNameLowerCase});
+        }
+        return new ResultUtil<${entity.className}>().setErrorMsg("操作失败");
+    }
+
+    @PutMapping("/update")
+    @ApiOperation(value = "更新数据")
+    public Result<${entity.className}> updateById(${entity.className} ${entity.classNameLowerCase}) {
+
+        if (i${entity.className}Service.updateById(${entity.classNameLowerCase})) {
+            return new ResultUtil<${entity.className}>().setData(${entity.classNameLowerCase});
+        }
+        return new ResultUtil<${entity.className}>().setErrorMsg("操作失败");
+    }
+
+    @PostMapping("/delByIds")
     @ApiOperation(value = "批量通过id删除")
     public Result<Object> delAllByIds(@RequestParam ${entity.primaryKeyType}[] ids) {
 
@@ -73,5 +94,16 @@ public class ${entity.className}Controller {
             i${entity.className}Service.removeById(id);
         }
         return ResultUtil.success("批量通过id删除数据成功");
+    }
+
+
+
+
+    @GetMapping("/getByCondition")
+    @ApiOperation(value = "多条件分页获取")
+    public Result<IPage<${entity.className}>> getByCondition(${entity.className} ${entity.classNameLowerCase},
+                                                 PageVo page){
+        IPage<${entity.className}> data = i${entity.className}Service.page(PageUtil.initMpPage(page), Wrappers.query(${entity.classNameLowerCase}));
+        return new ResultUtil<IPage<${entity.className}>>().setData(data);
     }
 }

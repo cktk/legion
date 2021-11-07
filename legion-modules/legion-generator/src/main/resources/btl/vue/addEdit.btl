@@ -197,56 +197,56 @@
 if(api){
 %>
 // 根据你的实际请求api.js位置路径修改
-import { add${apiName}, edit${apiName} } from "@/api/index";
+import { add${apiName}, edit${apiName} } from "./api";
 <%
 }
 %>
 <%
 if(fileUpload){
 %>
-import fileUpload from "@/views/my-components/file-upload";
+import fileUpload from "@/views/my-components/legion/file-upload";
 <%
 }
 %>
 <%
 if(upload){
 %>
-import uploadPicInput from "@/views/my-components/upload-pic-input";
+import uploadPicInput from "@/views/my-components/legion/upload-pic-input";
 <%
 }
 %>
 <%
 if(uploadThumb){
 %>
-import uploadThumb from "@/views/my-components/upload-pic-thumb";
+import uploadThumb from "@/views/my-components/legion/upload-pic-thumb";
 <%
 }
 %>
 <%
 if(editor){
 %>
-import editor from "@/views/my-components/editor";
+import editor from "@/views/my-components/legion/editor";
 <%
 }
 %>
 <%
 if(password){
 %>
-import password from "@/views/my-components/set-password";
+import password from "@/views/my-components/legion/set-password";
 <%
 }
 %>
 <%
 if(dict){
 %>
-import dict from "@/views/my-components/dict";
+import dict from "@/views/my-components/legion/dict";
 <%
 }
 %>
 <%
 if(customList){
 %>
-import customList from "@/views/my-components/custom-list";
+import customList from "@/views/my-components/legion/custom-list";
 <%
 }
 %>

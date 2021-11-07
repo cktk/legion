@@ -299,7 +299,7 @@
 if(api){
 %>
 // 根据你的实际请求api.js位置路径修改
-import { get${apiName}List, delete${apiName} } from "@/api/index";
+import { get${apiName}List, delete${apiName} } from "./api";
 <%
 }
 %>
@@ -308,14 +308,14 @@ import addEdit from "./addEdit.vue";
 <%
 if(searchDict){
 %>
-import dict from "@/views/my-components/dict";
+import dict from "@/views/my-components/legion/dict";
 <%
 }
 %>
 <%
 if(searchCustomList){
 %>
-import customList from "@/views/my-components/custom-list";
+import customList from "@/views/my-components/legion/custom-list";
 <%
 }
 %>
@@ -541,8 +541,8 @@ export default {
         get${apiName}List(this.searchForm).then(res => {
           this.loading = false;
           if (res.success) {
-            this.data = res.result.content;
-            this.total = res.result.totalElements;
+            this.data = res.result.records;
+            this.total = res.result.total;
             if (this.data.length == 0 && this.searchForm.pageNumber > 1) {
               this.searchForm.pageNumber -= 1;
               this.getDataList();
@@ -556,8 +556,8 @@ export default {
         // this.getRequest("请求路径", this.searchForm).then(res => {
         //   this.loading = false;
         //   if (res.success) {
-        //     this.data = res.result.content;
-        //     this.total = res.result.totalElements;
+        //     this.data = res.result.records;
+        //     this.total = res.result.total;
         //     if (this.data.length == 0 && this.searchForm.pageNumber > 1) {
         //       this.searchForm.pageNumber -= 1;
         //       this.getDataList();

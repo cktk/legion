@@ -21,7 +21,7 @@ public class WebSocketStompConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
 
         // 允许使用socketJs方式访问 即可通过http://IP:PORT/ws来和服务端websocket连接
-        registry.addEndpoint("/api/legion/ws").setAllowedOriginPatterns("*").withSockJS();
+        registry.addEndpoint("/ws").setAllowedOriginPatterns("*").withSockJS();
     }
 
     /**

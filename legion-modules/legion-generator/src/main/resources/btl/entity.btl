@@ -1,6 +1,6 @@
 package ${entity.entityPackage};
 
-import LegionBaseEntity;
+import com.esmooc.legion.core.base.LegionBaseEntity;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiModel;
@@ -8,7 +8,9 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-
+<%
+if(entity.activiti&&!entity.isTree){
+%>
 import org.springframework.data.annotation.Transient;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -45,7 +47,11 @@ public class ${entity.className} extends LegionBaseEntity {
 
     private static final long serialVersionUID = 1L;
 
-
+    <%
+    if(entity.activiti&&!entity.isTree){
+    %>
+    @ApiModelProperty(value = "关联流程申请表id")
+    private String actBusinessId;
 
     @Transient
     @TableField(exist=false)

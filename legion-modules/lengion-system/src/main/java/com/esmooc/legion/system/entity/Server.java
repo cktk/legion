@@ -1,10 +1,5 @@
 package com.esmooc.legion.system.entity;
 
-import java.net.UnknownHostException;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Properties;
-
 import com.esmooc.legion.system.util.Arith;
 import com.esmooc.legion.system.util.IpUtils;
 import oshi.SystemInfo;
@@ -16,6 +11,11 @@ import oshi.software.os.FileSystem;
 import oshi.software.os.OSFileStore;
 import oshi.software.os.OperatingSystem;
 import oshi.util.Util;
+
+import java.net.UnknownHostException;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * 服务器相关信息
@@ -101,20 +101,37 @@ public class Server
         this.sysFiles = sysFiles;
     }
 
-    public void copyTo() throws Exception
-    {
+    public void copyTo() {
         SystemInfo si = new SystemInfo();
         HardwareAbstractionLayer hal = si.getHardware();
 
-        setCpuInfo(hal.getProcessor());
+        try {
+            setCpuInfo(hal.getProcessor());
+        } catch (Exception ignored) {
+            System.out.println("报错了1");
+        }
+        try {
+            setMemInfo(hal.getMemory());
+        } catch (Exception ignored) {
+            System.out.println("报错了1");
+        }
+        try {
+            setSysInfo();
+        } catch (Exception ignored) {
+            System.out.println("报错了1");
+        }
 
-        setMemInfo(hal.getMemory());
+        try {
+            setJvmInfo();
+        } catch (Exception ignored) {
+            System.out.println("报错了1");
+        }
 
-        setSysInfo();
-
-        setJvmInfo();
-
-        setSysFiles(si.getOperatingSystem());
+        try {
+            setSysFiles(si.getOperatingSystem());
+        } catch (Exception ignored) {
+            System.out.println("报错了");
+        }
     }
 
     /**
@@ -182,12 +199,15 @@ public class Server
     /**
      * 设置磁盘信息
      */
-    private void setSysFiles(OperatingSystem os)
-    {
-        FileSystem fileSystem = os.getFileSystem();
-        List<OSFileStore> fsArray = fileSystem.getFileStores();
-        for (OSFileStore fs : fsArray)
-        {
+    private void setSysFiles(OperatingSystem os) {
+        List<OSFileStore> fsArray = null;
+        try {
+            FileSystem fileSystem = os.getFileSystem();
+            fsArray = fileSystem.getFileStores();
+        } catch (Exception e) {
+            return;
+        }
+        for (OSFileStore fs : fsArray) {
             long free = fs.getUsableSpace();
             long total = fs.getTotalSpace();
             long used = total - free;

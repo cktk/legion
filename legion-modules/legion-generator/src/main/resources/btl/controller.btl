@@ -1,11 +1,11 @@
 package ${entity.controllerPackage};
 
-import LegionBaseController;
-import PageUtil;
-import ResultUtil;
-import PageVo;
-import Result;
-import SearchVo;
+import com.esmooc.legion.core.base.LegionBaseController;
+import com.esmooc.legion.core.common.utils.PageUtil;
+import com.esmooc.legion.core.common.utils.ResultUtil;
+import com.esmooc.legion.core.common.vo.PageVo;
+import com.esmooc.legion.core.common.vo.Result;
+import com.esmooc.legion.core.common.vo.SearchVo;
 import ${entity.entityPackage}.${entity.className};
 import ${entity.servicePackage}.${entity.className}Service;
 import io.swagger.annotations.Api;
@@ -16,13 +16,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.transaction.annotation.Transactional;
 
-import SecurityUtil;
-import ActBusiness;
-import ActBusinessService;
-import cn.hutool.core.util.StrUtil;
-<%
-}
-%>
 
 /**
  * @author ${entity.author}
@@ -42,24 +35,12 @@ public class ${entity.className}Controller extends LegionBaseController<${entity
         return ${entity.classNameLowerCase}Service;
     }
 
-
-    @Autowired
-    private SecurityUtil securityUtil;
-    <%
-    }
-    %>
-
     @RequestMapping(value = "/getByCondition", method = RequestMethod.GET)
     @ApiOperation(value = "多条件分页获取")
     public Result<Page<${entity.className}>> getByCondition(${entity.className} ${entity.classNameLowerCase}, SearchVo searchVo, PageVo pageVo) {
 
         Page<${entity.className}> page = ${entity.classNameLowerCase}Service.findByCondition(${entity.classNameLowerCase}, searchVo, PageUtil.initPage(pageVo));
-
         return new ResultUtil<Page<${entity.className}>>().setData(page);
     }
 
-
-    <%
-    }
-    %>
 }

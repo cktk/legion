@@ -1,10 +1,10 @@
 package ${entity.controllerPackage};
 
-import CommonConstant;
-import RedisTemplateHelper;
-import CommonUtil;
-import ResultUtil;
-import Result;
+import com.esmooc.legion.core.common.constant.CommonConstant;
+import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
+import com.esmooc.legion.core.common.utils.CommonUtil;
+import com.esmooc.legion.core.common.utils.ResultUtil;
+import com.esmooc.legion.core.common.vo.Result;
 import ${entity.entityPackage}.${entity.className};
 import ${entity.servicePackage}.${entity.className}Service;
 import cn.hutool.core.util.StrUtil;

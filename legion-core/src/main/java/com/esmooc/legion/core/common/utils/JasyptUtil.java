@@ -54,8 +54,20 @@ public class JasyptUtil {
     public static void main(String[] args) {
 
         // 加密 若修改了第一个参数加密password记得在配置文件同步修改
-        System.out.println(encyptPwd("legion", "123456"));
+        String pwd="hUnr3tyARPSQnAlVufQP6VP/+0n7t0E6O91qmiVk2tn0EWjAC43iaSlGfTyKzRu629osKnyAEKJJ+UOx1J4uEw==";
+
+        String encCode="j6JzDaUk7pcfTWUaYsvQdEVkuv";
+
+        String encPwd = encyptPwd(encCode, pwd);
+        System.out.println("加密后密码  "+encPwd);
         // 解密
-        System.out.println(decyptPwd("legion", "PYVnAYh+j5C3jkMV1d+myj6JzDaUk7pcfTWUaYsvQdEVkuvIVf7Y0mOU9XkffxT8"));
+//        encPwd="";
+
+        String decPwd = decyptPwd(encCode, pwd);
+
+        System.out.println("解密后密码  "+decPwd);
+
+        System.out.println("解密结果  " +pwd.equals(decPwd));
+
     }
 }

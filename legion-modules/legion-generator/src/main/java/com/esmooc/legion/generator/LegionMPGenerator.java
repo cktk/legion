@@ -1,9 +1,10 @@
 package com.esmooc.legion.generator;
 
-import com.esmooc.legion.generator.bean.Entity;
-import com.esmooc.legion.generator.bean.Item;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.esmooc.legion.generator.bean.Entity;
+import com.esmooc.legion.generator.bean.Item;
+import com.esmooc.legion.generator.utils.GenerUtils;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.beetl.core.Configuration;
@@ -27,17 +28,45 @@ import java.util.List;
 @Slf4j
 public class LegionMPGenerator {
 
+    public static final String COM_ESMOOC_LEGION = "com.esmooc.legion.";
     /**
      * 实体类名
      * 建议仅需修改
      */
-    private static final String CLASS_NAME = "Student";
+    private static final String CLASS_NAME = "RefugeUser";
+
 
     /**
      * 类说明描述
      * 建议仅需修改
      */
-    private static final String DESCRIPTION = "测试";
+    private static final String DESCRIPTION = "避难人员信息";
+
+
+    /**
+     * 数据库表名前缀
+     * 下方请根据需要修改
+     */
+    private static final String TABLE_PRE = "b_";
+
+    /**
+     * 主键类型
+     */
+    private static final String PRIMARY_KEY_TYPE = "String";
+
+
+    /**
+     * 模块包路径
+     * （下方包路径拼接使用）
+     */
+    private static final String MODULE_PACKAGE = "refuge";
+
+    /**
+     * 生成模块路径
+     * (文件自动生成至该模块下)
+     */
+    private static final String MODULE = "/legion-modules/legion-" + MODULE_PACKAGE;
+
 
     /**
      * 作者名
@@ -51,58 +80,36 @@ public class LegionMPGenerator {
      */
     private static final Boolean IS_TREE = false;
 
-    /**
-     * 数据库表名前缀
-     * 下方请根据需要修改
-     */
-    private static final String TABLE_PRE = "t_";
-
-    /**
-     * 主键类型
-     */
-    private static final String PRIMARY_KEY_TYPE = "String";
-
-    /**
-     * 生成模块路径
-     * (文件自动生成至该模块下)
-     */
-    private static final String MODULE = "/legion-modules/legion-your";
-
-    /**
-     * 模块包路径
-     * （下方包路径拼接使用）
-     */
-    private static final String MODULE_PACKAGE = "your";
 
     /**
      * 实体类对应包
      * (文件自动生成至该包下)
      */
-    private static final String ENTITY_PACKAGE = "com.esmooc.legion." + MODULE_PACKAGE + ".entity";
+    private static final String ENTITY_PACKAGE = COM_ESMOOC_LEGION + MODULE_PACKAGE + ".entity";
 
     /**
      * dao对应包 【注意修改后需到com.esmooc.legion.core.config.mybatisplus.MybatisPlusConfig配置你的mapper路径扫描】
      * (文件自动生成至该包下)
      */
-    private static final String DAO_PACKAGE = "com.esmooc.legion." + MODULE_PACKAGE + ".mapper";
+    private static final String DAO_PACKAGE = COM_ESMOOC_LEGION + MODULE_PACKAGE + ".mapper";
 
     /**
      * service对应包
      * (文件自动生成至该包下)
      */
-    private static final String SERVICE_PACKAGE = "com.esmooc.legion." + MODULE_PACKAGE + ".service";
+    private static final String SERVICE_PACKAGE = COM_ESMOOC_LEGION + MODULE_PACKAGE + ".service";
 
     /**
      * serviceImpl对应包
      * (文件自动生成至该包下)
      */
-    private static final String SERVICE_IMPL_PACKAGE = "com.esmooc.legion." + MODULE_PACKAGE + ".serviceimpl";
+    private static final String SERVICE_IMPL_PACKAGE = COM_ESMOOC_LEGION + MODULE_PACKAGE + ".service.impl";
 
     /**
      * controller对应包
      * (文件自动生成至该包下)
      */
-    private static final String CONTROLLER_PACKAGE = "com.esmooc.legion." + MODULE_PACKAGE + ".controller";
+    private static final String CONTROLLER_PACKAGE = COM_ESMOOC_LEGION + MODULE_PACKAGE + ".controller";
 
     /**
      * 路径前缀
@@ -115,6 +122,8 @@ public class LegionMPGenerator {
      * @throws IOException
      */
     public static void main(String[] args) throws IOException {
+        // 根据类名删除生成的代码
+        deleteCode(CLASS_NAME);
 
         // 模板路径
         ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader("/btl/");
@@ -155,9 +164,9 @@ public class LegionMPGenerator {
         entity.setServiceImplPackage(SERVICE_IMPL_PACKAGE);
         entity.setControllerPackage(CONTROLLER_PACKAGE);
         entity.setAuthor(AUTHOR);
-        entity.setClassName(LegionGenerator.name(CLASS_NAME, true));
-        entity.setTableName(TABLE_PRE + LegionGenerator.camel2Underline(CLASS_NAME));
-        entity.setClassNameLowerCase(LegionGenerator.name(CLASS_NAME, false));
+        entity.setClassName(GenerUtils.name(CLASS_NAME, true));
+        entity.setTableName(TABLE_PRE + GenerUtils.camel2Underline(CLASS_NAME));
+        entity.setClassNameLowerCase(GenerUtils.name(CLASS_NAME, false));
         entity.setDescription(DESCRIPTION);
         entity.setPrimaryKeyType(PRIMARY_KEY_TYPE);
         entity.setIsTree(IS_TREE);
@@ -170,7 +179,7 @@ public class LegionMPGenerator {
         String entityResult = entityTemplate.render();
         log.info(entityResult);
         // 创建文件
-        String entityFileUrl = SYS_PATH + LegionGenerator.dotToLine(ENTITY_PACKAGE) + "/" + LegionGenerator.name(CLASS_NAME, true) + ".java";
+        String entityFileUrl = SYS_PATH + GenerUtils.dotToLine(ENTITY_PACKAGE) + "/" + GenerUtils.name(CLASS_NAME, true) + ".java";
         File entityFile = new File(entityFileUrl);
         File entityDir = entityFile.getParentFile();
         if (!entityDir.exists()) {
@@ -187,7 +196,7 @@ public class LegionMPGenerator {
         String daoResult = daoTemplate.render();
         log.info(daoResult);
         // 创建文件
-        String daoFileUrl = SYS_PATH + LegionGenerator.dotToLine(DAO_PACKAGE) + "/" + LegionGenerator.name(CLASS_NAME, true) + "Mapper.java";
+        String daoFileUrl = SYS_PATH + GenerUtils.dotToLine(DAO_PACKAGE) + "/" + GenerUtils.name(CLASS_NAME, true) + "Mapper.java";
         File daoFile = new File(daoFileUrl);
         File daoDir = daoFile.getParentFile();
         if (!daoDir.exists()) {
@@ -204,7 +213,7 @@ public class LegionMPGenerator {
         String serviceResult = serviceTemplate.render();
         log.info(serviceResult);
         // 创建文件
-        String serviceFileUrl = SYS_PATH + LegionGenerator.dotToLine(SERVICE_PACKAGE) + "/I" + LegionGenerator.name(CLASS_NAME, true) + "Service.java";
+        String serviceFileUrl = SYS_PATH + GenerUtils.dotToLine(SERVICE_PACKAGE) + "/I" + GenerUtils.name(CLASS_NAME, true) + "Service.java";
         File serviceFile = new File(serviceFileUrl);
         File serviceDir = serviceFile.getParentFile();
         if (!serviceDir.exists()) {
@@ -221,7 +230,7 @@ public class LegionMPGenerator {
         String serviceImplResult = serviceImplTemplate.render();
         log.info(serviceImplResult);
         // 创建文件
-        String serviceImplFileUrl = SYS_PATH + LegionGenerator.dotToLine(SERVICE_IMPL_PACKAGE) + "/I" + LegionGenerator.name(CLASS_NAME, true) + "ServiceImpl.java";
+        String serviceImplFileUrl = SYS_PATH + GenerUtils.dotToLine(SERVICE_IMPL_PACKAGE) + "/" + GenerUtils.name(CLASS_NAME, true) + "ServiceImpl.java";
         File serviceImplFile = new File(serviceImplFileUrl);
         File serviceImplDir = serviceImplFile.getParentFile();
         if (!serviceImplDir.exists()) {
@@ -238,7 +247,7 @@ public class LegionMPGenerator {
         String controllerResult = controllerTemplate.render();
         log.info(controllerResult);
         // 创建文件
-        String controllerFileUrl = SYS_PATH + LegionGenerator.dotToLine(CONTROLLER_PACKAGE) + "/" + LegionGenerator.name(CLASS_NAME, true) + "Controller.java";
+        String controllerFileUrl = SYS_PATH + GenerUtils.dotToLine(CONTROLLER_PACKAGE) + "/" + GenerUtils.name(CLASS_NAME, true) + "Controller.java";
         File controllerFile = new File(controllerFileUrl);
         File controllerDir = controllerFile.getParentFile();
         if (!controllerDir.exists()) {
@@ -255,7 +264,7 @@ public class LegionMPGenerator {
         String mapperXmlResult = mapperXmlTemplate.render();
         log.info(mapperXmlResult);
         // 创建文件
-        String mapperXmlFileUrl = System.getProperty("user.dir") + MODULE + "/src/main/resources/mapper/" + LegionGenerator.name(CLASS_NAME, true) + "Mapper.xml";
+        String mapperXmlFileUrl = System.getProperty("user.dir") + MODULE + "/src/main/resources/mapper/" + MODULE_PACKAGE+"/" + GenerUtils.name(CLASS_NAME, true) + "Mapper.xml";
         File mapperXmlFile = new File(mapperXmlFileUrl);
         File mapperXmlDir = mapperXmlFile.getParentFile();
         if (!mapperXmlDir.exists()) {
@@ -280,24 +289,43 @@ public class LegionMPGenerator {
      */
     private static void deleteCode(String className) throws IOException {
 
-        String entityFileUrl = SYS_PATH + LegionGenerator.dotToLine(ENTITY_PACKAGE) + "/" + LegionGenerator.name(className, true) + ".java";
-        Files.delete(Paths.get(entityFileUrl));
+//        String entityFileUrl = SYS_PATH + GenerUtils.dotToLine(ENTITY_PACKAGE) + "/" + GenerUtils.name(className, true) + ".java";
+//        try {
+//            Files.delete(Paths.get(entityFileUrl));
+//        } catch (IOException e) {
+//
+//        }
 
-        String daoFileUrl = SYS_PATH + LegionGenerator.dotToLine(DAO_PACKAGE) + "/" + LegionGenerator.name(className, true) + "Mapper.java";
-        Files.delete(Paths.get(daoFileUrl));
+        String daoFileUrl = SYS_PATH + GenerUtils.dotToLine(DAO_PACKAGE) + "/" + GenerUtils.name(className, true) + "Mapper.java";
+        try {
+            Files.delete(Paths.get(daoFileUrl));
+        } catch (IOException e) {
 
-        String serviceFileUrl = SYS_PATH + LegionGenerator.dotToLine(SERVICE_PACKAGE) + "/I" + LegionGenerator.name(className, true) + "Service.java";
-        Files.delete(Paths.get(serviceFileUrl));
+        }
+        String serviceFileUrl = SYS_PATH + GenerUtils.dotToLine(SERVICE_PACKAGE) + "/I" + GenerUtils.name(className, true) + "Service.java";
+        try {
+            Files.delete(Paths.get(serviceFileUrl));
+        } catch (IOException e) {
 
-        String serviceImplFileUrl = SYS_PATH + LegionGenerator.dotToLine(SERVICE_IMPL_PACKAGE) + "/I" + LegionGenerator.name(className, true) + "ServiceImpl.java";
-        Files.delete(Paths.get(serviceImplFileUrl));
+        }
+        String serviceImplFileUrl = SYS_PATH + GenerUtils.dotToLine(SERVICE_IMPL_PACKAGE) + "/" + GenerUtils.name(className, true) + "ServiceImpl.java";
+        try {
+            Files.delete(Paths.get(serviceImplFileUrl));
+        } catch (IOException e) {
 
-        String controllerFileUrl = SYS_PATH + LegionGenerator.dotToLine(CONTROLLER_PACKAGE) + "/" + LegionGenerator.name(className, true) + "Controller.java";
-        Files.delete(Paths.get(controllerFileUrl));
+        }
+        String controllerFileUrl = SYS_PATH + GenerUtils.dotToLine(CONTROLLER_PACKAGE) + "/" + GenerUtils.name(className, true) + "Controller.java";
+        try {
+            Files.delete(Paths.get(controllerFileUrl));
+        } catch (IOException e) {
 
-        String mapperXmlFileUrl = System.getProperty("user.dir") + MODULE + "/src/main/resources/mapper/" + LegionGenerator.name(className, true) + "Mapper.xml";
-        Files.delete(Paths.get(mapperXmlFileUrl));
+        }
+        String mapperXmlFileUrl = System.getProperty("user.dir") + MODULE + "/src/main/resources/mapper/" + GenerUtils.name(className, true) + "Mapper.xml";
+        try {
+            Files.delete(Paths.get(mapperXmlFileUrl));
+        } catch (IOException e) {
 
+        }
         log.info("删除代码完毕！");
     }
 
@@ -316,11 +344,11 @@ public class LegionMPGenerator {
 
         Entity entity = new Entity();
 
-        entity.setClassName(LegionGenerator.name(CLASS_NAME, true));
-        entity.setClassNameLowerCase(LegionGenerator.name(CLASS_NAME, false));
+        entity.setClassName(GenerUtils.name(CLASS_NAME, true));
+        entity.setClassNameLowerCase(GenerUtils.name(CLASS_NAME, false));
         List<Item> items = new ArrayList<>();
 
-        String path = ENTITY_PACKAGE + "." + LegionGenerator.name(CLASS_NAME, true);
+        String path = ENTITY_PACKAGE + "." + GenerUtils.name(CLASS_NAME, true);
         Class<Object> c = (Class<Object>) Class.forName(path);
         Object obj = c.getDeclaredConstructor().newInstance();
         java.lang.reflect.Field[] fields = obj.getClass().getDeclaredFields();
@@ -355,9 +383,9 @@ public class LegionMPGenerator {
 
             Item item = new Item();
             item.setType(fieldType);
-            item.setUpperName(LegionGenerator.name(fieldName, true));
-            item.setLowerName(LegionGenerator.name(fieldName, false));
-            item.setLineName(LegionGenerator.camel2Underline(fieldName));
+            item.setUpperName(GenerUtils.name(fieldName, true));
+            item.setLowerName(GenerUtils.name(fieldName, false));
+            item.setLineName(GenerUtils.camel2Underline(fieldName));
             item.setTitle(fieldNameCN);
 
             items.add(item);
