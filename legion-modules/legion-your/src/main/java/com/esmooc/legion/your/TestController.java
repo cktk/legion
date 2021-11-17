@@ -5,20 +5,17 @@ import com.esmooc.legion.core.common.lock.Callback;
 import com.esmooc.legion.core.common.lock.RedisLockTemplate;
 import com.esmooc.legion.core.common.utils.ResultUtil;
 import com.esmooc.legion.core.common.vo.Result;
+import com.esmooc.legion.your.entity.Test;
+import com.esmooc.legion.your.service.ITestService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import lombok.var;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -33,6 +30,29 @@ public class TestController {
 
     @Autowired
     private RedisLockTemplate redisLockTemplate;
+
+
+    @Autowired
+    private ITestService iTestService;
+
+    @GetMapping()
+    @ApiOperation(value = "获取全部数据")
+    public Result<List<Test>> getAll() {
+
+        List<Test> list = iTestService.list();
+        return new ResultUtil<List<Test>>().setData(list);
+    }
+
+    @PostMapping()
+    @ApiOperation(value = "添加数据")
+    public Result<Test> save(Test test) {
+
+        if (iTestService.saveOrUpdate(test)) {
+            return new ResultUtil<Test>().setData(test);
+        }
+        return new ResultUtil<Test>().setErrorMsg("操作失败");
+    }
+
 
     @RequestMapping(value = "/lockAndLimit", method = RequestMethod.GET)
     @RateLimiter(rate = 1, rateInterval = 5000)

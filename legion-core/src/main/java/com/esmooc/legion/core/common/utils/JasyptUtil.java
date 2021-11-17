@@ -63,7 +63,7 @@ public class JasyptUtil {
         // 解密
 //        encPwd="";
 
-        String decPwd = decyptPwd(encCode, pwd);
+        String decPwd = decyptPwd(encCode, encPwd);
 
         System.out.println("解密后密码  "+decPwd);
 

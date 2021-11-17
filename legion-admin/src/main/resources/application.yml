@@ -69,13 +69,13 @@ spring:
         connectionProperties: druid.stat.mergeSql\=true;druid.stat.slowSqlMillis\=5000
       datasource:
         master:
-          url: jdbc:mysql://cc.c0c0.cc:3306/legion?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2B8
+          url: jdbc:mysql://mysql.c0c0.cc:3306/legion?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2B8
           username: root
-          password: ENC()
+          password: ENC(T5pWqQ6Gcy8/2crkrzpDPEoTLffeOWZZtEOvrUMcPbn/2917jnpM7EeOaX+f35t6YQn3dybFimF1ym7UO3O01Wk9h1QWjHeDaBLKNEtytqI=)
           driver-class-name: com.mysql.cj.jdbc.Driver
   redis:
-    host: db.coocco.cc
-    password: ENC()
+    host: redis.c0c0.cc
+    password: ENC(WWl1ZUCSZB6tQIZCIY5lpW0EjHJfTfEZa72UqKdt1znKshVluvU0CkMKIChwJ8g2k29uBW6SvMj/MJZKHoaQDw==)
     database: 3
     port: 6379
     # 超时时间 Duration类型 3秒
@@ -259,12 +259,12 @@ ignored:
     - /legion/email/resetByEmail
     - /legion/file/view/**
     - /legion/social/**
-    - /legion/ws/**
     - /legion/setting/notice
     - /legion/user/regist
     - /legion/user/smsLogin
     - /legion/user/resetByMobile
     - /legion/common/**
+    - /ws/**
     - /druid/**
     - /doc.html
     - /swagger-ui.html
