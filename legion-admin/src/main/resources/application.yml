@@ -1,7 +1,7 @@
 # 配置文件加密key 生产环境中可通过环境变量、命令行等形式进行设置
 jasypt:
   encryptor:
-    password: leiyanfu   # Jasypt加密 可到common-utils中找到JasyptUtil加解密工具类生成加密结果 格式为  ENC(加密结果)
+    password: ${ENC_CODE}   # Jasypt加密 可到common-utils中找到JasyptUtil加解密工具类生成加密结果 格式为  ENC(加密结果)
 
 server:
   port: 8881
@@ -71,13 +71,12 @@ spring:
         master:
           url: jdbc:mysql://cc.c0c0.cc:3306/legion?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2B8
           username: root
-          password: pwjEqyVVjFKoiEEJIRrnGQoX4MjTVF
+          password: ENC()
           driver-class-name: com.mysql.cj.jdbc.Driver
   redis:
-    host: 127.0.0.1
-    #   password: leiyanfu
-    # 数据库索引 默认0
-    database: 1
+    host: db.coocco.cc
+    password: ENC()
+    database: 3
     port: 6379
     # 超时时间 Duration类型 3秒
     timeout: 3S
@@ -276,6 +275,7 @@ ignored:
     - /**/*.png
     - /**/*.ico
     - /test/**
+    - /pacs/**
   # 限流及黑名单不拦截的路径
   limitUrls:
     - /**/*.js
@@ -302,6 +302,7 @@ mybatis-plus:
       logic-delete-field: del_flag  # 全局逻辑删除的实体字段名(since 3.3.0,配置后可以忽略不配置步骤2)
       logic-delete-value: 1 # 逻辑已删除值(默认为 1)
       logic-not-delete-value: 0 # 逻辑未删除值(默认为 0)
+
 # 日志
 logging:
   # 输出级别
@@ -309,10 +310,10 @@ logging:
     root: info
   file:
     # 指定路径
-    path: legion-logs
+    path: legion-admin/src/main/resources/logs/legion/logs
   logback:
     rollingpolicy:
       # 最大保存天数
       max-history: 7
       # 每个文件最大大小
-      max-file-size: 5MB
+      max-file-size: 500MB

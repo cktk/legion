@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.esmooc.legion.your.mapper.StudyMapper">
+  <resultMap id="BaseResultMap" type="com.esmooc.legion.your.entity.Study">
+    <!--@mbg.generated-->
+    <!--@Table p_study-->
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="study_id" jdbcType="VARCHAR" property="studyId" />
+    <result column="modality_type" jdbcType="VARCHAR" property="modalityType" />
+    <result column="p_id" jdbcType="VARCHAR" property="pId" />
+    <result column="age" jdbcType="VARCHAR" property="age" />
+    <result column="study_time" jdbcType="TIMESTAMP" property="studyTime" />
+    <result column="accession_no" jdbcType="VARCHAR" property="accessionNo" />
+    <result column="study_instance_id" jdbcType="VARCHAR" property="studyInstanceId" />
+    <result column="create_by_id" jdbcType="VARCHAR" property="createById" />
+    <result column="update_by_id" jdbcType="VARCHAR" property="updateById" />
+    <result column="create_by" jdbcType="VARCHAR" property="createBy" />
+    <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="del_flag" jdbcType="VARCHAR" property="delFlag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, study_id, modality_type, p_id, age, study_time, accession_no, study_instance_id, 
+    create_by_id, update_by_id, create_by, update_by, create_time, update_time, del_flag
+  </sql>
+</mapper>

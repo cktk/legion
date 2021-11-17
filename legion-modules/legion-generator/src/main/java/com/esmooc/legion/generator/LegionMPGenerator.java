@@ -29,25 +29,32 @@ import java.util.List;
 public class LegionMPGenerator {
 
     public static final String COM_ESMOOC_LEGION = "com.esmooc.legion.";
+
+    /**
+     * 模块包路径
+     * （下方包路径拼接使用）
+     */
+    private static final String MODULE_PACKAGE = "your";
+
     /**
      * 实体类名
      * 建议仅需修改
      */
-    private static final String CLASS_NAME = "RefugeUser";
+    private static final String CLASS_NAME = "Test";
 
 
     /**
      * 类说明描述
      * 建议仅需修改
      */
-    private static final String DESCRIPTION = "避难人员信息";
+    private static final String DESCRIPTION = "测试";
 
 
     /**
      * 数据库表名前缀
      * 下方请根据需要修改
      */
-    private static final String TABLE_PRE = "b_";
+    private static final String TABLE_PRE = "t_";
 
     /**
      * 主键类型
@@ -55,11 +62,6 @@ public class LegionMPGenerator {
     private static final String PRIMARY_KEY_TYPE = "String";
 
 
-    /**
-     * 模块包路径
-     * （下方包路径拼接使用）
-     */
-    private static final String MODULE_PACKAGE = "refuge";
 
     /**
      * 生成模块路径
