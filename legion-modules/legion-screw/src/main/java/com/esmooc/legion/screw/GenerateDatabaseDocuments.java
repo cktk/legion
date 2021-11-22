@@ -1,4 +1,4 @@
-package com.esmooc.screw;
+package com.esmooc.legion.screw;
 
 import cn.smallbun.screw.core.Configuration;
 import cn.smallbun.screw.core.engine.EngineConfig;
@@ -8,7 +8,6 @@ import cn.smallbun.screw.core.execute.DocumentationExecute;
 import cn.smallbun.screw.core.process.ProcessConfig;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import org.testng.annotations.Test;
 
 import javax.sql.DataSource;
 import java.util.ArrayList;
@@ -16,14 +15,17 @@ import java.util.ArrayList;
 /**
  * @author Daimao
  * @version 1.0
- * @ClassName: DbDocTest
+ * @ClassName: Creat
  * @Description:
- * @date 2021年11月22日10点23分
+ * @date 2021年11月22日11点44分
  **/
-public class DbDocTest {
+public class GenerateDatabaseDocuments {
 
-    @Test
-    public void shouldAnswerWithTrue() {
+    public static void main(String[] args) {
+        generateDatabaseDocuments();
+    }
+
+    public static void generateDatabaseDocuments() {
         //数据源
         HikariConfig hikariConfig = new HikariConfig();
         hikariConfig.setDriverClassName("com.mysql.cj.jdbc.Driver");
