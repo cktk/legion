@@ -22,6 +22,7 @@
         <module>legion-app</module>
         <module>legion-autochat</module>
         <module>lengion-system</module>
+        <module>legion-screw</module>
     </modules>
 
     <dependencies>
