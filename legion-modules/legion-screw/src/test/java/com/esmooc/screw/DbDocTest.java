@@ -30,6 +30,13 @@ public class DbDocTest {
         hikariConfig.setJdbcUrl("jdbc:mysql://**************:3306/legion");
         hikariConfig.setUsername("**************");
         hikariConfig.setPassword("**************");
+
+        //oracle的配置
+//        hikariConfig.setDriverClassName("oracle.jdbc.driver.OracleDriver");
+//        hikariConfig.setJdbcUrl("jdbc:oracle:thin:@IP:1521/orcl");
+//        hikariConfig.setUsername("USER");
+//        hikariConfig.setPassword("PWD");
+
         //设置可以获取tables remarks信息
         hikariConfig.addDataSourceProperty("useInformationSchema", "true");
         hikariConfig.setMinimumIdle(2);
