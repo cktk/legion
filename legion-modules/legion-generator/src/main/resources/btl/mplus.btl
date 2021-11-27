@@ -21,6 +21,6 @@ public Result<IPage<${entity.className}>> getByCondition(${entity.className} ${e
     <%
     }
     %>
-    IPage<${entity.className}> data = i${entity.className}Service.page(PageUtil.initMpPage(page), qw);
+    IPage<${entity.className}> data = i${entity.className}Service.page(PageUtil.initPage(page), qw);
     return new ResultUtil<IPage<${entity.className}>>().setData(data);
 }

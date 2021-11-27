@@ -1,37 +1,24 @@
 package com.esmooc.legion.core.entity;
 
-import com.esmooc.legion.core.base.LegionBaseEntity;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.esmooc.legion.core.base.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
-
-import javax.persistence.Entity;
-import javax.persistence.Table;
 
 /**
  * @author Daimao
  */
 @Data
-@Entity
-@DynamicInsert
-@DynamicUpdate
-@Table(name = "t_setting")
 @TableName("t_setting")
 @ApiModel(value = "配置")
 @NoArgsConstructor
-public class Setting extends LegionBaseEntity {
-
-    private static final long serialVersionUID = 1L;
-
+public class Setting extends BaseEntity {
     @ApiModelProperty(value = "配置值value")
     private String value;
 
     public Setting(String id) {
-
         super.setId(id);
     }
 }

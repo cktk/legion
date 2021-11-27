@@ -1,5 +1,7 @@
 package com.esmooc.legion.core.common.utils;
 
+import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.constant.SecurityConstant;
@@ -13,15 +15,12 @@ import com.esmooc.legion.core.entity.Department;
 import com.esmooc.legion.core.entity.Member;
 import com.esmooc.legion.core.entity.Role;
 import com.esmooc.legion.core.entity.User;
+import com.esmooc.legion.core.entity.vo.PermissionDTO;
+import com.esmooc.legion.core.entity.vo.RoleDTO;
 import com.esmooc.legion.core.service.DepartmentService;
+import com.esmooc.legion.core.service.IUserRoleService;
 import com.esmooc.legion.core.service.MemberService;
 import com.esmooc.legion.core.service.UserService;
-import com.esmooc.legion.core.service.mybatis.IUserRoleService;
-import com.esmooc.legion.core.vo.PermissionDTO;
-import com.esmooc.legion.core.vo.RoleDTO;
-import cn.hutool.core.util.IdUtil;
-import cn.hutool.core.util.StrUtil;
-
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -214,7 +213,7 @@ public class SecurityUtil {
 
     private void getRecursion(String departmentId, List<String> ids) {
 
-        Department department = departmentService.get(departmentId);
+        Department department = departmentService.getById(departmentId);
         ids.add(department.getId());
         if (department.getIsParent() != null && department.getIsParent()) {
             // 获取其下级

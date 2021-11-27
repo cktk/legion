@@ -13,16 +13,15 @@ import com.esmooc.legion.core.service.MemberService;
 import cn.hutool.core.util.StrUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.EntityManager;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,18 +32,15 @@ import java.util.Map;
 @RestController
 @Api(tags = "会员接口")
 @RequestMapping(value = "/legion/app/v1/member/")
+@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE,makeFinal = true)
 public class MemberController {
 
-    @Autowired
-    private MemberService memberService;
+    MemberService memberService;
+    SecurityUtil securityUtil;
 
-    @Autowired
-    private SecurityUtil securityUtil;
 
-    @Autowired
-    private EntityManager entityManager;
-
-    @RequestMapping(value = "/quickLogin", method = RequestMethod.POST)
+    @PostMapping("/quickLogin")
     @ApiOperation(value = "手机号快捷登录/注册")
     @SystemLog(description = "快捷登录", type = LogType.MEMBER_LOGIN)
     public Result<Object> quickLogin(@RequestParam String mobile,
@@ -85,13 +81,13 @@ public class MemberController {
         return ResultUtil.data(result);
     }
 
-    @RequestMapping(value = "/info", method = RequestMethod.GET)
+    @GetMapping("/info")
     @ApiOperation(value = "获取当前登录会员信息接口")
     public Result<Member> getUserInfo() {
 
         Member member = securityUtil.getCurrMember();
-        // 清除持久上下文环境 避免后面语句导致持久化
-        entityManager.clear();
+        //TODO 清除持久上下文环境 避免后面语句导致持久化
+//        entityManager.clear();
         member.setPassword(null);
         return ResultUtil.data(member);
     }

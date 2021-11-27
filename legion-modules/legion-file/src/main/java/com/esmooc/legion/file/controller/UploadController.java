@@ -3,7 +3,6 @@ package com.esmooc.legion.file.controller;
 import cn.hutool.json.JSONUtil;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.constant.SettingConstant;
-import com.esmooc.legion.core.common.exception.LimitException;
 import com.esmooc.legion.core.common.limit.RedisRaterLimiter;
 import com.esmooc.legion.core.common.utils.Base64DecodeMultipartFile;
 import com.esmooc.legion.core.common.utils.CommonUtil;
@@ -12,7 +11,7 @@ import com.esmooc.legion.core.common.utils.ResultUtil;
 import com.esmooc.legion.core.common.vo.Result;
 import com.esmooc.legion.core.entity.Setting;
 import com.esmooc.legion.core.service.SettingService;
-import com.esmooc.legion.core.vo.OssSetting;
+import com.esmooc.legion.core.entity.vo.OssSetting;
 import com.esmooc.legion.file.entity.File;
 import com.esmooc.legion.file.manage.FileManageFactory;
 import com.esmooc.legion.file.service.FileService;
@@ -45,11 +44,6 @@ public class UploadController {
     @Value("${legion.maxUploadFile}")
     private Integer maxUploadFile;
 
-    @Autowired
-    private RedisRaterLimiter redisRaterLimiter;
-
-    @Autowired
-    private IpInfoUtil ipInfoUtil;
 
     @Autowired
     private FileManageFactory fileManageFactory;
@@ -69,7 +63,7 @@ public class UploadController {
         if (file.getSize() > maxUploadFile * 1024 * 1024) {
             return ResultUtil.error("文件大小过大，不能超过" + maxUploadFile + "MB");
         }
-        Setting setting = settingService.get(SettingConstant.OSS_USED);
+        Setting setting = settingService.getById(SettingConstant.OSS_USED);
         if (setting == null || StrUtil.isBlank(setting.getValue())) {
             return ResultUtil.error(501, "您还未配置OSS存储服务");
         }
@@ -96,7 +90,7 @@ public class UploadController {
             return ResultUtil.error(e.toString());
         }
         if (setting.getValue().equals(SettingConstant.LOCAL_OSS)) {
-            OssSetting os =  JSONUtil.toBean(settingService.get(SettingConstant.LOCAL_OSS).getValue(), OssSetting.class);
+            OssSetting os =  JSONUtil.toBean(settingService.getById(SettingConstant.LOCAL_OSS).getValue(), OssSetting.class);
             result = os.getHttp() + os.getEndpoint() + "/" + f.getId();
         }
         return ResultUtil.data(result);

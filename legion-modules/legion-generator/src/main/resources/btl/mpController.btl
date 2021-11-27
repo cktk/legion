@@ -52,7 +52,7 @@ public class ${entity.className}Controller {
     @ApiOperation(value = "分页获取")
     public Result<IPage<${entity.className}>> getByPage(PageVo page) {
 
-        IPage<${entity.className}> data = i${entity.className}Service.page(PageUtil.initMpPage(page));
+        IPage<${entity.className}> data = i${entity.className}Service.page(PageUtil.initPage(page));
         return new ResultUtil<IPage<${entity.className}>>().setData(data);
     }
 
@@ -103,7 +103,7 @@ public class ${entity.className}Controller {
     @ApiOperation(value = "多条件分页获取")
     public Result<IPage<${entity.className}>> getByCondition(${entity.className} ${entity.classNameLowerCase},
                                                  PageVo page){
-        IPage<${entity.className}> data = i${entity.className}Service.page(PageUtil.initMpPage(page), Wrappers.query(${entity.classNameLowerCase}));
+        IPage<${entity.className}> data = i${entity.className}Service.page(PageUtil.initPage(page), Wrappers.query(${entity.classNameLowerCase}));
         return new ResultUtil<IPage<${entity.className}>>().setData(data);
     }
 }

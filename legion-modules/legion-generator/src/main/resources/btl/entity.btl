@@ -1,6 +1,6 @@
 package ${entity.entityPackage};
 
-import com.esmooc.legion.core.base.LegionBaseEntity;
+import com.esmooc.legion.core.base.BaseEntity;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiModel;

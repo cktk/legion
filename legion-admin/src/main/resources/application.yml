@@ -80,12 +80,6 @@ spring:
     port: 6379
     # 超时时间 Duration类型 3秒
     timeout: 3S
-  jpa:
-    # 显示sql
-    show-sql: true
-    # 自动生成表结构 关闭设为  none create
-    hibernate:
-      ddl-auto: none
   # 定时任务
   quartz:
     # 任务信息存储至数据库

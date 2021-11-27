@@ -33,10 +33,15 @@
             <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
 
-        <!-- JPA -->
+<!--        &lt;!&ndash; JPA &ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-starter-data-jpa</artifactId>-->
+<!--        </dependency>-->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>31.0.1-jre</version>
         </dependency>
         <!-- MybatisPlus -->
         <dependency>

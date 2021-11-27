@@ -14,7 +14,7 @@ import com.esmooc.legion.core.config.security.SecurityUserDetails;
 import com.esmooc.legion.core.entity.User;
 import com.esmooc.legion.social.entity.Social;
 import com.esmooc.legion.social.service.SocialService;
-import com.esmooc.legion.social.vo.WechatUserInfo;
+import com.esmooc.legion.social.entity.vo.WechatUserInfo;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
@@ -25,7 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
@@ -135,7 +134,7 @@ public class WechatController {
         Social wechat = socialService.findByOpenIdAndPlatform(wu.getOpenid(), TYPE);
         if (wechat == null) {
             Social w = new Social().setOpenId(wu.getOpenid()).setUsername(wu.getNickname()).setAvatar(wu.getHeadimgurl()).setPlatform(TYPE);
-            wechat = socialService.save(w);
+             socialService.save(w);
         }
 
         String url = "";

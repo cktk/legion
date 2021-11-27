@@ -1,7 +1,7 @@
 package com.esmooc.legion.base.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.esmooc.legion.base.entity.DictData;
-import com.esmooc.legion.core.base.LegionBaseService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -11,15 +11,8 @@ import java.util.List;
  * 字典数据接口
  * @author Daimao
  */
-public interface DictDataService extends LegionBaseService<DictData, String> {
+public interface DictDataService extends IService<DictData> {
 
-    /**
-     * 多条件获取
-     * @param dictData
-     * @param pageable
-     * @return
-     */
-    Page<DictData> findByCondition(DictData dictData, Pageable pageable);
 
     /**
      * 通过dictId获取启用字典 已排序

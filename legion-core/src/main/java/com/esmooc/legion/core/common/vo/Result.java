@@ -11,7 +11,7 @@ import java.io.Serializable;
  * 前后端交互数据标准
  */
 @Data
-public class Result<T> implements Serializable {
+public class Result<T>  {
 
     private static final long serialVersionUID = 1L;
 

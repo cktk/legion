@@ -1,7 +1,6 @@
 package com.esmooc.legion.core.common.utils;
 
 import cn.hutool.core.util.StrUtil;
-
 import cn.hutool.json.JSONUtil;
 import org.springframework.cglib.beans.BeanMap;
 

@@ -1,75 +1,71 @@
 package com.esmooc.legion.core.entity;
 
-import com.esmooc.legion.core.base.LegionBaseEntity;
-import com.esmooc.legion.core.common.constant.CommonConstant;
-import com.esmooc.legion.core.vo.UserVo;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.esmooc.legion.core.base.BaseEntity;
+import com.esmooc.legion.core.common.constant.CommonConstant;
+import com.esmooc.legion.core.entity.vo.UserVo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import java.math.BigDecimal;
 import java.util.List;
 
 /**
  * @author Daimao
  */
+@ApiModel(value = "t_department")
 @Data
-@Entity
-@DynamicInsert
-@DynamicUpdate
-@Table(name = "t_department")
-@TableName("t_department")
-@ApiModel(value = "部门")
-public class Department extends LegionBaseEntity {
+@EqualsAndHashCode(callSuper = true)
+@AllArgsConstructor
+@NoArgsConstructor
+@TableName(value = "t_department")
+public class Department extends BaseEntity {
 
-    private static final long serialVersionUID = 1L;
 
+    @ApiModelProperty(value = "父id")
+    @TableField(value = "parent_id")
+    private String parentId;
+
+    @TableField(value = "sort_order")
+    @ApiModelProperty(value = "排序值")
+    private BigDecimal sortOrder;
+
+
+    @TableField(value = "title")
     @ApiModelProperty(value = "部门名称")
     private String title;
 
-    @ApiModelProperty(value = "父id")
-    @Column(nullable = false)
-    private String parentId;
-
+    @TableField(value = "is_parent")
     @ApiModelProperty(value = "是否为父节点(含子节点) 默认false")
-    private Boolean isParent = false;
+    private Boolean isParent;
 
-    @ApiModelProperty(value = "排序值")
-    @Column(precision = 10, scale = 2)
-    private BigDecimal sortOrder;
-
+    @TableField(value = "`status`")
     @ApiModelProperty(value = "是否启用 0启用 -1禁用")
     private Integer status = CommonConstant.STATUS_NORMAL;
 
-    @Transient
+
     @TableField(exist = false)
     @ApiModelProperty(value = "父节点名称")
     private String parentTitle;
 
-    @Transient
     @TableField(exist = false)
     @ApiModelProperty(value = "主负责人")
     private List<String> mainHeader;
 
-    @Transient
     @TableField(exist = false)
     @ApiModelProperty(value = "副负责人")
     private List<String> viceHeader;
 
-    @Transient
     @TableField(exist = false)
     @ApiModelProperty(value = "主负责人")
     private List<UserVo> mainHeaders;
 
-    @Transient
     @TableField(exist = false)
     @ApiModelProperty(value = "副负责人")
     private List<UserVo> viceHeaders;

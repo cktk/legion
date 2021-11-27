@@ -1,9 +1,9 @@
 package com.esmooc.legion.core.config.security.permission;
 
+import cn.hutool.core.util.StrUtil;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.entity.Permission;
 import com.esmooc.legion.core.service.PermissionService;
-import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.ConfigAttribute;

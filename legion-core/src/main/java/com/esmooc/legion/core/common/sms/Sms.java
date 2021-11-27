@@ -1,7 +1,7 @@
 package com.esmooc.legion.core.common.sms;
 
 
-import com.esmooc.legion.core.vo.SmsSetting;
+import com.esmooc.legion.core.entity.vo.SmsSetting;
 
 /**
  * @author Daimao

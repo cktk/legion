@@ -2,9 +2,11 @@ package com.esmooc.legion.config.swagger;
 
 import com.esmooc.legion.core.config.properties.IgnoredUrlsProperties;
 import io.swagger.annotations.ApiOperation;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -15,7 +17,6 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
-import springfox.documentation.swagger2.annotations.EnableSwagger2WebMvc;
 
 import java.util.Collections;
 import java.util.List;
@@ -30,12 +31,11 @@ import static springfox.documentation.builders.PathSelectors.regex;
 @Slf4j
 @Configuration
 @EnableSwagger2
+@AllArgsConstructor
+@FieldDefaults(makeFinal = true,level = AccessLevel.PRIVATE)
 public class Swagger2Config {
 
-
-
-    @Autowired
-    private IgnoredUrlsProperties ignoredUrlsProperties;
+     IgnoredUrlsProperties ignoredUrlsProperties;
 
     public List<SecurityContext> securityContexts() {
 

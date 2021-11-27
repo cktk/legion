@@ -2,18 +2,12 @@ package com.esmooc.legion.core.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.esmooc.legion.core.base.LegionBaseEntity;
+import com.esmooc.legion.core.base.BaseEntity;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -21,16 +15,9 @@ import java.util.List;
  * @author Daimao
  */
 @Data
-@Entity
-@DynamicInsert
-@DynamicUpdate
-@Table(name = "t_permission")
 @TableName("t_permission")
 @ApiModel(value = "菜单权限")
-public class Permission extends LegionBaseEntity {
-
-    private static final long serialVersionUID = 1L;
-
+public class Permission extends BaseEntity {
 
     @TableField(value = "description")
     @ApiModelProperty(value = "说明备注")
@@ -89,7 +76,6 @@ public class Permission extends LegionBaseEntity {
 
 
     @ApiModelProperty(value = "父id")
-    @Column(nullable = false)
     @TableField(value = "parent_id")
     private String parentId;
 
@@ -99,39 +85,37 @@ public class Permission extends LegionBaseEntity {
 
     @TableField(value = "sort_order")
     @ApiModelProperty(value = "排序值")
-    @Column(precision = 10, scale = 2)
     private BigDecimal sortOrder;
 
     @TableField(value = "`status`")
     @ApiModelProperty(value = "是否启用 0启用 -1禁用")
     private Integer status = CommonConstant.STATUS_NORMAL;
 
-    @Transient
+
+
+
+
+
     @TableField(exist = false)
     @ApiModelProperty(value = "子菜单/权限")
     private List<Permission> children;
 
-    @Transient
     @TableField(exist = false)
     @ApiModelProperty(value = "页面拥有的权限类型")
     private List<String> permTypes;
 
-    @Transient
     @TableField(exist = false)
     @ApiModelProperty(value = "父节点名称")
     private String parentTitle;
 
-    @Transient
     @TableField(exist = false)
     @ApiModelProperty(value = "节点展开 前端所需")
     private Boolean expand = true;
 
-    @Transient
     @TableField(exist = false)
     @ApiModelProperty(value = "是否勾选 前端所需")
     private Boolean checked = false;
 
-    @Transient
     @TableField(exist = false)
     @ApiModelProperty(value = "是否选中 前端所需")
     private Boolean selected = false;

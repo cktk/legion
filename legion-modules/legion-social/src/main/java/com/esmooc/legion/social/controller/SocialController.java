@@ -10,7 +10,7 @@ import com.esmooc.legion.core.entity.User;
 import com.esmooc.legion.core.service.UserService;
 import com.esmooc.legion.social.entity.Social;
 import com.esmooc.legion.social.service.SocialService;
-import com.esmooc.legion.social.vo.RelateUserInfo;
+import com.esmooc.legion.social.entity.vo.RelateUserInfo;
 import cn.hutool.core.util.StrUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -67,12 +67,12 @@ public class SocialController {
         return new ResultUtil<RelateUserInfo>().setData(r);
     }
 
-    @RequestMapping(value = "/delByIds", method = RequestMethod.POST)
+    @PostMapping("/delByIds")
     @ApiOperation(value = "解绑")
     public Result<Object> delByIds(@RequestParam String[] ids) {
 
         for (String id : ids) {
-            socialService.delete(id);
+            socialService.removeById(id);
         }
         return ResultUtil.success("解绑成功");
     }
@@ -81,18 +81,7 @@ public class SocialController {
     @ApiOperation(value = "多条件分页获取")
     public Result<Object> delByIds(Social social,
                                    SearchVo searchVo,
-                                   PageVo pv) {
-
-        Page<Social> socialPage = socialService.findByCondition(social, searchVo, PageUtil.initPage(pv));
-        socialPage.getContent().forEach(e -> {
-            if (StrUtil.isNotBlank(e.getRelateUsername())) {
-                e.setIsRelated(true);
-                User u = userService.findByUsername(e.getRelateUsername());
-                if (u != null) {
-                    e.setNickname(u.getNickname());
-                }
-            }
-        });
-        return ResultUtil.data(socialPage);
+                                   PageVo pageVo) {
+        return ResultUtil.data(socialService.page(PageUtil.initPage(pageVo)));
     }
 }

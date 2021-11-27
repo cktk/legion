@@ -47,7 +47,7 @@ public class ${entity.className}Controller {
         return new ResultUtil<List<${entity.className}>>().setData(list);
     }
 
-    @RequestMapping(value = "/add", method = RequestMethod.POST)
+    @PostMapping( "/add")
     @ApiOperation(value = "添加")
     public Result<Object> add(${entity.className} ${entity.classNameLowerCase}) {
 
@@ -65,7 +65,7 @@ public class ${entity.className}Controller {
         return ResultUtil.success("添加成功");
     }
 
-    @RequestMapping(value = "/edit", method = RequestMethod.POST)
+    @PostMapping("/edit")
     @ApiOperation(value = "编辑")
     public Result<Object> edit(${entity.className} ${entity.classNameLowerCase}) {
 
@@ -89,7 +89,7 @@ public class ${entity.className}Controller {
         return ResultUtil.success("编辑成功");
     }
 
-    @RequestMapping(value = "/delByIds", method = RequestMethod.POST)
+    @PostMapping("/delByIds")
     @ApiOperation(value = "批量通过id删除")
     public Result<Object> delByIds(@RequestParam String[] ids) {
 

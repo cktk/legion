@@ -1,7 +1,9 @@
 package com.esmooc.legion.core.service;
 
-import com.esmooc.legion.core.base.LegionBaseService;
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.esmooc.legion.core.common.vo.PageVo;
 import com.esmooc.legion.core.common.vo.SearchVo;
+import com.esmooc.legion.core.entity.DepartmentHeader;
 import com.esmooc.legion.core.entity.Member;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
@@ -13,16 +15,7 @@ import org.springframework.data.domain.Pageable;
  * @author Daimao
  */
 @CacheConfig(cacheNames = "member")
-public interface MemberService extends LegionBaseService<Member, String> {
-
-    /**
-     * 多条件分页获取
-     * @param member
-     * @param searchVo
-     * @param pageable
-     * @return
-     */
-    Page<Member> findByCondition(Member member, SearchVo searchVo, Pageable pageable);
+public interface MemberService extends IService<Member>  {
 
     /**
      * 通过用户名获取用户

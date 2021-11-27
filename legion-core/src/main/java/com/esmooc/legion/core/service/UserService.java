@@ -1,7 +1,7 @@
 package com.esmooc.legion.core.service;
 
 
-import com.esmooc.legion.core.base.LegionBaseService;
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.esmooc.legion.core.common.vo.SearchVo;
 import com.esmooc.legion.core.entity.User;
 import org.springframework.cache.annotation.CacheConfig;
@@ -16,7 +16,7 @@ import java.util.List;
  * @author Daimao
  */
 @CacheConfig(cacheNames = "user")
-public interface UserService extends LegionBaseService<User, String> {
+public interface UserService extends IService<User> {
 
     /**
      * 通过用户名获取用户
@@ -40,14 +40,6 @@ public interface UserService extends LegionBaseService<User, String> {
      */
     User findByEmail(String email);
 
-    /**
-     * 多条件分页获取用户
-     * @param user
-     * @param searchVo
-     * @param pageable
-     * @return
-     */
-    Page<User> findByCondition(User user, SearchVo searchVo, Pageable pageable);
 
     /**
      * 通过部门id获取

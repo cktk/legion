@@ -1,6 +1,6 @@
 package com.esmooc.legion.core.service;
 
-import com.esmooc.legion.core.base.LegionBaseService;
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.esmooc.legion.core.entity.Department;
 
 import java.util.List;
@@ -9,7 +9,7 @@ import java.util.List;
  * 部门接口
  * @author Daimao
  */
-public interface DepartmentService extends LegionBaseService<Department, String> {
+public interface DepartmentService extends IService<Department> {
 
     /**
      * 通过父id获取 升序
@@ -17,7 +17,7 @@ public interface DepartmentService extends LegionBaseService<Department, String>
      * @param openDataFilter 是否开启数据权限
      * @return
      */
-    List<Department> findByParentIdOrderBySortOrder(String parentId, Boolean openDataFilter);
+    List<Department> findByParentIdOrderBySortOrder(String parentId, Boolean openDataFilter,List<String> depIds);
 
     /**
      * 通过父id和状态获取
@@ -33,5 +33,5 @@ public interface DepartmentService extends LegionBaseService<Department, String>
      * @param openDataFilter 是否开启数据权限
      * @return
      */
-    List<Department> findByTitleLikeOrderBySortOrder(String title, Boolean openDataFilter);
+    List<Department> findByTitleLikeOrderBySortOrder(String title, Boolean openDataFilter, List<String> depIds );
 }

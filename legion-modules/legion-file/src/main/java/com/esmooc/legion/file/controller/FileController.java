@@ -1,19 +1,21 @@
 package com.esmooc.legion.file.controller;
 
 import cn.hutool.json.JSONUtil;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.constant.SettingConstant;
 import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
 import com.esmooc.legion.core.common.utils.PageUtil;
 import com.esmooc.legion.core.common.utils.ResultUtil;
+import com.esmooc.legion.core.common.utils.SearchUtil;
 import com.esmooc.legion.core.common.vo.PageVo;
 import com.esmooc.legion.core.common.vo.Result;
 import com.esmooc.legion.core.common.vo.SearchVo;
 import com.esmooc.legion.core.entity.User;
 import com.esmooc.legion.core.service.SettingService;
 import com.esmooc.legion.core.service.UserService;
-import com.esmooc.legion.core.vo.OssSetting;
+import com.esmooc.legion.core.entity.vo.OssSetting;
 import com.esmooc.legion.file.entity.File;
 import com.esmooc.legion.file.manage.FileManageFactory;
 import com.esmooc.legion.file.manage.impl.LocalFileManage;
@@ -21,17 +23,17 @@ import com.esmooc.legion.file.service.FileService;
 import cn.hutool.core.util.StrUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.data.domain.Page;
-import org.springframework.stereotype.Controller;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -48,39 +50,32 @@ import java.util.Map;
 @RequestMapping("/legion/file")
 @Transactional
 @CacheConfig(cacheNames = "file")
+@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE,makeFinal = true)
 public class FileController {
 
-    @Autowired
-    private FileService fileService;
+    FileService fileService;
+    FileManageFactory fileManageFactory;
+    SettingService settingService;
+    UserService userService;
+    RedisTemplateHelper redisTemplate;
 
-    @Autowired
-    private FileManageFactory fileManageFactory;
 
-    @Autowired
-    private SettingService settingService;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private RedisTemplateHelper redisTemplate;
-
-    @PersistenceContext
-    private EntityManager entityManager;
-
-    @RequestMapping(value = "/getByCondition", method = RequestMethod.GET)
+    @PostMapping("/getByCondition")
     @ApiOperation(value = "多条件分页获取")
-    public Result<Page<File>> getFileList(File file,
-                                          SearchVo searchVo,
-                                          PageVo pageVo) {
+    public Result<Page<File>> getFileList(@RequestBody Map<String, Object>   search, PageVo pageVo) {
 
-        Page<File> page = fileService.findByCondition(file, searchVo, PageUtil.initPage(pageVo));
-        OssSetting os =  JSONUtil.toBean(settingService.get(SettingConstant.LOCAL_OSS).getValue(), OssSetting.class);
+
+        Page<File> page = fileService.page(PageUtil.initPage(pageVo), SearchUtil.parseWhereSql(search));
+
+
+        OssSetting os =  JSONUtil.toBean(settingService.getById(SettingConstant.LOCAL_OSS).getValue(), OssSetting.class);
         Map<String, String> map = new HashMap<>(16);
-        for (File e : page.getContent()) {
+
+
+        for (File e : page.getRecords()) {
             if (e.getLocation() != null && CommonConstant.OSS_LOCAL.equals(e.getLocation())) {
                 String url = os.getHttp() + os.getEndpoint() + "/";
-                entityManager.detach(e);
                 e.setUrl(url + e.getId());
             }
             if (StrUtil.isNotBlank(e.getCreateBy())) {
@@ -105,7 +100,7 @@ public class FileController {
     public Result<Object> copy(@RequestParam String id,
                                @RequestParam String key) throws Exception {
 
-        File file = fileService.get(id);
+        File file = fileService.getFile(id);
         if (file.getLocation() == null) {
             return ResultUtil.error("存储位置未知");
         }
@@ -129,7 +124,7 @@ public class FileController {
                                  @RequestParam String newKey,
                                  @RequestParam String newName) throws Exception {
 
-        File file = fileService.get(id);
+        File file = fileService.getFile(id);
         if (file.getLocation() == null) {
             return ResultUtil.error("存储位置未知");
         }
@@ -146,7 +141,7 @@ public class FileController {
         if (!oldKey.equals(newKey)) {
             file.setUrl(newUrl);
         }
-        fileService.update(file);
+        fileService.updateById(file);
         return ResultUtil.data(null);
     }
 
@@ -155,7 +150,7 @@ public class FileController {
     public Result<Object> delete(@RequestParam String[] ids) {
 
         for (String id : ids) {
-            File file = fileService.get(id);
+            File file = fileService.getFile(id);
             if (file == null) {
                 return ResultUtil.error("文件不存在");
             }
@@ -168,7 +163,7 @@ public class FileController {
                 key = file.getUrl();
             }
             fileManageFactory.getFileManage(file.getLocation()).deleteFile(key);
-            fileService.delete(id);
+            fileService.removeById(id);
             redisTemplate.delete("file::" + id);
         }
         return ResultUtil.data(null);
@@ -182,7 +177,7 @@ public class FileController {
                      @RequestParam(required = false, defaultValue = "UTF-8") String charset,
                      HttpServletResponse response) throws IOException {
 
-        File file = fileService.get(id);
+        File file = fileService.getFile(id);
         if (file == null) {
             throw new LegionException("文件ID：" + id + "不存在");
         }

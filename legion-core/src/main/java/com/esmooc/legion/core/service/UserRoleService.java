@@ -1,7 +1,7 @@
 package com.esmooc.legion.core.service;
 
 
-import com.esmooc.legion.core.base.LegionBaseService;
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.esmooc.legion.core.entity.User;
 import com.esmooc.legion.core.entity.UserRole;
 
@@ -11,7 +11,7 @@ import java.util.List;
  * 用户角色接口
  * @author Daimao
  */
-public interface UserRoleService extends LegionBaseService<UserRole, String> {
+public interface UserRoleService extends IService<UserRole> {
 
     /**
      * 通过roleId查找

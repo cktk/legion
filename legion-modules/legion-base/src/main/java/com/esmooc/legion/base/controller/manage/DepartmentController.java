@@ -1,5 +1,6 @@
 package com.esmooc.legion.base.controller.manage;
 
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.exception.LegionException;
@@ -8,21 +9,21 @@ import com.esmooc.legion.core.common.utils.CommonUtil;
 import com.esmooc.legion.core.common.utils.ResultUtil;
 import com.esmooc.legion.core.common.utils.SecurityUtil;
 import com.esmooc.legion.core.common.vo.Result;
-import com.esmooc.legion.core.dao.mapper.DeleteMapper;
 import com.esmooc.legion.core.entity.Department;
 import com.esmooc.legion.core.entity.DepartmentHeader;
 import com.esmooc.legion.core.entity.User;
+import com.esmooc.legion.core.mapper.DeleteMapper;
 import com.esmooc.legion.core.service.DepartmentHeaderService;
 import com.esmooc.legion.core.service.DepartmentService;
 import com.esmooc.legion.core.service.RoleDepartmentService;
 import com.esmooc.legion.core.service.UserService;
-import cn.hutool.core.util.StrUtil;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -41,28 +42,17 @@ import java.util.concurrent.TimeUnit;
 @RequestMapping("/legion/department")
 @CacheConfig(cacheNames = "department")
 @Transactional
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class DepartmentController {
 
-    @Autowired
-    private DepartmentService departmentService;
+    DepartmentService departmentService;
+    UserService userService;
+    RoleDepartmentService roleDepartmentService;
+    DepartmentHeaderService departmentHeaderService;
+    RedisTemplateHelper redisTemplate;
+    SecurityUtil securityUtil;
 
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private RoleDepartmentService roleDepartmentService;
-
-    @Autowired
-    private DepartmentHeaderService departmentHeaderService;
-
-    @Autowired
-    private DeleteMapper deleteMapper;
-
-    @Autowired
-    private RedisTemplateHelper redisTemplate;
-
-    @Autowired
-    private SecurityUtil securityUtil;
 
     @RequestMapping(value = "/getByParentId/{parentId}", method = RequestMethod.GET)
     @ApiOperation(value = "通过parentId获取")
@@ -73,28 +63,26 @@ public class DepartmentController {
         User u = securityUtil.getCurrUser();
         String key = "department::" + parentId + ":" + u.getId() + "_" + openDataFilter;
         String v = redisTemplate.get(key);
-        if (StrUtil.isNotBlank(v)) {
+        if (StrUtil.isNotEmpty(v)) {
             list = JSONUtil.toList(v, Department.class);
             return new ResultUtil<List<Department>>().setData(list);
         }
-        list = departmentService.findByParentIdOrderBySortOrder(parentId, openDataFilter);
+        list = departmentService.findByParentIdOrderBySortOrder(parentId, openDataFilter, securityUtil.getDeparmentIds());
         setInfo(list);
-        redisTemplate.set(key,
-               JSONUtil.toJsonStr(list) , 15L, TimeUnit.DAYS);
+        redisTemplate.set(key, JSONUtil.toJsonStr(list), 15L, TimeUnit.DAYS);
         return new ResultUtil<List<Department>>().setData(list);
     }
 
-    @RequestMapping(value = "/add", method = RequestMethod.POST)
+    @PostMapping( "/add")
     @ApiOperation(value = "添加")
     public Result<Object> add(Department department) {
-
-        Department d = departmentService.save(department);
+        departmentService.save(department);
         // 如果不是添加的一级 判断设置上级为父节点标识
         if (!CommonConstant.PARENT_ID.equals(department.getParentId())) {
-            Department parent = departmentService.get(department.getParentId());
+            Department parent = departmentService.getById(department.getParentId());
             if (parent.getIsParent() == null || !parent.getIsParent()) {
                 parent.setIsParent(true);
-                departmentService.update(parent);
+                departmentService.updateById(parent);
             }
         }
         // 更新缓存
@@ -102,15 +90,17 @@ public class DepartmentController {
         return ResultUtil.success("添加成功");
     }
 
-    @RequestMapping(value = "/edit", method = RequestMethod.POST)
+    @PostMapping("/edit")
     @ApiOperation(value = "编辑")
+    @Transactional
     public Result<Object> edit(Department department,
                                @RequestParam(required = false) String[] mainHeader,
                                @RequestParam(required = false) String[] viceHeader) {
 
-        Department old = departmentService.get(department.getId());
+        Department old = departmentService.getById(department.getId());
         String oldParentId = old.getParentId();
-        Department d = departmentService.update(department);
+        departmentService.updateById(department);
+        Department d = department;
         // 先删除原数据
         departmentHeaderService.deleteByDepartmentId(department.getId());
         List<DepartmentHeader> headers = new ArrayList<>();
@@ -129,14 +119,14 @@ public class DepartmentController {
             }
         }
         // 批量保存
-        departmentHeaderService.saveOrUpdateAll(headers);
+        departmentHeaderService.saveOrUpdateBatch(headers);
         // 如果该节点不是一级节点 且修改了级别 判断上级还有无子节点
         if (!"0".equals(oldParentId) && !oldParentId.equals(department.getParentId())) {
-            Department parent = departmentService.get(oldParentId);
-            List<Department> children = departmentService.findByParentIdOrderBySortOrder(parent.getId(), false);
+            Department parent = departmentService.getById(oldParentId);
+            List<Department> children = departmentService.findByParentIdOrderBySortOrder(parent.getId(), false, securityUtil.getDeparmentIds());
             if (parent != null && (children == null || children.isEmpty())) {
                 parent.setIsParent(false);
-                departmentService.update(parent);
+                departmentService.updateById(parent);
             }
         }
         // 若修改了部门名称
@@ -150,7 +140,7 @@ public class DepartmentController {
         return ResultUtil.success("编辑成功");
     }
 
-    @RequestMapping(value = "/delByIds", method = RequestMethod.POST)
+    @PostMapping(value = "/delByIds")
     @ApiOperation(value = "批量通过id删除")
     public Result<Object> delByIds(@RequestParam String[] ids) {
 
@@ -171,28 +161,26 @@ public class DepartmentController {
             throw new LegionException("删除失败，包含正被用户使用关联的部门");
         }
         // 获得其父节点
-        Department dep = departmentService.get(id);
+        Department dep = departmentService.getById(id);
         Department parent = null;
         if (dep != null && StrUtil.isNotBlank(dep.getParentId())) {
-            parent = departmentService.get(dep.getParentId());
+            parent = departmentService.getById(dep.getParentId());
         }
-        departmentService.delete(id);
+        departmentService.removeById(id);
         // 删除关联数据权限
         roleDepartmentService.deleteByDepartmentId(id);
         // 删除关联部门负责人
         departmentHeaderService.deleteByDepartmentId(id);
-        // 删除流程关联节点
-        deleteMapper.deleteActNode(id);
         // 判断父节点是否还有子节点
         if (parent != null) {
-            List<Department> childrenDeps = departmentService.findByParentIdOrderBySortOrder(parent.getId(), false);
+            List<Department> childrenDeps = departmentService.findByParentIdOrderBySortOrder(parent.getId(), false, securityUtil.getDeparmentIds());
             if (childrenDeps == null || childrenDeps.isEmpty()) {
                 parent.setIsParent(false);
-                departmentService.update(parent);
+                departmentService.updateById(parent);
             }
         }
         // 递归删除
-        List<Department> departments = departmentService.findByParentIdOrderBySortOrder(id, false);
+        List<Department> departments = departmentService.findByParentIdOrderBySortOrder(id, false, securityUtil.getDeparmentIds());
         for (Department d : departments) {
             if (!CommonUtil.judgeIds(d.getId(), ids)) {
                 deleteRecursion(d.getId(), ids);
@@ -205,17 +193,15 @@ public class DepartmentController {
     public Result<List<Department>> searchByTitle(@RequestParam String title,
                                                   @ApiParam("是否开始数据权限过滤") @RequestParam(required = false, defaultValue = "true") Boolean openDataFilter) {
 
-        List<Department> list = departmentService.findByTitleLikeOrderBySortOrder("%" + title + "%", openDataFilter);
+        List<Department> list = departmentService.findByTitleLikeOrderBySortOrder("%" + title + "%", openDataFilter, securityUtil.getDeparmentIds());
         setInfo(list);
         return new ResultUtil<List<Department>>().setData(list);
     }
 
     public void setInfo(List<Department> list) {
-
-        // lambda表达式
         list.forEach(item -> {
             if (!CommonConstant.PARENT_ID.equals(item.getParentId())) {
-                Department parent = departmentService.get(item.getParentId());
+                Department parent = departmentService.getById(item.getParentId());
                 item.setParentTitle(parent.getTitle());
             } else {
                 item.setParentTitle("一级部门");

@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Daimao
  */
 @Configuration
-@MapperScan({"com.esmooc.legion.*.mapper", "com.esmooc.legion.*.*.mapper"})
+@MapperScan({"com.esmooc.legion.*.mapper", "com.esmooc.legion.autochat.mapper"})
 public class MybatisPlusConfig {
 
     /**

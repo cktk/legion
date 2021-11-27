@@ -6,8 +6,8 @@ import com.esmooc.legion.core.common.constant.SettingConstant;
 import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.core.common.utils.NameUtil;
 import com.esmooc.legion.core.entity.Setting;
+import com.esmooc.legion.core.entity.vo.SmsSetting;
 import com.esmooc.legion.core.service.SettingService;
-import com.esmooc.legion.core.vo.SmsSetting;
 import com.tencentcloudapi.common.Credential;
 import com.tencentcloudapi.common.exception.TencentCloudSDKException;
 import com.tencentcloudapi.sms.v20190711.SmsClient;
@@ -33,7 +33,7 @@ public class TencentSms implements Sms {
     @Override
     public SmsSetting getSmsSetting() {
 
-        Setting setting = settingService.get(SettingConstant.TENCENT_SMS);
+        Setting setting = settingService.getById(SettingConstant.TENCENT_SMS);
         if (setting == null || StrUtil.isBlank(setting.getValue())) {
             throw new LegionException("您还未配置腾讯云短信服务");
         }

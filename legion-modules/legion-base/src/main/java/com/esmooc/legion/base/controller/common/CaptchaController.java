@@ -15,6 +15,7 @@ import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,22 +37,17 @@ import java.util.concurrent.TimeUnit;
 @RestController
 @Transactional
 @Slf4j
+@AllArgsConstructor
 public class CaptchaController {
 
-    @Autowired
-    private SmsUtil smsUtil;
+    private final SmsUtil smsUtil;
 
-    @Autowired
-    private RedisTemplateHelper redisTemplate;
+    private final RedisTemplateHelper redisTemplate;
 
-    @Autowired
-    private IpInfoUtil ipInfoUtil;
+    private final IpInfoUtil ipInfoUtil;
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
-    @Autowired
-    private SettingService settingService;
 
     @RequestMapping(value = "/init", method = RequestMethod.GET)
     @ApiOperation(value = "初始化验证码")

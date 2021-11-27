@@ -1,14 +1,13 @@
 package com.esmooc.legion.core.common.sms;
 
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
+import com.aliyuncs.exceptions.ClientException;
 import com.esmooc.legion.core.common.constant.SettingConstant;
 import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.core.entity.Setting;
+import com.esmooc.legion.core.entity.vo.SmsSetting;
 import com.esmooc.legion.core.service.SettingService;
-import com.esmooc.legion.core.vo.SmsSetting;
-import cn.hutool.core.util.StrUtil;
-import com.aliyuncs.exceptions.ClientException;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -28,7 +27,7 @@ public class SmsUtil {
 
     public String getSmsUsed() {
 
-        Setting setting = settingService.get(SettingConstant.SMS_USED);
+        Setting setting = settingService.getById(SettingConstant.SMS_USED);
         if (setting == null || StrUtil.isBlank(setting.getValue())) {
             throw new LegionException("您还未配置短信服务");
         }
@@ -37,8 +36,7 @@ public class SmsUtil {
     }
 
     public SmsSetting getSmsSetting() {
-
-        Setting sms = settingService.get(getSmsUsed());
+        Setting sms = settingService.getById(getSmsUsed());
         return JSONUtil.toBean(sms.getValue(), SmsSetting.class);
     }
 
@@ -60,8 +58,6 @@ public class SmsUtil {
     public static String getTemplateSuffix(Integer type) {
 
         switch (type) {
-            case 0:
-                return SettingConstant.SMS_COMMON;
             case 1:
                 return SettingConstant.SMS_REGIST;
             case 2:
@@ -72,6 +68,7 @@ public class SmsUtil {
                 return SettingConstant.SMS_CHANG_PASS;
             case 5:
                 return SettingConstant.SMS_RESET_PASS;
+            case 0:
             default:
                 return SettingConstant.SMS_COMMON;
         }
@@ -79,7 +76,7 @@ public class SmsUtil {
 
     public String getTemplateCode(Integer type){
 
-        Setting setting = settingService.get(getTemplate(type));
+        Setting setting = settingService.getById(getTemplate(type));
         if (StrUtil.isBlank(setting.getValue())) {
             throw new LegionException("系统还未配置短信服务或相应短信模版");
         }

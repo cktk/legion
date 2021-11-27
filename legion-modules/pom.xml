@@ -11,6 +11,7 @@
 
     <artifactId>legion-modules</artifactId>
     <packaging>pom</packaging>
+
     <modules>
         <module>legion-base</module>
         <module>legion-social</module>

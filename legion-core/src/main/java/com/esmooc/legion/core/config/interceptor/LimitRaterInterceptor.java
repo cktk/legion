@@ -1,5 +1,6 @@
 package com.esmooc.legion.core.config.interceptor;
 
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.esmooc.legion.core.common.annotation.RateLimiter;
 import com.esmooc.legion.core.common.constant.CommonConstant;
@@ -10,10 +11,8 @@ import com.esmooc.legion.core.common.utils.IpInfoUtil;
 import com.esmooc.legion.core.config.properties.LegionIpLimitProperties;
 import com.esmooc.legion.core.config.properties.LegionLimitProperties;
 import com.esmooc.legion.core.entity.Setting;
+import com.esmooc.legion.core.entity.vo.OtherSetting;
 import com.esmooc.legion.core.service.SettingService;
-import com.esmooc.legion.core.vo.OtherSetting;
-import cn.hutool.core.util.StrUtil;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -50,7 +49,7 @@ public class LimitRaterInterceptor extends HandlerInterceptorAdapter {
 
     public OtherSetting getOtherSetting() {
 
-        Setting setting = settingService.get(SettingConstant.OTHER_SETTING);
+        Setting setting = settingService.getById(SettingConstant.OTHER_SETTING);
         if (StrUtil.isBlank(setting.getValue())) {
             return null;
         }

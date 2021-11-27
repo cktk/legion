@@ -43,16 +43,13 @@ public class IpUtils
         return "0:0:0:0:0:0:0:1".equals(ip) ? "127.0.0.1" : ip;
     }
 
-    public static boolean internalIp(String ip)
-    {
+    public static boolean internalIp(String ip) {
         byte[] addr = textToNumericFormatV4(ip);
         return internalIp(addr) || "127.0.0.1".equals(ip);
     }
 
-    private static boolean internalIp(byte[] addr)
-    {
-        if (StringUtils.isNull(addr) || addr.length < 2)
-        {
+    private static boolean internalIp(byte[] addr) {
+        if (addr == null || addr.length < 2) {
             return true;
         }
         final byte b0 = addr[0];

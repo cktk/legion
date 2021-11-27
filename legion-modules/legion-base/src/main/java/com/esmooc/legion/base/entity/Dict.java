@@ -1,31 +1,22 @@
 package com.esmooc.legion.base.entity;
 
-import com.esmooc.legion.core.base.LegionBaseEntity;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.esmooc.legion.core.base.BaseEntity;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
 import java.math.BigDecimal;
 
 /**
  * @author Daimao
  */
 @Data
-@Entity
-@DynamicInsert
-@DynamicUpdate
-@Table(name = "t_dict")
 @TableName("t_dict")
 @ApiModel(value = "字典")
-public class Dict extends LegionBaseEntity {
+public class Dict extends BaseEntity {
 
-    private static final long serialVersionUID = 1L;
+
 
     @ApiModelProperty(value = "字典名称")
     private String title;
@@ -36,7 +27,7 @@ public class Dict extends LegionBaseEntity {
     @ApiModelProperty(value = "备注")
     private String description;
 
+    @TableField(value = "sort_order")
     @ApiModelProperty(value = "排序值")
-    @Column(precision = 10, scale = 2)
     private BigDecimal sortOrder;
 }

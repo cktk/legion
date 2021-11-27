@@ -5,6 +5,7 @@ import com.esmooc.legion.core.common.utils.ResultUtil;
 import com.esmooc.legion.core.common.vo.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,10 +23,10 @@ import javax.servlet.http.HttpServletRequest;
 @Api(tags = "IP接口")
 @RequestMapping("/legion/common/ip")
 @Transactional
+@AllArgsConstructor
 public class IpInfoController {
 
-    @Autowired
-    private IpInfoUtil ipInfoUtil;
+    private final IpInfoUtil ipInfoUtil;
 
     @RequestMapping(value = "/info", method = RequestMethod.GET)
     @ApiOperation(value = "IP及天气相关信息")

@@ -1,10 +1,13 @@
 package com.esmooc.legion.core.common.sms;
 
+import cn.hutool.core.util.StrUtil;
 import com.esmooc.legion.core.common.constant.SettingConstant;
 import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.core.entity.Setting;
 import com.esmooc.legion.core.service.SettingService;
-import cn.hutool.core.util.StrUtil;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -13,20 +16,17 @@ import org.springframework.stereotype.Component;
  * @author Daimao
  */
 @Component
+@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE,makeFinal = true)
 public class SmsFactory {
 
-    @Autowired
-    private SettingService settingService;
-
-    @Autowired
-    private AliSms aliSms;
-
-    @Autowired
-    private TencentSms tencentSms;
+    SettingService settingService;
+    AliSms aliSms;
+    TencentSms tencentSms;
 
     public Sms getSms() {
 
-        Setting setting = settingService.get(SettingConstant.SMS_USED);
+        Setting setting = settingService.getById(SettingConstant.SMS_USED);
         if (setting == null || StrUtil.isBlank(setting.getValue())) {
             throw new LegionException("您还未配置OSS存储服务");
         }

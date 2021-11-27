@@ -12,11 +12,14 @@ import com.esmooc.legion.core.entity.Setting;
 import com.esmooc.legion.core.entity.User;
 import com.esmooc.legion.core.service.SettingService;
 import com.esmooc.legion.core.service.UserService;
-import com.esmooc.legion.core.vo.OtherSetting;
+import com.esmooc.legion.core.entity.vo.OtherSetting;
 import cn.hutool.core.util.StrUtil;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -34,29 +37,20 @@ import java.util.concurrent.TimeUnit;
 @Api(tags = "邮箱验证接口")
 @RequestMapping("/legion/email")
 @Transactional
+@AllArgsConstructor
+@FieldDefaults(makeFinal = true,level = AccessLevel.PRIVATE)
 public class EmailValidateController {
 
-    @Autowired
-    private EmailUtil emailUtil;
-
-    @Autowired
-    private RedisTemplateHelper redisTemplate;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private IpInfoUtil ipInfoUtil;
-
-    @Autowired
-    private SettingService settingService;
-
-    @Autowired
-    private SecurityUtil securityUtil;
+    EmailUtil emailUtil;
+    RedisTemplateHelper redisTemplate;
+    UserService userService;
+    IpInfoUtil ipInfoUtil;
+    SettingService settingService;
+    SecurityUtil securityUtil;
 
     public OtherSetting getOtherSetting() {
 
-        Setting setting = settingService.get(SettingConstant.OTHER_SETTING);
+        Setting setting = settingService.getById(SettingConstant.OTHER_SETTING);
         if (StrUtil.isBlank(setting.getValue())) {
             throw new LegionException("系统未配置访问域名，请联系管理员");
         }
@@ -133,7 +127,7 @@ public class EmailValidateController {
 
         User u = securityUtil.getCurrUser();
         u.setEmail(email);
-        userService.update(u);
+        userService.updateById(u);
         // 删除缓存
         redisTemplate.delete("user::" + u.getUsername());
         return ResultUtil.success("修改邮箱成功");
@@ -151,7 +145,7 @@ public class EmailValidateController {
         String encryptPass = new BCryptPasswordEncoder().encode(password);
         u.setPassword(encryptPass);
         u.setPassStrength(passStrength);
-        userService.update(u);
+        userService.updateById(u);
         // 删除缓存
         redisTemplate.delete("user::" + u.getUsername());
         return ResultUtil.success("重置密码成功");

@@ -12,7 +12,16 @@
     <artifactId>legion-admin</artifactId>
 
     <dependencies>
-        <!-- 引入功能模块 -->
+        <dependency>
+            <groupId>com.esmooc</groupId>
+            <artifactId>legion-app</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.esmooc</groupId>
+            <artifactId>legion-autochat</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
         <dependency>
             <groupId>com.esmooc</groupId>
             <artifactId>legion-base</artifactId>
@@ -30,15 +39,19 @@
         </dependency>
         <dependency>
             <groupId>com.esmooc</groupId>
+            <artifactId>legion-open</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.esmooc</groupId>
             <artifactId>legion-quartz</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.esmooc</groupId>
-            <artifactId>legion-open</artifactId>
+            <artifactId>legion-screw</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
-
         <dependency>
             <groupId>com.esmooc</groupId>
             <artifactId>legion-social</artifactId>
@@ -46,12 +59,7 @@
         </dependency>
         <dependency>
             <groupId>com.esmooc</groupId>
-            <artifactId>legion-autochat</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.esmooc</groupId>
-            <artifactId>legion-app</artifactId>
+            <artifactId>legion-your</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
@@ -59,13 +67,6 @@
             <artifactId>lengion-system</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
-        <dependency>
-            <groupId>com.esmooc</groupId>
-            <artifactId>legion-your</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-
-
 
 
         <!-- 数据库连接池 -->

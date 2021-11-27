@@ -10,6 +10,7 @@ import cn.hutool.crypto.digest.Digester;
 import cn.hutool.http.HttpUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,12 +28,12 @@ import java.util.concurrent.TimeUnit;
 @RequestMapping("/legion/common/vaptcha")
 @RestController
 @Slf4j
+@AllArgsConstructor
 public class VaptchaController {
 
     public static final String CHAR = "0123456789abcdef";
 
-    @Autowired
-    private RedisTemplateHelper redisTemplate;
+    private final  RedisTemplateHelper redisTemplate;
 
     @RequestMapping(value = "/offline", method = RequestMethod.GET)
     @ApiOperation(value = "vaptcha离线模式接口")

@@ -6,12 +6,10 @@ import cn.hutool.http.HttpUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,14 +24,14 @@ import java.util.Map;
 @Transactional
 public class SecurityController {
 
-    @RequestMapping(value = "/needLogin", method = RequestMethod.GET)
+    @GetMapping( "/needLogin")
     @ApiOperation(value = "没有登录")
     public Result<Object> needLogin() {
 
         return ResultUtil.error(401, "您还未登录");
     }
 
-    @RequestMapping(value = "/swagger/login", method = RequestMethod.GET)
+    @GetMapping("/swagger/login")
     @ApiOperation(value = "Swagger接口文档专用登录接口 方便测试")
     public Result<Object> swaggerLogin(@RequestParam String username, @RequestParam String password,
                                        @ApiParam("图片验证码ID") @RequestParam(required = false) String captchaId,

@@ -5,7 +5,7 @@ import com.esmooc.legion.core.common.constant.SettingConstant;
 import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.core.entity.Setting;
 import com.esmooc.legion.core.service.SettingService;
-import com.esmooc.legion.core.vo.OssSetting;
+import com.esmooc.legion.core.entity.vo.OssSetting;
 import com.esmooc.legion.file.manage.FileManage;
 import cn.hutool.core.util.StrUtil;
 
@@ -38,7 +38,7 @@ public class QiniuFileManage implements FileManage {
     @Override
     public OssSetting getOssSetting() {
 
-        Setting setting = settingService.get(SettingConstant.QINIU_OSS);
+        Setting setting = settingService.getById(SettingConstant.QINIU_OSS);
         if (setting == null || StrUtil.isBlank(setting.getValue())) {
             throw new LegionException("您还未配置七牛云对象存储");
         }

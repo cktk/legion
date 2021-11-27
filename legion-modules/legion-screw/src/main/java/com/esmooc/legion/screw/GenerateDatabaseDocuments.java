@@ -47,11 +47,11 @@ public class GenerateDatabaseDocuments {
         //生成配置
         EngineConfig engineConfig = EngineConfig.builder()
                 //生成文件路径
-                .fileOutputDir("/Users/daimao")
+//                .fileOutputDir("/Users/daimao")
                 //打开目录
                 .openOutputDir(true)
                 //文件类型
-                .fileType(EngineFileType.HTML)
+                .fileType(EngineFileType.MD)
                 //生成模板实现
                 .produceType(EngineTemplateType.freemarker).build();
 

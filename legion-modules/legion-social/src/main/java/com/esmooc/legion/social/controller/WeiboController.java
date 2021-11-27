@@ -1,5 +1,8 @@
 package com.esmooc.legion.social.controller;
 
+import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONUtil;
 import com.esmooc.legion.core.common.annotation.SystemLog;
 import com.esmooc.legion.core.common.constant.CommonConstant;
@@ -12,21 +15,20 @@ import com.esmooc.legion.core.common.vo.Result;
 import com.esmooc.legion.core.config.security.SecurityUserDetails;
 import com.esmooc.legion.core.entity.User;
 import com.esmooc.legion.social.entity.Social;
+import com.esmooc.legion.social.entity.vo.WeiboUserInfo;
 import com.esmooc.legion.social.service.SocialService;
-import com.esmooc.legion.social.vo.WeiboUserInfo;
-import cn.hutool.core.util.IdUtil;
-import cn.hutool.core.util.StrUtil;
-import cn.hutool.http.HttpUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -92,8 +94,8 @@ public class WeiboController {
      */
     private static final String GET_USERINFO_DETAIL_URL = "https://api.weibo.com/2/users/show.json";
 
-    @RequestMapping(value = "/login", method = RequestMethod.GET)
     @ApiOperation(value = "获取微博认证链接")
+    @GetMapping("/login")
     public Result<Object> login() {
 
         // 生成并保存state 忽略该参数有可能导致CSRF攻击
@@ -107,7 +109,7 @@ public class WeiboController {
         return ResultUtil.data(url);
     }
 
-    @RequestMapping(value = "/callback", method = RequestMethod.GET)
+    @GetMapping("/callback")
     @ApiOperation(value = "获取accessToken")
     @SystemLog(description = "微博关联登录", type = LogType.LOGIN)
     public String callback(@RequestParam(required = false) String code,
@@ -146,7 +148,7 @@ public class WeiboController {
         Social w = socialService.findByOpenIdAndPlatform(uid, TYPE);
         if (w == null) {
             Social newb = new Social().setOpenId(uid).setUsername(wb.getName()).setAvatar(wb.getProfile_image_url()).setPlatform(TYPE);
-            w = socialService.save(newb);
+            socialService.save(newb);
         }
 
         String url = "";

@@ -40,6 +40,6 @@ public class AddMessage {
             ms.setMessageId(item.getId());
             messageSends.add(ms);
         });
-        messageSendService.saveOrUpdateAll(messageSends);
+        messageSendService.saveOrUpdateBatch(messageSends);
     }
 }

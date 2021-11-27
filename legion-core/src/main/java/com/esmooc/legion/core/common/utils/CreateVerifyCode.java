@@ -1,7 +1,7 @@
 package com.esmooc.legion.core.common.utils;
 
-import com.esmooc.legion.core.common.exception.CaptchaException;
 import cn.hutool.core.util.StrUtil;
+import com.esmooc.legion.core.common.exception.CaptchaException;
 
 import javax.imageio.ImageIO;
 import java.awt.*;

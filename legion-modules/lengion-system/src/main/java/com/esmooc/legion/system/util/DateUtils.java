@@ -1,6 +1,7 @@
 package com.esmooc.legion.system.util;
 
-import org.apache.commons.lang3.time.DateFormatUtils;
+
+import cn.hutool.core.date.DateUtil;
 
 import java.lang.management.ManagementFactory;
 import java.text.ParseException;
@@ -12,8 +13,7 @@ import java.util.Date;
  * 
  * @author LeiYanFu
  */
-public class DateUtils extends org.apache.commons.lang3.time.DateUtils
-{
+public class DateUtils {
     public static String YYYY = "yyyy";
 
     public static String YYYY_MM = "yyyy-MM";
@@ -92,7 +92,7 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils
     public static final String datePath()
     {
         Date now = new Date();
-        return DateFormatUtils.format(now, "yyyy/MM/dd");
+        return DateUtil.format(now, "yyyy/MM/dd");
     }
 
     /**
@@ -101,27 +101,10 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils
     public static final String dateTime()
     {
         Date now = new Date();
-        return DateFormatUtils.format(now, "yyyyMMdd");
+        return DateUtil.format(now, "yyyyMMdd");
     }
 
-    /**
-     * 日期型字符串转化为日期 格式
-     */
-    public static Date parseDate(Object str)
-    {
-        if (str == null)
-        {
-            return null;
-        }
-        try
-        {
-            return parseDate(str.toString(), parsePatterns);
-        }
-        catch (ParseException e)
-        {
-            return null;
-        }
-    }
+
     
     /**
      * 获取服务器启动时间

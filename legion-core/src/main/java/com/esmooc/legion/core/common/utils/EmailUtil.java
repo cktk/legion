@@ -1,12 +1,12 @@
 package com.esmooc.legion.core.common.utils;
 
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.esmooc.legion.core.common.constant.SettingConstant;
 import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.core.entity.Setting;
+import com.esmooc.legion.core.entity.vo.EmailSetting;
 import com.esmooc.legion.core.service.SettingService;
-import com.esmooc.legion.core.vo.EmailSetting;
-import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
@@ -35,7 +35,7 @@ public class EmailUtil {
 
     public EmailSetting getEmailSetting() {
 
-        Setting setting = settingService.get(SettingConstant.EMAIL_SETTING);
+        Setting setting = settingService.getById(SettingConstant.EMAIL_SETTING);
         if (StrUtil.isBlank(setting.getValue())) {
             throw new LegionException("您还未配置邮件发送相关配置");
         }

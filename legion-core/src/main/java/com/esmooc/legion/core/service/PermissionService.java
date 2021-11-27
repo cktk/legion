@@ -1,6 +1,6 @@
 package com.esmooc.legion.core.service;
 
-import com.esmooc.legion.core.base.LegionBaseService;
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.esmooc.legion.core.entity.Permission;
 
 import java.util.List;
@@ -9,7 +9,7 @@ import java.util.List;
  * 权限接口
  * @author Daimao
  */
-public interface PermissionService extends LegionBaseService<Permission, String> {
+public interface PermissionService extends IService<Permission> {
 
     /**
      * 通过parendId查找

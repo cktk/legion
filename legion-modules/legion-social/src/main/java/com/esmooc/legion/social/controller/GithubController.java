@@ -13,7 +13,7 @@ import com.esmooc.legion.core.config.security.SecurityUserDetails;
 import com.esmooc.legion.core.entity.User;
 import com.esmooc.legion.social.entity.Social;
 import com.esmooc.legion.social.service.SocialService;
-import com.esmooc.legion.social.vo.GithubUserInfo;
+import com.esmooc.legion.social.entity.vo.GithubUserInfo;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
@@ -25,7 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
@@ -123,7 +122,7 @@ public class GithubController {
         Social github = socialService.findByOpenIdAndPlatform(gu.getId(), TYPE);
         if (github == null) {
             Social g = new Social().setOpenId(gu.getId()).setUsername(gu.getLogin()).setAvatar(gu.getAvatar_url()).setPlatform(TYPE);
-            github = socialService.save(g);
+            socialService.save(g);
         }
 
         String url = "";

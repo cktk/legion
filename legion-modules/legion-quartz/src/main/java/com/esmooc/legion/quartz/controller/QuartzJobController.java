@@ -1,5 +1,6 @@
 package com.esmooc.legion.quartz.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.core.common.utils.PageUtil;
@@ -10,15 +11,14 @@ import com.esmooc.legion.quartz.entity.QuartzJob;
 import com.esmooc.legion.quartz.service.QuartzJobService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -30,27 +30,25 @@ import java.util.List;
 @Api(tags = "定时任务管理接口")
 @RequestMapping("/legion/quartzJob")
 @Transactional
+@AllArgsConstructor
+@FieldDefaults(makeFinal = true,level = AccessLevel.PRIVATE)
 public class QuartzJobController {
 
-    @Autowired
-    private QuartzJobService quartzJobService;
+    QuartzJobService quartzJobService;
+    Scheduler scheduler;
 
-    @Autowired
-    private Scheduler scheduler;
-
-    @RequestMapping(value = "/getAllByPage", method = RequestMethod.GET)
+    @GetMapping("/getAllByPage")
     @ApiOperation(value = "获取所有定时任务")
-    public Result<Page<QuartzJob>> getAllByPage(String key, PageVo page) {
+    public Result<Object> getAllByPage(String key, PageVo page) {
 
-        Page<QuartzJob> data = quartzJobService.findByCondition(key, PageUtil.initPage(page));
-        return new ResultUtil<Page<QuartzJob>>().setData(data);
+        return ResultUtil.data(quartzJobService.page(PageUtil.initPage(page)));
     }
 
-    @RequestMapping(value = "/add", method = RequestMethod.POST)
+    @PostMapping( "/add")
     @ApiOperation(value = "添加定时任务")
     public Result<Object> addJob(QuartzJob job) {
 
-        List<QuartzJob> list = quartzJobService.findByJobClassName(job.getJobClassName());
+        List<QuartzJob> list = quartzJobService.list(new QueryWrapper<QuartzJob>().lambda().eq(QuartzJob::getJobClassName, job.getJobClassName()));
         if (list != null && list.size() > 0) {
             return ResultUtil.error("该定时任务类名已存在");
         }
@@ -59,14 +57,14 @@ public class QuartzJobController {
         return ResultUtil.success("创建定时任务成功");
     }
 
-    @RequestMapping(value = "/edit", method = RequestMethod.POST)
+    @PostMapping("/edit")
     @ApiOperation(value = "更新定时任务")
     public Result<Object> editJob(QuartzJob job) {
 
         delete(job.getJobClassName());
         add(job.getJobClassName(), job.getCronExpression(), job.getParameter());
         job.setStatus(CommonConstant.STATUS_NORMAL);
-        quartzJobService.update(job);
+        quartzJobService.updateById(job);
         return ResultUtil.success("更新定时任务成功");
     }
 
@@ -80,7 +78,7 @@ public class QuartzJobController {
             throw new LegionException("暂停定时任务失败");
         }
         job.setStatus(CommonConstant.STATUS_DISABLE);
-        quartzJobService.update(job);
+        quartzJobService.updateById(job);
         return ResultUtil.success("暂停定时任务成功");
     }
 
@@ -94,18 +92,18 @@ public class QuartzJobController {
             throw new LegionException("恢复定时任务失败");
         }
         job.setStatus(CommonConstant.STATUS_NORMAL);
-        quartzJobService.update(job);
+        quartzJobService.updateById(job);
         return ResultUtil.success("恢复定时任务成功");
     }
 
-    @RequestMapping(value = "/delByIds", method = RequestMethod.POST)
+    @PostMapping("/delByIds")
     @ApiOperation(value = "删除定时任务")
     public Result<Object> deleteJob(@RequestParam String[] ids) {
 
         for (String id : ids) {
-            QuartzJob job = quartzJobService.get(id);
+            QuartzJob job = quartzJobService.getById(id);
             delete(job.getJobClassName());
-            quartzJobService.delete(job);
+            quartzJobService.removeById(job);
         }
         return ResultUtil.success("删除定时任务成功");
     }

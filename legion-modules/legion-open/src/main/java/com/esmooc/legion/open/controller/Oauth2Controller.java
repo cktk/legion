@@ -16,7 +16,7 @@ import com.esmooc.legion.core.entity.User;
 import com.esmooc.legion.core.service.UserService;
 import com.esmooc.legion.open.entity.Client;
 import com.esmooc.legion.open.service.ClientService;
-import com.esmooc.legion.open.vo.Oauth2TokenInfo;
+import com.esmooc.legion.open.entity.vo.Oauth2TokenInfo;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import io.swagger.annotations.Api;
@@ -273,7 +273,7 @@ public class Oauth2Controller {
 
     private Client getClient(String client_id) {
 
-        Client client = clientService.get(client_id);
+        Client client = clientService.getById(client_id);
         if (client == null) {
             throw new LegionException("客户端client_id不存在");
         }

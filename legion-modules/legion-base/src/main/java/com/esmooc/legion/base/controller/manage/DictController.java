@@ -8,13 +8,13 @@ import com.esmooc.legion.core.common.utils.ResultUtil;
 import com.esmooc.legion.core.common.vo.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -27,18 +27,15 @@ import java.util.List;
 @Api(tags = "字典管理接口")
 @RequestMapping("/legion/dict")
 @Transactional
+@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE,makeFinal = true)
 public class DictController {
 
-    @Autowired
-    private DictService dictService;
+    DictService dictService;
+    DictDataService dictDataService;
+    RedisTemplateHelper redisTemplate;
 
-    @Autowired
-    private DictDataService dictDataService;
-
-    @Autowired
-    private RedisTemplateHelper redisTemplate;
-
-    @RequestMapping(value = "/getAll", method = RequestMethod.GET)
+    @GetMapping("/getAll")
     @ApiOperation(value = "获取全部数据")
     public Result<List<Dict>> getAll() {
 
@@ -46,7 +43,7 @@ public class DictController {
         return new ResultUtil<List<Dict>>().setData(list);
     }
 
-    @RequestMapping(value = "/add", method = RequestMethod.POST)
+    @PostMapping( "/add")
     @ApiOperation(value = "添加")
     public Result<Object> add(Dict dict) {
 
@@ -57,28 +54,28 @@ public class DictController {
         return ResultUtil.success("添加成功");
     }
 
-    @RequestMapping(value = "/edit", method = RequestMethod.POST)
+    @PostMapping("/edit")
     @ApiOperation(value = "编辑")
     public Result<Object> edit(Dict dict) {
 
-        Dict old = dictService.get(dict.getId());
+        Dict old = dictService.getById(dict.getId());
         // 若type修改判断唯一
         if (!old.getType().equals(dict.getType()) && dictService.findByType(dict.getType()) != null) {
             return ResultUtil.error("字典类型Type已存在");
         }
-        dictService.update(dict);
+        dictService.updateById(dict);
         // 删除缓存
         redisTemplate.delete("dictData::" + dict.getType());
         return ResultUtil.success("编辑成功");
     }
 
-    @RequestMapping(value = "/delByIds", method = RequestMethod.POST)
+    @PostMapping("/delByIds")
     @ApiOperation(value = "通过id删除")
     public Result<Object> delAllByIds(@RequestParam String[] ids) {
 
         for (String id : ids) {
-            Dict dict = dictService.get(id);
-            dictService.delete(id);
+            Dict dict = dictService.getById(id);
+            dictService.removeById(id);
             dictDataService.deleteByDictId(id);
             // 删除缓存
             redisTemplate.delete("dictData::" + dict.getType());

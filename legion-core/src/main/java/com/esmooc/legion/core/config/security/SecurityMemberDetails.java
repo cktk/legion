@@ -1,8 +1,8 @@
 package com.esmooc.legion.core.config.security;
 
+import cn.hutool.core.util.StrUtil;
 import com.esmooc.legion.core.common.constant.MemberConstant;
 import com.esmooc.legion.core.entity.Member;
-import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -18,7 +18,7 @@ import java.util.List;
 @Slf4j
 public class SecurityMemberDetails extends Member implements UserDetails {
 
-    private static final long serialVersionUID = 1L;
+
 
     private String permissions;
 

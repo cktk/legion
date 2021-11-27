@@ -1,6 +1,6 @@
 package com.esmooc.legion.base.utils;
 
-import com.esmooc.legion.base.vo.MenuVo;
+import com.esmooc.legion.base.entity.vo.MenuVo;
 import com.esmooc.legion.core.entity.Permission;
 import cn.hutool.core.bean.BeanUtil;
 

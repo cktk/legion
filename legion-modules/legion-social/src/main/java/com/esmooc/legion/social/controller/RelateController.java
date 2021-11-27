@@ -96,7 +96,7 @@ public class RelateController {
         if (s != null) {
             return ResultUtil.error("该账户已绑定有" + platform + "账号，请先进行解绑操作");
         }
-        Social social = socialService.get(ID);
+        Social social = socialService.getById(ID);
         if (social == null) {
             return ResultUtil.error("绑定失败，请先进行第三方授权认证");
         }
@@ -104,7 +104,7 @@ public class RelateController {
             return ResultUtil.error("该" + platform + "账号已绑定有用户，请先进行解绑操作");
         }
         social.setRelateUsername(username);
-        socialService.update(social);
+        socialService.updateById(social);
 
         if (!isLogin) {
             String JWT = securityUtil.getToken(username, true);

@@ -1,26 +1,8 @@
 package com.esmooc.legion.generator.utils;
 
-import com.esmooc.legion.core.common.exception.LegionException;
-import com.esmooc.legion.generator.bean.Entity;
-import com.esmooc.legion.generator.bean.Item;
 import cn.hutool.core.util.StrUtil;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.SneakyThrows;
+import com.esmooc.legion.core.common.exception.LegionException;
 import lombok.extern.slf4j.Slf4j;
-import org.beetl.core.Configuration;
-import org.beetl.core.GroupTemplate;
-import org.beetl.core.Template;
-import org.beetl.core.resource.ClasspathResourceLoader;
-
-import javax.persistence.Transient;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 代码生成器 JPA

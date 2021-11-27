@@ -1,5 +1,7 @@
 package com.esmooc.legion.core.config.security.validate;
 
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONUtil;
 import com.esmooc.legion.core.common.constant.SettingConstant;
 import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
@@ -7,10 +9,8 @@ import com.esmooc.legion.core.common.utils.IpInfoUtil;
 import com.esmooc.legion.core.common.utils.ResponseUtil;
 import com.esmooc.legion.core.config.properties.CaptchaProperties;
 import com.esmooc.legion.core.entity.Setting;
+import com.esmooc.legion.core.entity.vo.VaptchaSetting;
 import com.esmooc.legion.core.service.SettingService;
-import com.esmooc.legion.core.vo.VaptchaSetting;
-import cn.hutool.core.util.StrUtil;
-import cn.hutool.http.HttpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -79,7 +79,7 @@ public class VaptchaValidateFilter extends OncePerRequestFilter {
                 chain.doFilter(request, response);
                 return;
             } else {
-                Setting setting = settingService.get(SettingConstant.VAPTCHA_SETTING);
+                Setting setting = settingService.getById(SettingConstant.VAPTCHA_SETTING);
                 if (StrUtil.isBlank(setting.getValue())) {
                     ResponseUtil.out(response, ResponseUtil.resultMap(false, 500, "系统还未配置Vaptcha验证码，请联系管理员"));
                     return;
