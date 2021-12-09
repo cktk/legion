@@ -1,8 +1,9 @@
 package com.esmooc.legion.base.controller.manage;
 
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
-import com.esmooc.legion.base.utils.VoUtil;
 import com.esmooc.legion.base.entity.vo.MenuVo;
+import com.esmooc.legion.base.utils.VoUtil;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
@@ -14,15 +15,12 @@ import com.esmooc.legion.core.config.security.permission.MySecurityMetadataSourc
 import com.esmooc.legion.core.entity.Permission;
 import com.esmooc.legion.core.entity.RolePermission;
 import com.esmooc.legion.core.entity.User;
+import com.esmooc.legion.core.service.IPermissionService;
 import com.esmooc.legion.core.service.PermissionService;
 import com.esmooc.legion.core.service.RolePermissionService;
-import com.esmooc.legion.core.service.IPermissionService;
-import cn.hutool.core.util.StrUtil;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
@@ -30,7 +28,9 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -281,11 +281,14 @@ public class PermissionController {
 
     public void setInfo(Permission permission) {
 
-        if (!CommonConstant.PARENT_ID.equals(permission.getParentId())) {
-            Permission parent = permissionService.getById(permission.getParentId());
-            permission.setParentTitle(parent.getTitle());
-        } else {
+        if (StrUtil.isBlank(permission.getParentId()) || CommonConstant.PARENT_ID.equals(permission.getParentId())) {
             permission.setParentTitle("一级菜单");
+            return;
         }
+
+        Permission parent = permissionService.getById(permission.getParentId());
+        permission.setParentTitle(parent.getTitle());
+
+
     }
 }

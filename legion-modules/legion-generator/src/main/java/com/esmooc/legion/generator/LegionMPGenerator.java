@@ -28,39 +28,42 @@ import java.util.List;
 @Slf4j
 public class LegionMPGenerator {
 
-    public static final String COM_ESMOOC_LEGION = "com.esmooc.legion.";
 
     /**
      * 模块包路径
      * （下方包路径拼接使用）
      */
-    private static final String MODULE_PACKAGE = "your";
+    private static final String MODULE_PACKAGE = "classroom";
 
     /**
      * 实体类名
      * 建议仅需修改
      */
-    private static final String CLASS_NAME = "Test";
+    private static final String CLASS_NAME = "TeacherInfo";
 
 
     /**
      * 类说明描述
      * 建议仅需修改
      */
-    private static final String DESCRIPTION = "测试";
+    private static final String DESCRIPTION = "老师信息";
 
 
     /**
      * 数据库表名前缀
      * 下方请根据需要修改
      */
-    private static final String TABLE_PRE = "t_";
+    private static final String TABLE_PRE = "s_";
 
     /**
      * 主键类型
      */
     private static final String PRIMARY_KEY_TYPE = "String";
 
+
+
+
+    public static final String COM_ESMOOC_LEGION = "com.esmooc.legion.";
 
 
     /**

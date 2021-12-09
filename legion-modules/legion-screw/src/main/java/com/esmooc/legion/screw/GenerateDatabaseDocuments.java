@@ -28,16 +28,16 @@ public class GenerateDatabaseDocuments {
     public static void generateDatabaseDocuments() {
         //数据源
         HikariConfig hikariConfig = new HikariConfig();
-        hikariConfig.setDriverClassName("com.mysql.cj.jdbc.Driver");
-        hikariConfig.setJdbcUrl("jdbc:mysql://**************:3306/legion");
-        hikariConfig.setUsername("**************");
-        hikariConfig.setPassword("**************");
+//        hikariConfig.setDriverClassName("com.mysql.cj.jdbc.Driver");
+//        hikariConfig.setJdbcUrl("jdbc:mysql://**************:3306/legion");
+//        hikariConfig.setUsername("**************");
+//        hikariConfig.setPassword("**************");
 
         //oracle的配置
-//        hikariConfig.setDriverClassName("oracle.jdbc.driver.OracleDriver");
-//        hikariConfig.setJdbcUrl("jdbc:oracle:thin:@IP:1521/orcl");
-//        hikariConfig.setUsername("USER");
-//        hikariConfig.setPassword("PWD");
+        hikariConfig.setDriverClassName("oracle.jdbc.driver.OracleDriver");
+        hikariConfig.setJdbcUrl("jdbc:oracle:thin:@192.168.1.125:1521/orcl");
+        hikariConfig.setUsername("ambase");
+        hikariConfig.setPassword("ambase");
 
         //设置可以获取tables remarks信息
         hikariConfig.addDataSourceProperty("useInformationSchema", "true");
@@ -51,7 +51,7 @@ public class GenerateDatabaseDocuments {
                 //打开目录
                 .openOutputDir(true)
                 //文件类型
-                .fileType(EngineFileType.MD)
+                .fileType(EngineFileType.HTML)
                 //生成模板实现
                 .produceType(EngineTemplateType.freemarker).build();
 
