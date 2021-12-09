@@ -127,7 +127,7 @@ public class PermissionController {
 
         List<Permission> list = permissionService.list();
         // 0级
-        List<Permission> list0 = list.stream().filter(e -> (CommonConstant.LEVEL_ZERO).equals(e.getLevel()))
+        List<Permission> list0 = list.stream().filter(e -> ( e.getLevel()==null ||(CommonConstant.LEVEL_ZERO).equals(e.getLevel())))
                 .sorted(Comparator.comparing(Permission::getSortOrder)).collect(Collectors.toList());
         getAllByRecursion(list0, list);
         return new ResultUtil<List<Permission>>().setData(list0);

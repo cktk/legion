@@ -66,7 +66,7 @@ public class RoleController {
         Page<Role> list = roleService.page(PageUtil.initPage(page), queryWrapper);
         for (Role role : list.getRecords()) {
             // 角色拥有权限
-            List<RolePermission> permissions = rolePermissionService.findByRoleId(role.getId());
+            List<RolePermission> permissions =   rolePermissionService.findByRoleId(role.getId());
             role.setPermissions(permissions);
             // 角色拥有数据权限
             List<RoleDepartment> departments = roleDepartmentService.findByRoleId(role.getId());

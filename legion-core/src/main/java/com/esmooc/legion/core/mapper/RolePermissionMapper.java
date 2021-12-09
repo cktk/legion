@@ -18,20 +18,18 @@ public interface RolePermissionMapper extends BaseMapper<RolePermission> {
      * @param permissionId
      * @return
      */
-    @Select("select * from t_role_permission  where  permission_id =#{permissionId} ")
     List<RolePermission> findByPermissionId(String permissionId);
 
     /**
      * 通过roleId获取
      * @param roleId
      */
-    @Select("select * from t_role_permission  where  role_id =#{roleId} ")
+
     List<RolePermission> findByRoleId(String roleId);
 
     /**
      * 通过roleId删除
      * @param roleId
      */
-    @Delete("delete from t_role_permission r where r.role_id =#{roleId} ")
     void deleteByRoleId(String roleId);
 }
