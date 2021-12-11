@@ -19,6 +19,9 @@ import com.esmooc.legion.core.service.MessageService;
 import com.esmooc.legion.core.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import lombok.var;
 import org.apache.ibatis.annotations.Param;
@@ -26,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -37,19 +41,14 @@ import java.util.List;
 @Api(tags = "消息发送管理接口")
 @RequestMapping("/legion/messageSend")
 @Transactional
+@FieldDefaults(level = AccessLevel.PRIVATE,makeFinal = true)
+@AllArgsConstructor
 public class MessageSendController {
 
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private MessageService messageService;
-
-    @Autowired
-    private MessageSendService messageSendService;
-
-    @Autowired
-    private SecurityUtil securityUtil;
+    UserService userService;
+    MessageService messageService;
+    MessageSendService messageSendService;
+    SecurityUtil securityUtil;
 
 
     @GetMapping("/get/{id}")

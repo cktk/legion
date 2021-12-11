@@ -20,6 +20,9 @@ import com.esmooc.legion.core.service.PermissionService;
 import com.esmooc.legion.core.service.RolePermissionService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
@@ -43,25 +46,16 @@ import java.util.stream.Collectors;
 @RequestMapping("/legion/permission")
 @CacheConfig(cacheNames = "permission")
 @Transactional
+@FieldDefaults(level = AccessLevel.PRIVATE,makeFinal = true)
+@AllArgsConstructor
 public class PermissionController {
 
-    @Autowired
-    private PermissionService permissionService;
-
-    @Autowired
-    private RolePermissionService rolePermissionService;
-
-    @Autowired
-    private IPermissionService iPermissionService;
-
-    @Autowired
-    private RedisTemplateHelper redisTemplate;
-
-    @Autowired
-    private SecurityUtil securityUtil;
-
-    @Autowired
-    private MySecurityMetadataSource mySecurityMetadataSource;
+    PermissionService permissionService;
+    RolePermissionService rolePermissionService;
+    IPermissionService iPermissionService;
+    RedisTemplateHelper redisTemplate;
+    SecurityUtil securityUtil;
+    MySecurityMetadataSource mySecurityMetadataSource;
 
     @RequestMapping(value = "/getMenuList", method = RequestMethod.GET)
     @ApiOperation(value = "获取用户页面菜单数据")
