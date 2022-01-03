@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.esmooc.legion.pacs.mapper.StudyMapper">
+  <resultMap id="BaseResultMap" type="com.esmooc.legion.pacs.entity.Study">
+    <!--@mbg.generated-->
+    <!--@Table p_study-->
+    <id column="id" jdbcType="VARCHAR" property="id"/>
+    <result column="modality" jdbcType="VARCHAR" property="modality"/>
+    <result column="study_date_time" jdbcType="TIMESTAMP" property="studyDateTime"/>
+    <result column="study_id" jdbcType="VARCHAR" property="studyId"/>
+    <result column="patient_id" jdbcType="VARCHAR" property="patientId"/>
+    <result column="patient_age" jdbcType="INTEGER" property="patientAge"/>
+    <result column="accession_number" jdbcType="VARCHAR" property="accessionNumber"/>
+    <result column="study_description" jdbcType="VARCHAR" property="studyDescription"/>
+    <result column="study_instance_UID" jdbcType="VARCHAR" property="studyInstanceUid"/>
+    <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+    <result column="update_by" jdbcType="VARCHAR" property="updateBy"/>
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+    <result column="del_flag" jdbcType="CHAR" property="delFlag"/>
+    <result column="dept_id" jdbcType="VARCHAR" property="deptId"/>
+    <result column="tenant_id" jdbcType="VARCHAR" property="tenantId"/>
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, modality, study_date_time, study_id, patient_id, patient_age, accession_number,
+    study_description, study_instance_UID, create_by, create_time, update_by, update_time,
+    del_flag, dept_id, tenant_id
+  </sql>
+
+  <select id="searchByPage" resultType="com.esmooc.legion.pacs.entity.dto.StudyDTO">
+    SELECT *
+    FROM p_study st
+                 LEFT JOIN p_patient p
+            ON st.patient_id = p.patient_id
+            where  1=1
+    <if test="studiesVo.patientID != null || studiesVo.patientID != ''">
+      AND p.patient_id = #{studiesVo.patientID}
+    </if>
+    <if test="studiesVo.patientName != null || studiesVo.patientName != ''">
+      AND p.name LIKE #{studiesVo.patientName}
+    </if>
+    <if test="studiesVo.startTime != null || studiesVo.startTime != '' || studiesVo.endTime != null || studiesVo.endTime != ''">
+      AND st.study_date_time between #{studiesVo.startTime} and #{studiesVo.endTime}
+    </if>
+    <if test="studiesVo.modality != null || studiesVo.modality != ''">
+      AND st.modality = #{studiesVo.modality}
+    </if>
+
+    ORDER BY st.update_time DESC
+  </select>
+</mapper>

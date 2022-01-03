@@ -2,7 +2,6 @@ package com.esmooc.legion.core.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.esmooc.legion.core.common.constant.CommonConstant;
-import com.esmooc.legion.core.common.utils.SecurityUtil;
 import com.esmooc.legion.core.entity.Permission;
 import com.esmooc.legion.core.entity.Role;
 import com.esmooc.legion.core.entity.User;

@@ -133,8 +133,8 @@ public class SystemLogAspect {
                 long beginTime = THREAD_LOCAL_BEGIN_TIME.get().getTime();
                 long endTime = System.currentTimeMillis();
                 // 请求耗时
-                Long logElapsedTime = endTime - beginTime;
-                log.setCostTime(logElapsedTime.intValue());
+                long logElapsedTime = endTime - beginTime;
+                log.setCostTime(logElapsedTime);
                 // 调用线程保存至DB
                 ThreadPoolUtil.getPool().execute(new SaveSystemLogThread(log, logService));
             THREAD_LOCAL_BEGIN_TIME.remove();

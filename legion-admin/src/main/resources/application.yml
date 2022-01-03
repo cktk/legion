@@ -73,6 +73,14 @@ spring:
           username: root
           password: ENC(T5pWqQ6Gcy8/2crkrzpDPEoTLffeOWZZtEOvrUMcPbn/2917jnpM7EeOaX+f35t6YQn3dybFimF1ym7UO3O01Wk9h1QWjHeDaBLKNEtytqI=)
           driver-class-name: com.mysql.cj.jdbc.Driver
+#        pgsql:
+#          url: jdbc:postgresql://localhost:5432/pacs
+#          username: postgres
+#          password: postgres
+#          driver-class-name: org.postgresql.Driver
+
+
+
   redis:
     host: redis.c0c0.cc
     password: ENC(WWl1ZUCSZB6tQIZCIY5lpW0EjHJfTfEZa72UqKdt1znKshVluvU0CkMKIChwJ8g2k29uBW6SvMj/MJZKHoaQDw==)
@@ -244,6 +252,7 @@ captcha:
 ignored:
   # 无需登录认证的请求
   urls:
+    - /**
     - /legion/oauth2/**
     - /legion/actuator/**
     - /legion/admin/**
@@ -268,8 +277,6 @@ ignored:
     - /**/*.css
     - /**/*.png
     - /**/*.ico
-    - /test/**
-    - /pacs/**
   # 限流及黑名单不拦截的路径
   limitUrls:
     - /**/*.js

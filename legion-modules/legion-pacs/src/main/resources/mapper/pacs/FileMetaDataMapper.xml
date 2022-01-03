@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.esmooc.legion.pacs.mapper.FileMetaDataMapper">
+  <resultMap id="BaseResultMap" type="com.esmooc.legion.pacs.entity.FileMetaData">
+    <!--@mbg.generated-->
+    <!--@Table p_file_meta_data-->
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="path" jdbcType="VARCHAR" property="path" />
+    <result column="size" jdbcType="BIGINT" property="size" />
+    <result column="device_id" jdbcType="VARCHAR" property="deviceId" />
+    <result column="series_id" jdbcType="VARCHAR" property="seriesId" />
+    <result column="patient_id" jdbcType="VARCHAR" property="patientId" />
+    <result column="instance_id" jdbcType="VARCHAR" property="instanceId" />
+    <result column="study_instance_UID" jdbcType="VARCHAR" property="studyInstanceUid" />
+    <result column="create_by" jdbcType="VARCHAR" property="createBy" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="del_flag" jdbcType="CHAR" property="delFlag" />
+    <result column="dept_id" jdbcType="VARCHAR" property="deptId" />
+    <result column="tenant_id" jdbcType="VARCHAR" property="tenantId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, `path`, `size`, device_id, series_id, patient_id, instance_id, study_instance_UID, 
+    create_by, create_time, update_by, update_time, del_flag, dept_id, tenant_id
+  </sql>
+</mapper>

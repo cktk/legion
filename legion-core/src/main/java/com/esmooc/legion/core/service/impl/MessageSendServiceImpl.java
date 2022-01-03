@@ -10,7 +10,6 @@ import com.esmooc.legion.core.mapper.MessageMapper;
 import com.esmooc.legion.core.mapper.MessageSendMapper;
 import com.esmooc.legion.core.service.MessageSendService;
 import lombok.extern.slf4j.Slf4j;
-import lombok.var;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -117,7 +116,7 @@ public class MessageSendServiceImpl extends ServiceImpl<MessageSendMapper, Messa
         if (message == null) {
             throw new LegionException("消息ID：" + messageId + "不存在");
         }
-        var messageSends = new ArrayList<MessageSend>();
+        ArrayList<MessageSend>  messageSends = new ArrayList<MessageSend>();
         for (String userId : userIds) {
             MessageSend ms = new MessageSend();
             ms.setUserId(userId).setMessageId(messageId);

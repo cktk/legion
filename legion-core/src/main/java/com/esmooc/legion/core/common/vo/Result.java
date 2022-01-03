@@ -4,8 +4,6 @@ package com.esmooc.legion.core.common.vo;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import java.io.Serializable;
-
 /**
  * @author Daimao
  * 前后端交互数据标准

@@ -54,9 +54,9 @@ public class JasyptUtil {
     public static void main(String[] args) {
 
         // 加密 若修改了第一个参数加密password记得在配置文件同步修改
-        String pwd="";
+        String pwd="WWsBQoRmQ4LeQ4J7n2wtZxiDmAR7xcFn";
 
-        String encCode="";
+        String encCode="bZsEVhyzN4gLmKq5";
 
         String encPwd = encyptPwd(encCode, pwd);
         System.out.println("加密后密码  "+encPwd);

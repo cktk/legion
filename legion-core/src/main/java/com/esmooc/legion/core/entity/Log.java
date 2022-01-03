@@ -64,7 +64,7 @@ public class Log extends BaseEntity {
 
     @TableField(value = "cost_time")
     @ApiModelProperty(value = "花费时间")
-    private Integer costTime;
+    private long costTime;
 
     /**
      * 转换请求参数为Json

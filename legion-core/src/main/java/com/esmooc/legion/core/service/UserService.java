@@ -2,12 +2,9 @@ package com.esmooc.legion.core.service;
 
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.esmooc.legion.core.common.vo.SearchVo;
 import com.esmooc.legion.core.entity.User;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
