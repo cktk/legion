@@ -71,7 +71,7 @@ spring:
         master:
           url: jdbc:mysql://mysql.c0c0.cc:3306/legion?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2B8
           username: root
-          password: ENC(T5pWqQ6Gcy8/2crkrzpDPEoTLffeOWZZtEOvrUMcPbn/2917jnpM7EeOaX+f35t6YQn3dybFimF1ym7UO3O01Wk9h1QWjHeDaBLKNEtytqI=)
+          password: ENC(exkPOsFJXdqEWIsxnywiobE2SuF0/5jBwAli/GdHqreAiDIuAd+2LYRrN0x4G7NKCrcuoOngSriSOBpDVJ6uJQ==)
           driver-class-name: com.mysql.cj.jdbc.Driver
 #        pgsql:
 #          url: jdbc:postgresql://localhost:5432/pacs
