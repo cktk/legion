@@ -33,27 +33,27 @@ public class LegionMPGenerator {
      * 模块包路径
      * （下方包路径拼接使用）
      */
-    private static final String MODULE_PACKAGE = "classroom";
+    private static final String MODULE_PACKAGE = "";
 
     /**
      * 实体类名
      * 建议仅需修改
      */
-    private static final String CLASS_NAME = "TeacherInfo";
+    private static final String CLASS_NAME = "";
 
 
     /**
      * 类说明描述
      * 建议仅需修改
      */
-    private static final String DESCRIPTION = "老师信息";
+    private static final String DESCRIPTION = "";
 
 
     /**
      * 数据库表名前缀
      * 下方请根据需要修改
      */
-    private static final String TABLE_PRE = "s_";
+    private static final String TABLE_PRE = "t_";
 
     /**
      * 主键类型
