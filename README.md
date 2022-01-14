@@ -89,3 +89,28 @@ Legion 的监控包括了全生命周期的状态、反馈、监控等，帮助�
 - **Spring Boot Actuator**：Actuator是Spring Boot提供的对应用系统的自省和监控的集成功能，可以对应用系统进行配置查看、相关功能统计等。
 - **Spring Boot Admin**：Spring Boot Admin 用于监控基于 Spring Boot 的应用，它是在 Spring Boot Actuator 的基础上提供简洁的可视化 WEB UI。
 - **Apache Druid**：Apache Druid是一个高性能的实时分析数据库，可以很好的监控DB池连接和SQL的执行情况，可以说是针对监控而生的DB连接池
+
+
+
+### Legion 角色控制访问权限(RBAC)
+#### Legion 对资源的管理是基于角色控制的，并从部门组织层、菜单权限层和用户层对角色进行划分。
+
+包含如下的特点：
+
+基于角色的权限访问控制
+基于部门组织层、菜单权限层和用户层的三层权限体系
+自定义角色创建和绑定
+架构
+![img](https://c0c0.oss-cn-qingdao.aliyuncs.com/sdskh.png)
+
+###  资源
+ 遵循REST原则，视HTTP-based REST API为一个或一组资源。
+ 对资源的引用和操作则视为权限。
+ 角色是资源的超集。
+
+角色和资源之间通过 RBAC 关联起来。
+ 一个角色严格遵循只能访问所属资源的原则。
+ 角色支持自定义角色。
+ 用户是资源的实际使用者。
+
+用户和角色之间通过 RBAC 关联起来。

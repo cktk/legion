@@ -7,7 +7,7 @@ import java.lang.management.ManagementFactory;
 
 /**
  * JVM相关信息
- * 
+ *
  * @author ruoyi
  */
 public class Jvm {
@@ -118,5 +118,16 @@ public class Jvm {
     public String getRunTime()
     {
         return DateUtils.getDatePoor(DateUtils.getNowDate(), DateUtils.getServerStartDate());
+    }
+
+    @Override
+    public String toString() {
+        return "Jvm{" +
+                "total=" + total +
+                ", max=" + max +
+                ", free=" + free +
+                ", version='" + version + '\'' +
+                ", home='" + home + '\'' +
+                '}';
     }
 }

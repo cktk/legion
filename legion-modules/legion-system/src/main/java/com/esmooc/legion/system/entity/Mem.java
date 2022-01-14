@@ -5,7 +5,7 @@ import com.esmooc.legion.system.util.Arith;
 
 /**
  * 內存相关信息
- * 
+ *
  * @author ruoyi
  */
 public class Mem {
@@ -57,5 +57,14 @@ public class Mem {
     public double getUsage()
     {
         return Arith.mul(Arith.div(used, total, 4), 100);
+    }
+
+    @Override
+    public String toString() {
+        return "Mem{" +
+                "total=" + total +
+                ", used=" + used +
+                ", free=" + free +
+                '}';
     }
 }

@@ -18,10 +18,11 @@
 
     <dependencies>
         <!-- 获取系统信息 -->
+        <!-- https://mvnrepository.com/artifact/com.github.oshi/oshi-core -->
         <dependency>
             <groupId>com.github.oshi</groupId>
             <artifactId>oshi-core</artifactId>
-            <version>5.1.0</version>
+            <version>6.0.0</version>
         </dependency>
 
 

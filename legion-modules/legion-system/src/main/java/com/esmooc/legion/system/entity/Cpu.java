@@ -5,11 +5,10 @@ import com.esmooc.legion.system.util.Arith;
 
 /**
  * CPU相关信息
- * 
+ *
  * @author ruoyi
  */
-public class Cpu
-{
+public class Cpu {
     /**
      * 核心数
      */
@@ -98,5 +97,17 @@ public class Cpu
     public void setFree(double free)
     {
         this.free = free;
+    }
+
+    @Override
+    public String toString() {
+        return "Cpu{" +
+                "cpuNum=" + cpuNum +
+                ", total=" + total +
+                ", sys=" + sys +
+                ", used=" + used +
+                ", wait=" + wait +
+                ", free=" + free +
+                '}';
     }
 }

@@ -2,7 +2,7 @@ package com.esmooc.legion.system.entity;
 
 /**
  * 系统相关信息
- * 
+ *
  * @author ruoyi
  */
 public class Sys
@@ -80,5 +80,16 @@ public class Sys
     public void setOsArch(String osArch)
     {
         this.osArch = osArch;
+    }
+
+    @Override
+    public String toString() {
+        return "Sys{" +
+                "computerName='" + computerName + '\'' +
+                ", computerIp='" + computerIp + '\'' +
+                ", userDir='" + userDir + '\'' +
+                ", osName='" + osName + '\'' +
+                ", osArch='" + osArch + '\'' +
+                '}';
     }
 }

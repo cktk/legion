@@ -2,7 +2,7 @@ package com.esmooc.legion.system.entity;
 
 /**
  * 系统文件相关信息
- * 
+ *
  * @author ruoyi
  */
 public class SysFile {
@@ -109,5 +109,18 @@ public class SysFile {
     public void setUsage(double usage)
     {
         this.usage = usage;
+    }
+
+    @Override
+    public String toString() {
+        return "SysFile{" +
+                "dirName='" + dirName + '\'' +
+                ", sysTypeName='" + sysTypeName + '\'' +
+                ", typeName='" + typeName + '\'' +
+                ", total='" + total + '\'' +
+                ", free='" + free + '\'' +
+                ", used='" + used + '\'' +
+                ", usage=" + usage +
+                '}';
     }
 }
