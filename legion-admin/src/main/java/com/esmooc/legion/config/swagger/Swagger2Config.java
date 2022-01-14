@@ -71,7 +71,21 @@ public class Swagger2Config {
     }
 
 
+    @Bean
+    public Docket createPacsRestApi() {
 
+        List<SecurityScheme> securitySchemes = Collections.singletonList(
+                new ApiKey("Authorization", "appToken", "header"));
+
+        return new Docket(DocumentationType.SWAGGER_2)
+                .groupName("3.Pacs业务接口")
+                .apiInfo(apiInfo()).select()
+                .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
+                .paths(regex(".*/pacs/.*"))
+                .build()
+                .securitySchemes(securitySchemes)
+                .securityContexts(securityContexts());
+    }
 
 
     @Bean

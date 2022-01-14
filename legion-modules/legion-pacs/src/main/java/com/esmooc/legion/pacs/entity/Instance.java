@@ -14,9 +14,9 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 
-/** 
+/**
 * @ClassName: Instance
-* @version 1.0 
+* @version 1.0
 * @author Daimao
 * @Description:
 * @date 2021年12月21日15点54分
@@ -25,12 +25,13 @@ import lombok.NoArgsConstructor;
 /**
     * 文件元数据
     */
-@ApiModel(value="文件元数据")
+
 @Data
-@EqualsAndHashCode(callSuper=true)
 @AllArgsConstructor
 @NoArgsConstructor
+@ApiModel(value="文件元数据")
 @TableName(value = "p_instance")
+@EqualsAndHashCode(callSuper=true)
 public class Instance extends BaseEntity {
     /**
      * kvp

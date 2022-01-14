@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -30,7 +31,7 @@ import java.lang.reflect.Method;
  */
 @Slf4j
 @Component
-public class LimitRaterInterceptor extends HandlerInterceptorAdapter {
+public class LimitRaterInterceptor implements HandlerInterceptor {
 
     @Autowired
     private LegionLimitProperties limitProperties;
@@ -72,7 +73,7 @@ public class LimitRaterInterceptor extends HandlerInterceptorAdapter {
             Boolean token1 = redisRaterLimiter.acquireByRedis(ip,
                     ipLimitProperties.getLimit(), ipLimitProperties.getTimeout());
             if (!token1) {
-                throw new LimitException("你手速怎么这么快，请点慢一点");
+                //throw new LimitException("你手速怎么这么快，请点慢一点");
             }
         }
 
@@ -80,7 +81,7 @@ public class LimitRaterInterceptor extends HandlerInterceptorAdapter {
             Boolean token2 = redisRaterLimiter.acquireByRedis(CommonConstant.LIMIT_ALL,
                     limitProperties.getLimit(), limitProperties.getTimeout());
             if (!token2) {
-                throw new LimitException("当前访问总人数太多啦，请稍后再试");
+                //throw new LimitException("当前访问总人数太多啦，请稍后再试");
             }
         }
 
@@ -90,7 +91,7 @@ public class LimitRaterInterceptor extends HandlerInterceptorAdapter {
             String[] list = os.getBlacklist().split("\n");
             for (String item : list) {
                 if (item.equals(ip)) {
-                    throw new LimitException("您的IP已被添加至黑名单");
+                    //throw new LimitException("您的IP已被添加至黑名单");
                 }
             }
         }
@@ -112,7 +113,7 @@ public class LimitRaterInterceptor extends HandlerInterceptorAdapter {
                 }
                 Boolean token3 = redisRaterLimiter.acquireByRedis(name, limit, timeout);
                 if (!token3) {
-                    throw new LimitException("当前访问人数太多啦，请稍后再试");
+                    //throw new LimitException("当前访问人数太多啦，请稍后再试");
                 }
             }
         } catch (LimitException e) {

@@ -18,9 +18,9 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>17</java.version>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <java.version>8</java.version>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
         <encoding>UTF-8</encoding>
         <!-- 依赖包版本 -->
         <spring.boot.version>2.5.5</spring.boot.version>
@@ -29,7 +29,7 @@
         <jjwt.version>0.9.1</jjwt.version>
         <mysql.connector.version>8.0.26</mysql.connector.version>
         <mybatis.plus.version>3.4.3.4</mybatis.plus.version>
-        <redission.version>3.16.3</redission.version>
+        <redission.version>3.16.7</redission.version>
         <knife4j.version>3.0.3</knife4j.version>
         <hutool.version>5.7.14</hutool.version>
         <lombok.version>1.18.22</lombok.version>
@@ -45,7 +45,6 @@
         <extentreports.testng.version>1.2.2</extentreports.testng.version>
         <selenuim.version>4.0.0-beta-4</selenuim.version>
         <dynamic.version>3.4.1</dynamic.version>
-        <kotlin.version>1.6.0-RC2</kotlin.version>
     </properties>
 
     <dependencyManagement>
@@ -195,48 +194,6 @@
         </dependencies>
     </dependencyManagement>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-stdlib-jdk8</artifactId>
-            <version>${kotlin.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-test</artifactId>
-            <version>${kotlin.version}</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.jetbrains.kotlin</groupId>
-                <artifactId>kotlin-maven-plugin</artifactId>
-                <version>${kotlin.version}</version>
-                <executions>
-                    <execution>
-                        <id>compile</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>test-compile</id>
-                        <phase>test-compile</phase>
-                        <goals>
-                            <goal>test-compile</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <jvmTarget>1.8</jvmTarget>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 
 
 </project>

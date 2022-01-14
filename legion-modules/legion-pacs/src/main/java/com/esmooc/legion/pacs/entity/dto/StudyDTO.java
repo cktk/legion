@@ -1,6 +1,8 @@
 package com.esmooc.legion.pacs.entity.dto;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
@@ -14,14 +16,23 @@ import java.util.Date;
  **/
 @Data
 public class StudyDTO {
+
+    @ApiModelProperty(value = "生日")
+    private String birthday;
+    @ApiModelProperty(value = "创建人")
+    private String createAt;
+    @ApiModelProperty(value = "id")
     private String id;
-    private String sex;
+    @ApiModelProperty(value = "类型")
+    private String modality;
+    @ApiModelProperty(value = "姓名")
     private String name;
-    private String weight;
+    private String sex;
+    //    private String weight;
     @TableField(value = "study_id")
     private String studyID;
-    private Date   birthday;
-    private String modality;
+
+
     @TableField(value = "patient_id")
     private String patientID;
     @TableField(value = "patient_age")

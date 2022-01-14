@@ -70,6 +70,7 @@ public class FileController {
 
 
         OssSetting os =  JSONUtil.toBean(settingService.getById(SettingConstant.LOCAL_OSS).getValue(), OssSetting.class);
+        
         Map<String, String> map = new HashMap<>(16);
 
 

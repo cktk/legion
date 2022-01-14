@@ -16,6 +16,7 @@ import java.util.Map;
 public class PageUtil {
     private final static String[] KEYWORDS = {"master", "truncate", "insert", "select",
             "delete", "update", "declare", "alter", "drop", "sleep"};
+
     private PageUtil() {
         throw new IllegalStateException("Utility class");
     }
@@ -24,6 +25,7 @@ public class PageUtil {
     /**
      * 条件筛选的时候一块处理了吧  虽然我也不是很喜欢   单是很方便啊
      * 写Integer 强转的时候不会抛出异常 省心
+     *
      * @param map pageNumber   pageSize   sort   order
      * @return {@link Page}
      */
@@ -31,8 +33,20 @@ public class PageUtil {
         PageVo pageVo = new PageVo();
         pageVo.setPageNumber((Integer) map.get("pageNumber"));
         pageVo.setPageSize((Integer) map.get("pageSize"));
-        pageVo.setSort((String) map.get("sort"));
-        pageVo.setSort((String) map.get("order"));
+
+        String sort = (String) map.get("sort");
+        if (StrUtil.isNotEmpty(sort)) {
+            pageVo.setSort(sort);
+
+            String order = (String) map.get("order");
+            if (StrUtil.isNotEmpty(order)) {
+                pageVo.setOrder(order);
+            } else {
+                pageVo.setOrder("desc");
+            }
+        }
+
+
         return initPage(pageVo);
 
     }
@@ -40,6 +54,7 @@ public class PageUtil {
     /**
      * Mybatis-Plus分页封装
      * 里面过滤了sql注入和初始化了默认数据
+     *
      * @param page
      * @return
      */
@@ -82,6 +97,7 @@ public class PageUtil {
 
     /**
      * List 手动分页
+     *
      * @param page
      * @param list
      * @return
@@ -137,6 +153,7 @@ public class PageUtil {
 
     /**
      * 防Mybatis-Plus order by注入
+     *
      * @param param
      */
     public static void SQLInject(String param) {
@@ -154,9 +171,6 @@ public class PageUtil {
             }
         }
     }
-
-
-
 
 
 }

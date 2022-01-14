@@ -7,7 +7,6 @@ import com.esmooc.legion.core.common.annotation.SystemLog;
 import com.esmooc.legion.core.common.constant.SecurityConstant;
 import com.esmooc.legion.core.common.enums.LogType;
 import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
-import com.esmooc.legion.core.common.utils.IpInfoUtil;
 import com.esmooc.legion.core.common.utils.ResponseUtil;
 import com.esmooc.legion.core.common.vo.TokenUser;
 import com.esmooc.legion.core.config.properties.LegionTokenProperties;
@@ -41,8 +40,6 @@ public class AuthenticationSuccessHandler extends SavedRequestAwareAuthenticatio
     @Autowired
     private LegionTokenProperties tokenProperties;
 
-    @Autowired
-    private IpInfoUtil ipInfoUtil;
 
     @Autowired
     private RedisTemplateHelper redisTemplate;
@@ -53,8 +50,8 @@ public class AuthenticationSuccessHandler extends SavedRequestAwareAuthenticatio
 
         // 用户选择保存登录状态几天（记住我）
         String saveLogin = request.getParameter(SecurityConstant.SAVE_LOGIN);
-        Boolean saved = false;
-        if (StrUtil.isNotBlank(saveLogin) && Boolean.valueOf(saveLogin)) {
+        boolean saved = false;
+        if (StrUtil.isNotBlank(saveLogin) && Boolean.parseBoolean(saveLogin)) {
             saved = true;
             if (!tokenProperties.getRedis()) {
                 tokenProperties.setTokenExpireTime(tokenProperties.getSaveLoginTime() * 60 * 24);
@@ -92,13 +89,12 @@ public class AuthenticationSuccessHandler extends SavedRequestAwareAuthenticatio
             }
         } else {
             // JWT不缓存权限 避免JWT长度过长
-            list = null;
             // JWT
             token = SecurityConstant.TOKEN_SPLIT + Jwts.builder()
                     // 主题 放入用户名
                     .setSubject(username)
                     // 自定义属性 放入用户拥有请求权限
-                    .claim(SecurityConstant.AUTHORITIES, JSONUtil.toJsonStr(list))
+                    .claim(SecurityConstant.AUTHORITIES, null)
                     // 失效时间
                     .setExpiration(new Date(System.currentTimeMillis() + tokenProperties.getTokenExpireTime() * 60 * 1000))
                     // 签名算法和密钥
