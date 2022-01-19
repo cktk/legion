@@ -25,13 +25,32 @@ public class ResultUtil<T> {
         return new ResultUtil<T>().setData(t, msg);
     }
 
+
+    public static <T> Result<T> success() {
+        return new ResultUtil<T>().setSuccessMsg();
+    }
+
     public static <T> Result<T> success(String msg) {
         return new ResultUtil<T>().setSuccessMsg(msg);
     }
 
+    public static <T> Result<T> success(Integer code,String msg) {
+        return new ResultUtil<T>().setSuccessMsg(code,msg);
+    }
+
+    public static <T> Result<T> success(String msg,T data) {
+        return new ResultUtil<T>().setSuccessMsg(msg,data);
+    }
+
+    public static <T> Result<T> success(Integer code,String msg,T data) {
+        return new ResultUtil<T>().setSuccessMsg(code,msg,data);
+    }
+
+
     public static <T> Result<T> error(String msg) {
         return new ResultUtil<T>().setErrorMsg(msg);
     }
+
 
     public static <T> Result<T> error(Integer code, String msg) {
         return new ResultUtil<T>().setErrorMsg(code, msg);
@@ -43,11 +62,45 @@ public class ResultUtil<T> {
         return this.result;
     }
 
+    public Result<T> setSuccessMsg() {
+        this.result.setSuccess(true);
+        this.result.setMessage("成功");
+        this.result.setCode(200);
+        this.result.setResult(null);
+        return this.result;
+    }
+
     public Result<T> setSuccessMsg(String msg) {
         this.result.setSuccess(true);
         this.result.setMessage(msg);
         this.result.setCode(200);
         this.result.setResult(null);
+        return this.result;
+    }
+
+    public Result<T> setSuccessMsg(Integer code,String msg) {
+        this.result.setSuccess(true);
+        this.result.setMessage(msg);
+        this.result.setCode(code);
+        this.result.setResult(null);
+        return this.result;
+    }
+
+
+    public Result<T> setSuccessMsg(String msg,T t) {
+        this.result.setSuccess(true);
+        this.result.setMessage(msg);
+        this.result.setCode(200);
+        this.result.setResult(t);
+        return this.result;
+    }
+
+
+    public Result<T> setSuccessMsg(Integer code,String msg,T t) {
+        this.result.setSuccess(true);
+        this.result.setMessage(msg);
+        this.result.setCode(code);
+        this.result.setResult(t);
         return this.result;
     }
 

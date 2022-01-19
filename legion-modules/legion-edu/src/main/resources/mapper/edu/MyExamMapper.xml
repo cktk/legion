@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.esmooc.legion.open.mapper.MyExamMapper">
+    <select id="list" resultType="com.esmooc.legion.open.entity.MyExam">
+        select *
+        from (
+        select bep.id,
+        bep.clazz_id as 'clazzId', IF(bep.grade is null, 0, bep.grade) as 'grade', IF(bep.is_pass is null, 0,
+        bep.is_pass) as 'isPass', bep.clazz_name as 'clazzName', IF(bc.course_title is null, 0, bc.period) as 'period',
+        bep.create_time as 'createTime', bep.type as 'type', bep.history_question as 'historyQuestion', bep.major_id as
+        'majorId'
+        from edu_exam_paper bep
+        left join
+        edu_course bc
+        on
+        bc.id = bep.clazz_id
+        left join
+        edu_exam be
+        on
+        be.id = bep.clazz_id
+        left join
+        edu_exam_major bem
+        on
+        be.id = bem.exam_id
+        where bep.user_id = #{exam.userId,jdbcType=VARCHAR}
+        and
+        (bep.type = '1'
+        or
+        bep.type = '2')
+        or (
+        bep.type = '1'
+        and
+        bep.is_pass = '1'
+        and
+        bep.user_id = #{exam.userId,jdbcType=VARCHAR}
+        )
+        group by bep.clazz_id, bep.create_time, bep.type, bep.id,
+        bep.clazz_name,
+        bep.type,
+        bep.history_question,
+        bep.major_id
+        order by bep.create_time, bep.clazz_name,
+        bep.type,
+        bep.history_question,
+        bep.major_id
+        desc
+        ) a
+        where a.clazzName is not null
+        <if test="exam.clazzName != null and exam.clazzName != ''">
+            and a.clazzName like concat('%', #{exam.userId,jdbcType=VARCHAR}, '%')
+        </if>
+        <if test="exam.majorId != null and exam.majorId != ''">
+            and FIND_IN_SET(#{exam.majorId,jdbcType=VARCHAR}, a.majorId)
+        </if>
+        group by a.clazzId,
+        a.createTime,
+        a.clazzName,
+        a.type,
+        a.historyQuestion,
+        a.majorId,
+        a.id
+        order by a.createTime,
+        a.clazzId,
+        a.clazzName,
+        a.type,
+        a.historyQuestion,
+        a.majorId,
+        a.id
+        desc
+    </select>
+
+    <select id="getUserPassExamCount" resultType="java.lang.Integer">
+        select count(*)
+        from edu_exam_paper
+        where user_id = #{userId}
+        and is_pass = '1'
+        and (type = '1' or type = '2')
+    </select>
+
+    <select id="getLaseTwoTimes" resultType="com.esmooc.legion.open.entity.MyExam">
+        select *
+        from (
+        select  bep.id                                                              as 'id',
+        bep.type                                                            as 'type',
+        bep.clazz_id as 'clazzId', IF(bep.grade is null, 0, bep.grade) as 'grade', bep.is_pass as 'isPass',
+        IF(bc.course_title is null, be.title, bc.course_title) as 'clazzName', IF(bc.course_title is null,
+        GROUP_CONCAT(bem.major_id), bc.subject) as 'majorId', IF(bc.course_title is null, 0, bc.period) as 'period',
+        bep.create_time as 'createTime'
+        from edu_exam_paper bep
+        left join
+        edu_course bc
+        on
+        bc.id = bep.clazz_id
+        left join
+        edu_exam be
+        on
+        be.id = bep.clazz_id
+        left join
+        edu_exam_major bem
+        on
+        be.id = bem.exam_id
+        where bep.user_id = #{userId,jdbcType=VARCHAR}
+        and bep.is_pass is not null
+        and (bep.type = '1'
+        or
+        bep.type = '2')
+        group by bep.type, bep.create_time,bep.id
+        order by  bep.create_time, bep.type,bep.id
+        desc
+        ) a
+        group by a.clazzId ,a.type,
+        a.createTime,a.id
+        order by  a.createTime,
+        a.type,a.id desc limit #{passExamCount,jdbcType=INTEGER}
+    </select>
+
+    <select id="isClazz" resultType="java.lang.Integer">
+        select count(*)
+        from edu_course
+        where id = #{clazzId}
+    </select>
+
+    <select id="getMajorNameByBankId" resultType="java.lang.String">
+        select GROUP_CONCAT(bem.major_id)
+        from edu_exam_major bem
+        where exam_id = #{clazzId}
+    </select>
+
+    <select id="getMajorIdByClazzId" resultType="java.lang.String">
+        select subject
+        from edu_course
+        where id = #{clazzId}
+    </select>
+
+    <select id="getGradeByUserIdClazzId" resultType="java.lang.String">
+        select grade
+        from edu_exam_paper
+        where clazz_id = #{clazzId}
+        and user_id = #{userId}
+        order by create_time
+        desc limit 1
+    </select>
+</mapper>

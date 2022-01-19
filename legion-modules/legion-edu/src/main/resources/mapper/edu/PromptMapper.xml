@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.esmooc.legion.open.mapper.PromptMapper">
+    <resultMap type="com.esmooc.legion.open.entity.Prompt" id="BizPromptResult">
+        <result property="id" column="id"/>
+        <result property="courseId" column="course_id"/>
+        <result property="prompt" column="prompt"/>
+        <result property="courseTitle" column="course_title"/>
+    </resultMap>
+
+    <sql id="selectBizPromptVo">
+        SELECT p.id,
+               p.course_id,
+               c.course_title,
+               p.prompt
+        FROM edu_prompt p
+                     LEFT JOIN edu_course c on c.id = p.course_id
+    </sql>
+
+    <select id="selectBizPromptList" parameterType="com.esmooc.legion.open.entity.Prompt" resultMap="BizPromptResult">
+        <include refid="selectBizPromptVo"/>
+        <where>
+            <if test="courseId != null  and courseId != ''">
+                and p.course_id = #{courseId}
+            </if>
+            <if test="prompt != null  and prompt != ''">
+                and p.prompt = #{prompt}
+            </if>
+            <if test="userId != null">
+                and c.create_by = #{userId}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectBizPromptById" parameterType="Long" resultMap="BizPromptResult">
+        <include refid="selectBizPromptVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertBizPrompt" parameterType="com.esmooc.legion.open.entity.Prompt" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into edu_prompt
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="courseId != null">
+                course_id,
+            </if>
+            <if test="prompt != null">
+                prompt,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="courseId != null">
+                #{courseId},
+            </if>
+            <if test="prompt != null">
+                #{prompt},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateBizPrompt" parameterType="com.esmooc.legion.open.entity.Prompt">
+        update edu_prompt
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="courseId != null">
+                course_id = #{courseId},
+            </if>
+            <if test="prompt != null">
+                prompt = #{prompt},
+            </if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBizPromptById" parameterType="Long">
+        delete from edu_prompt where id = #{id}
+    </delete>
+
+    <delete id="deleteBizPromptByIds" parameterType="String">
+        delete from edu_prompt where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.esmooc.legion.open.mapper.QuestionMapper">
+    <select id="questionListByClazzId" resultType="com.esmooc.legion.open.entity.ExamQuestion">
+        select
+        beq.id,
+        beq.type as 'type',
+        beq.title as 'title',
+        beq.options as 'options',
+        beq.answers as 'answers',
+        beq.clazz_id as 'clazzId',
+        beq.create_time as 'createTime',
+        beq.create_user as 'createUser',
+        beq.analysis as 'analysis',
+        su.nick_name as 'createName',
+        beq.major_id as 'majorId'
+        from
+        edu_exam_question beq
+        left join
+        sys_user su
+        on
+        beq.create_user = su.user_id
+        <where>
+            beq.is_delete = '0'
+            <if test="clazzId != null and clazzId != ''">
+                and
+                beq.clazz_id = #{clazzId}
+            </if>
+            <if test="bankId != null and bankId != ''">
+                and
+                beq.bank_id = #{bankId}
+            </if>
+            <if test="type != null and type != ''">
+                and
+                beq.type = #{type}
+            </if>
+            <if test="title != null and title != ''">
+                and
+                beq.title like concat('%', #{title}, '%')
+            </if>
+            <if test="majorId != null and majorId != ''">
+                and
+                beq.major_id = #{majorId}
+            </if>
+        </where>
+        order by
+        beq.create_time desc
+    </select>
+
+    <update id="deleteQuestionById">
+        update
+        edu_exam_question
+        set
+        is_delete = '1'
+        where
+        id = #{id}
+    </update>
+
+    <insert id="saveQuestion">
+        insert into
+        edu_exam_question
+        set
+        id = #{id},
+        title = #{title},
+        options = #{options},
+        answers = #{answers},
+        clazz_id = #{clazzId},
+        type = #{type},
+        create_time = #{createTime},
+        create_user = #{createUser},
+        analysis = #{analysis},
+        major_id = #{majorId},
+        bank_id = #{bankId}
+    </insert>
+
+    <select id="getQuestionById" resultType="com.esmooc.legion.open.entity.ExamQuestion">
+        select
+        beq.id,
+        beq.type as 'type',
+        beq.title as 'title',
+        beq.options as 'options',
+        beq.answers as 'answers',
+        beq.clazz_id as 'clazzId',
+        beq.analysis as 'analysis',
+        beq.major_id as 'majorId'
+        from
+        edu_exam_question beq
+        where
+        id in
+        <foreach collection="id" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="getQuestion" resultType="com.esmooc.legion.open.entity.ExamQuestion">
+        select
+        beq.id,
+        beq.type as 'type',
+        beq.title as 'title',
+        beq.options as 'options',
+        beq.answers as 'answers',
+        beq.clazz_id as 'clazzId',
+        beq.analysis as 'analysis',
+        beq.major_id as 'majorId'
+        from
+        edu_exam_question beq
+        where
+        id = #{id}
+    </select>
+
+    <update id="putQuestion">
+        update
+        edu_exam_question
+        set
+        title = #{title},
+        options = #{options},
+        answers = #{answers},
+        create_time = #{createTime},
+        type = #{type},
+        analysis = #{analysis}
+        where
+        id = #{id}
+    </update>
+
+    <insert id="createQuestionBank">
+        insert into
+        edu_exam_question_bank
+        set
+        id = #{id},
+        title = #{title},
+        major_id = #{majorId},
+        create_by = #{createBy},
+        create_time = #{createTime},
+        clazz_id = #{clazzId}
+    </insert>
+
+    <select id="selectQuestionBank" resultType="com.esmooc.legion.open.entity.ExamQuestionBank">
+        select
+        beqb.id,
+        beqb.title,
+        beqb.major_id as 'majorId',
+        beqb.create_time as 'createTime',
+        su.nick_name as 'createBy',
+        beqb.clazz_id as 'clazzId'
+        from
+        edu_exam_question_bank beqb
+        left join
+        sys_user su
+        on
+        beqb.create_by = su.user_id
+        where
+        1 = 1
+        <if test="title != null and title != ''">
+            and
+            beqb.title like concat('%', #{title}, '%')
+        </if>
+        <if test="majorId != null and majorId != ''">
+            and
+            <foreach collection="majorId.split(',')" item="item" index="index" open="(" separator="or" close=")">
+                FIND_IN_SET(
+                '${item}',
+                beqb.major_id)
+            </foreach>
+        </if>
+        order by
+        beqb.create_time
+        desc
+    </select>
+
+    <delete id="deleteQuestionBank">
+        delete from
+        edu_exam_question_bank
+        where
+        id
+        in
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteQuestionByBankId">
+        delete from
+        edu_exam_question
+        where
+        bank_id
+        in
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectSysDictData" resultType="com.esmooc.legion.open.entity.SysDictData">
+        select dict_code as 'id', dict_label as 'name', dict_value as 'value'
+        from sys_dict_data
+        where dict_type = 'biz_curricular_subject'
+    </select>
+
+    <select id="countQuestionByClazzId" resultType="java.lang.String">
+        select
+        id
+        from
+        edu_exam_question
+        where
+        clazz_id = #{clazzId}
+        and
+        title = #{title}
+        and
+        type = #{type}
+    </select>
+
+    <select id="countQuestionByBankId" resultType="java.lang.String">
+        select
+        id
+        from
+        edu_exam_question
+        where
+        bank_id = #{bankId}
+        and
+        title = #{title}
+        and
+        type = #{type}
+    </select>
+
+    <select id="getQuestionCountByPaperId" resultType="java.lang.Integer">
+        select
+        count(*)
+        from
+        edu_exam_paper_question
+        where
+        paper_id = #{paperId}
+    </select>
+
+    <select id="getBankById" resultType="com.esmooc.legion.open.entity.ExamQuestionBank">
+        select
+        beqb.id,
+        beqb.title,
+        beqb.major_id as 'majorId',
+        beqb.create_time as 'createTime',
+        beqb.clazz_id as 'clazzId'
+        from
+        edu_exam_question_bank beqb
+        where
+        (beqb.id = #{id}
+        or
+        beqb.clazz_id = #{clazzId})
+    </select>
+
+    <select id="selectQuestionCount" resultType="java.lang.Integer">
+        select
+        count(*)
+        from
+        edu_exam_question
+        where
+        (
+        clazz_id = #{id}
+        or
+        bank_id = #{id}
+        )
+        and
+        type = #{type}
+        and
+        is_delete = '0'
+    </select>
+
+    <select id="getPaperCountByUserId" resultType="java.lang.Integer">
+        select
+        count(*)
+        from
+        edu_exam_paper
+        where
+        user_id = #{id}
+        and
+        (type = '1'
+        or
+        type = '2')
+    </select>
+
+    <select id="selectQuestionCountByMajorId" resultType="java.lang.Integer">
+        select
+        count(*)
+        from
+        edu_exam_question
+        where
+        major_id in
+        <foreach collection="majorIds" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+        and
+        type = #{type}
+        and
+        is_delete = '0'
+    </select>
+
+    <select id="getMajorNameByMajorId" resultType="java.lang.String">
+        select
+        dict_label
+        from
+        sys_dict_data
+        where
+        dict_type = 'biz_curricular_subject'
+        and
+        dict_value = #{id}
+    </select>
+
+    <update id="updateBankById">
+        update
+        edu_exam_question_bank
+        set
+        create_time = #{date}
+        where
+        id = #{id}
+    </update>
+
+    <select id="getBankMajorById" resultType="java.lang.String">
+        select
+        major_id
+        from
+        edu_exam_question_bank
+        where
+        id = #{bankId}
+    </select>
+
+    <select id="getClazzMajorById" resultType="java.lang.String">
+        select
+        subject
+        from
+        edu_course
+        where
+        id = #{clazzId}
+    </select>
+
+    <update id="updateQuestion">
+        update
+        edu_exam_question
+        set
+        title = #{title},
+        options = #{options},
+        answers = #{answers},
+        type = #{type},
+        analysis = #{analysis}
+        where
+        id = #{id}
+    </update>
+
+    <update id="updateCreateTimeByBankId">
+        update
+        edu_exam_question_bank
+        set
+        create_time = #{time}
+        where
+        id = #{bankId}
+    </update>
+
+    <update id="updateCreateTimeByClazzId">
+        update
+        edu_exam_question_bank
+        set
+        create_time = #{time}
+        where
+        clazz_id = #{clazzId}
+    </update>
+
+    <select id="getBankIdByClazzId" resultType="java.lang.String">
+        select
+        id
+        from
+        edu_exam_question_bank
+        where
+        clazz_id = #{clazzId}
+        limit 1
+    </select>
+
+    <select id="getClazzIdByQuestionId" resultType="java.lang.String">
+        select
+        clazz_id
+        from
+        edu_exam_question
+        where
+        id = #{id}
+    </select>
+
+    <select id="getBankIdByQuestionId" resultType="java.lang.String">
+        select
+        bank_id
+        from
+        edu_exam_question
+        where
+        id = #{id}
+    </select>
+</mapper>

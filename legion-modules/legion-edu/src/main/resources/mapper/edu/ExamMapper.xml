@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.esmooc.legion.open.mapper.ExamMapper">
+    <select id="examList" resultType="com.esmooc.legion.open.entity.vo.ExamVO">
+        select
+        be.id,
+        be.title,
+        bepr.rules,
+        bepr.id as 'rulesId',
+        be.create_time as 'createTime',
+        su.nick_name as 'createBy',
+        GROUP_CONCAT(sdd.dict_label) as 'majorName',
+        GROUP_CONCAT(sdd.dict_value) as 'majorId',
+        be.issue
+        from
+        edu_exam be
+        left join
+        edu_exam_paper_rules bepr
+        on
+        be.id = bepr.clazz_id
+        left join
+        sys_user su
+        on
+        su.user_id = be.create_by
+        left join
+        edu_exam_major bem
+        on
+        bem.exam_id = be.id
+        left join
+        sys_dict_data sdd
+        on
+        sdd.dict_value = bem.major_id
+        where
+        sdd.dict_type = 'biz_curricular_subject'
+        and
+        be.is_delete = '0'
+        <if test="title != null and title != ''">
+            and
+            be.title like concat('%', #{title}, '%')
+        </if>
+        group by be.id,
+        be.title,
+        bepr.rules,
+        bepr.id,
+        be.create_time,
+        su.nick_name,
+        be.issue
+        order by be.id,
+        be.title,
+        bepr.rules,
+        bepr.id,
+        be.create_time,
+        su.nick_name,
+        be.issue DESC
+
+
+        <!--     group by
+                 be.id
+             order by
+                 bepr.create_time
+             desc-->
+    </select>
+
+    <insert id="saveBizExam">
+        insert into
+        edu_exam
+        set
+        id = #{id},
+        title = #{title},
+        create_by = #{createBy},
+        create_time = #{createTime},
+        bank_id = #{backId}
+    </insert>
+
+    <insert id="saveBizExamMajor">
+        insert into
+        edu_exam_major
+        set
+        id = #{id},
+        exam_id = #{examId},
+        major_id = #{majorId}
+    </insert>
+
+    <insert id="saveRules">
+        insert into
+        edu_exam_paper_rules
+        set
+        id = #{rulesId},
+        clazz_id = #{id},
+        rules = #{rules},
+        create_by = #{createBy},
+        create_time = #{createTime},
+        bank_id = #{backId}
+    </insert>
+
+    <update id="updateBizExam">
+        update
+        edu_exam
+        set
+        title = #{title},
+        create_time = #{createTime}
+        where
+        id = #{id}
+    </update>
+
+    <delete id="deleteBizExamMajorByExamId">
+        delete from
+        edu_exam_major
+        where
+        exam_id = #{id}
+    </delete>
+
+    <delete id="deleteBizExamRulesByExamId">
+        delete from
+        edu_exam_paper_rules
+        where
+        clazz_id = #{id}
+    </delete>
+
+    <select id="getExamById" resultType="com.esmooc.legion.open.entity.vo.ExamVO">
+        select
+        be.id,
+        be.title,
+        bepr.rules,
+        bepr.id as 'rulesId',
+        be.create_time as 'createTime',
+        su.nick_name as 'createBy',
+        GROUP_CONCAT(sdd.dict_label) as 'majorName',
+        GROUP_CONCAT(sdd.dict_value) as 'majorId'
+        from
+        edu_exam be
+        left join
+        edu_exam_paper_rules bepr
+        on
+        be.id = bepr.clazz_id
+        left join
+        sys_user su
+        on
+        su.user_id = be.create_by
+        left join
+        edu_exam_major bem
+        on
+        bem.exam_id = be.id
+        left join
+        sys_dict_data sdd
+        on
+        sdd.dict_value = bem.major_id
+        where
+        sdd.dict_type = 'biz_curricular_subject'
+        and
+        be.id = #{id}
+    </select>
+
+    <update id="updateBizExamIssue">
+        update
+        edu_exam
+        set
+        issue = #{issue}
+        where
+        id = #{id}
+    </update>
+
+    <update id="deleteBizExam">
+        update
+        edu_exam
+        set
+        is_delete = '1'
+        where
+        id = #{id}
+    </update>
+
+    <delete id="deleteBizExamGradeIsNull">
+        delete from
+        edu_exam_paper
+        where
+        clazz_id = #{id}
+        and
+        grade is null
+    </delete>
+
+    <select id="selectUserIdsByRoleIds" resultType="java.lang.String">
+        select
+        user_id
+        from
+        sys_user_role
+        where
+        role_id
+        in
+        <foreach collection="ids" item="id" separator="," close=")" open="(">
+            #{id}
+        </foreach>
+        group by
+        user_id
+    </select>
+
+    <insert id="insertExamPaper">
+        insert into
+        edu_exam_paper
+        set
+        id = #{id},
+        clazz_id = #{clazzId},
+        user_id = #{userId},
+        create_time = #{time},
+        type = #{type},
+        clazz_name = #{exanName},
+        major_id = #{examMajor}
+    </insert>
+
+    <select id="getExamCountById" resultType="java.lang.Integer">
+        select
+        count(*)
+        from
+        edu_course
+        where
+        id = #{id}
+    </select>
+
+    <update id="updateBizCourse">
+        update
+        edu_course
+        set
+        exam_issue = #{issue}
+        where
+        id = #{id}
+    </update>
+
+    <select id="getExamCountByIdUserId" resultType="java.lang.Integer">
+        select
+        count(*)
+        from
+        edu_exam_paper
+        where
+        user_id = #{userId}
+        and
+        clazz_id = #{id}
+    </select>
+
+    <select id="selectSumGradeById" resultType="java.lang.String">
+        select
+        sum(grade)
+        from
+        edu_exam_paper
+        where
+        clazz_id = #{id}
+    </select>
+
+    <select id="getUserGrade" resultType="java.lang.Integer">
+        select
+        count(*)
+        from
+        edu_exam_paper
+        where
+        clazz_id = #{id}
+        and
+        grade is not null
+    </select>
+
+    <select id="getQuestionCount" resultType="java.lang.Integer">
+        select
+        count(*)
+        from
+        edu_exam
+        where
+        id = #{id}
+    </select>
+
+    <select id="getBankIdCount" resultType="java.lang.Integer">
+        select
+        count(*)
+        from
+        edu_exam_paper_rules
+        where
+        bank_id = #{backId}
+    </select>
+
+    <delete id="deleteBizExamRulesByBankId">
+        delete from
+        edu_exam_paper_rules
+        where
+        bank_id = #{id}
+    </delete>
+
+    <select id="getRules" resultType="java.lang.String">
+        select
+        bepr.rules
+        from
+        edu_exam be
+        left join
+        edu_exam_paper_rules bepr
+        on
+        be.bank_id = bepr.clazz_id
+        where
+        be.id = #{id}
+    </select>
+
+    <select id="getClazzId" resultType="java.lang.String">
+        select
+        id
+        from
+        edu_exam
+        where
+        bank_id = #{id}
+    </select>
+
+    <select id="getClazzIds" resultType="java.lang.String">
+        select
+        clazz_id
+        from
+        edu_exam_question_bank
+        where id = #{id}
+    </select>
+</mapper>

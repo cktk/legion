@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.esmooc.legion.open.mapper.LearningRecordFileMapper">
+    <resultMap type="com.esmooc.legion.open.entity.LearningRecordFile" id="BizLearningRecordFileResult">
+        <result property="courseId" column="course_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="fileId" column="file_id"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="time" column="time"/>
+    </resultMap>
+
+    <sql id="selectBizLearningRecordFileVo">
+        select course_id, user_id, file_id, start_time, end_time, time
+        from edu_learning_record_file
+    </sql>
+
+    <select id="selectBizLearningRecordFileList" parameterType="com.esmooc.legion.open.entity.LearningRecordFile"
+            resultMap="BizLearningRecordFileResult">
+        <include refid="selectBizLearningRecordFileVo"/>
+        <where>
+            <if test="startTime != null">
+                and start_time = #{startTime}
+            </if>
+            <if test="endTime != null">
+                and end_time = #{endTime}
+            </if>
+            <if test="time != null">
+                and time = #{time}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectBizLearningRecordFileById" parameterType="com.esmooc.legion.open.entity.LearningRecordFile"
+            resultMap="BizLearningRecordFileResult">
+        <include refid="selectBizLearningRecordFileVo"/>
+        where course_id = #{courseId} and user_id = #{userId} and file_id = #{fileId}
+    </select>
+
+    <select id="selectBizLearningRecordFileSize" parameterType="com.esmooc.legion.open.entity.LearningRecordFile"
+            resultType="integer">
+        select COUNT(course_id) from edu_learning_record_file
+        where course_id = #{courseId} and user_id = #{userId} and !isNull(end_time)
+    </select>
+
+    <select id="selectBizLearningRecordFileTime" resultType="java.lang.Long">
+        select
+        IF
+        ( `time` , `time` , 0 ) AS `time`
+        from edu_learning_record_file
+        where course_id = #{courseId} and user_id = #{userId} limit 1
+    </select>
+
+    <insert id="insertBizLearningRecordFile" parameterType="com.esmooc.legion.open.entity.LearningRecordFile">
+        insert into edu_learning_record_file
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="courseId != null">
+                course_id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="fileId != null">
+                file_id,
+            </if>
+            <if test="startTime != null">
+                start_time,
+            </if>
+            <if test="endTime != null">
+                end_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="courseId != null">
+                #{courseId},
+            </if>
+            <if test="userId != null">
+                #{userId},
+            </if>
+            <if test="fileId != null">
+                #{fileId},
+            </if>
+            <if test="startTime != null">
+                #{startTime},
+            </if>
+            <if test="endTime != null">
+                #{endTime},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateBizLearningRecordFile" parameterType="com.esmooc.legion.open.entity.LearningRecordFile">
+        update edu_learning_record_file
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="startTime != null">
+                start_time = #{startTime},
+            </if>
+            <if test="endTime != null">
+                end_time = #{endTime},
+            </if>
+        </trim>
+        where course_id = #{courseId} and user_id = #{userId} and file_id = #{fileId}
+    </update>
+
+    <update id="updateBizLearningRecordFileTime" parameterType="com.esmooc.legion.open.entity.LearningRecordFile">
+        update edu_learning_record_file set time = #{time}
+        where course_id = #{courseId} and user_id = #{userId}
+    </update>
+
+    <delete id="deleteBizLearningRecordFileById" parameterType="String">
+        delete from edu_learning_record_file where course_id = #{courseId} and user_id = #{userId}
+    </delete>
+
+    <delete id="deleteBizLearningRecordFileByIds" parameterType="String">
+        delete from edu_learning_record_file where course_id in
+        <foreach item="courseId" collection="array" open="(" separator="," close=")">
+            #{courseId}
+        </foreach>
+        and user_id = #{userId}
+    </delete>
+
+    <select id="selectVideoStudentRanking" resultType="com.esmooc.legion.open.entity.vo.RankingVO">
+        SELECT u.user_id   as userId,
+               u.nick_name as nickName,
+               un.unitName,
+               (
+                       SELECT ROUND(SUM(bc.period), 1) AS time
+        FROM
+                edu_course bc
+                LEFT JOIN edu_learning_record blr
+        ON bc.id = blr.course_id
+                LEFT JOIN sys_user bu ON bu.user_id = blr.user_id
+        WHERE
+                blr.study_type = 2
+          AND bc.course_type = 1
+          AND bu.user_id = u.user_id
+                ) AS period
+        FROM
+                sys_user u
+                LEFT JOIN sys_unit un
+        ON un.id = u.unit
+        WHERE
+                u.del_flag = 0
+          and (
+                SELECT
+                ROUND( SUM ( bc.period )
+            , 1 ) AS time
+                FROM
+                edu_course bc
+                LEFT JOIN edu_learning_record blr ON bc.id = blr.course_id
+                LEFT JOIN sys_user bu ON bu.user_id = blr.user_id
+                WHERE
+                blr.study_type = 2
+          AND bu.user_id = u.user_id
+                ) != 0
+        ORDER BY period DESC
+                LIMIT 10
+    </select>
+
+    <select id="selectOpenStudentRanking" resultType="com.esmooc.legion.open.entity.vo.RankingVO">
+        SELECT DISTINCT u.user_id                                           AS userId,
+                        u.nick_name                                         AS nickName,
+                        un.unitName,
+                        ROUND(
+                                (
+                                        SELECT ROUND(SUM(DISTINCT lrf.time), 1) AS time
+                                        FROM
+                                        edu_learning_record lr
+                                        LEFT JOIN edu_learning_record_file lrf ON lr.course_id = lrf.course_id
+                                        WHERE
+                                        lr.user_id = u.user_id
+                                        AND lrf.user_id = u.user_id
+                                        AND lr.study_type = 2
+                                        AND lrf.time != 0 ),
+                    2
+                ) AS period
+        FROM sys_user u
+                     LEFT JOIN sys_unit un ON un.id = u.unit
+        WHERE u.del_flag = 0
+          AND ROUND(
+                (
+                        SELECT ROUND(SUM(DISTINCT lrf.time), 1) AS time
+                        FROM
+                        edu_learning_record lr
+                        LEFT JOIN edu_learning_record_file lrf ON lr.course_id = lrf.course_id
+                        WHERE
+                        lr.user_id = u.user_id
+                        AND lrf.user_id = u.user_id
+                        AND lr.study_type = 2
+                        AND lrf.time != 0 ),
+                    2
+                ) IS NOT NULL
+        ORDER BY period DESC LIMIT 10
+    </select>
+
+    <select id="selectVideoUnitRanking" resultType="com.esmooc.legion.open.entity.vo.RankingVO">
+        SELECT u.unitName,
+               ROUND((
+                       SELECT ROUND(sum(bc.period), 1) AS time
+                       FROM
+                       edu_course bc
+                       LEFT JOIN edu_learning_record blr ON bc.id = blr.course_id
+                       LEFT JOIN sys_user bu ON bu.user_id = blr.user_id
+                       WHERE
+                       blr.study_type = 2
+                       AND bu.unit = u.id
+                       AND bu.del_flag = 0 ) / ( SELECT COUNT( bu.user_id ) FROM sys_user bu WHERE bu.unit = u.id and bu.del_flag = 0 ), 1 ) AS period
+        FROM sys_unit u
+        WHERE ROUND(
+                      (
+                              SELECT ROUND(sum(bc.period), 1) AS time
+                              FROM
+                              edu_course bc
+                              LEFT JOIN edu_learning_record blr ON bc.id = blr.course_id
+                              LEFT JOIN sys_user bu ON bu.user_id = blr.user_id
+                              WHERE
+                              blr.study_type = 2
+                              AND bu.unit = u.id
+                              AND bu.del_flag = 0 ) / ( SELECT COUNT( bu.user_id ) FROM sys_user bu WHERE bu.unit = u.id AND bu.del_flag = 0 ),
+                1
+            ) IS NOT NULL
+        ORDER BY period DESC LIMIT 10
+    </select>
+
+    <select id="selectOpenUnitRanking" resultType="com.esmooc.legion.open.entity.vo.RankingVO">
+        SELECT u.unitName,
+               ROUND(
+                       (
+                               SELECT sum(DISTINCT blrf.time)
+                               FROM sys_user bu
+                                            LEFT JOIN edu_learning_record blr ON blr.user_id = bu.user_id
+                                            LEFT JOIN edu_learning_record_file blrf ON blrf.user_id = bu.user_id
+                                       AND blr.course_id = blrf.course_id
+                               WHERE bu.del_flag = 0
+                                 AND blr.study_type = 2
+                                 AND bu.unit = u.id
+                                 AND bu.del_flag = 0
+                               ) / (SELECT COUNT(bu.user_id) FROM sys_user bu WHERE bu.del_flag = 0 AND bu.unit = u.id),
+                       2
+                       ) AS period
+        FROM sys_unit u
+        WHERE ROUND(
+                      (
+                              SELECT sum(DISTINCT blrf.time)
+                              FROM sys_user bu
+                                           LEFT JOIN edu_learning_record blr ON blr.user_id = bu.user_id
+                                           LEFT JOIN edu_learning_record_file blrf ON blrf.user_id = bu.user_id
+                                      AND blr.course_id = blrf.course_id
+                              WHERE bu.del_flag = 0
+                                AND blr.study_type = 2
+                                AND bu.unit = u.id
+                                AND bu.del_flag = 0
+                              ) / (SELECT COUNT(bu.user_id) FROM sys_user bu WHERE bu.del_flag = 0 AND bu.unit = u.id),
+                      2
+                      ) IS NOT NULL
+        ORDER BY period DESC LIMIT 10
+    </select>
+</mapper>

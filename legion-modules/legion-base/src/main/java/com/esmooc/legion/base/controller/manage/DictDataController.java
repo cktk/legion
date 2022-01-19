@@ -47,8 +47,8 @@ public class DictDataController {
     @ApiOperation(value = "多条件分页获取用户列表")
     public Result<Page<DictData>> getByCondition(DictData dictData,
                                                  PageVo pageVo) {
-
-        Page<DictData> page = dictDataService.page( PageUtil.initPage(pageVo), Wrappers.query(dictData));
+        dictData.setId(null);
+        Page<DictData> page = dictDataService.page(PageUtil.initPage(pageVo), Wrappers.query(dictData));
         return new ResultUtil<Page<DictData>>().setData(page);
     }
 

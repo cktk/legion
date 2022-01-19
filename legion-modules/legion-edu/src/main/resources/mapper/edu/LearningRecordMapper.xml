@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.esmooc.legion.open.mapper.LearningRecordMapper">
+    <resultMap type="com.esmooc.legion.open.entity.vo.LearningRecordVO" id="LearningRecordResult">
+        <result property="id" column="id"/>
+        <result property="courseTitle" column="course_title"/>
+        <result property="subject" column="subject"/>
+        <result property="speciality" column="speciality"/>
+        <result property="period" column="period"/>
+        <result property="learningScope" column="learning_scope"/>
+        <result property="courseType" column="course_type"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="questionBank" column="questionBank"/>
+        <result property="questions" column="questions"/>
+        <result property="courseId" column="course_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="studyType" column="study_type"/>
+        <result property="userName" column="user_name"/>
+        <result property="year" column="year"/>
+        <result property="examId" column="examId"/>
+        <result property="no_pass_count" column="noPassCount"/>
+    </resultMap>
+
+    <sql id="selectBizLearningRecordVo">
+        SELECT DISTINCT c.id,
+                        c.course_title,
+                        c.`subject`,
+                        c.speciality,
+                        round(c.period, 1) AS                                        period,
+                        c.learning_scope,
+                        c.course_type,
+                        u.nickname        AS                                        create_by,
+                        c.create_time,
+                        ur.nickname       AS                                        update_by,
+                        c.update_time,
+                        c.del_flag,
+                        c.exam_issue       as                                        examIssue,
+                        c.exam,
+                        (SELECT `time`
+                         FROM edu_learning_record_file
+                         WHERE course_id = blrf.course_id AND user_id = blrf.user_id LIMIT 1 ) AS pdfTime,
+                        IF
+                                ( eq.clazz_id is null, 0, 1 ) AS questionBank,
+                        IF
+                                ( c.exam_issue IS NULL, 0, c.exam_issue ) AS questions,
+                        c.id AS course_id,
+                        blr.study_type AS study_type,
+                        usr.nickname as user_name,
+                        blr.no_pass_count,
+                        round(
+                                (
+                                        IF
+                                                (
+                                                ( SELECT grade FROM edu_exam_paper WHERE clazz_id = c.id AND user_id = usr.id AND type = 1 ORDER BY create_time DESC LIMIT 1 ) IS NULL,
+                                                - 1,
+                                                ( SELECT grade FROM edu_exam_paper WHERE clazz_id = c.id AND user_id = usr.id AND type = 1 ORDER BY create_time DESC LIMIT 1 )
+                                                )),
+                                2
+                                ) AS grade,
+                        IF
+                                (
+                                ( SELECT is_pass FROM edu_exam_paper WHERE clazz_id = c.id AND user_id = usr.id AND type = 1 ORDER BY create_time DESC LIMIT 1 ) IS NULL,
+                                0,
+                                ( SELECT is_pass FROM edu_exam_paper WHERE clazz_id = c.id AND user_id = usr.id AND type = 1 ORDER BY create_time DESC LIMIT 1 )
+                                ) AS isPass,
+                        IF
+                                (
+                                ( SELECT id FROM edu_exam_paper WHERE clazz_id = c.id AND user_id = usr.id AND type = 1 ORDER BY create_time DESC LIMIT 1 ) IS NULL,
+                                '',
+                                ( SELECT id FROM edu_exam_paper WHERE clazz_id = c.id AND user_id = usr.id AND type = 1 ORDER BY create_time DESC LIMIT 1 )
+                                ) AS examId
+        FROM
+                edu_course c
+                        LEFT JOIN legion.t_user u
+                        ON u.id = c.create_by
+                        LEFT JOIN legion.t_user ur ON ur.id = c.update_by
+                        LEFT JOIN edu_exam_question eq ON eq.clazz_id = c.id
+                        LEFT JOIN edu_exam_paper_rules eqr ON eqr.clazz_id = c.id
+                        LEFT JOIN edu_learning_record blr ON blr.course_id = c.id
+                        LEFT JOIN edu_learning_record_file blrf ON blrf.course_id = c.id
+                        AND blrf.course_id = blr.course_id
+                        AND blr.user_id = blrf.user_id
+                        LEFT JOIN legion.t_user  usr ON usr.id = blr.user_id
+
+    </sql>
+
+    <select id="selectBizLearningRecordList" parameterType="com.esmooc.legion.open.entity.vo.LearningRecordVO"
+            resultMap="LearningRecordResult">
+        <include refid="selectBizLearningRecordVo"/>
+        <where>
+            c.del_flag = #{learningRecord.delFlag}
+            <if test="learningRecord.courseTitle != null  and learningRecord.courseTitle != ''">
+                and c.course_title like concat('%', #{learningRecord.courseTitle}, '%')
+            </if>
+            <if test="learningRecord.courseType != null  and learningRecord.courseType != ''">
+                and c.course_type = #{learningRecord.courseType}
+            </if>
+            <if test="learningRecord.learningScope != null  and learningRecord.learningScope != ''">
+                and
+                <foreach collection="learningRecord.learningScope.split(',')" item="item" index="index" open="(" separator="or"
+                         close=")">
+                    FIND_IN_SET(
+                    '${item}',
+                    c.learning_scope)
+                </foreach>
+            </if>
+            <if test="learningRecord.userId != null   and learningRecord.userId != ''">
+                and blr.user_id = #{learningRecord.userId}
+            </if>
+            <if test="learningRecord.studyType != null">
+                and blr.study_type = #{learningRecord.studyType}
+            </if>
+            <if test="learningRecord.year != null  and learningRecord.year != ''">
+                and blr.year = #{learningRecord.year}
+            </if>
+            <if test="learningRecord.subject != null  and learningRecord.subject != ''">
+                and
+                <foreach collection="learningRecord.subject.split(',')" item="item" index="index" open="(" separator="or" close=")">
+                    FIND_IN_SET(
+                    '${item}',
+                    c.`subject`)
+                </foreach>
+            </if>
+        </where>
+        ORDER BY c.update_time DESC
+    </select>
+
+    <select id="selectBizLearningRecordById" parameterType="String" resultMap="LearningRecordResult">
+        <include refid="selectBizLearningRecordVo"/>
+        where blr.course_id = #{courseId} and blr.user_id = #{userId} and c.del_flag = 1
+    </select>
+
+    <select id="selectBizLearningRecordCourseId" parameterType="String" resultType="String">
+        select course_id from edu_learning_record where user_id = #{userId}
+    </select>
+
+    <select id="selectPlaybackFileVOList" resultType="com.esmooc.legion.open.entity.vo.PlaybackFileVO">
+        SELECT DISTINCT
+        cf.id,
+        cf.`name`,
+        cf.`file_name` as fileName,
+        IF ( blrf.start_time, IF ( blrf.end_time, 2, 1 ), 0 ) AS learningState
+        FROM
+        edu_course_file cf
+        LEFT JOIN edu_learning_record blr ON blr.course_id = cf.course_id
+        LEFT JOIN edu_learning_record_file blrf ON blrf.course_id = cf.course_id
+        AND cf.id = blrf.file_id
+        AND blrf.course_id = blr.course_id
+        AND blr.user_id = blrf.user_id
+        where cf.course_id = #{courseId}
+        and blr.user_id = #{userId}
+        and cf.file_type = #{fileType}
+        ORDER BY cf.number, cf.create_time DESC
+    </select>
+
+    <select id="getCountNot0" resultType="integer">
+        SELECT
+        COUNT( DISTINCT course_id )
+        FROM
+        edu_learning_record
+        WHERE
+        user_id = #{userId}
+        AND study_type != 0
+    </select>
+
+    <insert id="insertBizLearningRecord" parameterType="com.esmooc.legion.open.entity.LearningRecord">
+        insert into edu_learning_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="courseId != null">
+                course_id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="studyType != null">
+                study_type,
+            </if>
+            <if test="userName != null and userName != ''">
+                user_name,
+            </if>
+            <if test="year != null">
+                year,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="courseId != null">
+                #{courseId},
+            </if>
+            <if test="userId != null">
+                #{userId},
+            </if>
+            <if test="studyType != null">
+                #{studyType},
+            </if>
+            <if test="userName != null and userName != ''">
+                #{userName},
+            </if>
+            <if test="year != null">
+                #{year},
+            </if>
+        </trim>
+    </insert>
+
+    <insert id="insertBizLearningRecords">
+        insert into edu_learning_record
+        (course_id, user_id, study_type, year)
+        values
+        <foreach collection="courseIds" item="courseId" separator=",">
+            (#{courseId}, #{userId}, #{studyType}, #{year})
+        </foreach>
+    </insert>
+
+    <update id="updateBizLearningRecord" parameterType="com.esmooc.legion.open.entity.LearningRecord">
+        update edu_learning_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="studyType != null">
+                study_type = #{studyType},
+            </if>
+            <if test="userName != null and userName != ''">
+                user_name = #{userName},
+            </if>
+            <if test="year != null">
+                year = #{year},
+            </if>
+        </trim>
+        where course_id = #{courseId} and user_id = #{userId}
+    </update>
+
+    <delete id="deleteBizLearningRecordById" parameterType="String">
+        delete from edu_learning_record where course_id = #{courseId} and user_id = #{userId}
+    </delete>
+
+    <delete id="deleteBizLearningRecordByIds" parameterType="String">
+        delete from edu_learning_record where course_id in
+        <foreach item="courseId" collection="array" open="(" separator="," close=")">
+            #{courseId}
+        </foreach>
+        and user_id = #{userId}
+    </delete>
+</mapper>

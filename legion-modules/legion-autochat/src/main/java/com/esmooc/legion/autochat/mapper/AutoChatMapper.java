@@ -17,12 +17,7 @@ public interface AutoChatMapper extends BaseMapper<AutoChat> {
      * @param pageSize
      * @return
      */
-    @Select("SELECT * FROM t_auto_chat WHERE MATCH (title, keywords)" +
-            "        AGAINST (#{question})" +
-            "        ORDER BY sort_order DESC" +
-            "        LIMIT 0,${pageSize}")
     List<AutoChat> find(@Param("question") String question, @Param("pageSize") int pageSize);
 
-    @Select("select * from t_auto_chat where  title =#{title} ;")
     List<AutoChat> findByTitle(String title);
 }

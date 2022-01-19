@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.esmooc.legion.core.mapper.DictionariesMapper">
+    <select id="selectByFieldNameAndFieldValue" parameterType="java.lang.String"
+            resultType="com.esmooc.legion.core.entity.DictionariesEntity">
+        SELECT * FROM t_data_dict
+        <where>
+            <if test="fieldName != null and fieldName !=''">
+                type = #{fieldName}
+            </if>
+            <if test="fieldValue != null and fieldValue !=''">
+                and dict_code = #{fieldValue}
+            </if>
+        </where>
+    </select>
+</mapper>

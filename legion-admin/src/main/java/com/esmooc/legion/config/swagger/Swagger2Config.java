@@ -71,6 +71,7 @@ public class Swagger2Config {
     }
 
 
+
     @Bean
     public Docket createPacsRestApi() {
 
@@ -78,7 +79,7 @@ public class Swagger2Config {
                 new ApiKey("Authorization", "appToken", "header"));
 
         return new Docket(DocumentationType.SWAGGER_2)
-                .groupName("3.Pacs业务接口")
+                .groupName("2.Pacs业务接口")
                 .apiInfo(apiInfo()).select()
                 .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
                 .paths(regex(".*/pacs/.*"))
@@ -88,6 +89,25 @@ public class Swagger2Config {
     }
 
 
+
+    @Bean
+    public Docket createEduRestApi() {
+
+        List<SecurityScheme> securitySchemes = Collections.singletonList(
+                new ApiKey("Authorization", "appToken", "header"));
+
+        return new Docket(DocumentationType.SWAGGER_2)
+                .groupName("3.试题库业务接口")
+                .apiInfo(apiInfo()).select()
+                .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
+                .paths(regex(".*/edu/.*"))
+                .build()
+                .securitySchemes(securitySchemes)
+                .securityContexts(securityContexts());
+    }
+
+
+
     @Bean
     public Docket createAppRestApi() {
 
@@ -95,14 +115,16 @@ public class Swagger2Config {
                 new ApiKey("Authorization", "appToken", "header"));
 
         return new Docket(DocumentationType.SWAGGER_2)
-                .groupName("2业务接口")
+                .groupName("QQQQQ. 所有的")
                 .apiInfo(apiInfo()).select()
                 .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
-                .paths(regex(".*/legion/.*").negate())
+                //.paths(regex(".*").negate())
+                .paths(regex(".*"))
                 .build()
                 .securitySchemes(securitySchemes)
                 .securityContexts(securityContexts());
     }
+
 
 
     private ApiInfo apiInfo() {
