@@ -1,13 +1,13 @@
 package com.esmooc.legion.file.manage.impl;
 
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.esmooc.legion.core.common.constant.SettingConstant;
 import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.core.entity.Setting;
-import com.esmooc.legion.core.service.SettingService;
 import com.esmooc.legion.core.entity.vo.OssSetting;
+import com.esmooc.legion.core.service.SettingService;
 import com.esmooc.legion.file.manage.FileManage;
-import cn.hutool.core.util.StrUtil;
 import io.minio.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

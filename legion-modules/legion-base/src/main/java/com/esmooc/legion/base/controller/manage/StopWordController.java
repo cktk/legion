@@ -2,15 +2,12 @@ package com.esmooc.legion.base.controller.manage;
 
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.esmooc.legion.core.common.utils.PageUtil;
 import com.esmooc.legion.core.common.utils.ResultUtil;
-import com.esmooc.legion.core.common.utils.SearchUtil;
 import com.esmooc.legion.core.common.utils.StopWordsUtil;
 import com.esmooc.legion.core.common.vo.PageVo;
 import com.esmooc.legion.core.common.vo.Result;
-import com.esmooc.legion.core.common.vo.SearchVo;
 import com.esmooc.legion.core.entity.StopWord;
 import com.esmooc.legion.core.service.StopWordService;
 import io.swagger.annotations.Api;
@@ -19,11 +16,8 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 /**
  * @author Daimao

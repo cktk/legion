@@ -12,7 +12,6 @@ import com.esmooc.legion.core.common.vo.Result;
 import com.esmooc.legion.core.entity.Department;
 import com.esmooc.legion.core.entity.DepartmentHeader;
 import com.esmooc.legion.core.entity.User;
-import com.esmooc.legion.core.mapper.DeleteMapper;
 import com.esmooc.legion.core.service.DepartmentHeaderService;
 import com.esmooc.legion.core.service.DepartmentService;
 import com.esmooc.legion.core.service.RoleDepartmentService;

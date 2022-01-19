@@ -1,16 +1,15 @@
 package com.esmooc.legion.file.manage.impl;
 
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
+import com.aliyun.oss.OSSClient;
+import com.aliyun.oss.common.auth.DefaultCredentialProvider;
 import com.esmooc.legion.core.common.constant.SettingConstant;
 import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.core.entity.Setting;
-import com.esmooc.legion.core.service.SettingService;
 import com.esmooc.legion.core.entity.vo.OssSetting;
+import com.esmooc.legion.core.service.SettingService;
 import com.esmooc.legion.file.manage.FileManage;
-import cn.hutool.core.util.StrUtil;
-import com.aliyun.oss.OSSClient;
-import com.aliyun.oss.common.auth.DefaultCredentialProvider;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;

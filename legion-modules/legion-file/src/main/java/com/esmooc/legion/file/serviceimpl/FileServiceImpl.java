@@ -2,8 +2,8 @@ package com.esmooc.legion.file.serviceimpl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
-import com.esmooc.legion.file.mapper.FileMapper;
 import com.esmooc.legion.file.entity.File;
+import com.esmooc.legion.file.mapper.FileMapper;
 import com.esmooc.legion.file.service.FileService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

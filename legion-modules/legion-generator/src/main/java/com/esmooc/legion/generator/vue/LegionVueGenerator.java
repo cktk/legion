@@ -1,13 +1,13 @@
 package com.esmooc.legion.generator.vue;
 
+import cn.hutool.core.util.StrUtil;
 import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.core.common.limit.RedisRaterLimiter;
 import com.esmooc.legion.core.common.utils.IpInfoUtil;
 import com.esmooc.legion.core.common.utils.ResultUtil;
 import com.esmooc.legion.core.common.vo.Result;
-import com.esmooc.legion.generator.utils.GenerUtils;
 import com.esmooc.legion.generator.bean.Field;
-import cn.hutool.core.util.StrUtil;
+import com.esmooc.legion.generator.utils.GenerUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;

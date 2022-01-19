@@ -1,14 +1,10 @@
 package com.esmooc.legion.base.controller.manage;
 
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.esmooc.legion.base.entity.DictData;
 import com.esmooc.legion.core.common.utils.PageUtil;
 import com.esmooc.legion.core.common.utils.ResultUtil;
 import com.esmooc.legion.core.common.utils.SearchUtil;
-import com.esmooc.legion.core.common.vo.PageVo;
 import com.esmooc.legion.core.common.vo.Result;
-import com.esmooc.legion.core.common.vo.SearchVo;
 import com.esmooc.legion.core.entity.Log;
 import com.esmooc.legion.core.service.LogService;
 import io.swagger.annotations.Api;
@@ -21,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 
 /**

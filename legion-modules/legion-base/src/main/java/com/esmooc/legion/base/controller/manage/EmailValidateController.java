@@ -1,5 +1,6 @@
 package com.esmooc.legion.base.controller.manage;
 
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.constant.SettingConstant;
@@ -10,18 +11,15 @@ import com.esmooc.legion.core.common.vo.EmailValidate;
 import com.esmooc.legion.core.common.vo.Result;
 import com.esmooc.legion.core.entity.Setting;
 import com.esmooc.legion.core.entity.User;
+import com.esmooc.legion.core.entity.vo.OtherSetting;
 import com.esmooc.legion.core.service.SettingService;
 import com.esmooc.legion.core.service.UserService;
-import com.esmooc.legion.core.entity.vo.OtherSetting;
-import cn.hutool.core.util.StrUtil;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;

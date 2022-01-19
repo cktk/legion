@@ -1,10 +1,7 @@
 package com.esmooc.legion.social.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.esmooc.legion.core.common.vo.SearchVo;
 import com.esmooc.legion.social.entity.Social;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 

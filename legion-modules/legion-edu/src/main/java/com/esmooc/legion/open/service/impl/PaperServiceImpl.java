@@ -13,9 +13,9 @@ import com.esmooc.legion.open.entity.SubmitPaper;
 import com.esmooc.legion.open.mapper.PaperMapper;
 import com.esmooc.legion.open.mapper.PaperRulesMapper;
 import com.esmooc.legion.open.mapper.QuestionMapper;
+import com.esmooc.legion.open.service.LearningRecordService;
 import com.esmooc.legion.open.service.PaperRulesService;
 import com.esmooc.legion.open.service.PaperService;
-import com.esmooc.legion.open.service.LearningRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

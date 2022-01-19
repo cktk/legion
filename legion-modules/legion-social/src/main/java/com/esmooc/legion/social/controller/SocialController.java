@@ -6,17 +6,14 @@ import com.esmooc.legion.core.common.utils.ResultUtil;
 import com.esmooc.legion.core.common.vo.PageVo;
 import com.esmooc.legion.core.common.vo.Result;
 import com.esmooc.legion.core.common.vo.SearchVo;
-import com.esmooc.legion.core.entity.User;
 import com.esmooc.legion.core.service.UserService;
 import com.esmooc.legion.social.entity.Social;
-import com.esmooc.legion.social.service.SocialService;
 import com.esmooc.legion.social.entity.vo.RelateUserInfo;
-import cn.hutool.core.util.StrUtil;
+import com.esmooc.legion.social.service.SocialService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 

@@ -1,12 +1,13 @@
 package com.esmooc.legion.base.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.esmooc.legion.core.base.BaseEntity;
 import com.esmooc.legion.core.common.constant.CommonConstant;
-import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
 import java.math.BigDecimal;
 
 /**

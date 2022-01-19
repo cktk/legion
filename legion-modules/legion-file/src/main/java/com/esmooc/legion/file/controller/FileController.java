@@ -1,7 +1,8 @@
 package com.esmooc.legion.file.controller;
 
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.constant.SettingConstant;
 import com.esmooc.legion.core.common.exception.LegionException;
@@ -11,26 +12,22 @@ import com.esmooc.legion.core.common.utils.ResultUtil;
 import com.esmooc.legion.core.common.utils.SearchUtil;
 import com.esmooc.legion.core.common.vo.PageVo;
 import com.esmooc.legion.core.common.vo.Result;
-import com.esmooc.legion.core.common.vo.SearchVo;
 import com.esmooc.legion.core.entity.User;
+import com.esmooc.legion.core.entity.vo.OssSetting;
 import com.esmooc.legion.core.service.SettingService;
 import com.esmooc.legion.core.service.UserService;
-import com.esmooc.legion.core.entity.vo.OssSetting;
 import com.esmooc.legion.file.entity.File;
 import com.esmooc.legion.file.manage.FileManageFactory;
 import com.esmooc.legion.file.manage.impl.LocalFileManage;
 import com.esmooc.legion.file.service.FileService;
-import cn.hutool.core.util.StrUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -70,7 +67,7 @@ public class FileController {
 
 
         OssSetting os =  JSONUtil.toBean(settingService.getById(SettingConstant.LOCAL_OSS).getValue(), OssSetting.class);
-        
+
         Map<String, String> map = new HashMap<>(16);
 
 

@@ -2,9 +2,6 @@ package com.esmooc.legion.autochat.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.esmooc.legion.autochat.entity.AutoChat;
-import com.esmooc.legion.core.common.vo.SearchVo;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 /**
  * 问答助手客服接口

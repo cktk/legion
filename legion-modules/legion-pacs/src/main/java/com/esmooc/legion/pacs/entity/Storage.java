@@ -1,27 +1,23 @@
 package com.esmooc.legion.pacs.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.esmooc.legion.core.base.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 
-/** 
-* @ClassName: Storage
-* @version 1.0 
-* @author Daimao
-* @Description:
-* @date 2021年12月21日15点54分
-*
-**/
+/**
+ * @ClassName: Storage
+ * @version 1.0
+ * @author Daimao
+ * @Description:
+ * @date 2021年12月21日15点54分
+ **/
 /**
     * 存储
     */

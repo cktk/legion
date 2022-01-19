@@ -1,6 +1,5 @@
 package com.esmooc.legion.pacs.controller;
 
-import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.http.HttpUtil;
 

@@ -1,18 +1,17 @@
 package com.esmooc.legion.base.controller.common;
 
-import cn.hutool.json.JSONUtil;
-import com.esmooc.legion.core.common.constant.SettingConstant;
-import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.digest.DigestAlgorithm;
 import cn.hutool.crypto.digest.Digester;
 import cn.hutool.http.HttpUtil;
+import cn.hutool.json.JSONUtil;
+import com.esmooc.legion.core.common.constant.SettingConstant;
+import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;

@@ -1,5 +1,7 @@
 package com.esmooc.legion.open.controller;
 
+import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.esmooc.legion.core.common.annotation.SystemLog;
 import com.esmooc.legion.core.common.constant.OAuthConstant;
@@ -15,10 +17,8 @@ import com.esmooc.legion.core.config.security.SecurityUserDetails;
 import com.esmooc.legion.core.entity.User;
 import com.esmooc.legion.core.service.UserService;
 import com.esmooc.legion.open.entity.Client;
-import com.esmooc.legion.open.service.ClientService;
 import com.esmooc.legion.open.entity.vo.Oauth2TokenInfo;
-import cn.hutool.core.util.IdUtil;
-import cn.hutool.core.util.StrUtil;
+import com.esmooc.legion.open.service.ClientService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;

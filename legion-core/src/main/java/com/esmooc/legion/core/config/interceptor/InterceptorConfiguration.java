@@ -3,7 +3,6 @@ package com.esmooc.legion.core.config.interceptor;
 import com.esmooc.legion.core.config.properties.IgnoredUrlsProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 

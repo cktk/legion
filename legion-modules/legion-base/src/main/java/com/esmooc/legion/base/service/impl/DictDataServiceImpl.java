@@ -1,8 +1,8 @@
 package com.esmooc.legion.base.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.esmooc.legion.base.mapper.DictDataMapper;
 import com.esmooc.legion.base.entity.DictData;
+import com.esmooc.legion.base.mapper.DictDataMapper;
 import com.esmooc.legion.base.service.DictDataService;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import lombok.extern.slf4j.Slf4j;
