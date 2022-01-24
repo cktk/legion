@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
 
 /**
@@ -21,15 +22,16 @@ import javax.validation.ConstraintViolationException;
 public class RestCtrlExceptionHandler {
 
     @ExceptionHandler(LegionException.class)
-    @ResponseStatus(value = HttpStatus.OK)
-    public Result<Object> handleLegionException(LegionException e) {
-
+    @ResponseStatus(HttpStatus.OK)
+    public Result<Object> handleLegionException(LegionException e, HttpServletResponse response) {
         String errorMsg = "Legion exception";
+        int errorCode = 500;
         if (e != null) {
             errorMsg = e.getMsg();
+            errorCode=  e.getCode();
             log.error(e.toString(), e);
         }
-        return new ResultUtil<>().setErrorMsg(500, errorMsg);
+        return ResultUtil.error(errorCode, errorMsg);
     }
 
     @ExceptionHandler(BindException.class)
@@ -46,7 +48,7 @@ public class RestCtrlExceptionHandler {
         if (result.length() > 0) {
             result = result.substring(0, result.length() - 1);
         }
-        return new ResultUtil<>().setErrorMsg(500, result);
+        return ResultUtil.error(500, result);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -63,7 +65,7 @@ public class RestCtrlExceptionHandler {
         if (result.length() > 0) {
             result = result.substring(0, result.length() - 1);
         }
-        return new ResultUtil<>().setErrorMsg(500, result);
+        return ResultUtil.error(500, result);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
@@ -80,7 +82,7 @@ public class RestCtrlExceptionHandler {
         if (result.length() > 0) {
             result = result.substring(0, result.length() - 1);
         }
-        return new ResultUtil<>().setErrorMsg(500, result);
+        return ResultUtil.error(500, result);
     }
 
     @ExceptionHandler(LimitException.class)
@@ -92,7 +94,7 @@ public class RestCtrlExceptionHandler {
             errorMsg = e.getMsg();
             log.warn(e.getMsg(), e);
         }
-        return new ResultUtil<>().setErrorMsg(500, errorMsg);
+        return ResultUtil.error(500, errorMsg);
     }
 
     @ExceptionHandler(CaptchaException.class)
@@ -104,7 +106,7 @@ public class RestCtrlExceptionHandler {
             errorMsg = e.getMsg();
             log.warn(e.getMsg(), e);
         }
-        return new ResultUtil<>().setErrorMsg(500, errorMsg);
+        return ResultUtil.error(500, errorMsg);
     }
 
     @ExceptionHandler(AccessDeniedException.class)
@@ -116,7 +118,7 @@ public class RestCtrlExceptionHandler {
             errorMsg = e.getMessage();
             log.warn(e.getMessage(), e);
         }
-        return new ResultUtil<>().setErrorMsg(500, errorMsg);
+        return ResultUtil.error(500, errorMsg);
     }
 
     @ExceptionHandler(Exception.class)
@@ -128,6 +130,6 @@ public class RestCtrlExceptionHandler {
             errorMsg = e.getMessage();
             log.error(e.toString(), e);
         }
-        return new ResultUtil<>().setErrorMsg(500, errorMsg);
+        return ResultUtil.error(500, errorMsg);
     }
 }

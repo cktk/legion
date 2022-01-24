@@ -2,8 +2,8 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.esmooc.legion.open.mapper.MyExamMapper">
-    <select id="list" resultType="com.esmooc.legion.open.entity.MyExam">
+<mapper namespace="com.esmooc.legion.edu.mapper.MyExamMapper">
+    <select id="list" resultType="com.esmooc.legion.edu.entity.MyExam">
         select *
         from (
         select bep.id,
@@ -79,7 +79,7 @@
         and (type = '1' or type = '2')
     </select>
 
-    <select id="getLaseTwoTimes" resultType="com.esmooc.legion.open.entity.MyExam">
+    <select id="getLaseTwoTimes" resultType="com.esmooc.legion.edu.entity.MyExam">
         select *
         from (
         select  bep.id                                                              as 'id',

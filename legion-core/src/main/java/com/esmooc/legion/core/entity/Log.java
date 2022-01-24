@@ -32,7 +32,7 @@ public class Log extends BaseEntity {
 
     @TableField(value = "log_type")
     @ApiModelProperty(value = "日志类型 0登陆日志 1操作日志")
-    private Integer logType;
+    private String logType;
 
     @TableField(value = "request_url")
     @ApiModelProperty(value = "请求路径")

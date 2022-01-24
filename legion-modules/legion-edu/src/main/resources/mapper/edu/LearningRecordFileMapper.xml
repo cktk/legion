@@ -2,8 +2,8 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.esmooc.legion.open.mapper.LearningRecordFileMapper">
-    <resultMap type="com.esmooc.legion.open.entity.LearningRecordFile" id="BizLearningRecordFileResult">
+<mapper namespace="com.esmooc.legion.edu.mapper.LearningRecordFileMapper">
+    <resultMap type="com.esmooc.legion.edu.entity.LearningRecordFile" id="BizLearningRecordFileResult">
         <result property="courseId" column="course_id"/>
         <result property="userId" column="user_id"/>
         <result property="fileId" column="file_id"/>
@@ -17,7 +17,7 @@
         from edu_learning_record_file
     </sql>
 
-    <select id="selectBizLearningRecordFileList" parameterType="com.esmooc.legion.open.entity.LearningRecordFile"
+    <select id="selectBizLearningRecordFileList" parameterType="com.esmooc.legion.edu.entity.LearningRecordFile"
             resultMap="BizLearningRecordFileResult">
         <include refid="selectBizLearningRecordFileVo"/>
         <where>
@@ -33,13 +33,13 @@
         </where>
     </select>
 
-    <select id="selectBizLearningRecordFileById" parameterType="com.esmooc.legion.open.entity.LearningRecordFile"
+    <select id="selectBizLearningRecordFileById" parameterType="com.esmooc.legion.edu.entity.LearningRecordFile"
             resultMap="BizLearningRecordFileResult">
         <include refid="selectBizLearningRecordFileVo"/>
         where course_id = #{courseId} and user_id = #{userId} and file_id = #{fileId}
     </select>
 
-    <select id="selectBizLearningRecordFileSize" parameterType="com.esmooc.legion.open.entity.LearningRecordFile"
+    <select id="selectBizLearningRecordFileSize" parameterType="com.esmooc.legion.edu.entity.LearningRecordFile"
             resultType="integer">
         select COUNT(course_id) from edu_learning_record_file
         where course_id = #{courseId} and user_id = #{userId} and !isNull(end_time)
@@ -53,7 +53,7 @@
         where course_id = #{courseId} and user_id = #{userId} limit 1
     </select>
 
-    <insert id="insertBizLearningRecordFile" parameterType="com.esmooc.legion.open.entity.LearningRecordFile">
+    <insert id="insertBizLearningRecordFile" parameterType="com.esmooc.legion.edu.entity.LearningRecordFile">
         insert into edu_learning_record_file
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="courseId != null">
@@ -91,7 +91,7 @@
         </trim>
     </insert>
 
-    <update id="updateBizLearningRecordFile" parameterType="com.esmooc.legion.open.entity.LearningRecordFile">
+    <update id="updateBizLearningRecordFile" parameterType="com.esmooc.legion.edu.entity.LearningRecordFile">
         update edu_learning_record_file
         <trim prefix="SET" suffixOverrides=",">
             <if test="startTime != null">
@@ -104,7 +104,7 @@
         where course_id = #{courseId} and user_id = #{userId} and file_id = #{fileId}
     </update>
 
-    <update id="updateBizLearningRecordFileTime" parameterType="com.esmooc.legion.open.entity.LearningRecordFile">
+    <update id="updateBizLearningRecordFileTime" parameterType="com.esmooc.legion.edu.entity.LearningRecordFile">
         update edu_learning_record_file set time = #{time}
         where course_id = #{courseId} and user_id = #{userId}
     </update>
@@ -121,7 +121,7 @@
         and user_id = #{userId}
     </delete>
 
-    <select id="selectVideoStudentRanking" resultType="com.esmooc.legion.open.entity.vo.RankingVO">
+    <select id="selectVideoStudentRanking" resultType="com.esmooc.legion.edu.entity.vo.RankingVO">
         SELECT u.user_id   as userId,
                u.nick_name as nickName,
                un.unitName,
@@ -159,7 +159,7 @@
                 LIMIT 10
     </select>
 
-    <select id="selectOpenStudentRanking" resultType="com.esmooc.legion.open.entity.vo.RankingVO">
+    <select id="selectOpenStudentRanking" resultType="com.esmooc.legion.edu.entity.vo.RankingVO">
         SELECT DISTINCT u.user_id                                           AS userId,
                         u.nick_name                                         AS nickName,
                         un.unitName,
@@ -195,7 +195,7 @@
         ORDER BY period DESC LIMIT 10
     </select>
 
-    <select id="selectVideoUnitRanking" resultType="com.esmooc.legion.open.entity.vo.RankingVO">
+    <select id="selectVideoUnitRanking" resultType="com.esmooc.legion.edu.entity.vo.RankingVO">
         SELECT u.unitName,
                ROUND((
                        SELECT ROUND(sum(bc.period), 1) AS time
@@ -224,7 +224,7 @@
         ORDER BY period DESC LIMIT 10
     </select>
 
-    <select id="selectOpenUnitRanking" resultType="com.esmooc.legion.open.entity.vo.RankingVO">
+    <select id="selectOpenUnitRanking" resultType="com.esmooc.legion.edu.entity.vo.RankingVO">
         SELECT u.unitName,
                ROUND(
                        (

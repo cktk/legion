@@ -33,7 +33,6 @@ public class PageUtil {
         PageVo pageVo = new PageVo();
         pageVo.setPageNumber((Integer) map.get("pageNumber"));
         pageVo.setPageSize((Integer) map.get("pageSize"));
-
         String sort = (String) map.get("sort");
         if (StrUtil.isNotEmpty(sort)) {
             pageVo.setSort(sort);
@@ -61,10 +60,25 @@ public class PageUtil {
     public static Page initPage(PageVo page) {
 
         Page p = null;
-        int pageNumber = page.getPageNumber();
-        int pageSize = page.getPageSize();
-        String sort = page.getSort();
-        String order = page.getOrder();
+
+
+        int pageNumber = 1;
+        int pageSize = 10;
+        String sort = null;
+        String order = null;
+        try {
+            pageNumber = page.getPageNumber();
+            pageSize = page.getPageSize();
+            sort = page.getSort();
+            order = page.getOrder();
+        } catch (Exception e) {
+            page = new PageVo();
+            pageNumber = page.getPageNumber();
+            pageSize = page.getPageSize();
+            sort = page.getSort();
+            order = page.getOrder();
+        }
+
 
         SQLInject(sort);
 

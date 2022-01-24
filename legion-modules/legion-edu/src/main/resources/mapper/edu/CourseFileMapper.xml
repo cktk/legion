@@ -2,8 +2,8 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.esmooc.legion.open.mapper.CourseFileMapper">
-    <resultMap type="com.esmooc.legion.open.entity.CourseFile" id="BizCourseFileResult">
+<mapper namespace="com.esmooc.legion.edu.mapper.CourseFileMapper">
+    <resultMap type="com.esmooc.legion.edu.entity.CourseFile" id="BizCourseFileResult">
         <result property="id" column="id"/>
         <result property="fileName" column="file_name"/>
         <result property="fileType" column="file_type"/>
@@ -28,7 +28,7 @@
         from edu_course_file
     </sql>
 
-    <select id="selectBizCourseFileList" parameterType="com.esmooc.legion.open.entity.CourseFile"
+    <select id="selectBizCourseFileList" parameterType="com.esmooc.legion.edu.entity.CourseFile"
             resultMap="BizCourseFileResult">
         <include refid="selectBizCourseFileVo"/>
         <where>
@@ -73,7 +73,7 @@
         </where>
     </select>
 
-    <insert id="insertBizCourseFile" parameterType="com.esmooc.legion.open.entity.CourseFile">
+    <insert id="insertBizCourseFile" parameterType="com.esmooc.legion.edu.entity.CourseFile">
         insert into edu_course_file
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -135,7 +135,7 @@
         </trim>
     </insert>
 
-    <update id="updateBizCourseFile" parameterType="com.esmooc.legion.open.entity.CourseFile">
+    <update id="updateBizCourseFile" parameterType="com.esmooc.legion.edu.entity.CourseFile">
         update edu_course_file
         <trim prefix="SET" suffixOverrides=",">
             <if test="fileName != null">

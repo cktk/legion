@@ -4,9 +4,8 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.constant.SettingConstant;
-import com.esmooc.legion.core.common.utils.Base64DecodeMultipartFile;
-import com.esmooc.legion.core.common.utils.CommonUtil;
-import com.esmooc.legion.core.common.utils.ResultUtil;
+import com.esmooc.legion.core.common.limit.RedisRaterLimiter;
+import com.esmooc.legion.core.common.utils.*;
 import com.esmooc.legion.core.common.vo.Result;
 import com.esmooc.legion.core.entity.Setting;
 import com.esmooc.legion.core.entity.vo.OssSetting;
@@ -14,6 +13,7 @@ import com.esmooc.legion.core.service.SettingService;
 import com.esmooc.legion.file.entity.File;
 import com.esmooc.legion.file.manage.FileManageFactory;
 import com.esmooc.legion.file.service.FileService;
+import com.google.gson.Gson;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -41,8 +41,13 @@ import java.util.Objects;
 public class UploadController {
 
     @Value("${legion.maxUploadFile}")
-    private Integer maxUploadFile;
+    private Long maxUploadFile;
 
+    @Autowired
+    private RedisRaterLimiter redisRaterLimiter;
+
+    @Autowired
+    private IpInfoUtil ipInfoUtil;
 
     @Autowired
     private FileManageFactory fileManageFactory;
@@ -52,6 +57,8 @@ public class UploadController {
 
     @Autowired
     private FileService fileService;
+    @Autowired
+    private SecurityUtil securityUtil;
 
     @RequestMapping(value = "/file", method = RequestMethod.POST)
     @ApiOperation(value = "文件上传")
@@ -59,18 +66,19 @@ public class UploadController {
                                  @RequestParam(required = false) String base64,
                                  HttpServletRequest request) {
 
-        if (file.getSize() > maxUploadFile * 1024 * 1024) return ResultUtil.error("文件大小过大，不能超过" + maxUploadFile + "MB");
-
-
-        if (StrUtil.isBlank(base64)) return ResultUtil.error(501, "文件为空");
-
+        if (file.getSize() > maxUploadFile * 1024 *1024 ) {
+            return ResultUtil.error("文件大小过大，不能超过" + maxUploadFile + "MB");
+        }
         Setting setting = settingService.getById(SettingConstant.OSS_USED);
         if (setting == null || StrUtil.isBlank(setting.getValue())) {
             return ResultUtil.error(501, "您还未配置OSS存储服务");
         }
 
 
-        file = Base64DecodeMultipartFile.base64Convert(base64);
+        if (StrUtil.isNotBlank(base64)) {
+            // base64上传
+            file = Base64DecodeMultipartFile.base64Convert(base64);
+        }
         String result = "";
         String fKey = CommonUtil.renamePic(Objects.requireNonNull(file.getOriginalFilename()));
         File f = new File();
@@ -80,7 +88,7 @@ public class UploadController {
             result = fileManageFactory.getFileManage(null).inputStreamUpload(inputStream, fKey, file);
             // 保存数据信息至数据库
             f.setLocation(getType(setting.getValue())).setName(file.getOriginalFilename()).setSize(file.getSize())
-                    .setType(file.getContentType()).setFKey(fKey).setUrl(result);
+                    .setType(file.getContentType()).setFKey(fKey).setUrl(result).setNickname(securityUtil.getCurrUser().getNickname());
             fileService.save(f);
         } catch (Exception e) {
             log.error(e.toString());

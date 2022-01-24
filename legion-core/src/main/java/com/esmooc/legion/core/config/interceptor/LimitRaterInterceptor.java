@@ -50,7 +50,7 @@ public class LimitRaterInterceptor implements HandlerInterceptor {
     public OtherSetting getOtherSetting() {
 
         Setting setting = settingService.getById(SettingConstant.OTHER_SETTING);
-        if (StrUtil.isBlank(setting.getValue())) {
+        if (setting==null || StrUtil.isBlank(setting.getValue())) {
             return null;
         }
         return JSONUtil.toBean(setting.getValue(), OtherSetting.class);

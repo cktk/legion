@@ -1,6 +1,6 @@
 
 ${AnsiColor.BRIGHT_BLUE}
-山东知秋软件科技有限公司
+          呆猫
 ${AnsiColor.BRIGHT_GREEN}
 TSMDC  Boot Version: 1.0.0
 Spring Boot Version: ${spring-boot.version}${spring-boot.formatted-version}
@@ -12,7 +12,7 @@ ${AnsiColor.BRIGHT_YELLOW}
 |'''                   ._   _______________=---------"""""""
 |                ..--''|   l L |_l   |
 |          ..--''      .  /-___j '   '
-|    ..--''           /  ,       '   '           黄金 - AK-47
+|    ..--''           /  ,       '   '           黄金  AK-47
 |--''                /           `    \
                      L__'         \    -
                                    -    '-.

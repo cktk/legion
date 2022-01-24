@@ -23,5 +23,5 @@ public @interface SystemLog {
      * 日志类型
      * @return
      */
-    LogType type() default LogType.OPERATION;
+    String type() default LogType.OPERATION;
 }

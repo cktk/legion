@@ -49,7 +49,7 @@ public class DictDataController {
                                                  PageVo pageVo) {
         dictData.setId(null);
         Page<DictData> page = dictDataService.page(PageUtil.initPage(pageVo), Wrappers.query(dictData));
-        return new ResultUtil<Page<DictData>>().setData(page);
+        return ResultUtil.data(page);
     }
 
     @RequestMapping(value = "/getByType/{type}", method = RequestMethod.GET)
@@ -73,6 +73,7 @@ public class DictDataController {
         if (dict == null) {
             return ResultUtil.error("字典类型id不存在");
         }
+        dictData.setType(dict.getType());
         dictDataService.save(dictData);
         // 删除缓存
         redisTemplate.delete("dictData::" + dict.getType());
@@ -101,8 +102,8 @@ public class DictDataController {
             }
             Dict dict = dictService.getById(dictData.getDictId());
             dictDataService.removeById(id);
-            // 删除缓存
-            redisTemplate.delete("dictData::" + dict.getType());
+            // 删除缓存 TODO 缓存删除会报空指针
+            redisTemplate.delete("dictData::");
         }
         return ResultUtil.success("批量通过id删除数据成功");
     }

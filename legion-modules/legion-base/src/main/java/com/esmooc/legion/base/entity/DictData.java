@@ -25,6 +25,8 @@ public class DictData extends BaseEntity {
 
     @ApiModelProperty(value = "数据值")
     private String value;
+    @ApiModelProperty(value = "字典类型-冗余")
+    private String type;
 
     @TableField(value = "sort_order")
     @ApiModelProperty(value = "排序值")

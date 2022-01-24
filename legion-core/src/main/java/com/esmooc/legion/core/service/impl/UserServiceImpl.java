@@ -2,6 +2,7 @@ package com.esmooc.legion.core.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.esmooc.legion.core.common.constant.CommonConstant;
+import com.esmooc.legion.core.entity.DTO.UserDTO;
 import com.esmooc.legion.core.entity.Permission;
 import com.esmooc.legion.core.entity.Role;
 import com.esmooc.legion.core.entity.User;
@@ -97,5 +98,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public void updateDepartmentTitle(String departmentId, String departmentTitle) {
 
         userMapper.updateDepartmentTitle(departmentId, departmentTitle);
+    }
+
+
+    @Override
+    public List<User> bySqlPage(UserDTO user, Integer pageSize, Integer start) {
+        return userMapper.bySqlPage(user,pageSize,start);
     }
 }

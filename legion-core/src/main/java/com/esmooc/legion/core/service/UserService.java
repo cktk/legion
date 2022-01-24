@@ -1,7 +1,9 @@
 package com.esmooc.legion.core.service;
 
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.esmooc.legion.core.entity.DTO.UserDTO;
 import com.esmooc.legion.core.entity.User;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
@@ -59,4 +61,7 @@ public interface UserService extends IService<User> {
      * @param departmentTitle
      */
     void updateDepartmentTitle(String departmentId, String departmentTitle);
+
+    List<User> bySqlPage(UserDTO user, Integer pageSize, Integer start);
+
 }

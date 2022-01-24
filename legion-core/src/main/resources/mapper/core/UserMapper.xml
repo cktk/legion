@@ -29,8 +29,15 @@
   </resultMap>
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
-    id, create_by, create_time, update_by, update_time, address, avatar, description, 
-    email, mobile, nickname, `password`, sex, `status`, `type`, username, del_flag, department_id, 
+    id, create_by, create_time, update_by, update_time, address, avatar, description,
+    email, mobile, nickname, `password`, sex, `status`, `type`, username, del_flag, department_id,
     street, pass_strength, department_title, birth
   </sql>
+
+  <select id="bySqlPage" resultType="com.esmooc.legion.core.entity.User">
+    SELECT *
+    FROM legion.t_user
+     LIMIT  #{pageSize} OFFSET #{start}
+
+    </select>
 </mapper>

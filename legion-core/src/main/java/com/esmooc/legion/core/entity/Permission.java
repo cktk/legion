@@ -92,10 +92,6 @@ public class Permission extends BaseEntity {
     private Integer status = CommonConstant.STATUS_NORMAL;
 
 
-
-
-
-
     @TableField(exist = false)
     @ApiModelProperty(value = "子菜单/权限")
     private List<Permission> children;

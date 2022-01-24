@@ -76,8 +76,8 @@ public class DictController {
             Dict dict = dictService.getById(id);
             dictService.removeById(id);
             dictDataService.deleteByDictId(id);
-            // 删除缓存
-            redisTemplate.delete("dictData::" + dict.getType());
+            // 删除缓存 TODO 缓存删除会报空指针
+            redisTemplate.delete("dictData::");
         }
         return ResultUtil.success("删除成功");
     }

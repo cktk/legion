@@ -41,7 +41,7 @@ public class MemberController {
 
     @PostMapping("/quickLogin")
     @ApiOperation(value = "手机号快捷登录/注册")
-    @SystemLog(description = "快捷登录", type = LogType.MEMBER_LOGIN)
+    @SystemLog(description = "快捷登录", type = LogType.OPERATION)
     public Result<Object> quickLogin(@RequestParam String mobile,
                                      @RequestParam(required = false) String inviteCode,
                                      @RequestParam(required = false, defaultValue = "-1") Integer platform) {

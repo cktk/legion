@@ -2,8 +2,8 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.esmooc.legion.open.mapper.LearningRecordMapper">
-    <resultMap type="com.esmooc.legion.open.entity.vo.LearningRecordVO" id="LearningRecordResult">
+<mapper namespace="com.esmooc.legion.edu.mapper.LearningRecordMapper">
+    <resultMap type="com.esmooc.legion.edu.entity.vo.LearningRecordVO" id="LearningRecordResult">
         <result property="id" column="id"/>
         <result property="courseTitle" column="course_title"/>
         <result property="subject" column="subject"/>
@@ -90,7 +90,7 @@
 
     </sql>
 
-    <select id="selectBizLearningRecordList" parameterType="com.esmooc.legion.open.entity.vo.LearningRecordVO"
+    <select id="selectBizLearningRecordList" parameterType="com.esmooc.legion.edu.entity.vo.LearningRecordVO"
             resultMap="LearningRecordResult">
         <include refid="selectBizLearningRecordVo"/>
         <where>
@@ -140,7 +140,7 @@
         select course_id from edu_learning_record where user_id = #{userId}
     </select>
 
-    <select id="selectPlaybackFileVOList" resultType="com.esmooc.legion.open.entity.vo.PlaybackFileVO">
+    <select id="selectPlaybackFileVOList" resultType="com.esmooc.legion.edu.entity.vo.PlaybackFileVO">
         SELECT DISTINCT
         cf.id,
         cf.`name`,
@@ -169,7 +169,7 @@
         AND study_type != 0
     </select>
 
-    <insert id="insertBizLearningRecord" parameterType="com.esmooc.legion.open.entity.LearningRecord">
+    <insert id="insertBizLearningRecord" parameterType="com.esmooc.legion.edu.entity.LearningRecord">
         insert into edu_learning_record
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="courseId != null">
@@ -216,7 +216,7 @@
         </foreach>
     </insert>
 
-    <update id="updateBizLearningRecord" parameterType="com.esmooc.legion.open.entity.LearningRecord">
+    <update id="updateBizLearningRecord" parameterType="com.esmooc.legion.edu.entity.LearningRecord">
         update edu_learning_record
         <trim prefix="SET" suffixOverrides=",">
             <if test="studyType != null">
@@ -238,8 +238,9 @@
 
     <delete id="deleteBizLearningRecordByIds" parameterType="String">
         delete from edu_learning_record where course_id in
-        <foreach item="courseId" collection="array" open="(" separator="," close=")">
-            #{courseId}
+
+        <foreach item="courseIds" collection="courseIds" open="(" separator="," close=")">
+            #{courseIds}
         </foreach>
         and user_id = #{userId}
     </delete>

@@ -2,8 +2,8 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.esmooc.legion.open.mapper.PromptMapper">
-    <resultMap type="com.esmooc.legion.open.entity.Prompt" id="BizPromptResult">
+<mapper namespace="com.esmooc.legion.edu.mapper.PromptMapper">
+    <resultMap type="com.esmooc.legion.edu.entity.Prompt" id="BizPromptResult">
         <result property="id" column="id"/>
         <result property="courseId" column="course_id"/>
         <result property="prompt" column="prompt"/>
@@ -19,17 +19,17 @@
                      LEFT JOIN edu_course c on c.id = p.course_id
     </sql>
 
-    <select id="selectBizPromptList" parameterType="com.esmooc.legion.open.entity.Prompt" resultMap="BizPromptResult">
+    <select id="selectBizPromptList" parameterType="com.esmooc.legion.edu.entity.Prompt" resultMap="BizPromptResult">
         <include refid="selectBizPromptVo"/>
         <where>
-            <if test="courseId != null  and courseId != ''">
-                and p.course_id = #{courseId}
+            <if test="prompt.courseId != null  and prompt.courseId != ''">
+                and p.course_id = #{prompt.courseId}
             </if>
-            <if test="prompt != null  and prompt != ''">
-                and p.prompt = #{prompt}
+            <if test="prompt.prompt != null  and prompt.prompt != ''">
+                and p.prompt = #{prompt.prompt}
             </if>
-            <if test="userId != null">
-                and c.create_by = #{userId}
+            <if test="prompt.userId != null">
+                and c.create_by = #{prompt.userId}
             </if>
         </where>
     </select>
@@ -39,7 +39,7 @@
         where id = #{id}
     </select>
 
-    <insert id="insertBizPrompt" parameterType="com.esmooc.legion.open.entity.Prompt" useGeneratedKeys="true"
+    <insert id="insertBizPrompt" parameterType="com.esmooc.legion.edu.entity.Prompt" useGeneratedKeys="true"
             keyProperty="id">
         insert into edu_prompt
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -60,7 +60,7 @@
         </trim>
     </insert>
 
-    <update id="updateBizPrompt" parameterType="com.esmooc.legion.open.entity.Prompt">
+    <update id="updateBizPrompt" parameterType="com.esmooc.legion.edu.entity.Prompt">
         update edu_prompt
         <trim prefix="SET" suffixOverrides=",">
             <if test="courseId != null">

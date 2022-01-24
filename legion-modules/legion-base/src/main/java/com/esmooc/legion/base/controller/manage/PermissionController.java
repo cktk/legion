@@ -1,5 +1,6 @@
 package com.esmooc.legion.base.controller.manage;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.esmooc.legion.base.entity.vo.MenuVo;
@@ -15,6 +16,7 @@ import com.esmooc.legion.core.config.security.permission.MySecurityMetadataSourc
 import com.esmooc.legion.core.entity.Permission;
 import com.esmooc.legion.core.entity.RolePermission;
 import com.esmooc.legion.core.entity.User;
+import com.esmooc.legion.core.entity.vo.PermissionVO;
 import com.esmooc.legion.core.service.IPermissionService;
 import com.esmooc.legion.core.service.PermissionService;
 import com.esmooc.legion.core.service.RolePermissionService;
@@ -27,6 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.security.core.parameters.P;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -182,7 +185,7 @@ public class PermissionController {
 
     @PostMapping("/edit")
     @ApiOperation(value = "编辑")
-    public Result<Permission> edit(Permission permission) {
+    public Result<Permission> edit(PermissionVO permission) {
 
         if (permission.getId().equals(permission.getParentId())) {
             return ResultUtil.error("上级节点不能为自己");
@@ -200,7 +203,8 @@ public class PermissionController {
         }
         Permission old = permissionService.getById(permission.getId());
         String oldParentId = old.getParentId();
-        permissionService.updateById(permission);
+        Permission permission1 = BeanUtil.copyProperties(permission, Permission.class);
+        permissionService.updateById(permission1);
         // 如果该节点不是一级节点 且修改了级别 判断上级还有无子节点
         if (!CommonConstant.PARENT_ID.equals(oldParentId) && !oldParentId.equals(permission.getParentId())) {
             Permission parent = permissionService.getById(oldParentId);
@@ -215,7 +219,7 @@ public class PermissionController {
         // 手动批量删除缓存
         redisTemplate.deleteByPattern("user:*");
         redisTemplate.deleteByPattern("permission:*");
-        return ResultUtil.data(permission);
+        return ResultUtil.data(permission1);
     }
 
     @PostMapping("/delByIds")

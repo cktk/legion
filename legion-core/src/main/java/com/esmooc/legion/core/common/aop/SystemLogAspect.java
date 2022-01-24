@@ -78,12 +78,9 @@ public class SystemLogAspect {
     @AfterReturning("controllerAspect()")
     public void after(JoinPoint joinPoint) {
 
-
         try {
-            String username = "";
-
             String description = getControllerMethodInfo(joinPoint).get("description").toString();
-            int type = (int) getControllerMethodInfo(joinPoint).get("type");
+            String type = String.valueOf(getControllerMethodInfo(joinPoint).get("type"));
             Map<String, String[]> logParams = request.getParameterMap();
 
 
@@ -92,7 +89,7 @@ public class SystemLogAspect {
                     || (authentication instanceof AnonymousAuthenticationToken)) {
                 return;
             }
-            username = authentication.getName();
+            String  username = authentication.getName();
 
             String device = "", isMobile = "PC端";
             UserAgent ua = UserAgentUtil.parse(request.getHeader("user-agent"));
@@ -187,7 +184,7 @@ public class SystemLogAspect {
         Method[] methods = targetClass.getMethods();
 
         String description = "";
-        Integer type = null;
+        String type = null;
 
         for (Method method : methods) {
             if (!method.getName().equals(methodName)) {
@@ -199,7 +196,7 @@ public class SystemLogAspect {
                 continue;
             }
             description = method.getAnnotation(SystemLog.class).description();
-            type = method.getAnnotation(SystemLog.class).type().ordinal();
+            type = method.getAnnotation(SystemLog.class).type();
             map.put("description", description);
             map.put("type", type);
         }

@@ -1,6 +1,7 @@
 package com.esmooc.legion.core.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.esmooc.legion.core.entity.DTO.UserDTO;
 import com.esmooc.legion.core.entity.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -65,4 +66,9 @@ public interface UserMapper extends BaseMapper<User> {
      */
     @Update("update t_user u set u.department_title=#{departmentTitle} where u.department_id=#{departmentId}")
     void updateDepartmentTitle(@Param("departmentId") String departmentId, @Param("departmentTitle") String departmentTitle);
+
+    List<User> bySqlPage(@Param("user") UserDTO user, @Param("pageSize") int pageSize,@Param("start")  Integer start);
+
+
+
 }

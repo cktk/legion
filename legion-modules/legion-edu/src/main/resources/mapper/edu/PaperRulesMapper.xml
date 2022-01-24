@@ -2,15 +2,15 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.esmooc.legion.open.mapper.PaperRulesMapper">
-    <select id="paperRulesList" resultType="com.esmooc.legion.open.entity.vo.ExamPaperRulesVo">
+<mapper namespace="com.esmooc.legion.edu.mapper.PaperRulesMapper">
+    <select id="paperRulesList" resultType="com.esmooc.legion.edu.entity.vo.ExamPaperRulesVo">
         select
         bepr.id as 'id',
         bepr.clazz_id as 'clazzId',
         bc.course_title as 'clazzName',
         bepr.create_time as 'createTime',
         bepr.create_by as 'createBy',
-        su.nick_name as 'createName',
+        su.nickname as 'createName',
         bepr.rules as 'rules',
         0 as 'questionCount',
         0 as 'radioCount',
@@ -24,9 +24,9 @@
         on
         bepr.clazz_id = bc.id
         left join
-        sys_user su
+        legion.t_user su
         on
-        su.user_id = bepr.create_by
+        su.id = bepr.create_by
         <where>
             <if test="clazzName != null and clazzName != ''">
                 bc.course_title like concat('%', #{clazzName}, '%')

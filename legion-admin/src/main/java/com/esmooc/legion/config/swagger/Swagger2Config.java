@@ -1,11 +1,16 @@
 package com.esmooc.legion.config.swagger;
 
+import cn.hutool.json.JSONUtil;
+import com.esmooc.legion.core.common.constant.SettingConstant;
 import com.esmooc.legion.core.config.properties.IgnoredUrlsProperties;
+import com.esmooc.legion.core.entity.Setting;
+import com.esmooc.legion.core.service.SettingService;
 import io.swagger.annotations.ApiOperation;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;

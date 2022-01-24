@@ -1,6 +1,7 @@
 package com.esmooc.legion.base.controller.manage;
 
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.esmooc.legion.base.async.AddMessage;
 import com.esmooc.legion.core.common.annotation.SystemLog;
@@ -8,14 +9,12 @@ import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.enums.LogType;
 import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
-import com.esmooc.legion.core.common.utils.PageUtil;
-import com.esmooc.legion.core.common.utils.ResultUtil;
-import com.esmooc.legion.core.common.utils.SecurityUtil;
-import com.esmooc.legion.core.common.utils.StopWordsUtil;
+import com.esmooc.legion.core.common.utils.*;
 import com.esmooc.legion.core.common.vo.PageVo;
 import com.esmooc.legion.core.common.vo.Result;
 import com.esmooc.legion.core.common.vo.SearchVo;
 import com.esmooc.legion.core.config.security.SecurityUserDetails;
+import com.esmooc.legion.core.entity.DTO.UserDTO;
 import com.esmooc.legion.core.entity.Department;
 import com.esmooc.legion.core.entity.Role;
 import com.esmooc.legion.core.entity.User;
@@ -189,13 +188,13 @@ public class UserController {
     }
 
     /**
-     * @param password
-     * @param newPass
-     * @return
+     * @param password 旧密码
+     * @param newPass 新密码
+     * @return 状态
      */
     @RequestMapping(value = "/modifyPass", method = RequestMethod.POST)
     @ApiOperation(value = "修改密码")
-    public Result<Object> modifyPass(@ApiParam("旧密码") @RequestParam String password,
+    public Result<String> modifyPass(@ApiParam("旧密码") @RequestParam String password,
                                      @ApiParam("新密码") @RequestParam String newPass,
                                      @ApiParam("密码强度") @RequestParam String passStrength) {
 
@@ -218,10 +217,29 @@ public class UserController {
 
     @RequestMapping(value = "/getByCondition", method = RequestMethod.GET)
     @ApiOperation(value = "多条件分页获取用户列表")
-    public Result<Page<User>> getByCondition(User user,
+    public Result<Page<User>> getByCondition(UserDTO user,
                                              SearchVo searchVo,
                                              PageVo pageVo) {
-        return new ResultUtil<Page<User>>().setData(userService.page(PageUtil.initPage(pageVo)));
+
+
+        Integer number = pageVo.getPageNumber();
+        Integer pageSize = pageVo.getPageSize();
+        int start = Math.max((number - 1) * pageSize, 0);
+        System.out.println("pageSize  " + pageSize);
+        System.out.println("max  " + start);
+        //LIMIT pageSize OFFSET
+        List<User>  list= userService.bySqlPage(user,pageSize,start);
+        long count = 100000;
+        Page<User> iPage = new Page<User>();
+        iPage.setRecords(list);
+        iPage.setSize(pageSize);
+        iPage.setTotal(count);
+        iPage.setPages(count/pageSize);
+
+
+
+
+        return ResultUtil.data(iPage);
     }
 
     @RequestMapping(value = "/getByDepartmentId/{departmentId}", method = RequestMethod.GET)

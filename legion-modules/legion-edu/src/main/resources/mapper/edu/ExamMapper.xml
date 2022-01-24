@@ -2,65 +2,52 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.esmooc.legion.open.mapper.ExamMapper">
-    <select id="examList" resultType="com.esmooc.legion.open.entity.vo.ExamVO">
-        select
-        be.id,
-        be.title,
-        bepr.rules,
-        bepr.id as 'rulesId',
-        be.create_time as 'createTime',
-        su.nick_name as 'createBy',
-        GROUP_CONCAT(sdd.dict_label) as 'majorName',
-        GROUP_CONCAT(sdd.dict_value) as 'majorId',
-        be.issue
-        from
-        edu_exam be
-        left join
-        edu_exam_paper_rules bepr
-        on
-        be.id = bepr.clazz_id
-        left join
-        sys_user su
-        on
-        su.user_id = be.create_by
-        left join
-        edu_exam_major bem
-        on
-        bem.exam_id = be.id
-        left join
-        sys_dict_data sdd
-        on
-        sdd.dict_value = bem.major_id
-        where
-        sdd.dict_type = 'biz_curricular_subject'
-        and
-        be.is_delete = '0'
-        <if test="title != null and title != ''">
-            and
-            be.title like concat('%', #{title}, '%')
+<mapper namespace="com.esmooc.legion.edu.mapper.ExamMapper">
+    <select id="examList" resultType="com.esmooc.legion.edu.entity.vo.ExamVO">
+        select be.id,
+               be.title,
+               bepr.rules,
+               bepr.id                 as 'rulesId',
+               be.create_time          as 'createTime',
+               su.nickname             as 'createBy',
+               GROUP_CONCAT(sdd.title) as 'majorName',
+               GROUP_CONCAT(sdd.value) as 'majorId',
+               be.issue
+        from edu_exam be
+                     left join
+                     edu_exam_paper_rules bepr
+                             on
+                                     be.id = bepr.clazz_id
+                     left join
+                     legion.t_user su on su.id = be.create_by
+                     left join
+                     edu_exam_major bem
+                             on
+                                     bem.exam_id = be.id
+                     left join
+                     legion.t_dict_data sdd
+                             on
+                                     sdd.update_by = bem.major_id
+                where sdd.type = 'edu_curricular_subject'
+                  and be.is_delete = '0'
+        <if test="exam.title != null and exam.title != ''">
+            and be.title like concat('%', #{exam.title}, '%')
         </if>
         group by be.id,
-        be.title,
-        bepr.rules,
-        bepr.id,
-        be.create_time,
-        su.nick_name,
-        be.issue
+                 be.title,
+                 bepr.rules,
+                 bepr.id,
+                 be.create_time,
+                 su.nickname,
+                 be.issue
         order by be.id,
-        be.title,
-        bepr.rules,
-        bepr.id,
-        be.create_time,
-        su.nick_name,
-        be.issue DESC
+                 be.title,
+                 bepr.rules,
+                 bepr.id,
+                 be.create_time,
+                 su.nickname,
+                 be.issue DESC
 
-
-        <!--     group by
-                 be.id
-             order by
-                 bepr.create_time
-             desc-->
     </select>
 
     <insert id="saveBizExam">
@@ -119,38 +106,35 @@
         clazz_id = #{id}
     </delete>
 
-    <select id="getExamById" resultType="com.esmooc.legion.open.entity.vo.ExamVO">
-        select
-        be.id,
-        be.title,
-        bepr.rules,
-        bepr.id as 'rulesId',
-        be.create_time as 'createTime',
-        su.nick_name as 'createBy',
-        GROUP_CONCAT(sdd.dict_label) as 'majorName',
-        GROUP_CONCAT(sdd.dict_value) as 'majorId'
-        from
-        edu_exam be
-        left join
-        edu_exam_paper_rules bepr
-        on
-        be.id = bepr.clazz_id
-        left join
-        sys_user su
-        on
-        su.user_id = be.create_by
-        left join
-        edu_exam_major bem
-        on
-        bem.exam_id = be.id
-        left join
-        sys_dict_data sdd
-        on
-        sdd.dict_value = bem.major_id
-        where
-        sdd.dict_type = 'biz_curricular_subject'
-        and
-        be.id = #{id}
+    <select id="getExamById" resultType="com.esmooc.legion.edu.entity.vo.ExamVO">
+        select be.id,
+               be.title,
+               bepr.rules,
+               bepr.id                 as 'rulesId',
+               be.create_time          as 'createTime',
+               su.nickname             as 'createBy',
+               GROUP_CONCAT(sdd.title) as 'majorName',
+               GROUP_CONCAT(sdd.value) as 'majorId'
+        from edu_exam be
+                     left join
+                     edu_exam_paper_rules bepr
+                             on
+                                     be.id = bepr.clazz_id
+                     left join
+                     legion.t_user su
+                             on
+                                     su.id = be.create_by
+                     left join
+                     edu_exam_major bem
+                             on
+                                     bem.exam_id = be.id
+                     left join
+                     legion.t_dict_data sdd
+                             on
+                                     sdd.value = bem.major_id
+        where sdd.type = 'edu_curricular_subject'
+          and be.id = #{id}
+        GROUP BY sdd.title, sdd.value, bepr.rules, bepr.id
     </select>
 
     <update id="updateBizExamIssue">
@@ -184,7 +168,7 @@
         select
         user_id
         from
-        sys_user_role
+        legion.t_user_role
         where
         role_id
         in

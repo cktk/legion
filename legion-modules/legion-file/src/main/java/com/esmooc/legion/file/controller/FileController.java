@@ -12,6 +12,7 @@ import com.esmooc.legion.core.common.utils.ResultUtil;
 import com.esmooc.legion.core.common.utils.SearchUtil;
 import com.esmooc.legion.core.common.vo.PageVo;
 import com.esmooc.legion.core.common.vo.Result;
+import com.esmooc.legion.core.entity.Setting;
 import com.esmooc.legion.core.entity.User;
 import com.esmooc.legion.core.entity.vo.OssSetting;
 import com.esmooc.legion.core.service.SettingService;
@@ -60,13 +61,17 @@ public class FileController {
 
     @PostMapping("/getByCondition")
     @ApiOperation(value = "多条件分页获取")
-    public Result<Page<File>> getFileList(@RequestBody Map<String, Object>   search, PageVo pageVo) {
+    public Result<Page<File>> getFileList(@RequestBody  Map<String, Object>   search) {
+
+        Page<File> page = fileService.page(PageUtil.initPage(search), SearchUtil.parseWhereSql(search));
 
 
-        Page<File> page = fileService.page(PageUtil.initPage(pageVo), SearchUtil.parseWhereSql(search));
+        Setting setting = settingService.getById(SettingConstant.OSS_USED);
+        Setting useSetting = settingService.getById(setting.getValue());
 
 
-        OssSetting os =  JSONUtil.toBean(settingService.getById(SettingConstant.LOCAL_OSS).getValue(), OssSetting.class);
+        OssSetting os =  JSONUtil.toBean(useSetting.getValue(), OssSetting.class);
+
 
         Map<String, String> map = new HashMap<>(16);
 

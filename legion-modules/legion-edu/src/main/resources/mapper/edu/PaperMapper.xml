@@ -2,8 +2,8 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.esmooc.legion.open.mapper.PaperMapper">
-    <select id="getLastPaperByClazzIdUserId" resultType="com.esmooc.legion.open.entity.ExamPaper">
+<mapper namespace="com.esmooc.legion.edu.mapper.PaperMapper">
+    <select id="getLastPaperByClazzIdUserId" resultType="com.esmooc.legion.edu.entity.ExamPaper">
         select
         id,
         clazz_id as 'clazzId',
@@ -48,7 +48,7 @@
             bank_id = #{bankId}
         </if>
         ORDER BY RAND()
-        LIMIT ${count}
+        LIMIT #{count}
     </select>
 
     <select id="getRandomQuestionIdByMajorIds" resultType="java.lang.String">
@@ -70,7 +70,7 @@
             bank_id = #{bankId}
         </if>
         ORDER BY RAND()
-        LIMIT ${count}
+        LIMIT #{count}
     </select>
 
     <insert id="savePaper">
@@ -95,7 +95,7 @@
         question_id = #{data}
     </insert>
 
-    <select id="selectLastPaperId" resultType="com.esmooc.legion.open.entity.ExamPaper">
+    <select id="selectLastPaperId" resultType="com.esmooc.legion.edu.entity.ExamPaper">
         select
         id,
         clazz_id as 'clazzId',
@@ -196,7 +196,7 @@
     </select>
 
     <select id="getMaxCertificate" resultType="java.lang.String">
-        select IF(certificate is null, IF(certificate = "", 1, certificate), certificate)
+        select IF(certificate is null, IF(certificate = '', 1, certificate), certificate)
         from edu_exam_paper
         order by certificate
                 desc limit 1
@@ -211,7 +211,7 @@
         id = #{paperId}
     </select>
 
-    <select id="getPaperById" resultType="com.esmooc.legion.open.entity.ExamPaper">
+    <select id="getPaperById" resultType="com.esmooc.legion.edu.entity.ExamPaper">
         select
         bep.id,
         bep.clazz_id as 'clazzId',

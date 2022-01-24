@@ -1,8 +1,10 @@
 package com.esmooc.legion.core.common.utils;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -14,6 +16,12 @@ import java.util.regex.Pattern;
  * @Version V1.0
  **/
 public class SearchUtil {
+
+	//TODO 全局不构造
+	private static HashMap<String, String> IGNORE_KEYS = new HashMap<String, String>() {{
+		put("id", "忽略");
+
+	}};
 
 	/**
 	 * 解析sql在哪里
@@ -38,7 +46,8 @@ public class SearchUtil {
 		QueryWrapper queryWrapper = new QueryWrapper();
 		if (condition != null && condition.size() > 0) {
 			condition.forEach((k, v) -> {
-				if (k.contains("_") && StrUtil.isNotBlank(v.toString())) {
+
+				if (k!=null && v!=null && k.contains("_") && StrUtil.isNotEmpty(v.toString())) {
 					String pre = k.substring(0, k.indexOf("_"));
 					String column = humpToLine(k.substring(k.indexOf("_") + 1));
 					switch (pre) {
@@ -85,9 +94,33 @@ public class SearchUtil {
 							break;
 					}
 				}
+
 			});
 		}
 		return queryWrapper;
+	}
+
+
+
+
+
+	private static Map<String, Object>  parseWhereSqlToMap(Object obj) {
+		Map<String, Object> map = BeanUtil.beanToMap(obj);
+		Map<String, Object> maps = BeanUtil.beanToMap(obj);
+		//TODO 现在传对象默认为 eq
+		map.forEach((k, v) -> {
+			maps.put("like_" + k, v);
+
+		});
+		return maps;
+	}
+
+	public static QueryWrapper  parseWhereSql(Object... obj) {
+		Map<String, Object> map = BeanUtil.beanToMap(obj);
+		for (Object o : obj) {
+			map.putAll(parseWhereSqlToMap(o));
+		}
+		return parseWhereSql(map);
 	}
 
 	/**
