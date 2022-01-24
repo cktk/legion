@@ -1,5 +1,6 @@
 package com.esmooc.legion.edu.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.esmooc.legion.core.common.vo.PageVo;
 import com.esmooc.legion.edu.entity.ExamPaperRules;
 import com.esmooc.legion.edu.entity.vo.ExamPaperRulesVo;
@@ -7,7 +8,7 @@ import com.esmooc.legion.edu.entity.vo.ExamPaperRulesVo;
 import java.util.List;
 import java.util.Map;
 
-public interface PaperRulesService {
+public interface PaperRulesService  extends IService<ExamPaperRules> {
     List<ExamPaperRulesVo> paperRulesList(ExamPaperRulesVo examPaperRulesVo, PageVo pageVo);
 
     Map getClazzQuestion(String id);

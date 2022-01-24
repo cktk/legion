@@ -2,6 +2,7 @@ package com.esmooc.legion.edu.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.esmooc.legion.edu.entity.LearningRecordFile;
 import com.esmooc.legion.edu.entity.vo.RankingVO;
 
@@ -13,7 +14,7 @@ import java.util.List;
  * @author sun
  * @date 2020-12-28
  */
-public interface LearningRecordFileService {
+public interface LearningRecordFileService  extends IService<LearningRecordFile> {
     /**
      * 查询课程附件学习状态业务
      *

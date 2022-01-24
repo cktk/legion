@@ -25,7 +25,7 @@ import java.util.List;
 @RestController
 @Api(tags = "字典管理接口")
 @RequestMapping("/legion/dict")
-@Transactional
+//@Transactional
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE,makeFinal = true)
 public class DictController {
@@ -73,11 +73,8 @@ public class DictController {
     public Result<Object> delAllByIds(@RequestParam String[] ids) {
 
         for (String id : ids) {
-            Dict dict = dictService.getById(id);
             dictService.removeById(id);
             dictDataService.deleteByDictId(id);
-            // 删除缓存 TODO 缓存删除会报空指针
-            redisTemplate.delete("dictData::");
         }
         return ResultUtil.success("删除成功");
     }

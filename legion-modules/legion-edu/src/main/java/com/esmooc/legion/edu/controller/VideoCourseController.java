@@ -71,9 +71,8 @@ public class VideoCourseController {
             course.setDelFlag(Constants.UNREVISED);
         } else {
             course.setDelFlag(Constants.ISNOTDELETE);
-
         }
-        return ResultUtil.data(courseService.insertBizCourse(course));
+        return ResultUtil.data(courseService.insertCourse(course));
     }
 
 
@@ -98,7 +97,7 @@ public class VideoCourseController {
     @ApiOperation(value = "查询学员课程业务列表")
     @GetMapping("/stuVideoCourseList")
     public Result<IPage<StuVideoCourseVO>> stuVideoCourseList(StuVideoCourseVO stuVideoCourse, PageVo page) {
-        stuVideoCourse.setCourseType(Constants.VIDEOCOURSE + "");
+        //stuVideoCourse.setCourseType(Constants.VIDEOCOURSE + "");
         IPage<StuVideoCourseVO> list = courseService.stuVideoCourseList(stuVideoCourse, PageUtil.initPage(page));
         return ResultUtil.data(list);
     }

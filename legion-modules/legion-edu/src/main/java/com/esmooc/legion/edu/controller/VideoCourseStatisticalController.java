@@ -28,10 +28,9 @@ public class VideoCourseStatisticalController {
     /**
      * 查询学员课程业务列表
      */
-    @ApiOperation(value = " ")
+    @ApiOperation(value = "查询学员课程业务列表")
     @GetMapping("/list")
     public Result<IPage<StuVideoCourseVO>> stuVideoCourseList(StuVideoCourseVO stuVideoCourse, PageVo page) {
-        stuVideoCourse.setCourseType(Constants.VIDEOCOURSE + "");
         IPage<StuVideoCourseVO> list = courseService.stuVideoCourseList(stuVideoCourse, PageUtil.initPage(page));
         return ResultUtil.data(list);
     }

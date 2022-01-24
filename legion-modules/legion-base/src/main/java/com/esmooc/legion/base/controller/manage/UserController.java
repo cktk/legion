@@ -1,5 +1,6 @@
 package com.esmooc.legion.base.controller.manage;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -19,6 +20,7 @@ import com.esmooc.legion.core.entity.Department;
 import com.esmooc.legion.core.entity.Role;
 import com.esmooc.legion.core.entity.User;
 import com.esmooc.legion.core.entity.UserRole;
+import com.esmooc.legion.core.entity.vo.UserVo;
 import com.esmooc.legion.core.mapper.DeleteMapper;
 import com.esmooc.legion.core.service.*;
 import io.swagger.annotations.Api;
@@ -314,9 +316,10 @@ public class UserController {
     @RequestMapping(value = "/admin/edit", method = RequestMethod.POST)
     @ApiOperation(value = "管理员修改资料", notes = "需要通过id获取原用户信息 需要username更新缓存")
     @CacheEvict(key = "#u.username")
-    public Result<Object> edit(User u,
-                               @RequestParam(required = false) String[] roleIds) {
+    public Result<Object> edit(UserVo userVo, @RequestParam(required = false) String[] roleIds) {
 
+
+        User u = BeanUtil.copyProperties(userVo, User.class);
         User old = userService.getById(u.getId());
 
         u.setUsername(old.getUsername());
@@ -350,9 +353,9 @@ public class UserController {
             userRoleService.saveOrUpdateBatch(userRoles);
         }
         // 手动删除缓存
-        redisTemplate.delete("userRole::" + u.getId());
-        redisTemplate.delete("userRole::depIds:" + u.getId());
-        redisTemplate.delete("permission::userMenuList:" + u.getId());
+        //redisTemplate.delete("userRole::" + u.getId());
+        //redisTemplate.delete("userRole::depIds:" + u.getId());
+        //redisTemplate.delete("permission::userMenuList:" + u.getId());
         return ResultUtil.success("修改成功");
     }
 

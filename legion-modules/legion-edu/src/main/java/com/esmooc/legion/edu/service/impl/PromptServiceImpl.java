@@ -3,7 +3,10 @@ package com.esmooc.legion.edu.service.impl;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.esmooc.legion.edu.entity.CourseFile;
 import com.esmooc.legion.edu.entity.Prompt;
+import com.esmooc.legion.edu.mapper.CourseFileMapper;
 import com.esmooc.legion.edu.mapper.PromptMapper;
 import com.esmooc.legion.edu.service.PromptService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +19,7 @@ import org.springframework.stereotype.Service;
  * @date 2021-02-22
  */
 @Service
-public class PromptServiceImpl implements PromptService {
+public class PromptServiceImpl  extends ServiceImpl<PromptMapper, Prompt> implements PromptService {
     @Autowired
     private PromptMapper promptMapper;
 

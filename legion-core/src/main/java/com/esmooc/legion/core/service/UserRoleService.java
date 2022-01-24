@@ -31,5 +31,5 @@ public interface UserRoleService extends IService<UserRole> {
      * 删除用户角色
      * @param userId
      */
-    void deleteByUserId(String userId);
+    boolean deleteByUserId(String userId);
 }

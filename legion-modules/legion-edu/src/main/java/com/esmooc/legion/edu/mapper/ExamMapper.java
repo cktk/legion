@@ -1,7 +1,9 @@
 package com.esmooc.legion.edu.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.esmooc.legion.edu.entity.Exam;
 import com.esmooc.legion.edu.entity.vo.ExamVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -10,8 +12,8 @@ import java.util.Date;
 import java.util.List;
 
 @Mapper
-public interface ExamMapper {
-    IPage<ExamVO> examList(@Param("exam") ExamVO examVO, @Param("page")Page page);
+public interface ExamMapper extends BaseMapper<Exam> {
+    IPage<ExamVO> examList(@Param("exam") ExamVO examVO, @Param("page") Page page);
 
     void saveBizExam(ExamVO examVO);
 

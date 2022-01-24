@@ -28,7 +28,7 @@ public interface PermissionMapper extends BaseMapper<Permission> {
      * @param level
      * @return
      */
-    @Select("select * from t_permission where Level=#{level} order by sort_order")
+    @Select("select * from t_permission where Level=#{level} and del_flag=0 order by sort_order")
     List<Permission> findByLevelOrderBySortOrder(@Param("level") Integer level);
 
     /**
@@ -36,7 +36,7 @@ public interface PermissionMapper extends BaseMapper<Permission> {
      * @param parentId
      * @return
      */
-    @Select("select * from t_permission where  parent_id = #{parentId} order by sort_order ")
+    @Select("select * from t_permission where  parent_id = #{parentId} and del_flag=0 order by sort_order ")
     List<Permission> findByParentIdOrderBySortOrder(@Param("parentId") String parentId);
 
     /**
@@ -45,7 +45,7 @@ public interface PermissionMapper extends BaseMapper<Permission> {
      * @param status
      * @return
      */
-    @Select("select * from t_permission where  type = #{type}  and  status=#{status} order by sort_order ")
+    @Select("select * from t_permission where  type = #{type} and del_flag=0 and  status=#{status} order by sort_order ")
     List<Permission> findByTypeAndStatusOrderBySortOrder(@Param("type") Integer type, @Param("status") Integer status);
 
     /**
@@ -53,7 +53,7 @@ public interface PermissionMapper extends BaseMapper<Permission> {
      * @param title
      * @return
      */
-    @Select("select * from t_permission where  title = #{title}")
+    @Select("select * from t_permission where  title = #{title} and del_flag=0")
     List<Permission> findByTitle(@Param("title") String title);
 
     /**
@@ -61,6 +61,6 @@ public interface PermissionMapper extends BaseMapper<Permission> {
      * @param title
      * @return
      */
-    @Select("select * from t_permission where  title like #{title} order by sort_order")
+    @Select("select * from t_permission where  title like #{title} and del_flag=0 order by sort_order")
     List<Permission> findByTitleLikeOrderBySortOrder(@Param("title") String title);
 }

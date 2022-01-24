@@ -2,9 +2,11 @@ package com.esmooc.legion.edu.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.esmooc.legion.core.common.utils.SecurityUtil;
 import com.esmooc.legion.edu.common.constant.Constants;
 import com.esmooc.legion.edu.common.utils.BaseUtils;
+import com.esmooc.legion.edu.entity.Exam;
 import com.esmooc.legion.edu.entity.vo.ExamVO;
 import com.esmooc.legion.edu.mapper.ExamMapper;
 import com.esmooc.legion.edu.mapper.PaperMapper;
@@ -23,7 +25,7 @@ import java.util.Map;
  * @Date 2021-1-7 9:23
  **/
 @Service
-public class ExamServiceImpl implements ExamService {
+public class ExamServiceImpl  extends ServiceImpl<ExamMapper, Exam> implements  ExamService {
 
     @Autowired
     private ExamMapper examMapper;
@@ -113,17 +115,15 @@ public class ExamServiceImpl implements ExamService {
                 examMapper.saveBizExamMajor(BaseUtils.getUUID(), examVO.getId(), majorIds[i]);
             }
             // 新增规则
-            examMapper.saveRules(examVO);
-            m.put("id", examVO.getId());
         } else {
             /**
              *  课程进入
              */
             examMapper.deleteBizExamRulesByExamId(examVO.getId());
             examVO.setId(examVO.getClazzId());
-            examMapper.saveRules(examVO);
-            m.put("id", examVO.getId());
         }
+        examMapper.saveRules(examVO);
+        m.put("id", examVO.getId());
         return m;
     }
 

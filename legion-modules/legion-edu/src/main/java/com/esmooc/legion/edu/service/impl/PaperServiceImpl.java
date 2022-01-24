@@ -3,13 +3,16 @@ package com.esmooc.legion.edu.service.impl;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.esmooc.legion.core.common.utils.SecurityUtil;
 import com.esmooc.legion.core.entity.User;
 import com.esmooc.legion.edu.common.constant.Constants;
 import com.esmooc.legion.edu.common.utils.BaseUtils;
+import com.esmooc.legion.edu.entity.CourseFile;
 import com.esmooc.legion.edu.entity.ExamPaper;
 import com.esmooc.legion.edu.entity.ExamQuestion;
 import com.esmooc.legion.edu.entity.SubmitPaper;
+import com.esmooc.legion.edu.mapper.CourseFileMapper;
 import com.esmooc.legion.edu.mapper.PaperMapper;
 import com.esmooc.legion.edu.mapper.PaperRulesMapper;
 import com.esmooc.legion.edu.mapper.QuestionMapper;
@@ -19,6 +22,7 @@ import com.esmooc.legion.edu.service.PaperService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.awt.print.Paper;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,7 +34,7 @@ import java.util.Map;
  * @Date 2020-12-30 9:22
  **/
 @Service
-public class PaperServiceImpl implements PaperService {
+public class PaperServiceImpl  extends ServiceImpl<PaperMapper, ExamPaper> implements PaperService {
 
     @Autowired
     private PaperMapper paperMapper;
@@ -219,11 +223,11 @@ public class PaperServiceImpl implements PaperService {
         }
         // 查询题库id
         String bankId = paperRulesMapper.getBankIdByClazzId(id);
-//        if(null == bankId || "".equals(bankId)){
-//            m.put("code", false);
-//            m.put("msg", "当前试卷题数发生变化，请联系管理员！");
-//            return m;
-//        }
+        if(null == bankId || "".equals(bankId)){
+            m.put("code", false);
+            m.put("msg", "当前试卷题数发生变化，请联系管理员！");
+            return m;
+        }
         // 查询最后一次考试的id
         ExamPaper lastPaper = paperMapper.selectLastPaperId(id, securityUtil.getCurrUser().getId());
         // 查询最后一次考试是否关联试题

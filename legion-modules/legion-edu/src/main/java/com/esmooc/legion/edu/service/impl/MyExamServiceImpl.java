@@ -2,8 +2,11 @@ package com.esmooc.legion.edu.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.esmooc.legion.core.common.utils.SecurityUtil;
+import com.esmooc.legion.edu.entity.CourseFile;
 import com.esmooc.legion.edu.entity.MyExam;
+import com.esmooc.legion.edu.mapper.CourseFileMapper;
 import com.esmooc.legion.edu.mapper.MyExamMapper;
 import com.esmooc.legion.edu.service.MyExamService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +23,7 @@ import java.util.Map;
  * @Date 2021-1-12 13:49
  **/
 @Service
-public class MyExamServiceImpl implements MyExamService {
+public class MyExamServiceImpl extends ServiceImpl<MyExamMapper, MyExam> implements MyExamService {
 
     @Autowired
     private MyExamMapper myExamMapper;

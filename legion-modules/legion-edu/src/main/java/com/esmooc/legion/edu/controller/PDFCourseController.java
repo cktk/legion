@@ -73,7 +73,7 @@ public class PDFCourseController {
         } else {
             course.setDelFlag(Constants.ISNOTDELETE);
         }
-        return ResultUtil.data(courseService.insertBizCourse(course));
+        return ResultUtil.data(courseService.insertCourse(course));
     }
 
 

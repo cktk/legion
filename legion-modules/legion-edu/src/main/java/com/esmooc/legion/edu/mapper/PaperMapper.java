@@ -1,5 +1,7 @@
 package com.esmooc.legion.edu.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.esmooc.legion.edu.entity.Exam;
 import com.esmooc.legion.edu.entity.ExamPaper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -8,7 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 @Mapper
-public interface PaperMapper {
+public interface PaperMapper extends BaseMapper<ExamPaper> {
 
     ExamPaper getLastPaperByClazzIdUserId(@Param("clazzId") String clazzId,
                                           @Param("userId") String userId,

@@ -1,7 +1,9 @@
 package com.esmooc.legion.edu.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.esmooc.legion.edu.entity.Exam;
 import com.esmooc.legion.edu.entity.MyExam;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -9,7 +11,7 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 @Mapper
-public interface MyExamMapper {
+public interface MyExamMapper extends BaseMapper<MyExam> {
     IPage<MyExam> list(@Param("exam") MyExam exam, @Param("page") Page page);
 
     Integer getUserPassExamCount(String userId);

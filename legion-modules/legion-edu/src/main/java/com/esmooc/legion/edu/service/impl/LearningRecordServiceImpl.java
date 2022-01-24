@@ -2,13 +2,16 @@ package com.esmooc.legion.edu.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.esmooc.legion.core.common.utils.SecurityUtil;
 import com.esmooc.legion.core.entity.User;
 import com.esmooc.legion.edu.common.constant.Constants;
 import com.esmooc.legion.edu.common.utils.BaseUtils;
+import com.esmooc.legion.edu.entity.CourseFile;
 import com.esmooc.legion.edu.entity.LearningRecord;
 import com.esmooc.legion.edu.entity.vo.LearningRecordVO;
 import com.esmooc.legion.edu.entity.vo.PlaybackFileVO;
+import com.esmooc.legion.edu.mapper.CourseFileMapper;
 import com.esmooc.legion.edu.mapper.CourseMapper;
 import com.esmooc.legion.edu.mapper.LearningRecordFileMapper;
 import com.esmooc.legion.edu.mapper.LearningRecordMapper;
@@ -27,7 +30,7 @@ import java.util.List;
  * @date 2020-12-28
  */
 @Service
-public class LearningRecordServiceImpl implements LearningRecordService {
+public class LearningRecordServiceImpl extends ServiceImpl<LearningRecordMapper, LearningRecord> implements LearningRecordService {
     @Autowired
     private LearningRecordMapper learningRecordMapper;
 

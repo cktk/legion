@@ -1,5 +1,6 @@
 package com.esmooc.legion.edu.controller;
 
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.dynamic.datasource.annotation.DS;
 import com.esmooc.legion.core.common.utils.ResultUtil;
 import com.esmooc.legion.core.common.utils.SecurityUtil;
@@ -145,12 +146,12 @@ public class PaperController {
      */
     @ApiOperation(value = "提交试卷")
     @PostMapping("/submitPaper")
-    public Result submitPaper(@RequestBody SubmitPaper data) {
+    public Result submitPaper( SubmitPaper data) {
         // 校验 试卷id是否传
         if (null == data) {
             return ResultUtil.error("参数不能为空");
         }
-        if (null == data.getPaperId() || "".equals(data.getPaperId())) {
+        if (StrUtil.isNotEmpty(data.getPaperId())) {
             return ResultUtil.error("参数不能为空");
         }
         Map m = paperService.submitPaper(data);

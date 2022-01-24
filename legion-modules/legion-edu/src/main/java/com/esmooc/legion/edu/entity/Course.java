@@ -22,17 +22,16 @@ import java.util.Date;
 public class Course {
 
     /**
+     * 课程主键
+     */
+    private String id;
+
+    /**
      * 课程名称
      */
     @ExcelProperty("课程名称")
     private String courseTitle;
 
-    private static final long serialVersionUID = 1L;
-
-    /**
-     * 课程主键
-     */
-    private String id;
 
     /**
      * 科目
@@ -60,7 +59,7 @@ public class Course {
      * 课程类别
      */
     @ExcelProperty("课程类别")
-    private int courseType;
+    private Integer courseType;
 
     /**
      * 课程类别

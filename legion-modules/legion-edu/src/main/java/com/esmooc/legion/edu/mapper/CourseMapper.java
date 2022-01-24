@@ -1,8 +1,10 @@
 package com.esmooc.legion.edu.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.esmooc.legion.edu.entity.Course;
+import com.esmooc.legion.edu.entity.Exam;
 import com.esmooc.legion.edu.entity.vo.CourseVO;
 import com.esmooc.legion.edu.entity.vo.HomePageVO;
 import com.esmooc.legion.edu.entity.vo.StuPdfCourseVO;
@@ -20,7 +22,7 @@ import java.util.List;
  */
 
 @Mapper
-public interface CourseMapper {
+public interface CourseMapper extends BaseMapper<Course> {
     /**
      * 查询课程业务
      *
@@ -45,7 +47,7 @@ public interface CourseMapper {
      * @param course 课程业务
      * @return 结果
      */
-    int insertBizCourse(Course course);
+    int insertCourse(Course course);
 
     /**
      * 修改课程业务

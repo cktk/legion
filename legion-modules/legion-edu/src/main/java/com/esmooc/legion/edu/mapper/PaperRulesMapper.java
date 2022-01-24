@@ -1,5 +1,7 @@
 package com.esmooc.legion.edu.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.esmooc.legion.edu.entity.Exam;
 import com.esmooc.legion.edu.entity.ExamPaperRules;
 import com.esmooc.legion.edu.entity.vo.ExamPaperRulesVo;
 import org.apache.ibatis.annotations.Mapper;
@@ -8,7 +10,7 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 @Mapper
-public interface PaperRulesMapper {
+public interface PaperRulesMapper extends BaseMapper<ExamPaperRules> {
     List<ExamPaperRulesVo> paperRulesList(ExamPaperRulesVo examPaperRulesVo);
 
     Integer getQuestionCountByClazzIdType(@Param("id") String id, @Param("type") Integer type);

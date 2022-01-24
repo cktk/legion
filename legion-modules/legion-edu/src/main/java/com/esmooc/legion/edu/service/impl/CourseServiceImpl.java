@@ -2,6 +2,7 @@ package com.esmooc.legion.edu.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.esmooc.legion.edu.common.constant.Constants;
 import com.esmooc.legion.edu.common.utils.BaseUtils;
 import com.esmooc.legion.edu.common.utils.DateUtils;
@@ -31,7 +32,7 @@ import java.util.List;
  * @date 2020-12-28
  */
 @Service
-public class CourseServiceImpl implements CourseService {
+public class CourseServiceImpl extends ServiceImpl<CourseMapper,Course >  implements CourseService {
     @Autowired
     private CourseMapper courseMapper;
 
@@ -122,11 +123,11 @@ public class CourseServiceImpl implements CourseService {
      * @return 结果
      */
     @Override
-    public int insertBizCourse(Course course) {
+    public int insertCourse(Course course) {
         course.setCreateTime(DateUtils.getNowDate());
         course.setUpdateBy(course.getCreateBy());
         course.setUpdateTime(DateUtils.getNowDate());
-        return courseMapper.insertBizCourse(course);
+        return courseMapper.insertCourse(course);
     }
 
     /**

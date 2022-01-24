@@ -1,7 +1,9 @@
 package com.esmooc.legion.edu.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.esmooc.legion.edu.entity.Exam;
 import com.esmooc.legion.edu.entity.LearningRecordFile;
 import com.esmooc.legion.edu.entity.vo.RankingVO;
 import org.apache.ibatis.annotations.Mapper;
@@ -16,7 +18,7 @@ import java.util.List;
  * @date 2020-12-28
  */
 @Mapper
-public interface LearningRecordFileMapper {
+public interface LearningRecordFileMapper extends BaseMapper<LearningRecordFile> {
     /**
      * 查询课程附件学习状态业务
      *

@@ -2,10 +2,13 @@ package com.esmooc.legion.edu.service.impl;
 
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.esmooc.legion.core.common.vo.PageVo;
 import com.esmooc.legion.edu.common.constant.Constants;
+import com.esmooc.legion.edu.entity.CourseFile;
 import com.esmooc.legion.edu.entity.ExamPaperRules;
 import com.esmooc.legion.edu.entity.vo.ExamPaperRulesVo;
+import com.esmooc.legion.edu.mapper.CourseFileMapper;
 import com.esmooc.legion.edu.mapper.PaperRulesMapper;
 import com.esmooc.legion.edu.service.PaperRulesService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +24,7 @@ import java.util.Map;
  * @Date 2020-12-29 14:21
  **/
 @Service
-public class PaperRulesServiceImpl implements PaperRulesService {
+public class PaperRulesServiceImpl extends ServiceImpl<PaperRulesMapper, ExamPaperRules> implements PaperRulesService {
 
     @Autowired
     private PaperRulesMapper paperRulesMapper;

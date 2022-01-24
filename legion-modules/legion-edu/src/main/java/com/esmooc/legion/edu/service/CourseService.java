@@ -3,6 +3,7 @@ package com.esmooc.legion.edu.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.esmooc.legion.edu.entity.Course;
 import com.esmooc.legion.edu.entity.vo.CourseVO;
 import com.esmooc.legion.edu.entity.vo.HomePageVO;
@@ -17,7 +18,7 @@ import java.util.List;
  * @author sun
  * @date 2020-12-28
  */
-public interface CourseService {
+public interface CourseService  extends IService<Course> {
     /**
      * 查询课程业务
      *
@@ -56,7 +57,7 @@ public interface CourseService {
      * @param course 课程业务
      * @return 结果
      */
-    int insertBizCourse(Course course);
+    int insertCourse(Course course);
 
     /**
      * 修改课程业务

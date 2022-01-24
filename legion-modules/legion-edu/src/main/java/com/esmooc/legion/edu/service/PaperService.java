@@ -1,11 +1,14 @@
 package com.esmooc.legion.edu.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.esmooc.legion.core.entity.User;
+import com.esmooc.legion.edu.entity.ExamPaper;
 import com.esmooc.legion.edu.entity.SubmitPaper;
 
+import java.awt.print.Paper;
 import java.util.Map;
 
-public interface PaperService {
+public interface PaperService  extends IService<ExamPaper> {
     Map getPaper(String clazzId, String type, User user);
 
     Map startPracticing(String clazzId, String type, String userId);

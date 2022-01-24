@@ -29,7 +29,7 @@ import java.util.Map;
 public class ExamController {
 
     @Autowired
-    private ExamService bizExamService;
+    private ExamService examService;
 
     /**
      * 查询管理端试卷主表
@@ -40,7 +40,7 @@ public class ExamController {
     @ApiOperation(value = "查询管理端试卷主表")
     @GetMapping("/examList")
     public Result<IPage<ExamVO>> examList(ExamVO examVO, PageVo pageVo) {
-        IPage<ExamVO> list = bizExamService.examList(examVO, PageUtil.initPage(pageVo));
+        IPage<ExamVO> list = examService.examList(examVO, PageUtil.initPage(pageVo));
         return ResultUtil.data(list);
     }
 
@@ -65,7 +65,7 @@ public class ExamController {
         if (null == examVO.getRules() || "".equals(examVO.getRules())) {
             return ResultUtil.error("错误");
         }
-        Map m = bizExamService.saveExam(examVO);
+        Map m = examService.saveExam(examVO);
         return ResultUtil.data(m);
     }
 
@@ -77,16 +77,16 @@ public class ExamController {
         if (null == id || "".equals(id)) {
             return ResultUtil.error("参数为空");
         }
-        return ResultUtil.data(bizExamService.getExamById(id));
+        return ResultUtil.data(examService.getExamById(id));
     }
 
     @ApiOperation(value = "isUpdateRules")
     @GetMapping("/isUpdateRules")
-    public Object isUpdateRules(String id) {
+    public Result isUpdateRules(String id) {
         if (null == id || "".equals(id)) {
             return ResultUtil.error("参数为空");
         }
-        int type = bizExamService.isUpdateRules(id);
+        int type = examService.isUpdateRules(id);
         if (type == 1) {
             return ResultUtil.success(200, "ok");
         } else {
@@ -96,47 +96,47 @@ public class ExamController {
 
     @ApiOperation(value = " 删除试卷")
     @DeleteMapping("/deleteExam")
-    public Object deleteExam(String id) {
+    public Result deleteExam(String id) {
         // 校验
         if (null == id || "".equals(id)) {
             return ResultUtil.error(505, "参数错误");
         }
-        bizExamService.deleteExam(id);
+        examService.deleteExam(id);
         return ResultUtil.success("删除成功");
     }
 
 
     @ApiOperation(value = "发布考试")
     @PostMapping("/issueExam")
-    public Object issueExam(String id) {
+    public Result issueExam(String id) {
         // 校验
         if (null == id || "".equals(id)) {
             return ResultUtil.error(505, "参数错误");
         }
-        bizExamService.issueExam(id);
+        examService.issueExam(id);
         return ResultUtil.success();
     }
 
 
     @ApiOperation(value = "发布考试之后撤回")
     @PostMapping("/withdrawExam")
-    public Object withdrawExam(String id) {
+    public Result withdrawExam(String id) {
         // 校验
         if (null == id || "".equals(id)) {
             return ResultUtil.error(505, "参数错误");
         }
-        bizExamService.withdrawExam(id);
+        examService.withdrawExam(id);
         return ResultUtil.success(200, "撤回成功");
     }
 
 
     @ApiOperation(value = "根据题库创建试卷，校验是否可以创建试卷")
     @GetMapping("/checkBankCreate")
-    public Object checkBankCreate(String id) {
+    public Result checkBankCreate(String id) {
         if (null == id || "".equals(id)) {
             return ResultUtil.error(505, "参数错误");
         }
-        Map m = bizExamService.checkBankCreate(id);
+        Map m = examService.checkBankCreate(id);
         return ResultUtil.success("ok", m);
     }
 

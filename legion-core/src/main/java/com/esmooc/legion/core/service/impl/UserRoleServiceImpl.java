@@ -1,5 +1,6 @@
 package com.esmooc.legion.core.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.entity.User;
@@ -52,7 +53,8 @@ public class UserRoleServiceImpl extends ServiceImpl<UserRoleMapper, UserRole> i
     }
 
     @Override
-    public void deleteByUserId(String userId) {
-        userRoleMapper.deleteByUserId(userId);
+    public boolean deleteByUserId(String userId) {
+
+      return  this.remove(new QueryWrapper<UserRole>().lambda().eq(UserRole::getUserId, userId));
     }
 }

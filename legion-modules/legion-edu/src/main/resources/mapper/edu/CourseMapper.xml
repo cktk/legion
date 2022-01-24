@@ -236,7 +236,15 @@
         LEFT JOIN legion.t_user u ON u.id = blr.user_id
         LEFT JOIN legion.t_city a1 ON a1.light_path = u.address_ids
         <where>
-            u.type = concat('0', #{stuVideoCourse.userType}) and blr.study_type = 2
+
+
+            <if test="stuVideoCourse.userType != null  and stuVideoCourse.userType != ''">
+                u.type = #{stuVideoCourse.userType}
+            </if>
+
+            <if test="stuVideoCourse.studyType != null  and stuVideoCourse.studyType != ''">
+                and blr.study_type = #{stuVideoCourse.studyType}
+            </if>
             <if test="stuVideoCourse.courseTitle != null  and stuVideoCourse.courseTitle != ''">
                 and c.course_title like concat('%', #{stuVideoCourse.courseTitle}, '%')
             </if>
@@ -487,7 +495,7 @@
         ) a
     </select>
 
-    <insert id="insertBizCourse" parameterType="com.esmooc.legion.edu.entity.Course">
+    <insert id="insertCourse" parameterType="com.esmooc.legion.edu.entity.Course">
         insert into edu_course
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">

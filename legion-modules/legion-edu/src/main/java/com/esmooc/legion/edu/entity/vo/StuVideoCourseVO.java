@@ -9,7 +9,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class StuVideoCourseVO extends BaseEntity {
+public class StuVideoCourseVO {
+
+    private String id;
 
     /**
      * 身份证号
