@@ -25,7 +25,7 @@ import java.util.Map;
  * @Date 2021-1-7 9:23
  **/
 @Service
-public class ExamServiceImpl  extends ServiceImpl<ExamMapper, Exam> implements  ExamService {
+public class ExamServiceImpl  extends ServiceImpl<ExamMapper, Exam> implements ExamService {
 
     @Autowired
     private ExamMapper examMapper;

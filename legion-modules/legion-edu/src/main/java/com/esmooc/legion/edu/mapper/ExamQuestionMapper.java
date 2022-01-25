@@ -8,7 +8,7 @@ import org.apache.ibatis.annotations.Mapper;
  * @Author 呆猫
  *
  * @Date: 2022/01/24/ 10:21
- * @Description: 
+ * @Description:
  */
 @Mapper
 public interface ExamQuestionMapper extends BaseMapper<ExamQuestion> {

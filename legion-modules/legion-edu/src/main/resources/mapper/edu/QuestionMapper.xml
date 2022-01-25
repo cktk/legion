@@ -256,8 +256,6 @@
         )
         and
         type = #{type}
-        and
-        is_delete = '0'
     </select>
 
     <select id="getPaperCountByUserId" resultType="java.lang.Integer">
@@ -285,8 +283,6 @@
         </foreach>
         and
         type = #{type}
-        and
-        is_delete = '0'
     </select>
 
     <select id="getMajorNameByMajorId" resultType="java.lang.String">

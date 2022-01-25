@@ -23,7 +23,7 @@ public interface CourseFileService  extends IService<CourseFile> {
      * @param id 课程文件附件业务ID
      * @return 课程文件附件业务
      */
-    CourseFile selectBizCourseFileById(String id);
+    CourseFile selectCourseFileById(String id);
 
     /**
      * 查询课程文件附件业务列表
@@ -32,7 +32,7 @@ public interface CourseFileService  extends IService<CourseFile> {
      * @param page
      * @return 课程文件附件业务集合
      */
-    IPage<CourseFile> selectBizCourseFileList(CourseFile courseFile, Page page);
+    IPage<CourseFile> selectCourseFileList(CourseFile courseFile, Page page);
 
     /**
      * 新增课程文件附件业务
@@ -40,10 +40,10 @@ public interface CourseFileService  extends IService<CourseFile> {
      * @param bizCourseFile 课程文件附件业务
      * @return 结果
      */
-    String insertBizCourseFile(String courseId, long fileType, MultipartFile file, User user);
+    String insertCourseFile(String courseId, long fileType, MultipartFile file, User user);
 
 
-    int insertBizCourseFiles(String courseId, long fileType, MultipartFile[] files, User user);
+    int insertCourseFiles(String courseId, long fileType, MultipartFile[] files, User user);
 
     /**
      * 修改课程文件附件业务

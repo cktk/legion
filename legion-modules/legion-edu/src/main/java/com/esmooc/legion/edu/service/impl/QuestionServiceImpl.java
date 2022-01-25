@@ -13,7 +13,6 @@ import com.esmooc.legion.edu.entity.ExamQuestionBank;
 import com.esmooc.legion.edu.entity.SysDictData;
 import com.esmooc.legion.edu.mapper.ExamQuestionMapper;
 import com.esmooc.legion.edu.mapper.QuestionMapper;
-import com.esmooc.legion.edu.service.ExamQuestionService;
 import com.esmooc.legion.edu.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

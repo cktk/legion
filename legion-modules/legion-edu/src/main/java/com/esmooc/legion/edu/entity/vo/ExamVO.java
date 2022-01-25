@@ -1,9 +1,21 @@
 package com.esmooc.legion.edu.entity.vo;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.esmooc.legion.core.base.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.util.Date;
 
 /**
  * @ClassName ExamVO
@@ -13,8 +25,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ExamVO extends BaseEntity {
+public class ExamVO {
 
+    private String  id;
     /**
      * 试卷名称
      */
@@ -69,5 +82,35 @@ public class ExamVO extends BaseEntity {
     private String issur;
 
     private String backId;
+
+
+    @CreatedBy
+    @ApiModelProperty(value = "创建者")
+    @TableField(value = "create_by", fill = FieldFill.INSERT)
+    String createBy;
+
+    @CreatedDate
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @ApiModelProperty(value = "创建时间")
+    @TableField(value = "create_time", fill = FieldFill.INSERT)
+    Date createTime;
+
+    @ApiModelProperty(value = "更新者")
+    @LastModifiedBy
+    @TableField(value = "update_by", fill = FieldFill.UPDATE)
+    String updateBy;
+
+    @LastModifiedDate
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @ApiModelProperty(value = "更新时间")
+    @TableField(value = "update_time", fill = FieldFill.UPDATE)
+    Date updateTime;
+
+    @ApiModelProperty(value = "删除标志 默认1")
+    @TableField(value = "del_flag")
+    @TableLogic()
+    Integer delFlag =0;
 
 }

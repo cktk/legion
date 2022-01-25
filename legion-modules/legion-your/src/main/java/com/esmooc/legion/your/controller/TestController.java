@@ -1,24 +1,26 @@
 package com.esmooc.legion.your.controller;
 
+import cn.hutool.http.HttpUtil;
+import cn.hutool.json.JSONUtil;
 import com.esmooc.legion.core.common.annotation.RateLimiter;
 import com.esmooc.legion.core.common.lock.Callback;
 import com.esmooc.legion.core.common.lock.RedisLockTemplate;
 import com.esmooc.legion.core.common.utils.ResultUtil;
 import com.esmooc.legion.core.common.vo.Result;
+import com.esmooc.legion.your.entity.Book;
+import com.esmooc.legion.your.service.BookService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import lombok.var;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -27,7 +29,6 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @RestController
 @Api(tags = "测试接口")
-@Transactional
 @RequestMapping(value = "/test")
 public class TestController {
 
@@ -35,6 +36,118 @@ public class TestController {
     @Autowired
     private RedisLockTemplate redisLockTemplate;
 
+    @Autowired
+    private BookService bookService;
+
+    private static final String URL = "https://www.medtiku.com";
+
+    @ApiOperation(value = "获取试题")
+    @GetMapping(value = "/get/{id}")
+    public Result getByID(@PathVariable String id) {
+        return ResultUtil.data(bookService.getByPid(id));
+    }
+
+
+    //@GetMapping(value = "/save")
+    public void save() {
+        List<Book> books = bookService.listByO();
+        for (Book book : books) {
+            获取所有链接(book);
+        }
+        System.out.println("结束了");
+    }
+
+
+    //@GetMapping(value = "/savest")
+    public void saveST() {
+        List<Book> books = bookService.listByApp();
+
+        for (Book book : books) {
+
+            try {
+                String url = book.getUrl();
+                String[] split = url.split("/");//以逗号分割
+
+                String jsonurl = "https://www.medtiku.com/api/q?cid=" + split[4] + "&sid=" + split[3];
+
+                String json = HttpUtil.get(jsonurl, 50000);
+                Book jsonbook = new Book();
+                jsonbook.setPid(book.getId());
+                jsonbook.setData(json);
+                jsonbook.setUrl(jsonurl);
+                jsonbook.setTitle(book.getTitle());
+                jsonbook.setType("2");
+                bookService.save(jsonbook);
+                log.info("返回值 {}", jsonurl);
+                log.info("存储一下 {}", jsonbook);
+            } catch (Exception e) {
+                book.setType("0");
+                bookService.updateById(book);
+                System.out.println("报错了");
+            }
+        }
+
+
+        System.out.println("结束了");
+    }
+
+
+    public ArrayList<Book> 获取所有链接(Book b) {
+        String html = HttpUtil.get(URL + b.getUrl());
+
+        log.info("请求的URL {}", b.getUrl());
+        log.info("返回数据  {}", html);
+
+        if (isJson(html)) {
+            Book book = new Book();
+            book.setData(html);
+            book.setTitle(b.getTitle());
+            //book.setUrl(b.getUrl());
+            book.setPid(b.getId());
+            book.setType("2");
+            log.info("获取试题了{}", html);
+            boolean save = bookService.save(book);
+        }
+
+
+        ArrayList<Book> books = new ArrayList<>();
+        Document document = Jsoup.parse(html);
+        Elements item = document.getElementsByClass("item padh10");
+        for (Element element : item) {
+            Elements links = element.select("a[href]");
+            String link = links.attr("href");
+            String text = links.text();
+            Book book = new Book();
+
+            book.setTitle(text);
+            book.setUrl(link);
+            book.setType("1");
+            book.setPid(b.getId());
+            book.setData(html);
+            books.add(book);
+
+            bookService.save(book);
+            try {
+                获取所有链接(book);
+            } catch (Exception e) {
+
+                log.info("报错 {} ", b);
+            }
+            log.info("标题 {}  连接 {}", text, link);
+        }
+
+
+        return books;
+
+    }
+
+    public static boolean isJson(String content) {
+        try {
+            return JSONUtil.isJson(content);
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
 
     @RequestMapping(value = "/lockAndLimit", method = RequestMethod.GET)

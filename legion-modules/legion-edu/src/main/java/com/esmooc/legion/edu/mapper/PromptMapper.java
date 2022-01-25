@@ -4,7 +4,6 @@ package com.esmooc.legion.edu.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.esmooc.legion.edu.entity.Exam;
 import com.esmooc.legion.edu.entity.Prompt;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;

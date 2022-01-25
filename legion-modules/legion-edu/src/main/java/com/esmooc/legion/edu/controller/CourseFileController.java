@@ -47,7 +47,7 @@ public class CourseFileController {
     @GetMapping("/list")
     @ApiOperation(value = "查询课程文件附件业务列表")
     public Result<IPage<CourseFile>> list(CourseFile courseFile, PageVo page) {
-        IPage<CourseFile> list = bizCourseFileService.selectBizCourseFileList(courseFile, PageUtil.initPage(page));
+        IPage<CourseFile> list = bizCourseFileService.selectCourseFileList(courseFile, PageUtil.initPage(page));
         return ResultUtil.data(list);
     }
 
@@ -59,7 +59,7 @@ public class CourseFileController {
     @ApiOperation(value = "导出课程文件附件业务列表")
     @ResponseExcel
     public List<CourseFile> export(CourseFile courseFile, PageVo page) {
-        IPage<CourseFile> list = bizCourseFileService.selectBizCourseFileList(courseFile, PageUtil.initPage(page));
+        IPage<CourseFile> list = bizCourseFileService.selectCourseFileList(courseFile, PageUtil.initPage(page));
         return list.getRecords();
     }
 
@@ -67,24 +67,24 @@ public class CourseFileController {
     @GetMapping(value = "/{id}")
     @ApiOperation(value = "获取课程文件附件业务详细信息")
     public Result<CourseFile> getInfo(@PathVariable("id") String id) {
-        return ResultUtil.data(bizCourseFileService.selectBizCourseFileById(id));
+        return ResultUtil.data(bizCourseFileService.selectCourseFileById(id));
     }
 
     @PostMapping("/files")
     @ApiOperation(value = "新增课程文件附件业务")
     @SystemLog(description = "新增课程文件附件业务", type = LogType.EDU)
-    public Result<Integer> addFiles(@RequestParam String courseId,
-                                    @RequestParam long fileType,
-                                    @RequestParam MultipartFile[] files) {
-        return ResultUtil.data(bizCourseFileService.insertBizCourseFiles(courseId, fileType, files, securityUtil.getCurrUser()));
+    public Result<Integer> addFiles( String courseId,
+                                     long fileType,
+                                     MultipartFile[] files) {
+        return ResultUtil.data(bizCourseFileService.insertCourseFiles(courseId, fileType, files, securityUtil.getCurrUser()));
     }
 
     @ApiOperation(value = "上传文件")
     @PostMapping("/file")
-    public Result addFile(@RequestParam String courseId,
-                          @RequestParam long fileType,
-                          @RequestParam MultipartFile file) {
-        return ResultUtil.data(bizCourseFileService.insertBizCourseFile(courseId, fileType, file, securityUtil.getCurrUser()));
+    public Result addFile( String courseId,
+                           long fileType,
+                           MultipartFile file) {
+        return ResultUtil.data(bizCourseFileService.insertCourseFile(courseId, fileType, file, securityUtil.getCurrUser()));
     }
 
     @ApiOperation(value = "获取文件")
@@ -101,26 +101,26 @@ public class CourseFileController {
     @PutMapping
     @ApiOperation(value = "修改课程文件附件业务")
     @SystemLog(description = "课程文件附件业务", type = LogType.EDU)
-    public Result<Integer> edit(@RequestBody CourseFile courseFile) {
+    public Result<Integer> edit( CourseFile courseFile) {
         return ResultUtil.data(bizCourseFileService.updateBizCourseFile(courseFile));
     }
 
     @ApiOperation(value = "number")
     @PutMapping("/number")
-    public Result editNumber(@RequestBody List<CourseFile> courseFileList) {
+    public Result editNumber( List<CourseFile> courseFileList) {
         return ResultUtil.data(bizCourseFileService.updateBizCourseFiles(courseFileList));
     }
 
     @ApiOperation(value = "updateBizCourseFilesNumber")
     @PutMapping("/updateBizCourseFilesNumber")
-    public Result editNumber1(@RequestBody List<CourseFile> courseFileList) {
+    public Result editNumber1( List<CourseFile> courseFileList) {
         return ResultUtil.data(bizCourseFileService.updateBizCourseFilesNumber(courseFileList));
     }
 
     @SystemLog(description = "课程文件附件业务", type = LogType.EDU)
     @ApiOperation(value = "删除课程文件附件业务")
     @DeleteMapping("/{ids}")
-    public Result remove(@PathVariable String[] ids) {
+    public Result remove( String[] ids) {
         return ResultUtil.data(bizCourseFileService.deleteBizCourseFileByIds(ids));
     }
 

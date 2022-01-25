@@ -6,7 +6,6 @@ import com.esmooc.legion.core.common.utils.PageUtil;
 import com.esmooc.legion.core.common.utils.ResultUtil;
 import com.esmooc.legion.core.common.vo.PageVo;
 import com.esmooc.legion.core.common.vo.Result;
-import com.esmooc.legion.edu.common.constant.Constants;
 import com.esmooc.legion.edu.entity.vo.StuVideoCourseVO;
 import com.esmooc.legion.edu.service.CourseService;
 import io.swagger.annotations.Api;

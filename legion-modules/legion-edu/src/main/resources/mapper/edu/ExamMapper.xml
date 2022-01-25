@@ -24,12 +24,9 @@
                      edu_exam_major bem
                              on
                                      bem.exam_id = be.id
-                     left join
-                     legion.t_dict_data sdd
-                             on
-                                     sdd.update_by = bem.major_id
+               left join legion.t_dict_data sdd on sdd.value = bem.major_id
                 where sdd.type = 'edu_curricular_subject'
-                  and be.is_delete = '0'
+
         <if test="exam.title != null and exam.title != ''">
             and be.title like concat('%', #{exam.title}, '%')
         </if>

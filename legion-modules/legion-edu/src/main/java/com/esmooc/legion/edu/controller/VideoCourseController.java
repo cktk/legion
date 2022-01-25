@@ -72,7 +72,9 @@ public class VideoCourseController {
         } else {
             course.setDelFlag(Constants.ISNOTDELETE);
         }
-        return ResultUtil.data(courseService.insertCourse(course));
+        courseService.insertCourse(course);
+
+        return ResultUtil.data(course);
     }
 
 

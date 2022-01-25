@@ -38,7 +38,7 @@ public class CourseFileServiceImpl extends ServiceImpl<CourseFileMapper, CourseF
      * @return 课程文件附件业务
      */
     @Override
-    public CourseFile selectBizCourseFileById(String id) {
+    public CourseFile selectCourseFileById(String id) {
         return courseFileMapper.selectBizCourseFileById(id);
     }
 
@@ -51,7 +51,7 @@ public class CourseFileServiceImpl extends ServiceImpl<CourseFileMapper, CourseF
      */
     @Override
     @Transactional
-    public IPage<CourseFile> selectBizCourseFileList(CourseFile courseFile, Page page) {
+    public IPage<CourseFile> selectCourseFileList(CourseFile courseFile, Page page) {
         if (Constants.ISNOTDELETE.equals(courseFile.getDelFlag())) {
             /** 将页面假数据删除  0  delete */
             deleteBizCourseFileByCourseIdANDDelFlag(courseFile.getCourseId(), courseFile.getFileType());
@@ -69,7 +69,7 @@ public class CourseFileServiceImpl extends ServiceImpl<CourseFileMapper, CourseF
      * @return 结果
      */
     @Override
-    public String insertBizCourseFile(String courseId, long fileType, MultipartFile file, User user) {
+    public String insertCourseFile(String courseId, long fileType, MultipartFile file, User user) {
         String id = BaseUtils.getUUID();
         FileVO vo = FileUtils.writeFile(file);
         CourseFile courseFile = new CourseFile();
@@ -85,9 +85,9 @@ public class CourseFileServiceImpl extends ServiceImpl<CourseFileMapper, CourseF
     }
 
     @Override
-    public int insertBizCourseFiles(String courseId, long fileType, MultipartFile[] files, User user) {
+    public int insertCourseFiles(String courseId, long fileType, MultipartFile[] files, User user) {
         for (int i = 0; i < files.length; i++) {
-            this.insertBizCourseFile(courseId, fileType, files[i], user);
+            this.insertCourseFile(courseId, fileType, files[i], user);
         }
         return files.length;
     }

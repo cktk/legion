@@ -1,5 +1,6 @@
 package com.esmooc.legion.edu.controller;
 
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.esmooc.legion.core.common.utils.PageUtil;
@@ -47,22 +48,22 @@ public class ExamController {
 
     @ApiOperation(value = "管理端试卷保存/修改")
     @PostMapping("/saveExam")
-    public Result<Map> saveExam(@RequestBody ExamVO examVO) {
+    public Result<Map> saveExam( ExamVO examVO) {
         /**
          *  校验: 规则、类别、名称
          */
         if (null == examVO) {
             return ResultUtil.error("参数为空");
         }
-        if (null == examVO.getClazzId() || "".equals(examVO.getClazzId())) {
-            if (null == examVO.getTitle() || "".equals(examVO.getTitle())) {
+        if (StrUtil.isBlank(examVO.getClazzId())) {
+            if (StrUtil.isBlank(examVO.getTitle())) {
                 return ResultUtil.error("参数为空");
             }
-            if (null == examVO.getMajorId() || "".equals(examVO.getMajorId())) {
+            if (StrUtil.isBlank(examVO.getMajorId())) {
                 return ResultUtil.error("参数错误");
             }
         }
-        if (null == examVO.getRules() || "".equals(examVO.getRules())) {
+        if (StrUtil.isBlank(examVO.getRules())) {
             return ResultUtil.error("错误");
         }
         Map m = examService.saveExam(examVO);

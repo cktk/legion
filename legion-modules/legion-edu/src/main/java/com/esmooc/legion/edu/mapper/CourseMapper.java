@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.esmooc.legion.edu.entity.Course;
-import com.esmooc.legion.edu.entity.Exam;
 import com.esmooc.legion.edu.entity.vo.CourseVO;
 import com.esmooc.legion.edu.entity.vo.HomePageVO;
 import com.esmooc.legion.edu.entity.vo.StuPdfCourseVO;
