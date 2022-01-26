@@ -24,7 +24,7 @@ public interface PaperMapper extends BaseMapper<ExamPaper> {
                    @Param("clazzId") String clazzId,
                    @Param("userId") String userId,
                    @Param("date") Date dateNowSecond,
-                   @Param("type") String type,
+                   @Param("type") Integer type,
                    @Param("clazzMajor") String clazzMajor,
                    @Param("clazzName") String clazzName);
 

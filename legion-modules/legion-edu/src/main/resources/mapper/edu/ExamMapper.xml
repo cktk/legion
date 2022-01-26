@@ -3,6 +3,29 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.esmooc.legion.edu.mapper.ExamMapper">
+    <resultMap id="BaseResultMap" type="com.esmooc.legion.edu.entity.Exam">
+        <!--@mbg.generated-->
+        <!--@Table edu_exam-->
+        <id column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="issue" jdbcType="INTEGER" property="issue"/>
+        <result column="is_delete" jdbcType="INTEGER" property="isDelete"/>
+        <result column="is_bank" jdbcType="INTEGER" property="isBank"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="update_by" jdbcType="VARCHAR" property="updateBy"/>
+        <result column="del_flag" jdbcType="VARCHAR" property="delFlag"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <result column="bank_id" jdbcType="VARCHAR" property="bankId"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        id, create_by, create_time, issue, is_delete, is_bank, update_time, update_by, del_flag
+        , title, bank_id
+    </sql>
+
+
     <select id="examList" resultType="com.esmooc.legion.edu.entity.vo.ExamVO">
         select be.id,
                be.title,
@@ -47,54 +70,10 @@
 
     </select>
 
-    <insert id="saveBizExam">
-        insert into
-        edu_exam
-        set
-        id = #{id},
-        title = #{title},
-        create_by = #{createBy},
-        create_time = #{createTime},
-        bank_id = #{backId}
-    </insert>
 
-    <insert id="saveBizExamMajor">
-        insert into
-        edu_exam_major
-        set
-        id = #{id},
-        exam_id = #{examId},
-        major_id = #{majorId}
-    </insert>
 
-    <insert id="saveRules">
-        insert into
-        edu_exam_paper_rules
-        set
-        id = #{rulesId},
-        clazz_id = #{id},
-        rules = #{rules},
-        create_by = #{createBy},
-        create_time = #{createTime},
-        bank_id = #{backId}
-    </insert>
 
-    <update id="updateBizExam">
-        update
-        edu_exam
-        set
-        title = #{title},
-        create_time = #{createTime}
-        where
-        id = #{id}
-    </update>
 
-    <delete id="deleteBizExamMajorByExamId">
-        delete from
-        edu_exam_major
-        where
-        exam_id = #{id}
-    </delete>
 
     <delete id="deleteBizExamRulesByExamId">
         delete from

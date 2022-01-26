@@ -137,6 +137,16 @@
         beqb.id,
         beqb.title,
         beqb.major_id as 'majorId',
+       (select
+        title as  dict_label
+        from
+        legion.t_dict_data
+        where
+        type = 'edu_curricular_subject'
+        and
+        value = beqb.major_id
+        and del_flag=0) as majorName,
+        beqb.major_id as 'majorId',
         beqb.create_time as 'createTime',
         su.nickname as 'createBy',
         beqb.clazz_id as 'clazzId'

@@ -8,12 +8,14 @@ import com.esmooc.legion.core.common.utils.ResultUtil;
 import com.esmooc.legion.core.common.vo.PageVo;
 import com.esmooc.legion.core.common.vo.Result;
 import com.esmooc.legion.edu.entity.vo.ExamVO;
+import com.esmooc.legion.edu.entity.vo.Issue;
 import com.esmooc.legion.edu.service.ExamService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 /**
@@ -109,13 +111,12 @@ public class ExamController {
 
     @ApiOperation(value = "发布考试")
     @PostMapping("/issueExam")
-    public Result issueExam(String id) {
+    public Result issueExam(Issue issue) {
         // 校验
-        if (null == id || "".equals(id)) {
+        if (null == issue || "".equals(issue)) {
             return ResultUtil.error(505, "参数错误");
         }
-        examService.issueExam(id);
-        return ResultUtil.success();
+        return ResultUtil.data(examService.issueExam(issue.getId(),issue.getUserIds(),issue.getDeptIds(),issue.getRoleIds()));
     }
 
 

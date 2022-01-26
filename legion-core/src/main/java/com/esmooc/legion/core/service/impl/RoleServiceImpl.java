@@ -1,5 +1,6 @@
 package com.esmooc.legion.core.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.esmooc.legion.core.entity.Role;
 import com.esmooc.legion.core.mapper.RoleMapper;

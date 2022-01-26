@@ -19,5 +19,4 @@ public class FileVO extends BaseEntity {
      * 文件名称
      */
     String fileName;
-
 }

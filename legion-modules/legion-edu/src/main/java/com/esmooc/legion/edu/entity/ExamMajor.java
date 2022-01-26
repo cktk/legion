@@ -14,61 +14,47 @@ import lombok.NoArgsConstructor;
 /**
  * @Author 呆猫
  *
- * @Date: 2022/01/26/ 20:47
- * @Description:
+ * @Date: 2022/01/26/ 20:57
+ * @Description: 
  */
-
 /**
- * 试卷规则表
- */
-@ApiModel(value = "试卷规则表")
+    * 试卷-类别关系表
+    */
+@ApiModel(value="试卷-类别关系表")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@TableName(value = "edu_exam_paper_rules")
-public class ExamPaperRules {
+@TableName(value = "edu_exam_major")
+public class ExamMajor {
     @TableId(value = "id", type = IdType.INPUT)
-    @ApiModelProperty(value = "")
+    @ApiModelProperty(value="")
     private String id;
 
-    /**
-     * 课程id
-     */
-    @TableField(value = "clazz_id")
-    @ApiModelProperty(value = "课程id")
-    private String clazzId;
+    @TableField(value = "exam_id")
+    @ApiModelProperty(value="")
+    private String examId;
+
+    @TableField(value = "major_id")
+    @ApiModelProperty(value="")
+    private String majorId;
+
+    @TableField(value = "update_time")
+    @ApiModelProperty(value="")
+    private Date updateTime;
 
     @TableField(value = "create_time")
-    @ApiModelProperty(value = "")
+    @ApiModelProperty(value="")
     private Date createTime;
 
     @TableField(value = "create_by")
-    @ApiModelProperty(value = "")
+    @ApiModelProperty(value="")
     private String createBy;
 
-    @TableField(value = "update_time")
-    @ApiModelProperty(value = "")
-    private Date updateTime;
-
     @TableField(value = "update_by")
-    @ApiModelProperty(value = "")
+    @ApiModelProperty(value="")
     private String updateBy;
 
     @TableField(value = "del_flag")
-    @ApiModelProperty(value = "")
+    @ApiModelProperty(value="")
     private String delFlag;
-
-    /**
-     * 规则
-     */
-    @TableField(value = "rules")
-    @ApiModelProperty(value = "规则")
-    private String rules;
-
-    /**
-     * 题库id
-     */
-    @TableField(value = "bank_id")
-    @ApiModelProperty(value = "题库id")
-    private String bankId;
 }

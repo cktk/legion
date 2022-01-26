@@ -75,10 +75,4 @@ public interface LearningRecordFileMapper extends BaseMapper<LearningRecordFile>
 
     List<RankingVO> selectVideoStudentRanking();
 
-    List<RankingVO> selectOpenStudentRanking();
-
-    List<RankingVO> selectVideoUnitRanking();
-
-    List<RankingVO> selectOpenUnitRanking();
-
 }

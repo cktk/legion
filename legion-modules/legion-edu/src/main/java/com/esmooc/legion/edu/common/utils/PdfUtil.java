@@ -87,7 +87,7 @@ public class PdfUtil {
         // 生成的二维码的路径及名称
         String destPath = "C:\\Users\\sunbin\\Desktop\\jam.jpg";
         // 打印出解析出的内容
-        fillTemplate(o, "", Constants.FILE_PATH + "/muban.pdf");
+        fillTemplate(o, "",  "/muban.pdf");
     }
 
     public static int getLength(String s) {
@@ -105,7 +105,7 @@ public class PdfUtil {
 
     /**
      * @param o            写入的数据
-     * @param out          自定义保存pdf的文件流
+     * @param           自定义保存pdf的文件流
      * @param templatePath pdf模板路径
      */
     // 利用模板生成pdf
@@ -113,7 +113,7 @@ public class PdfUtil {
     public static String fillTemplate(Map<String, Object> o, String imgPath, String templatePath) {
         //生成随机文件名
         String pdf1Name = BaseUtils.getUUID();
-        File f = new File(Constants.FILE_PATH + "/" + pdf1Name + ".pdf");
+        File f = new File( "/" + pdf1Name + ".pdf");
         OutputStream out = null;
         try {
             out = new FileOutputStream(f);

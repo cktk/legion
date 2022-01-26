@@ -1,21 +1,79 @@
 package com.esmooc.legion.edu.entity;
 
-
-import com.esmooc.legion.core.base.BaseEntity;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * @Author 呆猫
+ *
+ * @Date: 2022/01/26/ 21:01
+ * @Description:
+ */
 
 /**
- * 考试
- *
- * @author Daimao
- * @date 2022年01月19日 15点01分47秒
+ * 管理端考试主表
  */
+@ApiModel(value = "管理端考试主表")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Exam extends BaseEntity {
+@TableName(value = "edu_exam")
+public class Exam {
+    @TableId(value = "id", type = IdType.INPUT)
+    @ApiModelProperty(value = "")
+    private String id;
+
+    @TableField(value = "create_by")
+    @ApiModelProperty(value = "")
+    private String createBy;
+
+    @TableField(value = "create_time")
+    @ApiModelProperty(value = "")
+    private Date createTime;
+
+    /**
+     * 是否发布  0：未发布  1：发布
+     */
+    @TableField(value = "issue")
+    @ApiModelProperty(value = "是否发布  0：未发布  1：发布")
+    private Integer issue;
+
+    @TableField(value = "is_delete")
+    @ApiModelProperty(value = "")
+    private Integer isDelete;
+
+    /**
+     * 是否题库创建考试
+     */
+    @TableField(value = "is_bank")
+    @ApiModelProperty(value = "是否题库创建考试")
+    private Integer isBank;
+
+    @TableField(value = "update_time")
+    @ApiModelProperty(value = "")
+    private Date updateTime;
+
+    @TableField(value = "update_by")
+    @ApiModelProperty(value = "")
+    private String updateBy;
+
+    @TableField(value = "del_flag")
+    @ApiModelProperty(value = "")
+    private String delFlag;
+
+    @TableField(value = "title")
+    @ApiModelProperty(value = "")
     private String title;
+
+    @TableField(value = "bank_id")
+    @ApiModelProperty(value = "")
+    private String bankId;
 }

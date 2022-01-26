@@ -4,6 +4,9 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.esmooc.legion.core.common.utils.SecurityUtil;
+import com.esmooc.legion.core.entity.Department;
+import com.esmooc.legion.core.entity.Role;
+import com.esmooc.legion.edu.common.constant.Constants;
 import com.esmooc.legion.edu.entity.MyExam;
 import com.esmooc.legion.edu.mapper.MyExamMapper;
 import com.esmooc.legion.edu.service.MyExamService;
@@ -14,6 +17,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @ClassName MyExamServiceImpl
@@ -30,10 +34,23 @@ public class MyExamServiceImpl extends ServiceImpl<MyExamMapper, MyExam> impleme
     private SecurityUtil securityUtil;
 
     @Override
-    public IPage<MyExam> list(MyExam exam, Page page) {
+    public IPage<MyExam> list(MyExam exam, Page pageVo) {
         exam.setUserId(securityUtil.getCurrUser().getId());
-        IPage<MyExam> list = myExamMapper.list(exam, page);
-        for (MyExam d : list.getRecords()) {
+        IPage<MyExam> page = myExamMapper.list(exam, pageVo);
+
+        try {
+            List<String> deptIds = securityUtil.getCurrUserDept().stream().map(Department::getId).collect(Collectors.toList());
+            List<String> RoleIds = securityUtil.getCurrUserRole().stream().map(Role::getId).collect(Collectors.toList());
+            List<MyExam> deptlist = myExamMapper.listBy(deptIds, Constants.DEPT,exam.getClazzName(),exam.getMajorId());
+            List<MyExam> rolelist = myExamMapper.listBy(RoleIds, Constants.ROLE,exam.getClazzName(),exam.getMajorId());
+            page.getRecords().addAll(deptlist);
+            page.getRecords().addAll(rolelist);
+        } catch (Exception e) {
+
+        }
+
+
+        for (MyExam d : page.getRecords()) {
             // 查询分数
             String grade = myExamMapper.getGradeByUserIdClazzId(d.getClazzId(), securityUtil.getCurrUser().getId());
             if (null == grade || "".equals(grade)) {
@@ -46,7 +63,7 @@ public class MyExamServiceImpl extends ServiceImpl<MyExamMapper, MyExam> impleme
                 d.setPeriod(String.valueOf(b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue()));
             }
         }
-        return list;
+        return page;
     }
 
     @Override

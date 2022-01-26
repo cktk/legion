@@ -1,31 +1,19 @@
 package com.esmooc.legion.edu.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.esmooc.legion.edu.entity.Exam;
-import com.esmooc.legion.edu.entity.vo.ExamVO;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
+import com.baomidou.mybatisplus.core.metadata.IPage;import com.baomidou.mybatisplus.extension.plugins.pagination.Page;import com.esmooc.legion.edu.entity.Exam;
+import com.esmooc.legion.edu.entity.vo.ExamVO;import org.apache.ibatis.annotations.Mapper;import org.apache.ibatis.annotations.Param;import java.util.Date;import java.util.List;
 
-import java.util.Date;
-import java.util.List;
-
+/**
+ * @Author 呆猫
+ * @Date: 2022/01/26/ 21:01
+ * @Description:
+ */
 @Mapper
 public interface ExamMapper extends BaseMapper<Exam> {
     IPage<ExamVO> examList(@Param("exam") ExamVO examVO, @Param("page") Page page);
 
-    void saveBizExam(ExamVO examVO);
 
-    void saveBizExamMajor(@Param("id") String uuid,
-                          @Param("examId") String id,
-                          @Param("majorId") String majorId);
-
-    void saveRules(ExamVO examVO);
-
-    void updateBizExam(ExamVO examVO);
-
-    void deleteBizExamMajorByExamId(String id);
 
     void deleteBizExamRulesByExamId(String id);
 

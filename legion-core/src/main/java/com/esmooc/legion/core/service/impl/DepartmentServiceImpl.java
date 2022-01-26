@@ -1,5 +1,6 @@
 package com.esmooc.legion.core.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.esmooc.legion.core.entity.Department;
 import com.esmooc.legion.core.mapper.DepartmentMapper;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,6 +26,21 @@ public class DepartmentServiceImpl  extends ServiceImpl<DepartmentMapper, Depart
     private DepartmentMapper departmentMapper;
 
 
+    /**
+     * 通过id 查询下面所有的id
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    public List<Department> findById(String id) {
+        List<Department> list = new ArrayList<>();
+        List<Department> departments = this.list();
+        list.addAll(departments);
+        return list;
+    }
+
+
 
     @Override
     public List<Department> findByParentIdOrderBySortOrder(String parentId, Boolean openDataFilter,List<String> depIds ) {
@@ -35,7 +52,6 @@ public class DepartmentServiceImpl  extends ServiceImpl<DepartmentMapper, Depart
 
     @Override
     public List<Department> findByParentIdAndStatusOrderBySortOrder(String parentId, Integer status) {
-
         return departmentMapper.findByParentIdAndStatusOrderBySortOrder(parentId, status);
     }
 

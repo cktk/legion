@@ -143,6 +143,51 @@ public class SecurityUtil {
     }
 
     /**
+     * 获取当前登录用户
+     *
+     * @return
+     */
+    public List<Department>  getCurrUserDept() {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated() || authentication.getName() == null
+                || authentication instanceof AnonymousAuthenticationToken) {
+            throw new LegionException("未检测到登录用户");
+        }
+        User u = userService.findByUsername(authentication.getName());
+        List<Department> dept = departmentService.findById(u.getDepartmentId());
+        return dept;
+    }
+
+    /**
+     * 获取当前登录用户
+     *
+     * @return
+     */
+    public List<Role> getCurrUserRole() {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated() || authentication.getName() == null
+                || authentication instanceof AnonymousAuthenticationToken) {
+            throw new LegionException("未检测到登录用户");
+        }
+
+        User u = userService.findByUsername(authentication.getName());
+        // 当前用户拥有角色
+        List<Role> roles = iUserRoleService.findByUserId(u.getId());
+        // 判断有无全部数据的角色
+        Boolean flagAll = false;
+        for (Role r : roles) {
+            if (r.getDataType() == null || r.getDataType().equals(CommonConstant.DATA_TYPE_ALL)) {
+                flagAll = true;
+                break;
+            }
+        }
+        return roles;
+    }
+
+
+    /**
      * 获取当前用户数据权限 null代表具有所有权限 包含值为-1的数据代表无任何权限
      */
     public List<String> getDeparmentIds() {

@@ -20,7 +20,7 @@ import java.util.List;
  **/
 public class FileUtils {
 
-    private final static String path = Constants.FILE_PATH;
+    private final static String path ="";
 
     static {
         File file = new File(path);

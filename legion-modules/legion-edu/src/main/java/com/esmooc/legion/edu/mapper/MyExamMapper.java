@@ -15,7 +15,7 @@ public interface MyExamMapper extends BaseMapper<MyExam> {
 
     Integer getUserPassExamCount(String userId);
 
-    List<MyExam> getLaseTwoTimes(@Param("userId")String userId, @Param("passExamCount") Integer passExamCount);
+    List<MyExam> getLaseTwoTimes(@Param("userId") String userId, @Param("passExamCount") Integer passExamCount);
 
     Integer isClazz(String clazzId);
 
@@ -25,4 +25,9 @@ public interface MyExamMapper extends BaseMapper<MyExam> {
 
     String getGradeByUserIdClazzId(@Param("clazzId") String clazzId,
                                    @Param("userId") String userId);
+
+    List<MyExam> listBy(@Param("ids") List<String> ids,
+                         @Param("userType") String userType,
+                         @Param("majorId") String majorId,
+                         @Param("clazzName") String clazzName);
 }

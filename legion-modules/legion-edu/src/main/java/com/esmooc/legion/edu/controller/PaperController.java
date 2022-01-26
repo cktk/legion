@@ -59,9 +59,9 @@ public class PaperController {
      */
     @ApiOperation(value = "开始练习/开始考试")
     @PostMapping("/startPracticing")
-    public Result startPracticing(String clazzId, String type) {
+    public Result startPracticing(String clazzId, Integer type) {
         // 校验
-        if (null == clazzId || null == type || "".equals(clazzId) || "".equals(type)) {
+        if (null == clazzId || null == type || "".equals(clazzId)) {
             return ResultUtil.error("参数不能为空");
         }
         Map m = paperService.startPracticing(clazzId, type, securityUtil.getCurrUser().getId());

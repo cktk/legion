@@ -1,35 +1,16 @@
 package com.esmooc.legion.edu.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.esmooc.legion.edu.entity.Course;
-import com.esmooc.legion.edu.entity.vo.CourseVO;
-import com.esmooc.legion.edu.entity.vo.HomePageVO;
-import com.esmooc.legion.edu.entity.vo.StuPdfCourseVO;
-import com.esmooc.legion.edu.entity.vo.StuVideoCourseVO;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-
-import java.util.List;
+import com.baomidou.mybatisplus.core.metadata.IPage;import com.baomidou.mybatisplus.extension.plugins.pagination.Page;import com.esmooc.legion.edu.entity.Course;
+import com.esmooc.legion.edu.entity.vo.HomePageVO;import com.esmooc.legion.edu.entity.vo.StuPdfCourseVO;import com.esmooc.legion.edu.entity.vo.StuVideoCourseVO;import org.apache.ibatis.annotations.Mapper;import org.apache.ibatis.annotations.Param;import java.util.List;
 
 /**
- * 课程业务Mapper接口
- *
- * @author sun
- * @date 2020-12-28
+ * @Author 呆猫
+ * @Date: 2022/01/26/ 14:40
+ * @Description:
  */
-
 @Mapper
 public interface CourseMapper extends BaseMapper<Course> {
-    /**
-     * 查询课程业务
-     *
-     * @param id 课程业务ID
-     * @return 课程业务
-     */
-    Course selectBizCourseById(String id);
-
     /**
      * 查询课程业务列表
      *
@@ -38,45 +19,11 @@ public interface CourseMapper extends BaseMapper<Course> {
      */
     List<Course> selectBizCourseList(Course course);
 
-    IPage<CourseVO> selectBizCourseVOList(@Param("course") CourseVO Course, @Param("page") IPage<?> page);
+    IPage<Course> selectBizCourseVOList(@Param("course") Course Course, @Param("page") IPage<?> page);
 
-    /**
-     * 新增课程业务
-     *
-     * @param course 课程业务
-     * @return 结果
-     */
-    int insertCourse(Course course);
+    IPage<StuVideoCourseVO> stuVideoCourseList(@Param("stuVideoCourse") StuVideoCourseVO stuVideoCourse, @Param("page") Page page);
 
-    /**
-     * 修改课程业务
-     *
-     * @param course 课程业务
-     * @return 结果
-     */
-    int updateBizCourse(Course course);
-
-    int deleteBizCourse(Course course);
-
-    /**
-     * 删除课程业务
-     *
-     * @param id 课程业务ID
-     * @return 结果
-     */
-    int deleteBizCourseById(String id);
-
-    /**
-     * 批量删除课程业务
-     *
-     * @param ids 需要删除的数据ID
-     * @return 结果
-     */
-    int deleteBizCourseByIds(String[] ids);
-
-    IPage<StuVideoCourseVO> stuVideoCourseList(@Param("stuVideoCourse") StuVideoCourseVO stuVideoCourse, @Param("page")  Page page);
-
-    IPage<StuPdfCourseVO> stuPdfCourseList(@Param("stuPdfCourse")  StuPdfCourseVO stuPdfCourse,@Param("page")  Page page);
+    IPage<StuPdfCourseVO> stuPdfCourseList(@Param("stuPdfCourse") StuPdfCourseVO stuPdfCourse, @Param("page") Page page);
 
     List<String> selectBizCourseIds1(@Param("ids") List<String> ids);
 

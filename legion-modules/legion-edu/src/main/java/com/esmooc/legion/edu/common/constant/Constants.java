@@ -126,10 +126,6 @@ public class Constants {
      */
     public static final String RESOURCE_PREFIX = "/profile";
 
-    /**
-     * 文件上传地址
-     */
-    public static final String FILE_PATH = "/Users/leiyanfu/IdeaProjects/我的/脚手架/单体框架/多模块/legion/legion-admin/src/main/resources/doc";
 
     /**
      * 全部      0
@@ -160,12 +156,20 @@ public class Constants {
      * 1 删除
      */
     public static final Integer ISDELETE = 0;
-    public static final Integer ISNOTDELETE = 2;
+    public static final Integer ISNOTDELETE = 1;
 
     /**
      * 未审核  unrevised
      */
     public static final Integer UNREVISED = 2;
+    /**
+     * 已审核
+     */
+    public static final Integer UNREVISED_OK = 0;
+    /**
+     * 审核未通过
+     */
+    public static final Integer UNREVISED_NO = 1;
 
     /**
      * 题目类型
@@ -197,6 +201,10 @@ public class Constants {
     public static final Integer STUDY = 1;
     public static final Integer ENDSTUDY = 2;
 
+
+    public static final String USER="1";
+    public static final String DEPT="2";
+    public static final String ROLE="3";
     /**
      * 角色编号
      * 超级管理员     1

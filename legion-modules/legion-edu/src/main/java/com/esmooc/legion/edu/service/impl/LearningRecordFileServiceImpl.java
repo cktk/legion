@@ -103,7 +103,7 @@ public class LearningRecordFileServiceImpl extends ServiceImpl<LearningRecordFil
             //查询课程下的文件个数
             CourseFile courseFile = new CourseFile();
             courseFile.setCourseId(bizLearningRecordFile.getCourseId());
-            courseFile.setFileType(Constants.VIDEO.longValue());
+            courseFile.setFileType(Constants.VIDEO);
             int fileSize = (int) courseFileMapper.selectBizCourseFileList(courseFile, null).getSize();
             int size = learningRecordFileMapper.selectBizLearningRecordFileSize(bizLearningRecordFile);
             // 单片文件数和学完的文件数符合 将课程变为  学习完
@@ -154,7 +154,7 @@ public class LearningRecordFileServiceImpl extends ServiceImpl<LearningRecordFil
             //查询课程下的文件个数
             CourseFile courseFile = new CourseFile();
             courseFile.setCourseId(bizLearningRecordFile.getCourseId());
-            courseFile.setFileType(Constants.PDF.longValue());
+            courseFile.setFileType(Constants.PDF);
             int fileSize = (int) courseFileMapper.selectBizCourseFileList(courseFile, null).getSize();
             int size = learningRecordFileMapper.selectBizLearningRecordFileSize(bizLearningRecordFile);
             // 单片文件数和学完的文件数符合 将课程变为  学习完 否则 为学习中
@@ -206,62 +206,6 @@ public class LearningRecordFileServiceImpl extends ServiceImpl<LearningRecordFil
         return learningRecordFileMapper.deleteBizLearningRecordFileById(courseId, userId);
     }
 
-    @Override
-    public List<RankingVO> selectVideoStudentRanking() {
-        return learningRecordFileMapper.selectVideoStudentRanking();
-    }
 
-    @Override
-    public List<RankingVO> selectOpenStudentRanking() {
-        List<RankingVO> list = learningRecordFileMapper.selectOpenStudentRanking();
-        if (list.size() > 0) {
-            for (RankingVO vo :
-                    list) {
-                String learningTime = "0秒";
-                if (vo != null) {
-                    if (vo.getPeriod() != null && vo.getPeriod() != "") {
-                        learningTime = BaseUtils.getTime((long) Double.parseDouble(vo.getPeriod()));
-                    }
-                }
-                vo.setPeriod(learningTime);
-            }
-        }
-        return list;
-    }
 
-    @Override
-    public List<RankingVO> selectVideoUnitRanking() {
-        List<RankingVO> list = learningRecordFileMapper.selectVideoUnitRanking();
-        if (list.size() > 0) {
-            for (RankingVO vo :
-                    list) {
-                String learningTime = "0";
-                if (vo != null) {
-                    if (vo.getPeriod() != null && vo.getPeriod() != "") {
-                        learningTime = vo.getPeriod();
-                    }
-                }
-                vo.setPeriod(learningTime);
-            }
-        }
-        return list;
-    }
-
-    @Override
-    public List<RankingVO> selectOpenUnitRanking() {
-        List<RankingVO> list = learningRecordFileMapper.selectOpenUnitRanking();
-        if (list.size() > 0) {
-            for (RankingVO vo :
-                    list) {
-                String learningTime = "0秒";
-                if (vo != null) {
-                    if (vo.getPeriod() != null && vo.getPeriod() != "") {
-                        learningTime = BaseUtils.getTime((long) Double.parseDouble(vo.getPeriod()));
-                    }
-                }
-                vo.setPeriod(learningTime);
-            }
-        }
-        return list;
-    }
 }

@@ -254,4 +254,9 @@ public class TestController {
         apologyText.add("一个傻傻的我有一颗痴痴的心，在等待你的包涵！如果你不朝气了的话能不能给我打个德律风让我表明一下，好吗？");
         apologyText.add("想起我们曾经有过的甜蜜，所有的气都烟消云散了。这就是真正的亲密无间，任何东西都无法割断——我们彼此的爱。");
     }
+
+
+    public static void main(String[] args) {
+
+    }
 }

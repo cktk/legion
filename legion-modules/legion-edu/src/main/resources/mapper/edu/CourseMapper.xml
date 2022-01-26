@@ -3,42 +3,33 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.esmooc.legion.edu.mapper.CourseMapper">
-    <resultMap type="com.esmooc.legion.edu.entity.Course" id="BizCourseResult">
-        <result property="id" column="id"/>
-        <result property="courseTitle" column="course_title"/>
-        <result property="subject" column="subject"/>
-        <result property="speciality" column="speciality"/>
-        <result property="period" column="period"/>
-        <result property="learningScope" column="learning_scope"/>
-        <result property="courseType" column="course_type"/>
-        <result property="createBy" column="create_by"/>
-        <result property="createTime" column="create_time"/>
-        <result property="updateBy" column="update_by"/>
-        <result property="updateTime" column="update_time"/>
-        <result property="delFlag" column="del_flag"/>
-        <result property="questionBank" column="questionBank"/>
-        <result property="questions" column="questions"/>
+    <resultMap id="BaseResultMap" type="com.esmooc.legion.edu.entity.Course">
+        <!--@mbg.generated-->
+        <!--@Table edu_course-->
+        <id column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="course_title" jdbcType="VARCHAR" property="courseTitle"/>
+        <result column="subject" jdbcType="VARCHAR" property="subject"/>
+        <result column="speciality" jdbcType="VARCHAR" property="speciality"/>
+        <result column="period" jdbcType="FLOAT" property="period"/>
+        <result column="learning_scope" jdbcType="VARCHAR" property="learningScope"/>
+        <result column="course_type" jdbcType="INTEGER" property="courseType"/>
+        <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_by" jdbcType="VARCHAR" property="updateBy"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="del_flag" jdbcType="CHAR" property="delFlag"/>
+        <result column="exam_issue" jdbcType="INTEGER" property="examIssue"/>
+        <result column="exam" jdbcType="INTEGER" property="exam"/>
+        <result column="audit" jdbcType="INTEGER" property="audit"/>
     </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        id, course_title, subject, speciality, period, learning_scope, course_type, create_by,
+        create_time, update_by, update_time, del_flag, exam_issue, exam, `audit`
+    </sql>
 
-    <resultMap type="com.esmooc.legion.edu.entity.vo.CourseVO" id="BizCourseVOResult">
-        <result property="id" column="id"/>
-        <result property="courseTitle" column="course_title"/>
-        <result property="subject" column="subject"/>
-        <result property="speciality" column="speciality"/>
-        <result property="period" column="period"/>
-        <result property="learningScope" column="learning_scope"/>
-        <result property="courseType" column="course_type"/>
-        <result property="createBy" column="create_by"/>
-        <result property="createTime" column="create_time"/>
-        <result property="updateBy" column="update_by"/>
-        <result property="updateTime" column="update_time"/>
-        <result property="delFlag" column="del_flag"/>
-        <result property="questionBank" column="questionBank"/>
-        <result property="questions" column="questions"/>
-        <result property="exam" column="exam"/>
-    </resultMap>
 
-    <sql id="selectBizCourseVo">
+    <sql id="selectCourseVo">
         SELECT DISTINCT c.id,
                         c.course_title,
                         c.`subject`,
@@ -47,7 +38,7 @@
                         round(c.period, 1)                              AS period,
                         c.learning_scope,
                         c.course_type,
-                        u.nickname                                     AS create_by,
+                        u.nickname                                      AS create_by,
                         c.create_time,
                         ur.nickname                                    AS update_by,
                         c.update_time,
@@ -64,8 +55,8 @@
     </sql>
 
 
-    <select id="selectBizCourseList" parameterType="com.esmooc.legion.edu.entity.Course" resultMap="BizCourseResult">
-        <include refid="selectBizCourseVo"/>
+    <select id="selectBizCourseList" parameterType="com.esmooc.legion.edu.entity.Course" resultMap="BaseResultMap">
+        <include refid="selectCourseVo"/>
         <where>
             <if test="courseTitle != null  and courseTitle != ''">
                 and course_title like concat('%', #{courseTitle}, '%')
@@ -74,8 +65,8 @@
                 and
                 <foreach collection="subject.split(',')" item="item" index="index" open="(" separator="or" close=")">
                     FIND_IN_SET(
-                    '${item}',
-                    c.`subject`)
+                            '${item}',
+                            c.`subject`)
                 </foreach>
             </if>
             <if test="speciality != null  and speciality != ''">
@@ -104,21 +95,21 @@
             <if test="delFlag != null  and delFlag != ''">
                 and c.del_flag = #{delFlag}
             </if>
+
             <if test="questionBank != null">
                 and IF
-                ( eqb.clazz_id IS NULL, 0, 1 ) = #{questionBank}
+                            (eqb.clazz_id IS NULL, 0, 1) = #{questionBank}
             </if>
             <if test="questions != null">
                 and IF
-                ( c.exam_issue IS NULL, 0, c.exam_issue ) = #{questions}
+                            (c.exam_issue IS NULL, 0, c.exam_issue) = #{questions}
             </if>
         </where>
         ORDER BY update_time DESC
     </select>
 
-    <select id="selectBizCourseVOList" parameterType="com.esmooc.legion.edu.entity.vo.CourseVO"
-            resultMap="BizCourseVOResult">
-        <include refid="selectBizCourseVo"/>
+    <select id="selectBizCourseVOList" parameterType="com.esmooc.legion.edu.entity.Course" resultMap="BaseResultMap">
+        <include refid="selectCourseVo"/>
         <where>
             <if test="course.courseTitle != null  and course.courseTitle != ''">
                 and course_title like concat('%', #{course.courseTitle}, '%')
@@ -128,7 +119,7 @@
                 <foreach collection="course.subject.split(',')" item="item" index="index" open="(" separator="or"
                          close=")">
                     FIND_IN_SET(
-                    '${item}',
+                            '${item}',
                     c.`subject`)
                 </foreach>
             </if>
@@ -149,44 +140,32 @@
                 <foreach collection="course.learningScope.split(',')" item="item" index="index" open="(" separator="or"
                          close=")">
                     FIND_IN_SET(
-                    '${item}',
-                    c.learning_scope)
+                            '${item}',
+                            c.learning_scope)
                 </foreach>
             </if>
             <if test="course.courseType != null  and course.courseType != ''">
                 and course_type = #{course.courseType}
             </if>
-            <if test="course.delFlag != null  and course.delFlag != ''">
-                and c.del_flag = #{course.delFlag}
+            <if test="course.audit != null  and course.audit != ''">
+                and c.audit = #{course.audit}
             </if>
             <if test="course.questionBank != null  and course.questionBank != ''">
                 and
-                <foreach collection="course.questionBank.split(',')" item="item" index="index" open="(" separator="or"
-                         close=")">
-                    FIND_IN_SET(
-                    '${item}',
-                    IF
-                    ( eqb.clazz_id IS NULL, 0, 1 ))
+                <foreach collection="course.questionBank.split(',')" item="item" index="index" open="(" separator="or" close=")">
+                    FIND_IN_SET( '${item}', IF (eqb.clazz_id IS NULL, 0, 1))
                 </foreach>
             </if>
             <if test="course.questions != null  and course.questions != ''">
                 and
-                <foreach collection="course.questions.split(',')" item="item" index="index" open="(" separator="or"
-                         close=")">
-                    FIND_IN_SET(
-                    '${item}',
-                    IF
-                    ( c.exam_issue IS NULL, 0, c.exam_issue ))
+                <foreach collection="course.questions.split(',')" item="item" index="index" open="(" separator="or"  close=")">
+                    FIND_IN_SET( '${item}',  IF   ( c.exam_issue IS NULL, 0, c.exam_issue ))
                 </foreach>
             </if>
         </where>
         ORDER BY update_time DESC
     </select>
 
-    <select id="selectBizCourseById" parameterType="String" resultMap="BizCourseResult">
-        <include refid="selectBizCourseVo"/>
-        where c.id = #{id}
-    </select>
 
     <select id="stuVideoCourseList" resultType="com.esmooc.legion.edu.entity.vo.StuVideoCourseVO">
         SELECT
@@ -236,8 +215,6 @@
         LEFT JOIN legion.t_user u ON u.id = blr.user_id
         LEFT JOIN legion.t_city a1 ON a1.light_path = u.address_ids
         <where>
-
-
             <if test="stuVideoCourse.userType != null  and stuVideoCourse.userType != ''">
                 u.type = #{stuVideoCourse.userType}
             </if>
@@ -495,147 +472,5 @@
         ) a
     </select>
 
-    <insert id="insertCourse" parameterType="com.esmooc.legion.edu.entity.Course">
-        insert into edu_course
-        <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="id != null">
-                id,
-            </if>
-            <if test="courseTitle != null">
-                course_title,
-            </if>
-            <if test="subject != null">
-                subject,
-            </if>
-            <if test="speciality != null">
-                speciality,
-            </if>
-            <if test="period != null">
-                period,
-            </if>
-            <if test="learningScope != null">
-                learning_scope,
-            </if>
-            <if test="courseType != null">
-                course_type,
-            </if>
-            <if test="createBy != null">
-                create_by,
-            </if>
-            <if test="createTime != null">
-                create_time,
-            </if>
-            <if test="updateBy != null">
-                update_by,
-            </if>
-            <if test="updateTime != null">
-                update_time,
-            </if>
-            <if test="delFlag != null">
-                del_flag,
-            </if>
-            <if test="exam != null">
-                exam,
-            </if>
-        </trim>
-        <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="id != null">
-                #{id},
-            </if>
-            <if test="courseTitle != null">
-                #{courseTitle},
-            </if>
-            <if test="subject != null">
-                #{subject},
-            </if>
-            <if test="speciality != null">
-                #{speciality},
-            </if>
-            <if test="period != null">
-                #{period},
-            </if>
-            <if test="learningScope != null">
-                #{learningScope},
-            </if>
-            <if test="courseType != null">
-                #{courseType},
-            </if>
-            <if test="createBy != null">
-                #{createBy},
-            </if>
-            <if test="createTime != null">
-                #{createTime},
-            </if>
-            <if test="updateBy != null">
-                #{updateBy},
-            </if>
-            <if test="updateTime != null">
-                #{updateTime},
-            </if>
-            <if test="delFlag != null">
-                #{delFlag},
-            </if>
-            <if test="exam != null">
-                #{exam},
-            </if>
-        </trim>
-    </insert>
 
-    <update id="updateBizCourse" parameterType="com.esmooc.legion.edu.entity.Course">
-        update edu_course
-        <trim prefix="SET" suffixOverrides=",">
-            <if test="courseTitle != null">
-                course_title = #{courseTitle},
-            </if>
-            <if test="subject != null">
-                subject = #{subject},
-            </if>
-            <if test="speciality != null">
-                speciality = #{speciality},
-            </if>
-            <if test="period != null">
-                period = #{period},
-            </if>
-            <if test="learningScope != null">
-                learning_scope = #{learningScope},
-            </if>
-            <if test="courseType != null">
-                course_type = #{courseType},
-            </if>
-            <if test="updateBy != null">
-                update_by = #{updateBy},
-            </if>
-            <if test="updateTime != null">
-                update_time = #{updateTime},
-            </if>
-            <if test="delFlag != null">
-                del_flag = #{delFlag},
-            </if>
-            <if test="exam != null">
-                exam = #{exam},
-            </if>
-        </trim>
-        where id = #{id}
-    </update>
-
-    <update id="deleteBizCourse" parameterType="com.esmooc.legion.edu.entity.Course">
-        update edu_course
-        <trim prefix="SET" suffixOverrides=",">
-            <if test="delFlag != null">
-                del_flag = #{delFlag},
-            </if>
-        </trim>
-        where id = #{id}
-    </update>
-
-    <delete id="deleteBizCourseById" parameterType="String">
-        delete from edu_course where id = #{id}
-    </delete>
-
-    <delete id="deleteBizCourseByIds" parameterType="String">
-        delete from edu_course where id in
-        <foreach item="id" collection="array" open="(" separator="," close=")">
-            #{id}
-        </foreach>
-    </delete>
 </mapper>

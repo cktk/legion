@@ -3,6 +3,7 @@ package com.esmooc.legion.edu.controller;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.core.common.utils.PageUtil;
 import com.esmooc.legion.core.common.utils.ResultUtil;
 import com.esmooc.legion.core.common.vo.PageVo;
@@ -41,10 +42,10 @@ public class QuestionController {
     public Result<IPage<ExamQuestion>> questionListByClazzId(ExamQuestion examQuestion, PageVo page) {
         // 校验是否传课程id
         if (null == examQuestion) {
-            return null;
+        throw  new LegionException("参数不能为空");
         }
         if ((null == examQuestion.getClazzId() || "".equals(examQuestion.getClazzId())) && (null == examQuestion.getBankId() || "".equals(examQuestion.getBankId()))) {
-            return null;
+            throw  new LegionException("参数不能为空");
         }
         IPage<ExamQuestion> list = questionService.questionListByClazzId(examQuestion, PageUtil.initPage(page));
         return ResultUtil.data(list);

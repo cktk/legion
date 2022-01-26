@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.esmooc.legion.edu.mapper.ExamPaperRulesMapper">
+  <resultMap id="BaseResultMap" type="com.esmooc.legion.edu.entity.ExamPaperRules">
+    <!--@mbg.generated-->
+    <!--@Table edu_exam_paper_rules-->
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="clazz_id" jdbcType="VARCHAR" property="clazzId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="create_by" jdbcType="VARCHAR" property="createBy" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
+    <result column="del_flag" jdbcType="VARCHAR" property="delFlag" />
+    <result column="bank_id" jdbcType="VARCHAR" property="bankId" />
+    <result column="rules" jdbcType="VARCHAR" property="rules" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, clazz_id, create_time, create_by, update_time, update_by, del_flag,rules, bank_id
+  </sql>
+
+</mapper>

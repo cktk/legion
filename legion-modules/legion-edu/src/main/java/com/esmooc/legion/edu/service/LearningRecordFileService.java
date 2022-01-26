@@ -68,11 +68,5 @@ public interface LearningRecordFileService  extends IService<LearningRecordFile>
      */
     public int deleteBizLearningRecordFileById(String courseId, String userId);
 
-    public List<RankingVO> selectVideoStudentRanking();
 
-    public List<RankingVO> selectOpenStudentRanking();
-
-    public List<RankingVO> selectVideoUnitRanking();
-
-    public List<RankingVO> selectOpenUnitRanking();
 }

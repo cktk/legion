@@ -10,7 +10,7 @@ import java.util.Map;
 public interface PaperService  extends IService<ExamPaper> {
     Map getPaper(String clazzId, String type, User user);
 
-    Map startPracticing(String clazzId, String type, String userId);
+    Map startPracticing(String clazzId, Integer type, String userId);
 
     Map satartExam(String id);
 

@@ -6,17 +6,16 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.esmooc.legion.core.common.utils.SecurityUtil;
 import com.esmooc.legion.edu.common.constant.Constants;
 import com.esmooc.legion.edu.common.utils.BaseUtils;
-import com.esmooc.legion.edu.entity.Exam;
+import com.esmooc.legion.edu.entity.*;
 import com.esmooc.legion.edu.entity.vo.ExamVO;
 import com.esmooc.legion.edu.mapper.ExamMapper;
 import com.esmooc.legion.edu.mapper.PaperMapper;
-import com.esmooc.legion.edu.service.ExamService;
-import com.esmooc.legion.edu.service.PaperRulesService;
+import com.esmooc.legion.edu.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -25,7 +24,7 @@ import java.util.Map;
  * @Date 2021-1-7 9:23
  **/
 @Service
-public class ExamServiceImpl  extends ServiceImpl<ExamMapper, Exam> implements ExamService {
+public class ExamServiceImpl extends ServiceImpl<ExamMapper, Exam> implements ExamService {
 
     @Autowired
     private ExamMapper examMapper;
@@ -34,14 +33,23 @@ public class ExamServiceImpl  extends ServiceImpl<ExamMapper, Exam> implements E
     private PaperRulesService paperRulesService;
 
     @Autowired
+    private ExamPaperService examPaperService;
+    @Autowired
     private PaperMapper paperMapper;
     @Autowired
+    private CourseService courseService;
+    @Autowired
     private SecurityUtil securityUtil;
+    @Autowired
+    private ExamMajorService examMajorService;
+    @Autowired
+    private ExamPaperRulesService examPaperRulesService;
+
     //TODO 没写完
 
     @Override
     public IPage<ExamVO> examList(ExamVO examVO, Page page) {
-        IPage<ExamVO> list = examMapper.examList(examVO,page);
+        IPage<ExamVO> list = examMapper.examList(examVO, page);
         // 解析规则
         for (ExamVO data : list.getRecords()) {
             String rules = data.getRules();
@@ -74,10 +82,7 @@ public class ExamServiceImpl  extends ServiceImpl<ExamMapper, Exam> implements E
             /**
              *  创建考试进来
              */
-            // 根据id判断是否新增
-            // 根据id查询条数
-//            Integer countId = bizExamMapper.getQuestionCount(examVO.getId());
-            // 根据bankId 查询当前是否有规则
+
             Integer countId = 0;
             if (null == examVO.getId() || "".equals(examVO.getId())) {
                 countId = examMapper.getBankIdCount(examVO.getBackId());
@@ -91,20 +96,21 @@ public class ExamServiceImpl  extends ServiceImpl<ExamMapper, Exam> implements E
             }
 
             if (0 == countId) {
-                // 新增
-                // 新增edu_exam 表
-                String bizExamId = BaseUtils.getUUID();
-                examVO.setId(bizExamId);
-                examMapper.saveBizExam(examVO);
+                Exam exam = new Exam();
+                exam.setId(BaseUtils.getUUID());
+                exam.setTitle(exam.getTitle());
+                exam.setBankId(exam.getBankId());
+                examMapper.insert(exam);
             } else {
                 if (null == examVO.getId() || "".equals(examVO.getId())) {
                     examVO.setId(examVO.getBackId());
                 }
                 // 修改
                 // 修改主表
-                examMapper.updateBizExam(examVO);
-                // 删除专业
-                examMapper.deleteBizExamMajorByExamId(examVO.getId());
+                Exam exam = new Exam();
+                exam.setId(examVO.getId());
+                exam.setTitle(exam.getTitle());
+                examMapper.updateById(exam);
                 // 删除规则
                 examMapper.deleteBizExamRulesByBankId(examVO.getId());
                 examMapper.deleteBizExamRulesByExamId(examVO.getId());
@@ -112,9 +118,20 @@ public class ExamServiceImpl  extends ServiceImpl<ExamMapper, Exam> implements E
             // 新增类别
             String[] majorIds = examVO.getMajorId().split(",");
             for (int i = 0; i < majorIds.length; i++) {
-                examMapper.saveBizExamMajor(BaseUtils.getUUID(), examVO.getId(), majorIds[i]);
+                ExamMajor major = new ExamMajor();
+                major.setId(BaseUtils.getUUID());
+                major.setExamId( examVO.getId());
+                major.setMajorId(majorIds[i]);
+                examMajorService.save(major);
             }
             // 新增规则
+            ExamPaperRules examPaperRules =new ExamPaperRules();
+            examPaperRules.setId(examVO.getRulesId());
+            examPaperRules.setClazzId(examVO.getId());
+            examPaperRules.setRules(examVO.getRules());
+            examPaperRules.setBankId(examVO.getBackId());
+            examPaperRulesService.save(examPaperRules);
+            m.put("id", examPaperRules.getId());
         } else {
             /**
              *  课程进入
@@ -122,10 +139,17 @@ public class ExamServiceImpl  extends ServiceImpl<ExamMapper, Exam> implements E
             examMapper.deleteBizExamRulesByExamId(examVO.getId());
             examVO.setId(examVO.getClazzId());
         }
-        examMapper.saveRules(examVO);
+
+        ExamPaperRules examPaperRules = new ExamPaperRules();
+        examPaperRules.setId(examVO.getRulesId());
+        examPaperRules.setClazzId(examVO.getId());
+        examPaperRules.setRules(examVO.getRules());
+        examPaperRules.setBankId(examVO.getBackId());
+        examPaperRulesService.save(examPaperRules);
         m.put("id", examVO.getId());
         return m;
     }
+
 
     @Override
     public Map getExamById(String id) {
@@ -135,40 +159,81 @@ public class ExamServiceImpl  extends ServiceImpl<ExamMapper, Exam> implements E
         return m;
     }
 
+
     @Override
-    public void issueExam(String id) {
+    public boolean issueExam(String id, ArrayList<String> userIds, ArrayList<String> deptIds, ArrayList<String> roleIds) {
         // 判断当前id是课程id还是exam表的id
         // 查询exam表
         Integer examIdCount = examMapper.getExamCountById(id);
         if (0 != examIdCount) {
             // 课程， 修改课程是否发布状态
-            examMapper.updateBizCourse(id, "1");
+            Course course = new Course();
+            course.setExamIssue(1);
+            course.setId(id);
+            return courseService.updateById(course);
         } else {
             // 创建考试
             // 修改发布状态
-            examMapper.updateBizExamIssue(id, "1");
-            // 查询内部学员
-            /**
-             *  需求变动 ，需要填加外部学员
-             *  Long[] roleIds = new Long[2];
-             *  roleIds[0] = Constants.INTERNAL;
-             *  roleIds[1] = Constants.EXTERNAL;
-             */
-            Long[] roleIds = new Long[1];
-            roleIds[0] = Constants.INTERNAL;
-            // 用户id, group by user_id， 去重，一个人既是内部学员，又是外部学员只会有一个考试
-            List<String> userIdList = examMapper.selectUserIdsByRoleIds(roleIds);
+            Exam exam = new Exam();
+            exam.setId(id);
+            exam.setIssue(1);
+            int update = examMapper.updateById(exam);
+            if (update < 1) {
+                //"错误"
+            }
+
+            ArrayList<ExamPaper> examPapers = new ArrayList<ExamPaper>();
+
+
             // 查询专业
             String examMajor = paperMapper.getExamMajorById(id);
             // 查询名称
             String examName = paperMapper.getExamNameById(id);
-            for (String userId : userIdList) {
-                // 根据id和用户id，查询当前用户是否有考试
-                Integer examCoutn = examMapper.getExamCountByIdUserId(userId, id);
-                if (examCoutn == 0) {
-                    examMapper.insertExamPaper(BaseUtils.getUUID(), id, userId, BaseUtils.getDateNowSecond(), Constants.EXAM, examMajor, examName);
+
+            if (userIds != null) {
+                for (String userId : userIds) {
+                    ExamPaper examPaper = new ExamPaper();
+                    examPaper.setClazzId(id);
+                    examPaper.setUserId(userId);
+                    examPaper.setType(Constants.EXAM);
+                    examPaper.setMajorId(examMajor);
+                    examPaper.setClazzName(examName);
+                    examPaper.setUserType(Constants.USER);
+                    examPapers.add(examPaper);
+
                 }
             }
+
+
+            if (deptIds != null) {
+                for (String deptId : deptIds) {
+                    ExamPaper examPaper = new ExamPaper();
+                    examPaper.setClazzId(id);
+                    examPaper.setUserId(deptId);
+                    examPaper.setType(Constants.EXAM);
+                    examPaper.setMajorId(examMajor);
+                    examPaper.setClazzName(examName);
+                    examPaper.setUserType(Constants.DEPT);
+                    examPapers.add(examPaper);
+                }
+
+            }
+
+            if (roleIds != null) {
+                for (String role : roleIds) {
+                    ExamPaper examPaper = new ExamPaper();
+                    examPaper.setClazzId(id);
+                    examPaper.setUserId(role);
+                    examPaper.setType(Constants.EXAM);
+                    examPaper.setMajorId(examMajor);
+                    examPaper.setClazzName(examName);
+                    examPaper.setUserType(Constants.ROLE);
+                    examPapers.add(examPaper);
+                }
+            }
+
+
+            return examPaperService.saveBatch(examPapers, 100);
         }
     }
 
@@ -227,3 +292,5 @@ public class ExamServiceImpl  extends ServiceImpl<ExamMapper, Exam> implements E
         return m;
     }
 }
+
+

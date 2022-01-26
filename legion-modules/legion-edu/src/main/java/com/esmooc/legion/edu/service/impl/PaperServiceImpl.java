@@ -4,6 +4,7 @@ import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.core.common.utils.SecurityUtil;
 import com.esmooc.legion.core.entity.User;
 import com.esmooc.legion.edu.common.constant.Constants;
@@ -60,10 +61,10 @@ public class PaperServiceImpl  extends ServiceImpl<PaperMapper, ExamPaper> imple
     }
 
     @Override
-    public Map startPracticing(String clazzId, String type, String userId) {
+    public Map startPracticing(String clazzId, Integer type, String userId) {
         Map m = new HashMap<>();
         // 查询是否已经学习
-        if ("1".equals(type)) {
+        if (1==type) {
             Integer studyType = paperMapper.getStudyTypeByClazzIdUserId(clazzId, userId);
             if (!Constants.ENDSTUDY.equals(studyType)) {
                 m.put("code", false);
@@ -215,7 +216,7 @@ public class PaperServiceImpl  extends ServiceImpl<PaperMapper, ExamPaper> imple
             String clazzId = paperRulesMapper.getExamClazzId(id);
             rules = paperRulesMapper.getRulesByClazzId(clazzId);
             if (null == rules || "".equals(rules)) {
-                return m;
+               throw  new LegionException("试卷错误暂无数据");
             }
         }
         // 查询题库id

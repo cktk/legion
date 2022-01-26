@@ -30,8 +30,6 @@ import java.util.List;
 @ApiModel(value = "用户")
 public class User extends BaseEntity {
 
-
-
     @ApiModelProperty(value = "登录名")
     @Pattern(regexp = NameUtil.regUsername, message = "登录账号不能包含特殊字符且长度不能>16")
     private String username;

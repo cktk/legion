@@ -6,16 +6,17 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.esmooc.legion.edu.entity.Exam;
 import com.esmooc.legion.edu.entity.vo.ExamVO;
 
+import java.util.ArrayList;
 import java.util.Map;
 
-public interface ExamService  extends IService<Exam> {
+public interface ExamService extends IService<Exam> {
     IPage<ExamVO> examList(ExamVO examVO, Page page);
 
     Map saveExam(ExamVO examVO);
 
     Map getExamById(String id);
 
-    void issueExam(String id);
+    boolean issueExam(String id, ArrayList<String> userIds, ArrayList<String> deptIds, ArrayList<String> roleIds);
 
     void deleteExam(String id);
 
@@ -25,3 +26,4 @@ public interface ExamService  extends IService<Exam> {
 
     Map checkBankCreate(String id);
 }
+

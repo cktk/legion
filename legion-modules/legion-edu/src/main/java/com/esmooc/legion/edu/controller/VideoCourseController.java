@@ -2,6 +2,7 @@ package com.esmooc.legion.edu.controller;
 
 import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.esmooc.legion.core.common.annotation.SystemLog;
 import com.esmooc.legion.core.common.enums.LogType;
 import com.esmooc.legion.core.common.utils.PageUtil;
@@ -11,7 +12,6 @@ import com.esmooc.legion.core.common.vo.PageVo;
 import com.esmooc.legion.core.common.vo.Result;
 import com.esmooc.legion.edu.common.constant.Constants;
 import com.esmooc.legion.edu.entity.Course;
-import com.esmooc.legion.edu.entity.vo.CourseVO;
 import com.esmooc.legion.edu.entity.vo.StuVideoCourseVO;
 import com.esmooc.legion.edu.service.CourseService;
 import com.pig4cloud.plugin.excel.annotation.ResponseExcel;
@@ -35,9 +35,10 @@ public class VideoCourseController {
 
     @ApiOperation(value = "查询课程业务列表")
     @GetMapping("/list")
-    public Result<IPage<CourseVO>> list(CourseVO bizCourse, PageVo page) {
-        bizCourse.setCourseType(Constants.VIDEOCOURSE + "");
-        return ResultUtil.data(courseService.selectBizCourseVOList(bizCourse, PageUtil.initPage(page)));
+    public Result<IPage<Course>> list(Course course, PageVo page) {
+        course.setCourseType(Constants.VIDEOCOURSE);
+        //course.setAudit(Constants.UNREVISED_OK);
+        return ResultUtil.data(courseService.page(PageUtil.initPage(page), Wrappers.query(course)));
     }
 
 
@@ -45,9 +46,9 @@ public class VideoCourseController {
     @SystemLog(description = "导出课程业务列表", type = LogType.EDU)
     @GetMapping("/export")
     @ResponseExcel
-    public List<CourseVO> export(CourseVO bizCourse, PageVo page) {
-        bizCourse.setCourseType(Constants.VIDEOCOURSE + "");
-        return this.list(bizCourse, page).getResult().getRecords();
+    public List<Course> export(Course course, PageVo page) {
+        course.setCourseType(Constants.VIDEOCOURSE);
+        return this.list(course, page).getResult().getRecords();
     }
 
 
@@ -55,7 +56,7 @@ public class VideoCourseController {
     @SystemLog(description = "获取课程业务详细信息", type = LogType.EDU)
     @GetMapping(value = "/{id}")
     public Result getInfo(@PathVariable("id") String id) {
-        return ResultUtil.data(courseService.selectBizCourseById(id));
+        return ResultUtil.data(courseService.getById(id));
     }
 
     /**
@@ -68,11 +69,11 @@ public class VideoCourseController {
         course.setCourseType(Constants.VIDEOCOURSE);
         course.setCreateBy(securityUtil.getCurrUser().getId() + "");
         if (Constants.CITY.equals(securityUtil.getCurrUser().getType())) {
-            course.setDelFlag(Constants.UNREVISED);
+            course.setAudit(Constants.UNREVISED);
         } else {
-            course.setDelFlag(Constants.ISNOTDELETE);
+            course.setAudit(Constants.UNREVISED_OK);
         }
-        courseService.insertCourse(course);
+        courseService.save(course);
 
         return ResultUtil.data(course);
     }
@@ -83,23 +84,22 @@ public class VideoCourseController {
     @PutMapping
     public Result edit( Course course) {
         course.setCourseType(Constants.VIDEOCOURSE);
-        course.setUpdateBy(securityUtil.getCurrUser().getId() + "");
-        return ResultUtil.data(courseService.updateBizCourse(course));
+        return ResultUtil.data(courseService.updateById(course));
     }
 
 
     @ApiOperation(value = "删除课程业务")
     @SystemLog(description = "删除课程业务", type = LogType.EDU)
     @DeleteMapping("/{ids}")
-    public Result remove(@PathVariable String[] ids) {
-        return ResultUtil.data(courseService.deleteBizCourseByIds(ids));
+    public Result remove(@PathVariable List<String> ids) {
+        return ResultUtil.data(courseService.removeByIds(ids));
     }
 
 
     @ApiOperation(value = "查询学员课程业务列表")
     @GetMapping("/stuVideoCourseList")
     public Result<IPage<StuVideoCourseVO>> stuVideoCourseList(StuVideoCourseVO stuVideoCourse, PageVo page) {
-        //stuVideoCourse.setCourseType(Constants.VIDEOCOURSE + "");
+        stuVideoCourse.setCourseType(Constants.VIDEOCOURSE + "");
         IPage<StuVideoCourseVO> list = courseService.stuVideoCourseList(stuVideoCourse, PageUtil.initPage(page));
         return ResultUtil.data(list);
     }

@@ -83,7 +83,7 @@ public class PaperRulesController {
         }
         // 构建参数
         examPaperRules.setId(BaseUtils.getUUID());
-        examPaperRules.setCreateTime(String.valueOf(BaseUtils.getDateNowSecond()));
+        examPaperRules.setCreateTime(BaseUtils.getDateNowSecond());
         examPaperRules.setCreateBy(securityUtil.getCurrUser().getId());
         paperRulesService.saveRules(examPaperRules);
         return ResultUtil.success();

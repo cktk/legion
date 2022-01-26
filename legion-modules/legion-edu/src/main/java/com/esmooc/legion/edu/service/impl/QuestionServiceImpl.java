@@ -143,17 +143,7 @@ public class QuestionServiceImpl extends ServiceImpl<ExamQuestionMapper, ExamQue
 
     @Override
     public IPage<ExamQuestionBank> selectQuestionBank(ExamQuestionBank examQuestionBank, Page page) {
-        IPage<ExamQuestionBank> list = questionMapper.selectQuestionBank(examQuestionBank, page);
-        for (ExamQuestionBank data : list.getRecords()) {
-            // 根据类别id查询类别名称
-            String unitName = "";
-            String[] unitId = data.getMajorId().split(",");
-            for (int i = 0; i < unitId.length; i++) {
-                unitName = unitName + "," + questionMapper.getMajorNameByMajorId(unitId[i]);
-            }
-            data.setMajorName(unitName.substring(1, unitName.length()));
-        }
-        return list;
+        return questionMapper.selectQuestionBank(examQuestionBank, page);
     }
 
     @Override
