@@ -56,11 +56,10 @@ public class LearningRecordServiceImpl extends ServiceImpl<LearningRecordMapper,
      * 查询课程学习状态业务列表
      *
      * @param bizLearningRecord 课程学习状态业务
-     * @param currUser
      * @return 课程学习状态业务
      */
     @Override
-    public IPage<LearningRecordVO> selectBizLearningRecordList(LearningRecordVO bizLearningRecord, User currUser, Page page) {
+    public IPage<LearningRecordVO> selectBizLearningRecordList(LearningRecordVO bizLearningRecord,  Page page) {
         String learningScope = securityUtil.getCurrUser().getType() + "";
 
         List<String> list = learningRecordMapper.selectBizLearningRecordCourseId(bizLearningRecord.getUserId());

@@ -3,15 +3,18 @@ package com.esmooc.legion.edu.service.impl;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.core.common.vo.PageVo;
 import com.esmooc.legion.edu.common.constant.Constants;
 import com.esmooc.legion.edu.entity.ExamPaperRules;
 import com.esmooc.legion.edu.entity.vo.ExamPaperRulesVo;
 import com.esmooc.legion.edu.mapper.PaperRulesMapper;
+import com.esmooc.legion.edu.service.ExamPaperRulesService;
 import com.esmooc.legion.edu.service.PaperRulesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.security.auth.login.LoginException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +29,8 @@ public class PaperRulesServiceImpl extends ServiceImpl<PaperRulesMapper, ExamPap
 
     @Autowired
     private PaperRulesMapper paperRulesMapper;
+    @Autowired
+    private ExamPaperRulesService examPaperRulesService;
 
     @Override
     public List<ExamPaperRulesVo> paperRulesList(ExamPaperRulesVo examPaperRulesVo, PageVo pageVo) {
@@ -68,8 +73,13 @@ public class PaperRulesServiceImpl extends ServiceImpl<PaperRulesMapper, ExamPap
          */
         paperRulesMapper.deleteRulesByClazzId(examPaperRules.getClazzId());
         // 执行添加
-        paperRulesMapper.saveRules(examPaperRules);
+
+        if (!examPaperRulesService.save(examPaperRules)){
+            throw new LegionException("保存失败");
+        }
+
     }
+
 
     @Override
     public void deleteRules(String id) {

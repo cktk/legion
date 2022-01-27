@@ -28,13 +28,7 @@ public interface ExamMapper extends BaseMapper<Exam> {
 
     List<String> selectUserIdsByRoleIds(@Param("ids") Long[] roleIds);
 
-    void insertExamPaper(@Param("id") String uuid,
-                         @Param("clazzId") String id,
-                         @Param("userId") String userId,
-                         @Param("time") Date dateNowSecond,
-                         @Param("type") Integer type,
-                         @Param("examMajor") String examMajor,
-                         @Param("exanName") String examName);
+
 
     Integer getExamCountById(String id);
 

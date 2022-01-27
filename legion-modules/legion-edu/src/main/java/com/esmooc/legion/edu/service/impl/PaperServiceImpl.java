@@ -18,13 +18,11 @@ import com.esmooc.legion.edu.mapper.QuestionMapper;
 import com.esmooc.legion.edu.service.PaperRulesService;
 import com.esmooc.legion.edu.service.LearningRecordService;
 import com.esmooc.legion.edu.service.PaperService;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @ClassName PaperServiceImpl
@@ -96,8 +94,18 @@ public class PaperServiceImpl  extends ServiceImpl<PaperMapper, ExamPaper> imple
         // 新增试卷主表
         m = generateTestQuestions(paperId, rules, clazzId, "1", bankId);
         if (Boolean.valueOf(m.get("code").toString())) {
-            paperMapper.savePaper(paperId, clazzId, userId, BaseUtils.getDateNowSecond(), type, clazzMajor, clazzName);
+            ExamPaper examPaper = new ExamPaper();
+            examPaper.setId(paperId);
+            examPaper.setClazzId(clazzId);
+            examPaper.setUserId(userId);
+            examPaper.setType(type);
+            examPaper.setClazzName(clazzName);
+            examPaper.setMajorId(clazzMajor);
+            if (this.save(examPaper)) {
+                throw new LegionException("保存失败");
+            }
         }
+
         m.put("paperId", paperId);
         return m;
     }
@@ -242,7 +250,17 @@ public class PaperServiceImpl  extends ServiceImpl<PaperMapper, ExamPaper> imple
             String examMajor = paperMapper.getExamMajorById(id);
             String examName = paperMapper.getExamNameById(id);
             // 新增试卷
-            paperMapper.savePaper(newPaperId, id, securityUtil.getCurrUser().getId(), BaseUtils.getDateNowSecond(), lastPaper.getType(), examMajor, examName);
+            ExamPaper examPaper = new ExamPaper();
+            examPaper.setId(newPaperId);
+            examPaper.setClazzId(id);
+            examPaper.setUserId(securityUtil.getCurrUser().getId());
+            examPaper.setType(lastPaper.getType());
+            examPaper.setClazzName(examName);
+            examPaper.setMajorId(examMajor);
+            if (this.save(examPaper)) {
+                throw new LegionException("保存失败");
+            }
+
             m = generateTestQuestions(newPaperId, rules, id, "2", bankId);
             m.put("paperId", newPaperId);
         }

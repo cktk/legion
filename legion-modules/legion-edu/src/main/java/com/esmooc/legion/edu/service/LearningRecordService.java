@@ -32,7 +32,7 @@ public interface LearningRecordService  extends IService<LearningRecord> {
      * @param currUser
      * @return 课程学习状态业务集合
      */
-    IPage<LearningRecordVO> selectBizLearningRecordList(LearningRecordVO bizLearningRecord, User currUser, Page page);
+    IPage<LearningRecordVO> selectBizLearningRecordList(LearningRecordVO bizLearningRecord, Page page);
 
     public List<PlaybackFileVO> selectPlaybackFileVOList(String courseId, String userId, int fileType);
 

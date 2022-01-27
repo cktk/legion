@@ -13,6 +13,7 @@ import com.esmooc.legion.edu.service.ExamService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -50,6 +51,7 @@ public class ExamController {
 
     @ApiOperation(value = "管理端试卷保存/修改")
     @PostMapping("/saveExam")
+    @Transactional
     public Result<Map> saveExam( ExamVO examVO) {
         /**
          *  校验: 规则、类别、名称
@@ -97,8 +99,9 @@ public class ExamController {
         }
     }
 
-    @ApiOperation(value = " 删除试卷")
+    @ApiOperation(value = "删除试卷")
     @DeleteMapping("/deleteExam")
+    @Transactional
     public Result deleteExam(String id) {
         // 校验
         if (null == id || "".equals(id)) {

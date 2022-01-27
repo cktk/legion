@@ -45,11 +45,11 @@ public class StuVideoCourseController {
 
     @ApiOperation(value = "查询课程业务列表")
     @GetMapping("/list")
-    public Result<IPage<LearningRecordVO>> list(LearningRecordVO bizLearningRecord, PageVo page) {
-        bizLearningRecord.setUserId(securityUtil.getCurrUser().getId());
-        bizLearningRecord.setCourseType(Constants.VIDEOCOURSE.toString());
-        bizLearningRecord.setDelFlag(Constants.ISNOTDELETE);
-        IPage<LearningRecordVO> list = learningRecordService.selectBizLearningRecordList(bizLearningRecord, securityUtil.getCurrUser(), PageUtil.initPage(page));
+    public Result<IPage<LearningRecordVO>> list(LearningRecordVO learningRecordVO, PageVo page) {
+        learningRecordVO.setUserId(securityUtil.getCurrUser().getId());
+        learningRecordVO.setCourseType(Constants.VIDEOCOURSE.toString());
+        learningRecordVO.setDelFlag(Constants.ISNOTDELETE);
+        IPage<LearningRecordVO> list = learningRecordService.selectBizLearningRecordList(learningRecordVO,  PageUtil.initPage(page));
         return ResultUtil.data(list);
     }
 

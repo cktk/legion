@@ -20,13 +20,6 @@ public interface PaperMapper extends BaseMapper<ExamPaper> {
                                               @Param("count") String count,
                                               @Param("bankId") String bankId);
 
-    void savePaper(@Param("id") String paperId,
-                   @Param("clazzId") String clazzId,
-                   @Param("userId") String userId,
-                   @Param("date") Date dateNowSecond,
-                   @Param("type") Integer type,
-                   @Param("clazzMajor") String clazzMajor,
-                   @Param("clazzName") String clazzName);
 
     void savePaperQuestion(@Param("id") String uuid,
                            @Param("paperId") String paperId,

@@ -32,6 +32,7 @@ public class MyExamController {
     @ApiOperation(value = "我的考试列表")
     @GetMapping("/list")
     public Result<IPage<MyExam>> list(MyExam data, PageVo pageVo) {
+        //todo DS失效  查legion库了
         IPage<MyExam> list = myExamService.list(data, PageUtil.initPage(pageVo));
         return ResultUtil.data(list);
     }

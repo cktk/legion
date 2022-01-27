@@ -1,8 +1,10 @@
 package com.esmooc.legion.edu.service.impl;
 
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.core.common.utils.SecurityUtil;
 import com.esmooc.legion.edu.common.constant.Constants;
 import com.esmooc.legion.edu.common.utils.BaseUtils;
@@ -74,9 +76,8 @@ public class ExamServiceImpl extends ServiceImpl<ExamMapper, Exam> implements Ex
     @Override
     public Map saveExam(ExamVO examVO) {
         Map m = new HashMap<>();
+
         // 构建参数
-        examVO.setCreateBy(securityUtil.getCurrUser().getId());
-        examVO.setCreateTime(BaseUtils.getDateNowSecond());
         examVO.setRulesId(BaseUtils.getUUID());
         if (null == examVO.getClazzId() || "".equals(examVO.getClazzId())) {
             /**
@@ -96,11 +97,15 @@ public class ExamServiceImpl extends ServiceImpl<ExamMapper, Exam> implements Ex
             }
 
             if (0 == countId) {
+                String examId = BaseUtils.getUUID();
                 Exam exam = new Exam();
-                exam.setId(BaseUtils.getUUID());
-                exam.setTitle(exam.getTitle());
-                exam.setBankId(exam.getBankId());
-                examMapper.insert(exam);
+                examVO.setId(examId);
+                exam.setId(examId);
+                exam.setTitle(examVO.getTitle());
+                exam.setBankId(examVO.getBackId());
+                if (!this.save(exam)) {
+                    throw new LegionException("保存失败");
+                }
             } else {
                 if (null == examVO.getId() || "".equals(examVO.getId())) {
                     examVO.setId(examVO.getBackId());
@@ -110,7 +115,9 @@ public class ExamServiceImpl extends ServiceImpl<ExamMapper, Exam> implements Ex
                 Exam exam = new Exam();
                 exam.setId(examVO.getId());
                 exam.setTitle(exam.getTitle());
-                examMapper.updateById(exam);
+                if (!this.updateById(exam)) {
+                    throw new LegionException("更新失败");
+                }
                 // 删除规则
                 examMapper.deleteBizExamRulesByBankId(examVO.getId());
                 examMapper.deleteBizExamRulesByExamId(examVO.getId());
@@ -120,18 +127,13 @@ public class ExamServiceImpl extends ServiceImpl<ExamMapper, Exam> implements Ex
             for (int i = 0; i < majorIds.length; i++) {
                 ExamMajor major = new ExamMajor();
                 major.setId(BaseUtils.getUUID());
-                major.setExamId( examVO.getId());
+                major.setExamId(examVO.getId());
                 major.setMajorId(majorIds[i]);
-                examMajorService.save(major);
+                if (!examMajorService.save(major)) {
+                    throw new LegionException("类别保存失败");
+                }
             }
-            // 新增规则
-            ExamPaperRules examPaperRules =new ExamPaperRules();
-            examPaperRules.setId(examVO.getRulesId());
-            examPaperRules.setClazzId(examVO.getId());
-            examPaperRules.setRules(examVO.getRules());
-            examPaperRules.setBankId(examVO.getBackId());
-            examPaperRulesService.save(examPaperRules);
-            m.put("id", examPaperRules.getId());
+
         } else {
             /**
              *  课程进入
@@ -145,7 +147,9 @@ public class ExamServiceImpl extends ServiceImpl<ExamMapper, Exam> implements Ex
         examPaperRules.setClazzId(examVO.getId());
         examPaperRules.setRules(examVO.getRules());
         examPaperRules.setBankId(examVO.getBackId());
-        examPaperRulesService.save(examPaperRules);
+        if (!examPaperRulesService.save(examPaperRules)) {
+            throw new LegionException("试卷规则保存失败");
+        }
         m.put("id", examVO.getId());
         return m;
     }
@@ -177,18 +181,28 @@ public class ExamServiceImpl extends ServiceImpl<ExamMapper, Exam> implements Ex
             Exam exam = new Exam();
             exam.setId(id);
             exam.setIssue(1);
-            int update = examMapper.updateById(exam);
-            if (update < 1) {
+
+            if (! this.updateById(exam)) {
                 //"错误"
+                throw new LegionException("状态更新失败");
             }
 
             ArrayList<ExamPaper> examPapers = new ArrayList<ExamPaper>();
 
-
             // 查询专业
             String examMajor = paperMapper.getExamMajorById(id);
+
+            if (StrUtil.isBlank(examMajor)) {
+                throw new LegionException("参数有误 examMajor 为空");
+            }
+
             // 查询名称
             String examName = paperMapper.getExamNameById(id);
+
+            if (StrUtil.isBlank(examName)) {
+                throw new LegionException("参数有误 examName 为空");
+            }
+
 
             if (userIds != null) {
                 for (String userId : userIds) {

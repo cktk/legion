@@ -32,7 +32,6 @@ public interface LearningRecordMapper extends BaseMapper<LearningRecord> {
     /**
      * 查询课程学习状态业务列表
      *
-     * @param bizLearningRecord 课程学习状态业务
      * @param page
      * @return 课程学习状态业务集合
      */

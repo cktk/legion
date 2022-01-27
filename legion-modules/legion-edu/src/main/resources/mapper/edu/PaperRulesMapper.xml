@@ -54,18 +54,6 @@
         delete from edu_exam_paper_rules where clazz_id = #{clazzId}
     </delete>
 
-    <insert id="saveRules">
-        insert into
-        edu_exam_paper_rules
-        set
-        id = #{id},
-        clazz_id = #{clazzId},
-        rules = #{rules},
-        create_time = #{createTime},
-        create_by = #{createBy},
-        bank_id = #{bankId}
-    </insert>
-
     <select id="getRulesById" resultType="java.lang.String">
         select
         rules

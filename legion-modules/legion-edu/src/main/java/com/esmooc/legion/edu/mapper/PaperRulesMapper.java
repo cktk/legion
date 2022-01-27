@@ -18,7 +18,7 @@ public interface PaperRulesMapper extends BaseMapper<ExamPaperRules> {
 
     void deleteRulesByClazzId(String clazzId);
 
-    void saveRules(ExamPaperRules examPaperRules);
+
 
     String getRulesById(String id);
 

@@ -56,7 +56,7 @@ public class PDFCourseController {
     @ApiOperation(value = "新增课程")
     @SystemLog(description = "新增课程", type = LogType.EDU)
     @PostMapping
-    public Result<Boolean> add(@RequestBody Course course) {
+    public Result<Boolean> add(Course course) {
         course.setCourseType(Constants.SOCIETYCOURSE);
         course.setCreateBy(securityUtil.getCurrUser().getId());
         if (Constants.CITY.equals(securityUtil.getCurrUser().getType())) {
@@ -66,7 +66,6 @@ public class PDFCourseController {
         }
         return ResultUtil.data(courseService.save(course));
     }
-
 
     @ApiOperation(value = "修改课程")
     @SystemLog(description = "修改课程", type = LogType.EDU)

@@ -40,7 +40,7 @@ public class LearningRecordController {
     @GetMapping("/list")
     public Result<IPage<LearningRecordVO>> list(LearningRecordVO bizLearningRecord, PageVo pageVo) {
         bizLearningRecord.setDelFlag(Constants.ISNOTDELETE);
-        IPage<LearningRecordVO> list = learningRecordService.selectBizLearningRecordList(bizLearningRecord, securityUtil.getCurrUser(), PageUtil.initPage(pageVo));
+        IPage<LearningRecordVO> list = learningRecordService.selectBizLearningRecordList(bizLearningRecord,  PageUtil.initPage(pageVo));
         return ResultUtil.data(list);
     }
 
@@ -51,7 +51,7 @@ public class LearningRecordController {
     @GetMapping("/export")
     public List<LearningRecordVO> export(LearningRecordVO bizLearningRecord, PageVo page) {
         bizLearningRecord.setDelFlag(Constants.ISNOTDELETE);
-        IPage<LearningRecordVO> list = learningRecordService.selectBizLearningRecordList(bizLearningRecord, securityUtil.getCurrUser(), PageUtil.initPage(page));
+        IPage<LearningRecordVO> list = learningRecordService.selectBizLearningRecordList(bizLearningRecord,  PageUtil.initPage(page));
         return list.getRecords();
     }
 

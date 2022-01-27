@@ -30,7 +30,7 @@ import java.util.List;
 @DS("edu")
 @Api(tags = "课程业务")
 @RestController
-@RequestMapping("/edu/PdfCourse")
+@RequestMapping("/edu/stuPdfCourse")
 public class StuPDFCourseController {
     @Autowired
     private LearningRecordService learningRecordService;
@@ -42,11 +42,11 @@ public class StuPDFCourseController {
 
     @ApiOperation(value = "查询课程业务列表")
     @GetMapping("/list")
-    public Result<IPage<LearningRecordVO>> list(LearningRecordVO bizLearningRecord, PageVo page) {
-        bizLearningRecord.setUserId(securityUtil.getCurrUser().getId());
-        bizLearningRecord.setCourseType(Constants.SOCIETYCOURSE.toString());
-        bizLearningRecord.setDelFlag(Constants.ISNOTDELETE);
-        IPage<LearningRecordVO> list = learningRecordService.selectBizLearningRecordList(bizLearningRecord, securityUtil.getCurrUser(), PageUtil.initPage(page));
+    public Result<IPage<LearningRecordVO>> list(LearningRecordVO learningRecordVO, PageVo page) {
+        learningRecordVO.setUserId(securityUtil.getCurrUser().getId());
+        learningRecordVO.setCourseType(Constants.SOCIETYCOURSE.toString());
+        learningRecordVO.setDelFlag(Constants.ISNOTDELETE);
+        IPage<LearningRecordVO> list = learningRecordService.selectBizLearningRecordList(learningRecordVO,  PageUtil.initPage(page));
         return ResultUtil.data(list);
     }
 
@@ -89,7 +89,7 @@ public class StuPDFCourseController {
     @ApiOperation(value = "新增课程业务")
     @SystemLog(description = "新增课程业务", type = LogType.EDU)
     @PostMapping("/pdfLearningRecordFile")
-    public Result addPdfLearningRecordFile(@RequestBody LearningRecordFile learningRecordFile) {
+    public Result addPdfLearningRecordFile(LearningRecordFile learningRecordFile) {
         learningRecordFile.setUserId(securityUtil.getCurrUser().getId());
         try {
             return ResultUtil.data(learningRecordFileService.insertPdfLearningRecord(learningRecordFile));

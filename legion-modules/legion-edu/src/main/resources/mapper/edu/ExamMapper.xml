@@ -155,18 +155,7 @@
         user_id
     </select>
 
-    <insert id="insertExamPaper">
-        insert into
-        edu_exam_paper
-        set
-        id = #{id},
-        clazz_id = #{clazzId},
-        user_id = #{userId},
-        create_time = #{time},
-        type = #{type},
-        clazz_name = #{exanName},
-        major_id = #{examMajor}
-    </insert>
+
 
     <select id="getExamCountById" resultType="java.lang.Integer">
         select

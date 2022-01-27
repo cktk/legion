@@ -67,19 +67,6 @@
         LIMIT #{count}
     </select>
 
-    <insert id="savePaper">
-        insert into
-        edu_exam_paper
-        set
-        id = #{id},
-        clazz_id = #{clazzId},
-        user_id = #{userId},
-        create_time = #{date},
-        type = #{type},
-        clazz_name = #{clazzName},
-        major_id = #{clazzMajor}
-    </insert>
-
     <insert id="savePaperQuestion">
         insert into
         edu_exam_paper_question

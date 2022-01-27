@@ -1,5 +1,6 @@
 package com.esmooc.legion.edu.controller;
 
+import cn.hutool.core.util.IdUtil;
 import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -58,6 +59,7 @@ public class CourseController {
     @ApiOperation(value = "新增课程文件附件业务")
     @SystemLog(description = "新增课程文件附件业务", type = LogType.EDU)
     public Result<Boolean> addFiles(CourseFile courseFile) {
+        courseFile.setId(IdUtil.objectId());
         return ResultUtil.data(courseFileService.save(courseFile));
     }
 
