@@ -11,4 +11,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
 public interface ExamPaperRulesService extends IService<ExamPaperRules>{
 
 
-}
+        ExamPaperRules getByClazzId(String id);
+    }

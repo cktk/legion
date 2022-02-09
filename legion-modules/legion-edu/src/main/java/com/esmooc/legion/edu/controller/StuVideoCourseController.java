@@ -49,7 +49,7 @@ public class StuVideoCourseController {
         learningRecordVO.setUserId(securityUtil.getCurrUser().getId());
         learningRecordVO.setCourseType(Constants.VIDEOCOURSE.toString());
         learningRecordVO.setDelFlag(Constants.ISNOTDELETE);
-        IPage<LearningRecordVO> list = learningRecordService.selectBizLearningRecordList(learningRecordVO,  PageUtil.initPage(page));
+        IPage<LearningRecordVO> list = learningRecordService.selectLearningRecordList(learningRecordVO,  PageUtil.initPage(page));
         return ResultUtil.data(list);
     }
 

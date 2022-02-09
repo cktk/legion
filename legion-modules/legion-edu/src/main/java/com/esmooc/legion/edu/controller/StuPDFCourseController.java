@@ -46,7 +46,7 @@ public class StuPDFCourseController {
         learningRecordVO.setUserId(securityUtil.getCurrUser().getId());
         learningRecordVO.setCourseType(Constants.SOCIETYCOURSE.toString());
         learningRecordVO.setDelFlag(Constants.ISNOTDELETE);
-        IPage<LearningRecordVO> list = learningRecordService.selectBizLearningRecordList(learningRecordVO,  PageUtil.initPage(page));
+        IPage<LearningRecordVO> list = learningRecordService.selectLearningRecordList(learningRecordVO,  PageUtil.initPage(page));
         return ResultUtil.data(list);
     }
 

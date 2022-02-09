@@ -1,5 +1,6 @@
 package com.esmooc.legion.your.controller;
 
+import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONUtil;
 import com.esmooc.legion.core.common.annotation.RateLimiter;
@@ -47,6 +48,43 @@ public class TestController {
         return ResultUtil.data(bookService.getByPid(id));
     }
 
+
+    @ApiOperation(value = "获取评论")
+    @GetMapping(value = "/msg")
+    public Result getmsg() {
+        for (int i = 81119; i < 99999999; i++) {
+
+
+            try {
+                String json = HttpUtil.get("https://www.medtiku.com/api/comment?qid=" + i, 5000);
+                if (json.length() > 50) {
+                    Book book = new Book();
+                    book.setType("3");
+                    book.setTitle("评论解析");
+                    book.setUrl(i + "");
+                    book.setData(json);
+                    book.setPid(i);
+                    ThreadUtil.execAsync(() -> {
+                        if (!bookService.save(book)) {
+                            log.info("保存失败 {} ", book);
+                        }
+                    });
+                } else {
+                    log.info("不够资格 {}  编号 {}", json, i);
+                }
+            } catch (Exception e) {
+                log.info("错误  {} 信息  {}", i, e.getMessage());
+            }
+
+
+        }
+
+
+        System.out.println("完事");
+        //MSG_URL
+
+        return ResultUtil.data(1);
+    }
 
     //@GetMapping(value = "/save")
     public void save() {

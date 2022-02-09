@@ -24,7 +24,7 @@ public interface CourseMapper extends BaseMapper<Course> {
     IPage<StuVideoCourseVO> stuVideoCourseList(@Param("stuVideoCourse") StuVideoCourseVO stuVideoCourse, @Param("page") Page page);
 
     IPage<StuPdfCourseVO> stuPdfCourseList(@Param("stuPdfCourse") StuPdfCourseVO stuPdfCourse, @Param("page") Page page);
-
+    IPage<Course> selectCoursePage( @Param("course")  Course course, @Param("page") Page  page);
     List<String> selectBizCourseIds1(@Param("ids") List<String> ids);
 
     List<String> selectBizCourseIds2(@Param("ids") List<String> ids);

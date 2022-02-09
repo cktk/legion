@@ -1,5 +1,6 @@
 package com.esmooc.legion.edu.service.impl;
 
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
@@ -10,14 +11,13 @@ import com.esmooc.legion.core.entity.User;
 import com.esmooc.legion.edu.common.constant.Constants;
 import com.esmooc.legion.edu.common.utils.BaseUtils;
 import com.esmooc.legion.edu.entity.ExamPaper;
+import com.esmooc.legion.edu.entity.ExamPaperRules;
 import com.esmooc.legion.edu.entity.ExamQuestion;
 import com.esmooc.legion.edu.entity.SubmitPaper;
 import com.esmooc.legion.edu.mapper.PaperMapper;
 import com.esmooc.legion.edu.mapper.PaperRulesMapper;
 import com.esmooc.legion.edu.mapper.QuestionMapper;
-import com.esmooc.legion.edu.service.PaperRulesService;
-import com.esmooc.legion.edu.service.LearningRecordService;
-import com.esmooc.legion.edu.service.PaperService;
+import com.esmooc.legion.edu.service.*;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -65,27 +65,22 @@ public class PaperServiceImpl  extends ServiceImpl<PaperMapper, ExamPaper> imple
         if (1==type) {
             Integer studyType = paperMapper.getStudyTypeByClazzIdUserId(clazzId, userId);
             if (!Constants.ENDSTUDY.equals(studyType)) {
-                m.put("code", false);
-                m.put("msg", "请重新学习视频课程后再进行考试！");
-                return m;
+                throw new LegionException("请重新学习视频课程后再进行考试！",509);
             }
         }
         // 查询生成规则
         String rules = paperRulesMapper.getRulesByClazzId(clazzId);
         if (null == rules || "".equals(rules)) {
-            m.put("code", false);
-            m.put("msg", "系统异常，请联系管理员！");
-            return m;
+            throw new LegionException("系统异常，请联系管理员！",509);
         }
         // 查询题库id
-        String bankId = paperRulesMapper.getBankIdByClazzId(clazzId);
-
+        ExamPaperRules examPaperRules = examPaperRulesService.getByClazzId(clazzId);
+        // 查询题库id
+        String bankId = examPaperRules.getBankId();
         // 根据课程id查询题库id
         String bank = paperMapper.getBankIdByClazzId(clazzId);
         if (null == bank || "".equals(bank)) {
-            m.put("code", false);
-            m.put("msg", "当前试卷题数发生变化，请联系管理员！");
-            return m;
+            throw new LegionException("当前试卷题数发生变化，请联系管理员！",509);
         }
         // 查询课程相关信息
         String clazzMajor = paperRulesMapper.getClazzMajorById(clazzId);
@@ -109,6 +104,8 @@ public class PaperServiceImpl  extends ServiceImpl<PaperMapper, ExamPaper> imple
         m.put("paperId", paperId);
         return m;
     }
+    @Autowired
+    private ExamQuestionService  examQuestionService;
 
     private Map generateTestQuestions(String paperId, String rules, String clazzId, String type, String bankId) {
         Map m = new HashMap<>();
@@ -122,42 +119,30 @@ public class PaperServiceImpl  extends ServiceImpl<PaperMapper, ExamPaper> imple
         if ("1".equals(type)) {
             Integer radioCount = paperMapper.getQuestionCountByClazzId(clazzId, Constants.RADIO, bankId);
             if (radioCount < Integer.valueOf(ruleMap.get("radio").toString())) {
-                m.put("code", false);
-                m.put("msg", "当前试卷题数发生变化，请联系管理员！");
-                return m;
+                throw new LegionException("当前试卷题数发生变化，请联系管理员！",578);
             }
             Integer checkboxCount = paperMapper.getQuestionCountByClazzId(clazzId, Constants.CHECKBOX, bankId);
             if (checkboxCount < Integer.valueOf(ruleMap.get("checkbox").toString())) {
-                m.put("code", false);
-                m.put("msg", "当前试卷题数发生变化，请联系管理员！");
-                return m;
+                throw new LegionException("当前试卷题数发生变化，请联系管理员！",577);
             }
             Integer judgmentCount = paperMapper.getQuestionCountByClazzId(clazzId, Constants.JUDGMENT, bankId);
             if (judgmentCount < Integer.valueOf(ruleMap.get("judgment").toString())) {
-                m.put("code", false);
-                m.put("msg", "当前试卷题数发生变化，请联系管理员！");
-                return m;
+                throw new LegionException("当前试卷题数发生变化，请联系管理员！",576);
             }
         } else {
             // 根据clazzId查询考试范围
             List<String> majorIds = paperMapper.getPaperMajorIdsById(clazzId);
             Integer radioCount = paperMapper.getQuestionCountByMajorIds(majorIds, Constants.RADIO, bankId);
             if (radioCount < Integer.valueOf(ruleMap.get("radio").toString())) {
-                m.put("code", false);
-                m.put("msg", "当前试卷题数发生变化，请联系管理员！");
-                return m;
+                throw new LegionException("当前试卷题数发生变化，请联系管理员！",575);
             }
             Integer checkboxCount = paperMapper.getQuestionCountByMajorIds(majorIds, Constants.CHECKBOX, bankId);
             if (checkboxCount < Integer.valueOf(ruleMap.get("checkbox").toString())) {
-                m.put("code", false);
-                m.put("msg", "当前试卷题数发生变化，请联系管理员！");
-                return m;
+                throw new LegionException("当前试卷题数发生变化，请联系管理员！",574);
             }
             Integer judgmentCount = paperMapper.getQuestionCountByMajorIds(majorIds, Constants.JUDGMENT, bankId);
             if (judgmentCount < Integer.valueOf(ruleMap.get("judgment").toString())) {
-                m.put("code", false);
-                m.put("msg", "当前试卷题数发生变化，请联系管理员！");
-                return m;
+                throw new LegionException("当前试卷题数发生变化，请联系管理员！",573);
             }
         }
         // 单选题
@@ -175,9 +160,9 @@ public class PaperServiceImpl  extends ServiceImpl<PaperMapper, ExamPaper> imple
         } else {
             // 根据clazzId查询考试范围
             List<String> majorIds = paperMapper.getPaperMajorIdsById(clazzId);
-            radioIds = paperMapper.getRandomQuestionIdByMajorIds(majorIds, Constants.RADIO, ruleMap.get("radio").toString(), bankId);
-            checkboxIds = paperMapper.getRandomQuestionIdByMajorIds(majorIds, Constants.CHECKBOX, ruleMap.get("checkbox").toString(), bankId);
-            judgmentIds = paperMapper.getRandomQuestionIdByMajorIds(majorIds, Constants.JUDGMENT, ruleMap.get("judgment").toString(), bankId);
+            radioIds = paperMapper.getRandomQuestionIdByMajorIds(majorIds, Constants.RADIO,Integer.parseInt(ruleMap.get("radio")+"") , bankId);
+            checkboxIds = paperMapper.getRandomQuestionIdByMajorIds(majorIds, Constants.CHECKBOX, Integer.parseInt( ruleMap.get("checkbox")+""), bankId);
+            judgmentIds = paperMapper.getRandomQuestionIdByMajorIds(majorIds, Constants.JUDGMENT, Integer.parseInt( ruleMap.get("judgment")+""), bankId);
         }
         List<ExamQuestion> radioList = new ArrayList<>();
         List<ExamQuestion> checkList = new ArrayList<>();
@@ -208,6 +193,8 @@ public class PaperServiceImpl  extends ServiceImpl<PaperMapper, ExamPaper> imple
         return m;
     }
 
+    @Autowired
+    private ExamPaperRulesService examPaperRulesService;
     /**
      * 创建考试- 开始考试
      *
@@ -219,7 +206,7 @@ public class PaperServiceImpl  extends ServiceImpl<PaperMapper, ExamPaper> imple
         Map m = new HashMap<>();
         // 查询生成规则
         String rules = paperRulesMapper.getRulesByClazzId(id);
-        if (null == rules || "".equals(rules)) {
+        if (StrUtil.isBlank(rules)) {
             // 查询考试clazzId
             String clazzId = paperRulesMapper.getExamClazzId(id);
             rules = paperRulesMapper.getRulesByClazzId(clazzId);
@@ -227,13 +214,14 @@ public class PaperServiceImpl  extends ServiceImpl<PaperMapper, ExamPaper> imple
                throw  new LegionException("试卷错误暂无数据");
             }
         }
+       ExamPaperRules examPaperRules = examPaperRulesService.getByClazzId(id);
         // 查询题库id
-        String bankId = paperRulesMapper.getBankIdByClazzId(id);
-        if(null == bankId || "".equals(bankId)){
-            m.put("code", false);
-            m.put("msg", "当前试卷题数发生变化，请联系管理员！");
-            return m;
-        }
+        String bankId = examPaperRules.getBankId();
+        //if(null == bankId || "".equals(bankId)){
+        //    m.put("code", false);
+        //    m.put("msg", "当前试卷题数发生变化，请联系管理员！");
+        //    return m;
+        //}
         // 查询最后一次考试的id
         ExamPaper lastPaper = paperMapper.selectLastPaperId(id, securityUtil.getCurrUser().getId());
         // 查询最后一次考试是否关联试题
@@ -257,7 +245,7 @@ public class PaperServiceImpl  extends ServiceImpl<PaperMapper, ExamPaper> imple
             examPaper.setType(lastPaper.getType());
             examPaper.setClazzName(examName);
             examPaper.setMajorId(examMajor);
-            if (this.save(examPaper)) {
+            if (!this.save(examPaper)) {
                 throw new LegionException("保存失败");
             }
 

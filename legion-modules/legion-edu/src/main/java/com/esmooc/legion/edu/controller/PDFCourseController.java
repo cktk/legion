@@ -70,7 +70,7 @@ public class PDFCourseController {
     @ApiOperation(value = "修改课程")
     @SystemLog(description = "修改课程", type = LogType.EDU)
     @PutMapping
-    public Result edit(@RequestBody Course course) {
+    public Result edit( Course course) {
         course.setCourseType(Constants.SOCIETYCOURSE);
         course.setUpdateBy(securityUtil.getCurrUser().getId());
         return ResultUtil.data(courseService.updateById(course));

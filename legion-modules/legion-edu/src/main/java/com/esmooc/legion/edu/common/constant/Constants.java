@@ -128,7 +128,7 @@ public class Constants {
 
 
     /**
-     * 全部      0
+     * 全部     0
      * 中心学员  1
      * 社会学员  2
      */
@@ -205,6 +205,11 @@ public class Constants {
     public static final String USER="1";
     public static final String DEPT="2";
     public static final String ROLE="3";
+
+
+    //是否发布
+    public static final String ISSUE_OK="1";
+    public static final String ISSUE_NO="0";
     /**
      * 角色编号
      * 超级管理员     1

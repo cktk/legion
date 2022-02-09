@@ -328,8 +328,7 @@
             FIND_IN_SET(
             '1',
             learning_scope)
-            and
-            del_flag = 1
+
             <if test="ids != null  and ids != '' and ids.size > 0">
                 and id not in
                 <foreach collection="ids" item="item" index="index" open="(" separator="," close=")">
@@ -345,11 +344,6 @@
         FROM
         edu_course
         <where>
-            FIND_IN_SET(
-            '2',
-            learning_scope)
-            and
-            del_flag = 1
             <if test="ids != null  and ids != '' and ids.size > 0">
                 and id not in
                 <foreach collection="ids" item="item" index="index" open="(" separator="," close=")">
@@ -384,7 +378,6 @@
         edu_course
         WHERE
         course_type = #{courseType}
-        and del_flag = 1
     </select>
 
     <select id="selectcourse" resultType="com.esmooc.legion.edu.entity.vo.HomePageVO">
@@ -404,7 +397,6 @@
         edu_course
         WHERE
         course_type = #{courseType}
-        and del_flag = 1
         ORDER BY
         create_time DESC
         LIMIT 0,10
@@ -431,7 +423,6 @@
         AND FIND_IN_SET(
         #{learningScope},
         learning_scope)
-        and del_flag = 1
         ORDER BY
         create_time DESC
         LIMIT 0,10
@@ -472,5 +463,71 @@
         ) a
     </select>
 
+    <select id="selectCoursePage" resultMap="BaseResultMap">
 
+        SELECT DISTINCT
+        c.id,
+        c.course_title,
+        c.`subject`,
+        c.speciality,
+        c.exam,
+        round( c.period, 1 ) AS period,
+        c.learning_scope,
+        c.course_type,
+        c.create_time,
+        c.update_time,
+        c.del_flag,
+        IF
+        ( eqb.clazz_id IS NULL, 0, 1 ) AS questionBank,
+        IF
+        ( c.exam_issue IS NULL, 0, c.exam_issue ) AS questions
+        FROM
+        edu_course c
+        LEFT JOIN edu_exam_question_bank eqb ON eqb.clazz_id = c.id
+        LEFT JOIN edu_exam_paper_rules eqr ON eqr.clazz_id = c.id
+
+        <where>
+            <if test="course.courseTitle != null  and course.courseTitle != ''"> and course_title like concat('%', #{courseTitle}, '%')</if>
+            <if test="course.subject != null  and course.subject != ''"> and
+                <foreach collection="course.subject.split(',')" item="item" index="index" open="(" separator="or" close=")">
+                    FIND_IN_SET(
+                    '${item}',
+                    c.`subject`)
+                </foreach>
+            </if>
+            <if test="course.speciality != null  and course.speciality != ''"> and
+                <foreach collection="course.speciality.split(',')" item="item" index="index" open="(" separator="or" close=")">
+                    FIND_IN_SET(
+                    '${item}',
+                    c.speciality)
+                </foreach>
+            </if>
+
+            <if test="course.learningScope != null  and course.learningScope != ''"> and
+                <foreach collection="course.learningScope.split(',')" item="item" index="index" open="(" separator="or" close=")">
+                    FIND_IN_SET(
+                    '${item}',
+                    c.learning_scope)
+                </foreach>
+            </if>
+            <if test="course.courseType != null  and course.courseType != ''"> and course_type = #{course.courseType}</if>
+            <if test="course.questionBank != null  and course.questionBank != ''"> and
+                <foreach collection="course.questionBank.split(',')" item="item" index="index" open="(" separator="or" close=")">
+                    FIND_IN_SET(
+                    '${item}',
+                    IF
+                    ( eqb.clazz_id IS NULL, 0, 1 ))
+                </foreach>
+            </if>
+            <if test="course.questions != null  and course.questions != ''"> and
+                <foreach collection="course.questions.split(',')" item="item" index="index" open="(" separator="or" close=")">
+                    FIND_IN_SET(
+                    '${item}',
+                    IF
+                    ( c.exam_issue IS NULL, 0, c.exam_issue ))
+                </foreach>
+            </if>
+        </where>
+        ORDER BY update_time DESC
+    </select>
 </mapper>

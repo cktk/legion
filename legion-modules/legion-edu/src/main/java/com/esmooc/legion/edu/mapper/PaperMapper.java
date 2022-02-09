@@ -61,7 +61,7 @@ public interface PaperMapper extends BaseMapper<ExamPaper> {
 
     List<String> getRandomQuestionIdByMajorIds(@Param("majorIds") List<String> majorIds,
                                                @Param("type") Integer type,
-                                               @Param("count") String count,
+                                               @Param("count") Integer count,
                                                @Param("bankId") String bankId);
 
     String getExamMajorById(String id);

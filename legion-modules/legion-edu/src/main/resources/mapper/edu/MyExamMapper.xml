@@ -4,73 +4,61 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.esmooc.legion.edu.mapper.MyExamMapper">
     <select id="list" resultType="com.esmooc.legion.edu.entity.MyExam">
-        select *
-        from (
-                     select bep.id,
-                            bep.clazz_id as 'clazzId',IF(bep.grade is null, 0, bep.grade) as 'grade',IF(bep.is_pass is null,
-                                                                                                        0,
-                                                                                                        bep.is_pass) as 'isPass',
-                            bep.clazz_name as 'clazzName',IF(bc.course_title is null, 0, bc.period) as 'period',
-                            bep.create_time as 'createTime',bep.type as 'type',bep.history_question as 'historyQuestion',bep.major_id as
-                                    'majorId'
-                     from edu_exam_paper bep
-                                  left join
+        select bep.id,
+        bep.clazz_id                              as 'clazzId',
+        IF(bep.grade is null, 0, bep.grade)       as 'grade',
+        IF(bep.is_pass is null,
+        0,
+        bep.is_pass)                           as 'isPass',
+        bep.clazz_name                            as 'clazzName',
+        IF(bc.course_title is null, 0, bc.period) as 'period',
+        bep.create_time                           as 'createTime',
+        bep.type                                  as 'type',
+        bep.history_question                      as 'historyQuestion',
+        bep.major_id                              as
+        'majorId'
+        from edu_exam_paper bep
+        left join
         edu_course bc
-                on
-                        bc.id = bep.clazz_id
-                                  left join
-                                  edu_exam be
         on
-                be.id = bep.clazz_id
-                                  left join
+        bc.id = bep.clazz_id
+        left join
+        edu_exam be
+        on
+        be.id = bep.clazz_id
+        left join
         edu_exam_major bem
-                on
-                        be.id = bem.exam_id
-                     where bep.user_id = #{exam.userId,jdbcType=VARCHAR}
+        on
+        be.id = bem.exam_id
+        where bep.user_id = '1'
         and
-                           (bep.type = '1'
+        (bep.type = '1'
         or
-                            bep.type = '2')
-                        or (
-                             bep.type = '1'
+        bep.type = '2')
+        or (
+        bep.type = '1'
         and
-                             bep.is_pass = '1'
+        bep.is_pass = '1'
         and
-                             bep.user_id = #{exam.userId,jdbcType=VARCHAR}
-                             )
-                     group by bep.clazz_id, bep.create_time, bep.type, bep.id,
-                              bep.clazz_name,
-                              bep.type,
-                              bep.history_question,
-                              bep.major_id
-                     order by bep.create_time, bep.clazz_name,
-                              bep.type,
-                              bep.history_question,
-                              bep.major_id
-        desc
-                     ) a
-        where
-        a.clazzName is not null
+        bep.user_id = '1'
+        )
         <if test="exam.clazzName != null and exam.clazzName != ''">
-            and a.clazzName like concat('%', #{exam.clazzName ,jdbcType=VARCHAR}, '%')
+            and bep.clazz_name like concat('%', #{exam.clazzName ,jdbcType=VARCHAR}, '%')
         </if>
+
         <if test="exam.majorId != null and exam.majorId != ''">
-            and FIND_IN_SET(#{exam.majorId,jdbcType=VARCHAR}, a.majorId)
+            and FIND_IN_SET(#{exam.majorId,jdbcType=VARCHAR},  bep.major_id)
         </if>
-        group by a.clazzId,
-        a.createTime,
-        a.clazzName,
-        a.type,
-        a.historyQuestion,
-        a.majorId,
-        a.id
-        order by a.createTime,
-        a.clazzId,
-        a.clazzName,
-        a.type,
-        a.historyQuestion,
-        a.majorId,
-        a.id
+
+        group by bep.clazz_id, bep.create_time, bep.type, bep.id,
+        bep.clazz_name,
+        bep.type,
+        bep.history_question,
+        bep.major_id
+        order by bep.create_time, bep.clazz_name,
+        bep.type,
+        bep.history_question,
+        bep.major_id
         desc
     </select>
 

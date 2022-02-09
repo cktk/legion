@@ -13,6 +13,7 @@ import com.esmooc.legion.core.common.vo.Result;
 import com.esmooc.legion.edu.common.constant.Constants;
 import com.esmooc.legion.edu.entity.Course;
 import com.esmooc.legion.edu.entity.vo.StuVideoCourseVO;
+import com.esmooc.legion.edu.mapper.CourseMapper;
 import com.esmooc.legion.edu.service.CourseService;
 import com.pig4cloud.plugin.excel.annotation.ResponseExcel;
 import io.swagger.annotations.Api;
@@ -30,6 +31,9 @@ import java.util.List;
 public class VideoCourseController {
     @Autowired
     private CourseService courseService;
+
+    @Autowired
+    private CourseMapper courseMapper;
     @Autowired
     private SecurityUtil securityUtil;
 
@@ -38,7 +42,7 @@ public class VideoCourseController {
     public Result<IPage<Course>> list(Course course, PageVo page) {
         course.setCourseType(Constants.VIDEOCOURSE);
         //course.setAudit(Constants.UNREVISED_OK);
-        return ResultUtil.data(courseService.page(PageUtil.initPage(page), Wrappers.query(course)));
+        return ResultUtil.data(courseMapper.selectCoursePage(course,PageUtil.initPage(page)));
     }
 
 

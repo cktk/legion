@@ -2,6 +2,7 @@ package com.esmooc.legion.edu.controller;
 
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.dynamic.datasource.annotation.DS;
+import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.core.common.utils.ResultUtil;
 import com.esmooc.legion.core.common.utils.SecurityUtil;
 import com.esmooc.legion.core.common.vo.Result;
@@ -67,6 +68,7 @@ public class PaperController {
         Map m = paperService.startPracticing(clazzId, type, securityUtil.getCurrUser().getId());
         if (!Boolean.valueOf(m.get("code").toString())) {
             m.put("success", false);
+            //throw new LegionException("当前试卷题数发生变化，请联系管理员！",509);
             return ResultUtil.data(m);
         }
         m.put("success", true);

@@ -57,11 +57,10 @@
         <foreach collection="majorIds" item="id" separator="," close=")" open="(">
             #{id}
         </foreach>
-        and
-        type = #{type}
+        and type = #{type}
+
         <if test="bankId != null and bankId != ''">
-            and
-            bank_id = #{bankId}
+            and bank_id = #{bankId}
         </if>
         ORDER BY RAND()
         LIMIT #{count}
@@ -385,8 +384,7 @@
         and
         type = #{type}
         <if test="bankId != null and bankId != ''">
-            and
-            bank_id = #{bankId}
+            and bank_id = #{bankId}
         </if>
     </select>
 

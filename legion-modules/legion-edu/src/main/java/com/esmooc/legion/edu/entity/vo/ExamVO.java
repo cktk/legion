@@ -1,8 +1,6 @@
 package com.esmooc.legion.edu.entity.vo;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.annotation.*;
 import com.esmooc.legion.core.base.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
@@ -79,7 +77,7 @@ public class ExamVO {
     /**
      * 是否发布  1：发布 0：未发布
      */
-    private String issur;
+    private String issue;
 
     private String backId;
 
@@ -111,6 +109,17 @@ public class ExamVO {
     @ApiModelProperty(value = "删除标志 默认1")
     @TableField(value = "del_flag")
     @TableLogic()
-    Integer delFlag =0;
+    Integer delFlag ;
 
+    /**
+     * 是否题库创建考试
+     */
+    @TableField(value = "is_bank")
+    @ApiModelProperty(value = "是否题库创建考试")
+    private Integer isBank;
+
+
+    @TableField(value = "bank_id")
+    @ApiModelProperty(value = "")
+    private String bankId;
 }

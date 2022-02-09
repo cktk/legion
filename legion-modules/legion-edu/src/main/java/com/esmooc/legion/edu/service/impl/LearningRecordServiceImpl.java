@@ -3,8 +3,8 @@ package com.esmooc.legion.edu.service.impl;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.core.common.utils.SecurityUtil;
-import com.esmooc.legion.core.entity.User;
 import com.esmooc.legion.edu.common.constant.Constants;
 import com.esmooc.legion.edu.common.utils.BaseUtils;
 import com.esmooc.legion.edu.entity.LearningRecord;
@@ -40,6 +40,8 @@ public class LearningRecordServiceImpl extends ServiceImpl<LearningRecordMapper,
 
     @Autowired
     private SecurityUtil securityUtil;
+    @Autowired
+    private LearningRecordService learningRecordService;
 
     /**
      * 查询课程学习状态业务
@@ -55,14 +57,14 @@ public class LearningRecordServiceImpl extends ServiceImpl<LearningRecordMapper,
     /**
      * 查询课程学习状态业务列表
      *
-     * @param bizLearningRecord 课程学习状态业务
+     * @param leraningRecord 课程学习状态业务
      * @return 课程学习状态业务
      */
     @Override
-    public IPage<LearningRecordVO> selectBizLearningRecordList(LearningRecordVO bizLearningRecord,  Page page) {
+    public IPage<LearningRecordVO> selectLearningRecordList(LearningRecordVO leraningRecord, Page page) {
         String learningScope = securityUtil.getCurrUser().getType() + "";
 
-        List<String> list = learningRecordMapper.selectBizLearningRecordCourseId(bizLearningRecord.getUserId());
+        List<String> list = learningRecordMapper.selectLearningRecordCourseId(leraningRecord.getUserId());
         List<String> ids = new ArrayList<>();
         if (Constants.INTERNALSTUDENTS.toString().equals(learningScope)) {
             ids = courseMapper.selectBizCourseIds1(list);
@@ -70,13 +72,23 @@ public class LearningRecordServiceImpl extends ServiceImpl<LearningRecordMapper,
             ids = courseMapper.selectBizCourseIds2(list);
         }
         if (ids.size() > 0) {
-            learningRecordMapper.insertBizLearningRecords(ids, bizLearningRecord.getUserId(), Constants.NOSTUDY, BaseUtils.getThisYear());
+            ArrayList<LearningRecord> learningRecords = new ArrayList<>();
+            for (String id : ids) {
+                LearningRecord learningRecord = new LearningRecord();
+                learningRecord.setCourseId(id);
+                learningRecord.setUserId(securityUtil.getCurrUser().getId());
+                learningRecord.setStudyType(Constants.NOSTUDY);
+                learningRecord.setYear(BaseUtils.getThisYear());
+                learningRecords.add(learningRecord);
+            }
+            if (!learningRecordService.saveBatch(learningRecords)) {
+                throw new LegionException("学习状态保存失败 ");
+            }
         }
 
-
-        bizLearningRecord.setLearningScope(learningScope);
-        IPage<LearningRecordVO> voList = learningRecordMapper.selectBizLearningRecordList(bizLearningRecord, page);
-        if (Constants.SOCIETYCOURSE.toString().equals(bizLearningRecord.getCourseType())) {
+        leraningRecord.setLearningScope(learningScope);
+        IPage<LearningRecordVO> voList = learningRecordMapper.selectBizLearningRecordList(leraningRecord, page);
+        if (Constants.SOCIETYCOURSE.toString().equals(leraningRecord.getCourseType())) {
             for (LearningRecordVO vo : voList.getRecords()) {
                 String learningTime = "";
                 if (vo != null) {

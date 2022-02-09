@@ -94,21 +94,11 @@
             resultMap="LearningRecordResult">
         <include refid="selectBizLearningRecordVo"/>
         <where>
-            c.del_flag = #{learningRecord.delFlag}
             <if test="learningRecord.courseTitle != null  and learningRecord.courseTitle != ''">
                 and c.course_title like concat('%', #{learningRecord.courseTitle}, '%')
             </if>
             <if test="learningRecord.courseType != null  and learningRecord.courseType != ''">
                 and c.course_type = #{learningRecord.courseType}
-            </if>
-            <if test="learningRecord.learningScope != null  and learningRecord.learningScope != ''">
-                and
-                <foreach collection="learningRecord.learningScope.split(',')" item="item" index="index" open="(" separator="or"
-                         close=")">
-                    FIND_IN_SET(
-                    '${item}',
-                    c.learning_scope)
-                </foreach>
             </if>
             <if test="learningRecord.userId != null   and learningRecord.userId != ''">
                 and blr.user_id = #{learningRecord.userId}
@@ -119,24 +109,16 @@
             <if test="learningRecord.year != null  and learningRecord.year != ''">
                 and blr.year = #{learningRecord.year}
             </if>
-            <if test="learningRecord.subject != null  and learningRecord.subject != ''">
-                and
-                <foreach collection="learningRecord.subject.split(',')" item="item" index="index" open="(" separator="or" close=")">
-                    FIND_IN_SET(
-                    '${item}',
-                    c.`subject`)
-                </foreach>
-            </if>
         </where>
         ORDER BY c.update_time DESC
     </select>
 
     <select id="selectBizLearningRecordById" parameterType="String" resultMap="LearningRecordResult">
         <include refid="selectBizLearningRecordVo"/>
-        where blr.course_id = #{courseId} and blr.user_id = #{userId} and c.del_flag = 1
+        where blr.course_id = #{courseId} and blr.user_id = #{userId}
     </select>
 
-    <select id="selectBizLearningRecordCourseId" parameterType="String" resultType="String">
+    <select id="selectLearningRecordCourseId" parameterType="String" resultType="String">
         select course_id from edu_learning_record where user_id = #{userId}
     </select>
 

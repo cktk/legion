@@ -35,7 +35,7 @@
                su.nickname             as 'createBy',
                GROUP_CONCAT(sdd.title) as 'majorName',
                GROUP_CONCAT(sdd.value) as 'majorId',
-               be.issue
+               be.issue                as issue
         from edu_exam be
                      left join
                      edu_exam_paper_rules bepr
@@ -88,38 +88,21 @@
                bepr.rules,
                bepr.id                 as 'rulesId',
                be.create_time          as 'createTime',
-               su.nickname             as 'createBy',
                GROUP_CONCAT(sdd.title) as 'majorName',
                GROUP_CONCAT(sdd.value) as 'majorId'
         from edu_exam be
-                     left join
-                     edu_exam_paper_rules bepr
-                             on
-                                     be.id = bepr.clazz_id
-                     left join
-                     legion.t_user su
-                             on
-                                     su.id = be.create_by
-                     left join
-                     edu_exam_major bem
-                             on
-                                     bem.exam_id = be.id
-                     left join
-                     legion.t_dict_data sdd
-                             on
-                                     sdd.value = bem.major_id
+                     left join edu_exam_paper_rules bepr on be.id = bepr.clazz_id
+                     left join edu_exam_major bem on bem.exam_id = be.id
+                     left join legion.t_dict_data sdd on sdd.value = bem.major_id
         where sdd.type = 'edu_curricular_subject'
           and be.id = #{id}
-        GROUP BY sdd.title, sdd.value, bepr.rules, bepr.id
+        group by bepr.rules, bepr.id
     </select>
 
     <update id="updateBizExamIssue">
-        update
-        edu_exam
-        set
-        issue = #{issue}
-        where
-        id = #{id}
+        update edu_exam
+        set issue = #{issue}
+        where id = #{id}
     </update>
 
     <update id="deleteBizExam">

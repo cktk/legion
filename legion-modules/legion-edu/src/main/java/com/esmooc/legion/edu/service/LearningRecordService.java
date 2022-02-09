@@ -3,7 +3,6 @@ package com.esmooc.legion.edu.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.esmooc.legion.core.entity.User;
 import com.esmooc.legion.edu.entity.LearningRecord;
 import com.esmooc.legion.edu.entity.vo.LearningRecordVO;
 import com.esmooc.legion.edu.entity.vo.PlaybackFileVO;
@@ -32,9 +31,9 @@ public interface LearningRecordService  extends IService<LearningRecord> {
      * @param currUser
      * @return 课程学习状态业务集合
      */
-    IPage<LearningRecordVO> selectBizLearningRecordList(LearningRecordVO bizLearningRecord, Page page);
+    IPage<LearningRecordVO> selectLearningRecordList(LearningRecordVO bizLearningRecord, Page page);
 
-    public List<PlaybackFileVO> selectPlaybackFileVOList(String courseId, String userId, int fileType);
+     List<PlaybackFileVO> selectPlaybackFileVOList(String courseId, String userId, int fileType);
 
     /**
      * 新增课程学习状态业务

@@ -27,7 +27,7 @@ public interface LearningRecordMapper extends BaseMapper<LearningRecord> {
      */
      LearningRecordVO selectBizLearningRecordById(@Param("courseId") String courseId, @Param("userId") String userId);
 
-     List<String> selectBizLearningRecordCourseId(@Param("userId") String userId);
+     List<String> selectLearningRecordCourseId(@Param("userId") String userId);
 
     /**
      * 查询课程学习状态业务列表
