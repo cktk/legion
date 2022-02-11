@@ -5,14 +5,17 @@ import com.esmooc.legion.core.common.constant.SettingConstant;
 import com.esmooc.legion.core.config.properties.IgnoredUrlsProperties;
 import com.esmooc.legion.core.entity.Setting;
 import com.esmooc.legion.core.service.SettingService;
+import com.lzw.face.FaceHelper;
 import io.swagger.annotations.ApiOperation;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.testng.annotations.Test;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -22,6 +25,7 @@ import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
@@ -38,6 +42,19 @@ import static springfox.documentation.builders.PathSelectors.regex;
 @AllArgsConstructor
 @FieldDefaults(makeFinal = true,level = AccessLevel.PRIVATE)
 public class Swagger2Config {
+
+    @SneakyThrows
+    public static void main(String[] args) {
+        String img1 = "/Users/leiyanfu/IdeaProjects/lib/1.png";
+        String img2 = "/Users/leiyanfu/IdeaProjects/lib/2.png";
+        System.out.println("result:"+FaceHelper.compare(new File(img1), new File(img2)));
+
+    }
+
+
+
+
+
 
      IgnoredUrlsProperties ignoredUrlsProperties;
 
