@@ -1,7 +1,7 @@
 package com.esmooc.legion.core.common.constant;
 
 /**
- * @author Daimao
+ * @author DaiMao
  */
 public interface OAuthConstant {
 

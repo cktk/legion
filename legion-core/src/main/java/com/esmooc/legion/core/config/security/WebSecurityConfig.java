@@ -30,7 +30,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 /**
  * Security 核心配置类
  * 开启注解控制权限至Controller
- * @author Daimao
+ * @author DaiMao
  */
 @Slf4j
 @Configuration
@@ -96,7 +96,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         }
 
         registry.and()
-                // 表单登录方式 TODO 来看看
+                // 表单登录方式
                 .formLogin()
                 .loginPage("/legion/common/needLogin")
                 // 登录请求url

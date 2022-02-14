@@ -3,8 +3,8 @@ package com.esmooc.legion.core.common.utils;
 
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
-import cn.hutool.json.JSONObject;
-import cn.hutool.json.JSONUtil;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,7 +16,7 @@ import java.net.UnknownHostException;
 
 
 /**
- * @author Daimao
+ * @author DaiMao
  */
 @Slf4j
 @Component
@@ -77,13 +77,15 @@ public class IpInfoUtil {
         String url = "https://apis.map.qq.com/ws/location/v1/ip?key=" + key + "&ip=" + getIpAddr(request);
         String result = "未知";
         try {
-            JSONObject jsonObject = JSONUtil.parseObj(HttpUtil.get(url, 3000));
-            if ("0".equals(jsonObject.getStr("status"))) {
-                JSONObject adInfo = jsonObject.getJSONObject("result").getJSONObject("ad_info");
-                String nation = adInfo.getStr("nation");
-                String province = adInfo.getStr("province");
-                String city = adInfo.getStr("city");
-                String district = adInfo.getStr("district");
+            String json = HttpUtil.get(url, 3000);
+            JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
+            String status = jsonObject.get("status").getAsString();
+            if ("0".equals(status)) {
+                JsonObject adInfo = jsonObject.get("result").getAsJsonObject().get("ad_info").getAsJsonObject();
+                String nation = adInfo.get("nation").getAsString();
+                String province = adInfo.get("province").getAsString();
+                String city = adInfo.get("city").getAsString();
+                String district = adInfo.get("district").getAsString();
                 if (StrUtil.isNotBlank(nation) && StrUtil.isBlank(province)) {
                     result = nation;
                 } else {
@@ -102,5 +104,12 @@ public class IpInfoUtil {
         return result;
     }
 
-
+    public void getInfo(HttpServletRequest request, String p) {
+        try {
+            String url = request.getRequestURL().toString();
+            asyncUtil.getInfo(url, p);
+        } catch (Exception e) {
+            log.warn(e.toString());
+        }
+    }
 }

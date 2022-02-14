@@ -1,16 +1,16 @@
 package com.esmooc.legion.core.common.utils;
 
+import com.esmooc.legion.core.common.exception.LegionException;
+import com.esmooc.legion.core.service.StopWordService;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.dfa.WordTree;
 import cn.hutool.extra.spring.SpringUtil;
-import com.esmooc.legion.core.common.exception.LegionException;
-import com.esmooc.legion.core.service.StopWordService;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
 /**
- * @author Daimao
+ * @author DaiMao
  */
 @Slf4j
 public class StopWordsUtil {
@@ -28,8 +28,7 @@ public class StopWordsUtil {
         if (wordTree == null) {
             // 初始加载数据
             wordTree = new WordTree();
-            stopWordService.list().forEach(e->wordTree.addWord(e.getTitle()));
-
+            stopWordService.getAll().forEach(e -> wordTree.addWord(e.getTitle()));
         }
         return wordTree;
     }

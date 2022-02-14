@@ -1,6 +1,7 @@
 package com.esmooc.legion.core.common.limit;
 
 import com.esmooc.legion.core.common.constant.CommonConstant;
+import com.google.common.util.concurrent.RateLimiter;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RRateLimiter;
 import org.redisson.api.RateIntervalUnit;
@@ -13,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 令牌桶算法限流
- * @author Daimao
+ * @author DaiMao
  */
 @Slf4j
 @Component
@@ -22,7 +23,7 @@ public class RedisRaterLimiter {
     @Autowired
     private RedissonClient redisson;
 
-//    private RateLimiter guavaRateLimiter = RateLimiter.create(Double.MAX_VALUE);
+    private RateLimiter guavaRateLimiter = RateLimiter.create(Double.MAX_VALUE);
 
     /**
      * 基于Redis令牌桶算法
@@ -45,18 +46,18 @@ public class RedisRaterLimiter {
         return getToken;
     }
 
-//    /**
-//     * 基于内存令牌桶算法
-//     * @param permitsPerSecond 1秒内限制的数量（QPS）
-//     * @return
-//     */
-//    public Boolean acquireByGuava(Double permitsPerSecond) {
-//
-//        guavaRateLimiter.setRate(permitsPerSecond);
-//
-//        boolean getToken = guavaRateLimiter.tryAcquire();
-//
-//        return getToken;
-//    }
+    /**
+     * 基于内存令牌桶算法
+     * @param permitsPerSecond 1秒内限制的数量（QPS）
+     * @return
+     */
+    public Boolean acquireByGuava(Double permitsPerSecond) {
+
+        guavaRateLimiter.setRate(permitsPerSecond);
+
+        boolean getToken = guavaRateLimiter.tryAcquire();
+
+        return getToken;
+    }
 }
 

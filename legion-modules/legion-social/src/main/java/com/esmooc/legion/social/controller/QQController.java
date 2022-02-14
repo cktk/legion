@@ -1,9 +1,5 @@
 package com.esmooc.legion.social.controller;
 
-import cn.hutool.core.util.IdUtil;
-import cn.hutool.core.util.StrUtil;
-import cn.hutool.http.HttpUtil;
-import cn.hutool.json.JSONUtil;
 import com.esmooc.legion.core.common.annotation.SystemLog;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.constant.SecurityConstant;
@@ -15,8 +11,12 @@ import com.esmooc.legion.core.common.vo.Result;
 import com.esmooc.legion.core.config.security.SecurityUserDetails;
 import com.esmooc.legion.core.entity.User;
 import com.esmooc.legion.social.entity.Social;
-import com.esmooc.legion.social.entity.vo.QQUserInfo;
 import com.esmooc.legion.social.service.SocialService;
+import com.esmooc.legion.social.vo.QQUserInfo;
+import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.HttpUtil;
+import com.google.gson.Gson;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -24,10 +24,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -35,12 +36,12 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * http://wiki.connect.qq.com/
- * @author Daimao
+ * @author DaiMao
  */
 @Slf4j
 @Api(tags = "QQ登录接口")
 @RequestMapping("/legion/social/qq")
-@RestController
+@Controller
 public class QQController {
 
     private static final String STATE = SecurityConstant.QQ_STATE;
@@ -80,6 +81,7 @@ public class QQController {
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     @ApiOperation(value = "获取qq认证链接")
+    @ResponseBody
     public Result<Object> login() {
 
         // 生成并保存state 忽略该参数有可能导致CSRF攻击
@@ -132,12 +134,12 @@ public class QQController {
         String userInfoUrl = GET_USERINFO_URL + "?access_token=" + accessToken + "&oauth_consumer_key=" + appId
                 + "&openid=" + openId;
         String userInfo = HttpUtil.get(userInfoUrl);
-        QQUserInfo q = JSONUtil.toBean(userInfo, QQUserInfo.class);
+        QQUserInfo q = new Gson().fromJson(userInfo, QQUserInfo.class);
         // 存入数据库
         Social qq = socialService.findByOpenIdAndPlatform(openId, TYPE);
         if (qq == null) {
             Social newqq = new Social().setOpenId(openId).setUsername(q.getNickname()).setAvatar(q.getFigureurl_1()).setPlatform(TYPE);
-            socialService.save(newqq);
+            qq = socialService.save(newqq);
         }
 
         String url = "";

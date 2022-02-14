@@ -1,12 +1,5 @@
 package com.esmooc.legion.social.controller;
 
-import cn.hutool.core.util.IdUtil;
-import cn.hutool.core.util.StrUtil;
-import cn.hutool.crypto.digest.HMac;
-import cn.hutool.crypto.digest.HmacAlgorithm;
-import cn.hutool.http.HttpUtil;
-import cn.hutool.json.JSONObject;
-import cn.hutool.json.JSONUtil;
 import com.esmooc.legion.core.common.annotation.SystemLog;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.constant.SecurityConstant;
@@ -19,6 +12,13 @@ import com.esmooc.legion.core.config.security.SecurityUserDetails;
 import com.esmooc.legion.core.entity.User;
 import com.esmooc.legion.social.entity.Social;
 import com.esmooc.legion.social.service.SocialService;
+import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.crypto.digest.HMac;
+import cn.hutool.crypto.digest.HmacAlgorithm;
+import cn.hutool.http.HttpUtil;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -27,10 +27,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -38,12 +39,12 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * https://ding-doc.dingtalk.com/doc#/serverapi2/kymkv6
- * @author Daimao
+ * @author DaiMao
  */
 @Slf4j
 @Api(tags = "钉钉登录接口")
 @RequestMapping("/legion/social/dingding")
-@RestController
+@Controller
 public class DingdingController {
 
     private static final String STATE = SecurityConstant.DINGDING_STATE;
@@ -75,6 +76,7 @@ public class DingdingController {
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     @ApiOperation(value = "获取企业微信认证链接")
+    @ResponseBody
     public Result<Object> login() {
 
         // 生成并保存state 忽略该参数有可能导致CSRF攻击
@@ -117,15 +119,15 @@ public class DingdingController {
         }
 
         // 获取unionid
-        JSONObject userJson = JSONUtil.parseObj(result).getJSONObject("user_info");
-        String nick = userJson.getStr("nick");
-        String openid = userJson.getStr("openid");
+        JsonObject userJson = JsonParser.parseString(result).getAsJsonObject().get("user_info").getAsJsonObject();
+        String nick = userJson.get("nick").getAsString();
+        String openid = userJson.get("openid").getAsString();
 
         // 存入数据库
         Social dingding = socialService.findByOpenIdAndPlatform(openid, TYPE);
         if (dingding == null) {
             Social newding = new Social().setOpenId(openid).setUsername(nick).setPlatform(TYPE);
-            socialService.save(newding);
+            dingding = socialService.save(newding);
         }
 
         String url = "";

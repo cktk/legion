@@ -6,21 +6,24 @@ import com.esmooc.legion.core.common.utils.ResultUtil;
 import com.esmooc.legion.core.common.vo.PageVo;
 import com.esmooc.legion.core.common.vo.Result;
 import com.esmooc.legion.core.common.vo.SearchVo;
+import com.esmooc.legion.core.entity.User;
 import com.esmooc.legion.core.service.UserService;
 import com.esmooc.legion.social.entity.Social;
-import com.esmooc.legion.social.entity.vo.RelateUserInfo;
 import com.esmooc.legion.social.service.SocialService;
+import com.esmooc.legion.social.vo.RelateUserInfo;
+import cn.hutool.core.util.StrUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 /**
- * @author Daimao
+ * @author DaiMao
  */
 @Slf4j
 @RestController
@@ -61,15 +64,15 @@ public class SocialController {
                 r.setWorkwechatId(e.getId()).setWorkwechatUsername(e.getUsername()).setWorkwechat(true);
             }
         });
-        return new ResultUtil<RelateUserInfo>().setData(r);
+        return ResultUtil.data(r);
     }
 
-    @PostMapping("/delByIds")
+    @RequestMapping(value = "/delByIds", method = RequestMethod.POST)
     @ApiOperation(value = "解绑")
     public Result<Object> delByIds(@RequestParam String[] ids) {
 
         for (String id : ids) {
-            socialService.removeById(id);
+            socialService.delete(id);
         }
         return ResultUtil.success("解绑成功");
     }
@@ -78,7 +81,18 @@ public class SocialController {
     @ApiOperation(value = "多条件分页获取")
     public Result<Object> delByIds(Social social,
                                    SearchVo searchVo,
-                                   PageVo pageVo) {
-        return ResultUtil.data(socialService.page(PageUtil.initPage(pageVo)));
+                                   PageVo pv) {
+
+        Page<Social> socialPage = socialService.findByCondition(social, searchVo, PageUtil.initPage(pv));
+        socialPage.getContent().forEach(e -> {
+            if (StrUtil.isNotBlank(e.getRelateUsername())) {
+                e.setIsRelated(true);
+                User u = userService.findByUsername(e.getRelateUsername());
+                if (u != null) {
+                    e.setNickname(u.getNickname());
+                }
+            }
+        });
+        return ResultUtil.data(socialPage);
     }
 }

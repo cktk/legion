@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * @author Daimao
+ * @author DaiMao
  */
 @Component
 @Slf4j

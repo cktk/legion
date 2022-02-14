@@ -1,10 +1,10 @@
 package com.esmooc.legion.core.config.security.jwt;
 
-import cn.hutool.core.util.StrUtil;
 import com.esmooc.legion.core.common.exception.LoginFailLimitException;
 import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
 import com.esmooc.legion.core.common.utils.ResponseUtil;
 import com.esmooc.legion.core.config.properties.LegionTokenProperties;
+import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @author Daimao
+ * @author DaiMao
  */
 @Slf4j
 @Component

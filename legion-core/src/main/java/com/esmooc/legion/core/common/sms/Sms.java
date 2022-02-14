@@ -1,10 +1,10 @@
 package com.esmooc.legion.core.common.sms;
 
 
-import com.esmooc.legion.core.entity.vo.SmsSetting;
+import com.esmooc.legion.core.vo.SmsSetting;
 
 /**
- * @author Daimao
+ * @author DaiMao
  */
 public interface Sms {
 

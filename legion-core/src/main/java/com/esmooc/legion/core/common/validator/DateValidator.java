@@ -9,7 +9,7 @@ import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * @author Daimao
+ * @author DaiMao
  */
 @Target({FIELD})
 @Retention(RUNTIME)

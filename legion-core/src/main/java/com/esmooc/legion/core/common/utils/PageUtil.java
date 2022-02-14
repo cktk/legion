@@ -1,19 +1,22 @@
 package com.esmooc.legion.core.common.utils;
 
+import com.esmooc.legion.core.common.exception.LegionException;
+import com.esmooc.legion.core.common.vo.PageVo;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.esmooc.legion.core.common.exception.LegionException;
-import com.esmooc.legion.core.common.vo.PageVo;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
- * @author Daimao
+ * @author DaiMao
  */
 public class PageUtil {
+
     private final static String[] KEYWORDS = {"master", "truncate", "insert", "select",
             "delete", "update", "declare", "alter", "drop", "sleep"};
 
@@ -21,78 +24,75 @@ public class PageUtil {
         throw new IllegalStateException("Utility class");
     }
 
-
     /**
-     * 条件筛选的时候一块处理了吧  虽然我也不是很喜欢   单是很方便啊
-     * 写Integer 强转的时候不会抛出异常 省心
-     *
-     * @param map pageNumber   pageSize   sort   order
-     * @return {@link Page}
+     * JPA分页封装
+     * @param page
+     * @return
      */
-    public static Page initPage(Map<String, Object> map) {
-        PageVo pageVo = new PageVo();
-        pageVo.setPageNumber((Integer) map.get("pageNumber"));
-        pageVo.setPageSize((Integer) map.get("pageSize"));
-        String sort = (String) map.get("sort");
-        if (StrUtil.isNotEmpty(sort)) {
-            pageVo.setSort(sort);
+    public static Pageable initPage(PageVo page) {
 
-            String order = (String) map.get("order");
-            if (StrUtil.isNotEmpty(order)) {
-                pageVo.setOrder(order);
-            } else {
-                pageVo.setOrder("desc");
-            }
+        Pageable pageable = null;
+        int pageNumber = page.getPageNumber();
+        int pageSize = page.getPageSize();
+        String sort = page.getSort();
+        String order = page.getOrder();
+
+        if (pageNumber < 1) {
+            pageNumber = 1;
         }
-
-
-        return initPage(pageVo);
-
+        if (pageSize < 1) {
+            pageSize = 10;
+        }
+        if (pageSize > 100) {
+            pageSize = 100;
+        }
+        if (StrUtil.isNotBlank(sort)) {
+            Sort.Direction d;
+            if (StrUtil.isBlank(order)) {
+                d = Sort.Direction.DESC;
+            } else {
+                d = Sort.Direction.valueOf(order.toUpperCase());
+            }
+            Sort s = Sort.by(d, sort);
+            pageable = PageRequest.of(pageNumber - 1, pageSize, s);
+        } else {
+            pageable = PageRequest.of(pageNumber - 1, pageSize);
+        }
+        return pageable;
     }
 
     /**
      * Mybatis-Plus分页封装
-     * 里面过滤了sql注入和初始化了默认数据
-     *
      * @param page
      * @return
      */
-    public static Page initPage(PageVo page) {
+    public static Page initMpPage(PageVo page) {
 
         Page p = null;
-
-
-        int pageNumber = 1;
-        int pageSize = 10;
-        String sort = null;
-        String order = null;
-        try {
-            pageNumber = page.getPageNumber();
-            pageSize = page.getPageSize();
-            sort = page.getSort();
-            order = page.getOrder();
-        } catch (Exception e) {
-            page = new PageVo();
-            pageNumber = page.getPageNumber();
-            pageSize = page.getPageSize();
-            sort = page.getSort();
-            order = page.getOrder();
-        }
-
+        int pageNumber = page.getPageNumber();
+        int pageSize = page.getPageSize();
+        String sort = page.getSort();
+        String order = page.getOrder();
 
         SQLInject(sort);
 
-        if (pageNumber < 1) pageNumber = 1;
-        if (pageSize < 1) pageSize = 10;
-        if (pageSize > 100) pageSize = 100;
+        if (pageNumber < 1) {
+            pageNumber = 1;
+        }
+        if (pageSize < 1) {
+            pageSize = 10;
+        }
+        if (pageSize > 100) {
+            pageSize = 100;
+        }
         if (StrUtil.isNotBlank(sort)) {
             Boolean isAsc = false;
             if (StrUtil.isBlank(order)) {
                 isAsc = false;
             } else {
-                if ("desc".equalsIgnoreCase(order)) {
+                if ("desc".equals(order.toLowerCase())) {
                     isAsc = false;
-                } else if ("asc".equalsIgnoreCase(order)) {
+                } else if ("asc".equals(order.toLowerCase())) {
                     isAsc = true;
                 }
             }
@@ -111,7 +111,6 @@ public class PageUtil {
 
     /**
      * List 手动分页
-     *
      * @param page
      * @param list
      * @return
@@ -167,7 +166,6 @@ public class PageUtil {
 
     /**
      * 防Mybatis-Plus order by注入
-     *
      * @param param
      */
     public static void SQLInject(String param) {
@@ -185,6 +183,4 @@ public class PageUtil {
             }
         }
     }
-
-
 }

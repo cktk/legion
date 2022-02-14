@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 
 /**
  * 用户名验证工具类
- * @author Daimao
+ * @author DaiMao
  */
 @Slf4j
 public class NameUtil {

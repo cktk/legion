@@ -1,7 +1,5 @@
 package com.esmooc.legion.social.controller;
 
-import cn.hutool.core.util.IdUtil;
-import cn.hutool.core.util.StrUtil;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
 import com.esmooc.legion.core.common.utils.ResultUtil;
@@ -11,6 +9,8 @@ import com.esmooc.legion.core.entity.User;
 import com.esmooc.legion.core.service.UserService;
 import com.esmooc.legion.social.entity.Social;
 import com.esmooc.legion.social.service.SocialService;
+import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.StrUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @author Daimao
+ * @author DaiMao
  */
 @Slf4j
 @Api(tags = "绑定第三方账号接口")
@@ -96,7 +96,7 @@ public class RelateController {
         if (s != null) {
             return ResultUtil.error("该账户已绑定有" + platform + "账号，请先进行解绑操作");
         }
-        Social social = socialService.getById(ID);
+        Social social = socialService.get(ID);
         if (social == null) {
             return ResultUtil.error("绑定失败，请先进行第三方授权认证");
         }
@@ -104,7 +104,7 @@ public class RelateController {
             return ResultUtil.error("该" + platform + "账号已绑定有用户，请先进行解绑操作");
         }
         social.setRelateUsername(username);
-        socialService.updateById(social);
+        socialService.update(social);
 
         if (!isLogin) {
             String JWT = securityUtil.getToken(username, true);

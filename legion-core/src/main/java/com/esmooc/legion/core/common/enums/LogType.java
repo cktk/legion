@@ -1,20 +1,27 @@
 package com.esmooc.legion.core.common.enums;
 
 /**
- * @author Daimao
+ * @author DaiMao
  */
-public interface LogType {
+public enum LogType {
 
     /**
      * 默认0操作
      */
-  String  OPERATION="OPERATION";
+    OPERATION,
 
     /**
      * 1登录
      */
-    String LOGIN="LOGIN";
+    LOGIN,
 
+    /**
+     * 2会员操作
+     */
+    MEMBER_OPERATION,
 
-    String  EDU="EDU";
+    /**
+     * 3会员登录
+     */
+    MEMBER_LOGIN,
 }

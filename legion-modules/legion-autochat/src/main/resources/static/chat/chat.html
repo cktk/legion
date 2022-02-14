@@ -36,9 +36,9 @@
     function init() {
         if (getVariable("accessToken") == false) {
             alert("您还未登录");
-            window.location.href = "http://legion.esmooc.com";
+            window.location.href = "http://www.esmooc.com";
         }
-        axios.get("/setting/autoChat?accessToken=" + getVariable("accessToken"))
+        axios.get("/legion/setting/autoChat?accessToken=" + getVariable("accessToken"))
             .then(res => {
                 res = res.data;
                 if (res.success) {
@@ -111,7 +111,7 @@
                 send: function (msg) {
                     if (msg.type === 'text') {
                         return {
-                            url: "/autoChat/ask?accessToken=" + getVariable("accessToken"),
+                            url: "/legion/autoChat/ask?accessToken=" + getVariable("accessToken"),
                             data: {
                                 q: msg.content.text
                             }
@@ -121,7 +121,7 @@
                 // 联想输入
                 autoComplete(data) {
                     return {
-                        url: "/autoChat/associate?accessToken=" + getVariable("accessToken"),
+                        url: "/legion/autoChat/associate?accessToken=" + getVariable("accessToken"),
                         data: {
                             q: data.text,
                         },
@@ -130,7 +130,7 @@
                 // 点赞接口
                 evaluate(data) {
                     return {
-                        url: "/autoChat/evaluate?accessToken=" + getVariable("accessToken"),
+                        url: "/legion/autoChat/evaluate?accessToken=" + getVariable("accessToken"),
                         data: {
                             messageId: data.msgId,
                             evaluateType: data.type,

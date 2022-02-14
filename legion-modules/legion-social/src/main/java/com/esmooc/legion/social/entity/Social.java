@@ -1,21 +1,31 @@
 package com.esmooc.legion.social.entity;
 
+import com.esmooc.legion.core.base.LegionBaseEntity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.esmooc.legion.core.base.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 
 /**
- * @author Daimao
+ * @author DaiMao
  */
 @Data
 @Accessors(chain = true)
+@Entity
+@DynamicInsert
+@DynamicUpdate
+@Table(name = "t_social")
 @TableName("t_social")
 @ApiModel(value = "文件")
-public class Social extends BaseEntity {
+public class Social extends LegionBaseEntity {
 
     @ApiModelProperty(value = "社交账号唯一id")
     private String openId;
@@ -32,10 +42,12 @@ public class Social extends BaseEntity {
     @ApiModelProperty(value = "绑定用户账号")
     private String relateUsername;
 
+    @Transient
     @TableField(exist = false)
     @ApiModelProperty(value = "是否绑定")
     private Boolean isRelated;
 
+    @Transient
     @TableField(exist = false)
     @ApiModelProperty(value = "绑定用户名")
     private String nickname;

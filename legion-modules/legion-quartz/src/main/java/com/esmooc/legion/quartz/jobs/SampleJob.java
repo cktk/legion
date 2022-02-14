@@ -9,7 +9,7 @@ import org.quartz.JobExecutionException;
 
 /**
  * 示例带参定时任务
- * @author Daimao
+ * @author DaiMao
  */
 @Slf4j
 public class SampleJob implements Job {
@@ -17,6 +17,6 @@ public class SampleJob implements Job {
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
 
-        log.info(String.format("欢迎使用Legion前后端分离开发平台!作者:Daimao 时间:" + DateUtil.now()));
+        log.info(String.format("欢迎使用Legion前后端分离开发平台!作者:DaiMao 时间:" + DateUtil.now()));
     }
 }

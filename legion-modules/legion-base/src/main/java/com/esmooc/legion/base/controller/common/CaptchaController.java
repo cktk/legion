@@ -1,7 +1,5 @@
 package com.esmooc.legion.base.controller.common;
 
-import cn.hutool.core.util.IdUtil;
-import cn.hutool.core.util.StrUtil;
 import com.esmooc.legion.core.common.annotation.RateLimiter;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
@@ -11,11 +9,14 @@ import com.esmooc.legion.core.common.utils.CreateVerifyCode;
 import com.esmooc.legion.core.common.utils.IpInfoUtil;
 import com.esmooc.legion.core.common.utils.ResultUtil;
 import com.esmooc.legion.core.common.vo.Result;
+import com.esmooc.legion.core.service.SettingService;
 import com.esmooc.legion.core.service.UserService;
+import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.StrUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,24 +29,29 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @author Daimao
+ * @author DaiMao
  */
 @Api(tags = "验证码接口")
 @RequestMapping("/legion/common/captcha")
 @RestController
 @Transactional
 @Slf4j
-@AllArgsConstructor
 public class CaptchaController {
 
-    private final SmsUtil smsUtil;
+    @Autowired
+    private SmsUtil smsUtil;
 
-    private final RedisTemplateHelper redisTemplate;
+    @Autowired
+    private RedisTemplateHelper redisTemplate;
 
-    private final IpInfoUtil ipInfoUtil;
+    @Autowired
+    private IpInfoUtil ipInfoUtil;
 
-    private final UserService userService;
+    @Autowired
+    private UserService userService;
 
+    @Autowired
+    private SettingService settingService;
 
     @RequestMapping(value = "/init", method = RequestMethod.GET)
     @ApiOperation(value = "初始化验证码")

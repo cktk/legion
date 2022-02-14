@@ -1,13 +1,13 @@
 package com.esmooc.legion.file.manage.impl;
 
-import cn.hutool.core.util.StrUtil;
-import cn.hutool.json.JSONUtil;
 import com.esmooc.legion.core.common.constant.SettingConstant;
 import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.core.entity.Setting;
-import com.esmooc.legion.core.entity.vo.OssSetting;
 import com.esmooc.legion.core.service.SettingService;
+import com.esmooc.legion.core.vo.OssSetting;
 import com.esmooc.legion.file.manage.FileManage;
+import cn.hutool.core.util.StrUtil;
+import com.google.gson.Gson;
 import io.minio.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.InputStream;
 
 /**
- * @author Daimao
+ * @author DaiMao
  */
 @Slf4j
 @Component
@@ -29,11 +29,11 @@ public class MinioFileManage implements FileManage {
     @Override
     public OssSetting getOssSetting() {
 
-        Setting setting = settingService.getById(SettingConstant.MINIO_OSS);
+        Setting setting = settingService.get(SettingConstant.MINIO_OSS);
         if (setting == null || StrUtil.isBlank(setting.getValue())) {
             throw new LegionException("您还未配置MinIO存储");
         }
-        return  JSONUtil.toBean(setting.getValue(), OssSetting.class);
+        return new Gson().fromJson(setting.getValue(), OssSetting.class);
     }
 
     /**
@@ -67,7 +67,7 @@ public class MinioFileManage implements FileManage {
             builder.append("            \"Resource\": \"arn:aws:s3:::" + os.getBucket() + "/*\"\n");
             builder.append("        }\n");
             builder.append("    ],\n");
-            builder.append("    \"Version\": \"2021-10-17\"\n");
+            builder.append("    \"Version\": \"2012-10-17\"\n");
             builder.append("}\n");
             minioClient.setBucketPolicy(SetBucketPolicyArgs.builder().bucket(os.getBucket()).config(builder.toString()).build());
         }

@@ -1,19 +1,25 @@
 package com.esmooc.legion.core.entity;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.esmooc.legion.core.base.BaseEntity;
+import com.esmooc.legion.core.base.LegionBaseEntity;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.utils.NameUtil;
-import com.esmooc.legion.core.entity.vo.PermissionDTO;
-import com.esmooc.legion.core.entity.vo.RoleDTO;
+import com.esmooc.legion.core.vo.PermissionDTO;
+import com.esmooc.legion.core.vo.RoleDTO;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -22,15 +28,22 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * @author Daimao
+ * @author DaiMao
  */
 @Data
 @Accessors(chain = true)
+@Entity
+@DynamicInsert
+@DynamicUpdate
+@Table(name = "t_user")
 @TableName("t_user")
 @ApiModel(value = "用户")
-public class User extends BaseEntity {
+public class User extends LegionBaseEntity {
+
+    private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "登录名")
+    @Column(unique = true, nullable = false)
     @Pattern(regexp = NameUtil.regUsername, message = "登录账号不能包含特殊字符且长度不能>16")
     private String username;
 
@@ -60,8 +73,8 @@ public class User extends BaseEntity {
     @ApiModelProperty(value = "性别")
     private String sex;
 
-    @TableField(value = "pass_strength")
     @ApiModelProperty(value = "密码强度")
+    @Column(length = 2)
     private String passStrength;
 
     @ApiModelProperty(value = "用户头像")
@@ -76,11 +89,9 @@ public class User extends BaseEntity {
     @ApiModelProperty(value = "描述/详情/备注")
     private String description;
 
-    @TableField(value = "department_id")
     @ApiModelProperty(value = "所属部门id")
     private String departmentId;
 
-    @TableField(value = "department_title")
     @ApiModelProperty(value = "所属部门名称")
     private String departmentTitle;
 
@@ -89,14 +100,17 @@ public class User extends BaseEntity {
     @ApiModelProperty(value = "生日")
     private Date birth;
 
+    @Transient
     @TableField(exist = false)
     @ApiModelProperty(value = "用户拥有角色")
     private List<RoleDTO> roles;
 
+    @Transient
     @TableField(exist = false)
     @ApiModelProperty(value = "用户拥有的权限")
     private List<PermissionDTO> permissions;
 
+    @Transient
     @TableField(exist = false)
     @ApiModelProperty(value = "导入数据时使用")
     private Integer defaultRole;

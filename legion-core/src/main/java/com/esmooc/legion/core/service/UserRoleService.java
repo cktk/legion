@@ -1,7 +1,7 @@
 package com.esmooc.legion.core.service;
 
 
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.esmooc.legion.core.base.LegionBaseService;
 import com.esmooc.legion.core.entity.User;
 import com.esmooc.legion.core.entity.UserRole;
 
@@ -9,9 +9,9 @@ import java.util.List;
 
 /**
  * 用户角色接口
- * @author Daimao
+ * @author DaiMao
  */
-public interface UserRoleService extends IService<UserRole> {
+public interface UserRoleService extends LegionBaseService<UserRole, String> {
 
     /**
      * 通过roleId查找
@@ -31,5 +31,5 @@ public interface UserRoleService extends IService<UserRole> {
      * 删除用户角色
      * @param userId
      */
-    boolean deleteByUserId(String userId);
+    void deleteByUserId(String userId);
 }

@@ -1,0 +1,67 @@
+package com.esmooc.legion.core.base;
+
+import com.esmooc.legion.core.common.constant.CommonConstant;
+import com.esmooc.legion.core.common.utils.SnowFlakeUtil;
+import com.baomidou.mybatisplus.annotation.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import javax.persistence.EntityListeners;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
+import java.io.Serializable;
+import java.util.Date;
+
+/**
+ * @author DaiMao
+ */
+@Data
+@MappedSuperclass
+@EntityListeners(AuditingEntityListener.class)
+@JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler", "fieldHandler"})
+public abstract class LegionBaseEntity implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @TableId
+    @ApiModelProperty(value = "唯一标识")
+    private String id = SnowFlakeUtil.nextId().toString();
+
+    @ApiModelProperty(value = "创建者")
+    @CreatedBy
+    @TableField(value = "create_by",fill = FieldFill.INSERT)
+    private String createBy;
+
+    @CreatedDate
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @ApiModelProperty(value = "创建时间")
+    @TableField(value = "create_time",fill = FieldFill.INSERT)
+    private Date createTime;
+
+    @ApiModelProperty(value = "更新者")
+    @LastModifiedBy
+    @TableField(value = "update_by",fill = FieldFill.UPDATE)
+    private String updateBy;
+
+    @LastModifiedDate
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @ApiModelProperty(value = "更新时间")
+    @TableField(value = "update_time",fill = FieldFill.UPDATE)
+    private Date updateTime;
+
+    @TableField(value = "del_flag")
+    @TableLogic()
+    @ApiModelProperty(value = "删除标志 默认0")
+    private Integer delFlag = CommonConstant.STATUS_NORMAL;
+}

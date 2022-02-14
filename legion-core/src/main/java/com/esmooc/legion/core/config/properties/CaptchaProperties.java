@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author Daimao
+ * @author DaiMao
  */
 @Data
 @Configuration

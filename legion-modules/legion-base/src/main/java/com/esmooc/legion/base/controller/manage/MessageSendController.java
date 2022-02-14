@@ -1,9 +1,6 @@
 package com.esmooc.legion.base.controller.manage;
 
-import cn.hutool.core.util.StrUtil;
-import cn.hutool.json.JSONUtil;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.esmooc.legion.core.base.LegionBaseController;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.utils.PageUtil;
 import com.esmooc.legion.core.common.utils.ResultUtil;
@@ -16,118 +13,68 @@ import com.esmooc.legion.core.entity.User;
 import com.esmooc.legion.core.service.MessageSendService;
 import com.esmooc.legion.core.service.MessageService;
 import com.esmooc.legion.core.service.UserService;
+import com.google.gson.Gson;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import lombok.var;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 
 /**
- * @author Daimao
+ * @author DaiMao
  */
 @Slf4j
 @RestController
 @Api(tags = "消息发送管理接口")
 @RequestMapping("/legion/messageSend")
 @Transactional
-@FieldDefaults(level = AccessLevel.PRIVATE,makeFinal = true)
-@AllArgsConstructor
-public class MessageSendController {
+public class MessageSendController extends LegionBaseController<MessageSend, String> {
 
-    UserService userService;
-    MessageService messageService;
-    MessageSendService messageSendService;
-    SecurityUtil securityUtil;
+    @Autowired
+    private UserService userService;
 
+    @Autowired
+    private MessageService messageService;
 
-    @GetMapping("/get/{id}")
-    @ApiOperation(value = "通过id获取")
-    public Result<MessageSend> get(@PathVariable String id) {
-        return new ResultUtil<MessageSend>().setData(messageSendService.getById(id));
+    @Autowired
+    private MessageSendService messageSendService;
+
+    @Override
+    public MessageSendService getService() {
+        return messageSendService;
     }
 
-    @GetMapping("/getAll")
-    @ApiOperation(value = "获取全部数据")
-    public Result<List<MessageSend>> getAll() {
-        return new ResultUtil<List<MessageSend>>().setData(messageSendService.list());
-    }
+    @Autowired
+    private SecurityUtil securityUtil;
 
-    @GetMapping("/getByPage")
-    @ApiOperation(value = "分页获取")
-    public Result<Page<MessageSend>> getByPage(PageVo page) {
-        return new ResultUtil<Page<MessageSend>>().setData(messageSendService.page(PageUtil.initPage(page)));
-    }
-
-    @PostMapping(value = "/save")
-    @ApiOperation(value = "保存数据")
-    public Result<MessageSend> save(MessageSend autoChat) {
-
-
-        if (messageSendService.save(autoChat)) {
-            return new ResultUtil<MessageSend>().setData(autoChat);
-        }
-        return ResultUtil.error("更新失败");
-    }
-
-    @RequestMapping(value = "/update", method = RequestMethod.PUT)
-    @ApiOperation(value = "更新数据")
-    public Result<MessageSend> update(MessageSend autoChat) {
-        if (messageSendService.updateById(autoChat)) {
-            return new ResultUtil<MessageSend>().setData(autoChat);
-        }
-        return ResultUtil.error("更新失败");
-    }
-
-    @PostMapping("/delByIds")
-    @ApiOperation(value = "批量通过id删除")
-    @Transactional
-    public Result<MessageSend> delByIds(List<String> ids) {
-
-        if (messageSendService.removeByIds(ids)) {
-            return ResultUtil.success("批量通过id删除数据成功");
-        }
-
-        return ResultUtil.error("删除失败已回滚");
-
-
-    }
-
-
-    @RequestMapping(value = "/getByCondition", method = RequestMethod.GET)
     @ApiOperation(value = "多条件分页获取")
-    public Result<Page<MessageSend>> getByCondition(MessageSend msg,PageVo pv) {
+    @GetMapping("/getByCondition")
+    public Result<Page<MessageSend>> getByCondition(MessageSend ms,
+                                                    PageVo pv) {
 
-
-       var queryWrapper = new QueryWrapper<MessageSend>();
-        queryWrapper.eq( StrUtil.isNotEmpty(msg.getUserId()),"user_id",msg.getUserId());
-        queryWrapper.eq(msg.getStatus()!=null , "status",msg.getStatus());
-        Page<MessageSend> page = messageSendService.page(PageUtil.initPage(pv),queryWrapper);
-
-        page.getRecords().forEach(item -> {
-            User u = userService.getById(item.getUserId());
+        Page<MessageSend> page = messageSendService.findByCondition(ms, PageUtil.initPage(pv));
+        page.getContent().forEach(item -> {
+            User u = userService.get(item.getUserId());
             if (u != null) {
                 item.setUsername(u.getUsername()).setNickname(u.getNickname());
             }
-            Message m = messageService.getById(item.getMessageId());
+            Message m = messageService.get(item.getMessageId());
             if (m != null) {
                 if (m.getIsTemplate()) {
                     Message message = messageSendService.getTemplateMessage(item.getMessageId(),
-                            JSONUtil.toBean(item.getParams(), HashMap.class));
+                            new Gson().fromJson(item.getParams(), HashMap.class));
                     item.setTitle(message.getTitle()).setContent(message.getContent()).setType(m.getType());
                 } else {
                     item.setTitle(m.getTitle()).setContent(m.getContent()).setType(m.getType());
                 }
             }
         });
-        return new ResultUtil<Page<MessageSend>>().setData(page);
+        return ResultUtil.data(page);
     }
 
     @RequestMapping(value = "/all/{type}", method = RequestMethod.GET)
@@ -143,12 +90,12 @@ public class MessageSendController {
         return ResultUtil.success("操作成功");
     }
 
-    @PostMapping("/edit")
+    @RequestMapping(value = "/edit", method = RequestMethod.POST)
     @ApiOperation(value = "编辑")
     public Result<Object> edit(MessageSend messageSend) {
 
-        if (messageService.getById(messageSend.getMessageId()) != null) {
-            messageSendService.updateById(messageSend);
+        if (messageService.get(messageSend.getMessageId()) != null) {
+            messageSendService.update(messageSend);
         }
         return ResultUtil.success("操作成功");
     }

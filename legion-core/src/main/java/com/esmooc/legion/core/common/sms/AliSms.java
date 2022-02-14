@@ -1,8 +1,11 @@
 package com.esmooc.legion.core.common.sms;
 
+import com.esmooc.legion.core.common.constant.SettingConstant;
+import com.esmooc.legion.core.common.exception.LegionException;
+import com.esmooc.legion.core.entity.Setting;
+import com.esmooc.legion.core.service.SettingService;
+import com.esmooc.legion.core.vo.SmsSetting;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.json.JSONObject;
-import cn.hutool.json.JSONUtil;
 import com.aliyuncs.CommonRequest;
 import com.aliyuncs.CommonResponse;
 import com.aliyuncs.DefaultAcsClient;
@@ -10,17 +13,15 @@ import com.aliyuncs.IAcsClient;
 import com.aliyuncs.exceptions.ClientException;
 import com.aliyuncs.http.MethodType;
 import com.aliyuncs.profile.DefaultProfile;
-import com.esmooc.legion.core.common.constant.SettingConstant;
-import com.esmooc.legion.core.common.exception.LegionException;
-import com.esmooc.legion.core.entity.Setting;
-import com.esmooc.legion.core.entity.vo.SmsSetting;
-import com.esmooc.legion.core.service.SettingService;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * @author Daimao
+ * @author DaiMao
  */
 @Slf4j
 @Component
@@ -32,11 +33,11 @@ public class AliSms implements Sms {
     @Override
     public SmsSetting getSmsSetting() {
 
-        Setting setting = settingService.getById(SettingConstant.ALI_SMS);
+        Setting setting = settingService.get(SettingConstant.ALI_SMS);
         if (setting == null || StrUtil.isBlank(setting.getValue())) {
             throw new LegionException("您还未配置阿里云短信服务");
         }
-        return JSONUtil.toBean(setting.getValue(), SmsSetting.class);
+        return new Gson().fromJson(setting.getValue(), SmsSetting.class);
     }
 
     @Override
@@ -66,9 +67,9 @@ public class AliSms implements Sms {
             log.error(e.getMessage());
             throw new LegionException("请求发送短信验证码失败，" + e.getErrMsg());
         }
-        JSONObject result = JSONUtil.parseObj(response.getData());
-        String code = result.getStr("Code");
-        String message = result.getStr("Message");
+        JsonObject result = JsonParser.parseString(response.getData()).getAsJsonObject();
+        String code = result.get("Code").getAsString();
+        String message = result.get("Message").getAsString();
         if (!"OK".equals(code) && !"OK".equals(message)) {
             throw new LegionException("请求发送验证码失败，" + message);
         }

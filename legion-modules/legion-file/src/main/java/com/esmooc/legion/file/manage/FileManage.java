@@ -1,12 +1,12 @@
 package com.esmooc.legion.file.manage;
 
-import com.esmooc.legion.core.entity.vo.OssSetting;
+import com.esmooc.legion.core.vo.OssSetting;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
 
 /**
- * @author Daimao
+ * @author DaiMao
  */
 public interface FileManage {
 

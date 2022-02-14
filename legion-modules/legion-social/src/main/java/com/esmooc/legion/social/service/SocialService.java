@@ -1,15 +1,18 @@
 package com.esmooc.legion.social.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.esmooc.legion.core.base.LegionBaseService;
+import com.esmooc.legion.core.common.vo.SearchVo;
 import com.esmooc.legion.social.entity.Social;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 /**
  * Github登录接口
- * @author Daimao
+ * @author DaiMao
  */
-public interface SocialService  extends IService<Social> {
+public interface SocialService extends LegionBaseService<Social, String> {
 
     /**
      * 通过openId和平台获取
@@ -34,4 +37,12 @@ public interface SocialService  extends IService<Social> {
      */
     List<Social> findByRelateUsername(String relateUsername);
 
+    /**
+     * 分页多条件获取
+     * @param social
+     * @param searchVo
+     * @param pageable
+     * @return
+     */
+    Page<Social> findByCondition(Social social, SearchVo searchVo, Pageable pageable);
 }

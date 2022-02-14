@@ -1,31 +1,20 @@
 package com.esmooc.legion.config.swagger;
 
-import cn.hutool.json.JSONUtil;
-import com.esmooc.legion.core.common.constant.SettingConstant;
 import com.esmooc.legion.core.config.properties.IgnoredUrlsProperties;
-import com.esmooc.legion.core.entity.Setting;
-import com.esmooc.legion.core.service.SettingService;
-import com.lzw.face.FaceHelper;
 import io.swagger.annotations.ApiOperation;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.SneakyThrows;
-import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.testng.annotations.Test;
 import springfox.documentation.builders.ApiInfoBuilder;
-import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.*;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
+import springfox.documentation.swagger2.annotations.EnableSwagger2WebMvc;
 
-import java.io.File;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
@@ -34,29 +23,45 @@ import static springfox.documentation.builders.PathSelectors.ant;
 import static springfox.documentation.builders.PathSelectors.regex;
 
 /**
- * @author Daimao
+ * @author DaiMao
  */
 @Slf4j
 @Configuration
-@EnableSwagger2
-@AllArgsConstructor
-@FieldDefaults(makeFinal = true,level = AccessLevel.PRIVATE)
+@EnableSwagger2WebMvc
 public class Swagger2Config {
 
-    @SneakyThrows
-    public static void main(String[] args) {
-        String img1 = "/Users/leiyanfu/IdeaProjects/lib/1.png";
-        String img2 = "/Users/leiyanfu/IdeaProjects/lib/2.png";
-        System.out.println("result:"+FaceHelper.compare(new File(img1), new File(img2)));
+    @Value("${swagger.title:Legion}")
+    private String title;
 
-    }
+    @Value("${swagger.description:Api Documentation}")
+    private String description;
 
+    @Value("${swagger.version:1.0}")
+    private String version;
 
+    @Value("${swagger.termsOfServiceUrl:http://www.esmooc.com}")
+    private String termsOfServiceUrl;
 
+    @Value("${swagger.group:Legion v1.0}")
+    private String group;
 
+    @Value("${swagger.group2:Legion2 v1.0}")
+    private String group2;
 
+    @Value("${swagger.group3:Legion2 v2.0}")
+    private String group3;
 
-     IgnoredUrlsProperties ignoredUrlsProperties;
+    @Value("${swagger.contact.name:DaiMao}")
+    private String name;
+
+    @Value("${swagger.contact.url:http://esmooc.com}")
+    private String url;
+
+    @Value("${swagger.contact.email:1012139570@qq.com}")
+    private String email;
+
+    @Autowired
+    private IgnoredUrlsProperties ignoredUrlsProperties;
 
     public List<SecurityContext> securityContexts() {
 
@@ -82,51 +87,17 @@ public class Swagger2Config {
                 new ApiKey("Authorization", "accessToken", "header"));
 
         return new Docket(DocumentationType.SWAGGER_2)
-                .groupName("1.基础接口")
+                .groupName(group)
                 .apiInfo(apiInfo()).select()
+                // 扫描所有有注解的api，用这种方式更灵活
                 .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
-                .paths(PathSelectors.any())
-                .paths(regex(".*/legion/.*"))
+                .paths(regex(".*/app/.*").negate())
                 .build()
                 .securitySchemes(securitySchemes)
                 .securityContexts(securityContexts());
     }
 
 
-
-    @Bean
-    public Docket createPacsRestApi() {
-
-        List<SecurityScheme> securitySchemes = Collections.singletonList(
-                new ApiKey("Authorization", "appToken", "header"));
-
-        return new Docket(DocumentationType.SWAGGER_2)
-                .groupName("2.Pacs业务接口")
-                .apiInfo(apiInfo()).select()
-                .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
-                .paths(regex(".*/pacs/.*"))
-                .build()
-                .securitySchemes(securitySchemes)
-                .securityContexts(securityContexts());
-    }
-
-
-
-    @Bean
-    public Docket createEduRestApi() {
-
-        List<SecurityScheme> securitySchemes = Collections.singletonList(
-                new ApiKey("Authorization", "appToken", "header"));
-
-        return new Docket(DocumentationType.SWAGGER_2)
-                .groupName("3.试题库业务接口")
-                .apiInfo(apiInfo()).select()
-                .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
-                .paths(regex(".*/edu/.*"))
-                .build()
-                .securitySchemes(securitySchemes)
-                .securityContexts(securityContexts());
-    }
 
 
 
@@ -137,25 +108,50 @@ public class Swagger2Config {
                 new ApiKey("Authorization", "appToken", "header"));
 
         return new Docket(DocumentationType.SWAGGER_2)
-                .groupName("QQQQQ. 所有的")
+                .groupName(group2)
                 .apiInfo(apiInfo()).select()
+                // 扫描所有有注解的api，用这种方式更灵活
                 .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
-                //.paths(regex(".*").negate())
-                .paths(regex(".*"))
+                .paths(regex(".*/app/.*"))
                 .build()
                 .securitySchemes(securitySchemes)
                 .securityContexts(securityContexts());
     }
 
-
+    @Bean
+    public Docket createEduRestApi() {
+        List<SecurityScheme> securitySchemes = Collections.singletonList(
+                new ApiKey("Authorization", "appToken", "header"));
+        return new Docket(DocumentationType.SWAGGER_2)
+                .groupName(group3)
+                .apiInfo(apiInfo()).select()
+                .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
+                .paths(regex(".*/edu/.*"))
+                .build()
+                .securitySchemes(securitySchemes)
+                .securityContexts(securityContexts());
+    }
+    @Bean
+    public Docket createV2RestApi() {
+        List<SecurityScheme> securitySchemes = Collections.singletonList(
+                new ApiKey("Authorization", "appToken", "header"));
+        return new Docket(DocumentationType.SWAGGER_2)
+                .groupName("两癌新接口")
+                .apiInfo(apiInfo()).select()
+                .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
+                .paths(regex(".*/v2/.*"))
+                .build()
+                .securitySchemes(securitySchemes)
+                .securityContexts(securityContexts());
+    }
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("Legion API接口文档")
-                .description("Legion Api Documentation")
-                .termsOfServiceUrl("http://legion.esmooc.com")
-                .contact(new Contact("Daimao", "http://legion.esmooc.com", "cktk@qq.com"))
-                .version("1.0")
+                .title(title)
+                .description(description)
+                .termsOfServiceUrl(termsOfServiceUrl)
+                .contact(new Contact(name, url, email))
+                .version(version)
                 .build();
     }
 }

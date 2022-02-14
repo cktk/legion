@@ -3,7 +3,7 @@ package com.esmooc.legion.core.common.constant;
 import cn.hutool.core.util.IdUtil;
 
 /**
- * @author Daimao
+ * @author DaiMao
  */
 public interface SecurityConstant {
 

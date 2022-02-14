@@ -1,11 +1,11 @@
 package com.esmooc.legion.core.config.security;
 
-import cn.hutool.core.util.StrUtil;
 import com.esmooc.legion.core.common.exception.LoginFailLimitException;
 import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
 import com.esmooc.legion.core.common.utils.NameUtil;
 import com.esmooc.legion.core.entity.User;
 import com.esmooc.legion.core.service.UserService;
+import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @author Daimao
+ * @author DaiMao
  */
 @Slf4j
 @Component

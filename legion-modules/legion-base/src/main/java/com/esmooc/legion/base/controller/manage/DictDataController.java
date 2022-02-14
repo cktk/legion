@@ -1,7 +1,5 @@
 package com.esmooc.legion.base.controller.manage;
 
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.esmooc.legion.base.entity.Dict;
 import com.esmooc.legion.base.entity.DictData;
 import com.esmooc.legion.base.service.DictDataService;
@@ -17,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +23,7 @@ import java.util.List;
 
 
 /**
- * @author Daimao
+ * @author DaiMao
  */
 @Slf4j
 @RestController
@@ -47,8 +46,8 @@ public class DictDataController {
     @ApiOperation(value = "多条件分页获取用户列表")
     public Result<Page<DictData>> getByCondition(DictData dictData,
                                                  PageVo pageVo) {
-        dictData.setId(null);
-        Page<DictData> page = dictDataService.page(PageUtil.initPage(pageVo), Wrappers.query(dictData));
+
+        Page<DictData> page = dictDataService.findByCondition(dictData, PageUtil.initPage(pageVo));
         return ResultUtil.data(page);
     }
 
@@ -65,45 +64,44 @@ public class DictDataController {
         return ResultUtil.data(list);
     }
 
-    @PostMapping( "/add")
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
     @ApiOperation(value = "添加")
     public Result<Object> add(DictData dictData) {
 
-        Dict dict = dictService.getById(dictData.getDictId());
+        Dict dict = dictService.get(dictData.getDictId());
         if (dict == null) {
             return ResultUtil.error("字典类型id不存在");
         }
-        dictData.setType(dict.getType());
         dictDataService.save(dictData);
         // 删除缓存
         redisTemplate.delete("dictData::" + dict.getType());
         return ResultUtil.success("添加成功");
     }
 
-    @PostMapping("/edit")
+    @RequestMapping(value = "/edit", method = RequestMethod.POST)
     @ApiOperation(value = "编辑")
     public Result<Object> edit(DictData dictData) {
 
-        dictDataService.updateById(dictData);
+        dictDataService.update(dictData);
         // 删除缓存
-        Dict dict = dictService.getById(dictData.getDictId());
+        Dict dict = dictService.get(dictData.getDictId());
         redisTemplate.delete("dictData::" + dict.getType());
         return ResultUtil.success("编辑成功");
     }
 
-    @PostMapping("/delByIds")
+    @RequestMapping(value = "/delByIds", method = RequestMethod.POST)
     @ApiOperation(value = "批量通过id删除")
     public Result<Object> delByIds(@RequestParam String[] ids) {
 
         for (String id : ids) {
-            DictData dictData = dictDataService.getById(id);
+            DictData dictData = dictDataService.get(id);
             if (dictData == null) {
                 return ResultUtil.error("数据不存在");
             }
-            Dict dict = dictService.getById(dictData.getDictId());
-            dictDataService.removeById(id);
-            // 删除缓存 TODO 缓存删除会报空指针
-            redisTemplate.delete("dictData::");
+            Dict dict = dictService.get(dictData.getDictId());
+            dictDataService.delete(id);
+            // 删除缓存
+            redisTemplate.delete("dictData::" + dict.getType());
         }
         return ResultUtil.success("批量通过id删除数据成功");
     }

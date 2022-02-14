@@ -1,15 +1,15 @@
 package com.esmooc.legion.core.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.esmooc.legion.core.base.LegionBaseService;
 import com.esmooc.legion.core.entity.RolePermission;
 
 import java.util.List;
 
 /**
  * 角色权限接口
- * @author Daimao
+ * @author DaiMao
  */
-public interface RolePermissionService extends IService<RolePermission> {
+public interface RolePermissionService extends LegionBaseService<RolePermission, String> {
 
     /**
      * 通过permissionId获取

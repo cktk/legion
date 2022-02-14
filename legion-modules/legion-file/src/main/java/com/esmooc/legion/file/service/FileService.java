@@ -1,15 +1,23 @@
 package com.esmooc.legion.file.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.esmooc.legion.core.base.LegionBaseService;
+import com.esmooc.legion.core.common.vo.SearchVo;
 import com.esmooc.legion.file.entity.File;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * 文件管理接口
- * @author Daimao
+ * @author DaiMao
  */
-public interface FileService extends IService<File> {
+public interface FileService extends LegionBaseService<File, String> {
 
-    File upload(MultipartFile file, String base64);
-    File getFile(String id);
+    /**
+     * 多条件获取列表
+     * @param file
+     * @param searchVo
+     * @param pageable
+     * @return
+     */
+    Page<File> findByCondition(File file, SearchVo searchVo, Pageable pageable);
 }

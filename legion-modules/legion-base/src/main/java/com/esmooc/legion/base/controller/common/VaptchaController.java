@@ -1,17 +1,17 @@
 package com.esmooc.legion.base.controller.common;
 
+import com.esmooc.legion.core.common.constant.SettingConstant;
+import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.digest.DigestAlgorithm;
 import cn.hutool.crypto.digest.Digester;
 import cn.hutool.http.HttpUtil;
-import cn.hutool.json.JSONUtil;
-import com.esmooc.legion.core.common.constant.SettingConstant;
-import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
+import com.google.gson.JsonParser;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,18 +21,18 @@ import java.security.SecureRandom;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @author Daimao
+ * @author DaiMao
  */
 @Api(tags = "Vaptcha验证码离线验证接口")
 @RequestMapping("/legion/common/vaptcha")
 @RestController
 @Slf4j
-@AllArgsConstructor
 public class VaptchaController {
 
     public static final String CHAR = "0123456789abcdef";
 
-    private final  RedisTemplateHelper redisTemplate;
+    @Autowired
+    private RedisTemplateHelper redisTemplate;
 
     @RequestMapping(value = "/offline", method = RequestMethod.GET)
     @ApiOperation(value = "vaptcha离线模式接口")
@@ -45,11 +45,11 @@ public class VaptchaController {
         if (StrUtil.isBlank(offline_key)) {
             // 校验是否进入离线模式
             String offCheck = HttpUtil.get(SettingConstant.CHANNEL_URL + vid);
-            int offline_state = JSONUtil.parseObj(offCheck).getInt("offline_state");
+            int offline_state = JsonParser.parseString(offCheck).getAsJsonObject().get("offline_state").getAsInt();
             if (offline_state == 0) {
                 return "Vapthca未进入离线模式";
             } else {
-                offline_key = JSONUtil.parseObj(offCheck).getStr("offline_key");
+                offline_key = JsonParser.parseString(offCheck).getAsJsonObject().get("offline_key").getAsString();
                 redisTemplate.set(vid, offline_key, 3L, TimeUnit.MINUTES);
             }
         }
@@ -73,7 +73,7 @@ public class VaptchaController {
             }
             String validatekey = new Digester(DigestAlgorithm.MD5).digestHex(v + imageId);
             String offValidate = HttpUtil.get(SettingConstant.VALIDATE_URL + offline_key + "/" + validatekey);
-            Boolean validateResult = JSONUtil.parseObj(offValidate).getBool("result");
+            Boolean validateResult = JsonParser.parseString(offValidate).getAsJsonObject().get("result").getAsBoolean();
             String token, result;
             if (validateResult) {
                 // 校验成功则生成token

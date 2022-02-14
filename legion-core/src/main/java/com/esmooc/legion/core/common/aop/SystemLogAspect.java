@@ -1,13 +1,14 @@
 package com.esmooc.legion.core.common.aop;
 
-import cn.hutool.http.useragent.UserAgent;
-import cn.hutool.http.useragent.UserAgentUtil;
-import cn.hutool.json.JSONUtil;
 import com.esmooc.legion.core.common.annotation.SystemLog;
 import com.esmooc.legion.core.common.utils.IpInfoUtil;
+import com.esmooc.legion.core.common.utils.ObjectUtil;
 import com.esmooc.legion.core.common.utils.ThreadPoolUtil;
 import com.esmooc.legion.core.entity.Log;
 import com.esmooc.legion.core.service.LogService;
+import cn.hutool.http.useragent.UserAgent;
+import cn.hutool.http.useragent.UserAgentUtil;
+import cn.hutool.json.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -15,6 +16,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.NamedThreadLocal;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -29,7 +31,7 @@ import java.util.Map;
 
 /**
  * Spring AOP实现日志管理
- * @author Daimao
+ * @author DaiMao
  */
 @Aspect
 @Component
@@ -37,7 +39,6 @@ import java.util.Map;
 public class SystemLogAspect {
 
     private static final ThreadLocal<Date> THREAD_LOCAL_BEGIN_TIME = new NamedThreadLocal<>("ThreadLocal beginTime");
-
 
     @Autowired
     private LogService logService;
@@ -80,10 +81,8 @@ public class SystemLogAspect {
 
         try {
             String description = getControllerMethodInfo(joinPoint).get("description").toString();
-            String type = String.valueOf(getControllerMethodInfo(joinPoint).get("type"));
+            int type = (int) getControllerMethodInfo(joinPoint).get("type");
             Map<String, String[]> logParams = request.getParameterMap();
-
-
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             if (authentication == null || !authentication.isAuthenticated() || authentication.getName() == null
                     || (authentication instanceof AnonymousAuthenticationToken)) {
@@ -101,8 +100,7 @@ public class SystemLogAspect {
                         + " " + ua.getOs().toString() + " | " + isMobile;
             }
 
-
-            Log log = new Log();
+                Log log = new Log();
 
                 // 请求用户
                 log.setUsername(username);
@@ -120,6 +118,7 @@ public class SystemLogAspect {
                 }else {
                     log.setMapToParams(logParams);
                 }
+                ipInfoUtil.getInfo(request, ObjectUtil.mapToStringAll(request.getParameterMap()));
                 // 请求IP
                 log.setIp(ipInfoUtil.getIpAddr(request));
                 // IP地址
@@ -130,16 +129,17 @@ public class SystemLogAspect {
                 long beginTime = THREAD_LOCAL_BEGIN_TIME.get().getTime();
                 long endTime = System.currentTimeMillis();
                 // 请求耗时
-                long logElapsedTime = endTime - beginTime;
-                log.setCostTime(logElapsedTime);
-                // 调用线程保存至DB
+                Long logElapsedTime = endTime - beginTime;
+                log.setCostTime(logElapsedTime.intValue());
+
+                // 调用线程保存至ES
                 ThreadPoolUtil.getPool().execute(new SaveSystemLogThread(log, logService));
+
             THREAD_LOCAL_BEGIN_TIME.remove();
         } catch (Exception e) {
             log.error("AOP后置通知异常", e);
         }
     }
-
 
 
     /**
@@ -164,7 +164,6 @@ public class SystemLogAspect {
 
     /**
      * 获取注解中对方法的描述信息 用于Controller层注解
-     *
      * @param joinPoint 切点
      * @return 方法描述
      * @throws Exception
@@ -184,7 +183,7 @@ public class SystemLogAspect {
         Method[] methods = targetClass.getMethods();
 
         String description = "";
-        String type = null;
+        Integer type = null;
 
         for (Method method : methods) {
             if (!method.getName().equals(methodName)) {
@@ -196,7 +195,7 @@ public class SystemLogAspect {
                 continue;
             }
             description = method.getAnnotation(SystemLog.class).description();
-            type = method.getAnnotation(SystemLog.class).type();
+            type = method.getAnnotation(SystemLog.class).type().ordinal();
             map.put("description", description);
             map.put("type", type);
         }

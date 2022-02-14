@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * @author Daimao
+ * @author DaiMao
  */
 @Data
 @AllArgsConstructor

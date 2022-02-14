@@ -1,8 +1,5 @@
 package com.esmooc.legion.core.common.utils;
 
-import cn.hutool.core.util.IdUtil;
-import cn.hutool.core.util.StrUtil;
-import cn.hutool.json.JSONUtil;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.constant.SecurityConstant;
 import com.esmooc.legion.core.common.exception.LegionException;
@@ -15,12 +12,16 @@ import com.esmooc.legion.core.entity.Department;
 import com.esmooc.legion.core.entity.Member;
 import com.esmooc.legion.core.entity.Role;
 import com.esmooc.legion.core.entity.User;
-import com.esmooc.legion.core.entity.vo.PermissionDTO;
-import com.esmooc.legion.core.entity.vo.RoleDTO;
 import com.esmooc.legion.core.service.DepartmentService;
-import com.esmooc.legion.core.service.IUserRoleService;
 import com.esmooc.legion.core.service.MemberService;
 import com.esmooc.legion.core.service.UserService;
+import com.esmooc.legion.core.service.mybatis.IUserRoleService;
+import com.esmooc.legion.core.vo.PermissionDTO;
+import com.esmooc.legion.core.vo.RoleDTO;
+import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.StrUtil;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +39,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @author Daimao
+ * @author DaiMao
  */
 @Component
 public class SecurityUtil {
@@ -105,10 +106,10 @@ public class SecurityUtil {
             }
             if (saved) {
                 redisTemplate.set(SecurityConstant.USER_TOKEN + u.getUsername(), token, tokenProperties.getSaveLoginTime(), TimeUnit.DAYS);
-                redisTemplate.set(SecurityConstant.TOKEN_PRE + token, JSONUtil.toJsonStr(user), tokenProperties.getSaveLoginTime(), TimeUnit.DAYS);
+                redisTemplate.set(SecurityConstant.TOKEN_PRE + token, new Gson().toJson(user), tokenProperties.getSaveLoginTime(), TimeUnit.DAYS);
             } else {
                 redisTemplate.set(SecurityConstant.USER_TOKEN + u.getUsername(), token, tokenProperties.getTokenExpireTime(), TimeUnit.MINUTES);
-                redisTemplate.set(SecurityConstant.TOKEN_PRE + token, JSONUtil.toJsonStr(user), tokenProperties.getTokenExpireTime(), TimeUnit.MINUTES);
+                redisTemplate.set(SecurityConstant.TOKEN_PRE + token, new Gson().toJson(user), tokenProperties.getTokenExpireTime(), TimeUnit.MINUTES);
             }
         } else {
             // JWT不缓存权限 避免JWT长度过长
@@ -118,7 +119,7 @@ public class SecurityUtil {
                     //主题 放入用户名
                     .setSubject(u.getUsername())
                     //自定义属性 放入用户拥有请求权限
-                    .claim(SecurityConstant.AUTHORITIES, JSONUtil.toJsonStr(list))
+                    .claim(SecurityConstant.AUTHORITIES, new Gson().toJson(list))
                     //失效时间
                     .setExpiration(new Date(System.currentTimeMillis() + tokenProperties.getTokenExpireTime() * 60 * 1000))
                     //签名算法和密钥
@@ -143,51 +144,6 @@ public class SecurityUtil {
     }
 
     /**
-     * 获取当前登录用户
-     *
-     * @return
-     */
-    public List<Department>  getCurrUserDept() {
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated() || authentication.getName() == null
-                || authentication instanceof AnonymousAuthenticationToken) {
-            throw new LegionException("未检测到登录用户");
-        }
-        User u = userService.findByUsername(authentication.getName());
-        List<Department> dept = departmentService.findById(u.getDepartmentId());
-        return dept;
-    }
-
-    /**
-     * 获取当前登录用户
-     *
-     * @return
-     */
-    public List<Role> getCurrUserRole() {
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated() || authentication.getName() == null
-                || authentication instanceof AnonymousAuthenticationToken) {
-            throw new LegionException("未检测到登录用户");
-        }
-
-        User u = userService.findByUsername(authentication.getName());
-        // 当前用户拥有角色
-        List<Role> roles = iUserRoleService.findByUserId(u.getId());
-        // 判断有无全部数据的角色
-        Boolean flagAll = false;
-        for (Role r : roles) {
-            if (r.getDataType() == null || r.getDataType().equals(CommonConstant.DATA_TYPE_ALL)) {
-                flagAll = true;
-                break;
-            }
-        }
-        return roles;
-    }
-
-
-    /**
      * 获取当前用户数据权限 null代表具有所有权限 包含值为-1的数据代表无任何权限
      */
     public List<String> getDeparmentIds() {
@@ -198,7 +154,8 @@ public class SecurityUtil {
         String key = "userRole::depIds:" + u.getId();
         String v = redisTemplate.get(key);
         if (StrUtil.isNotBlank(v)) {
-            deparmentIds = JSONUtil.toList(v, String.class);
+            deparmentIds = new Gson().fromJson(v, new TypeToken<List<String>>() {
+            }.getType());
             return deparmentIds;
         }
         // 当前用户拥有角色
@@ -252,13 +209,13 @@ public class SecurityUtil {
         deparmentIds.clear();
         deparmentIds.addAll(set);
         // 缓存
-        redisTemplate.set(key, JSONUtil.toJsonStr(deparmentIds), 15L, TimeUnit.DAYS);
+        redisTemplate.set(key, new Gson().toJson(deparmentIds), 15L, TimeUnit.DAYS);
         return deparmentIds;
     }
 
     private void getRecursion(String departmentId, List<String> ids) {
 
-        Department department = departmentService.getById(departmentId);
+        Department department = departmentService.get(departmentId);
         ids.add(department.getId());
         if (department.getIsParent() != null && department.getIsParent()) {
             // 获取其下级
@@ -303,7 +260,7 @@ public class SecurityUtil {
             }
         }
         redisTemplate.set(key, token, appTokenProperties.getTokenExpireTime(), TimeUnit.DAYS);
-        redisTemplate.set(SecurityConstant.TOKEN_MEMBER_PRE + token, JSONUtil.toJsonStr(member), appTokenProperties.getTokenExpireTime(), TimeUnit.DAYS);
+        redisTemplate.set(SecurityConstant.TOKEN_MEMBER_PRE + token, new Gson().toJson(member), appTokenProperties.getTokenExpireTime(), TimeUnit.DAYS);
         return token;
     }
 

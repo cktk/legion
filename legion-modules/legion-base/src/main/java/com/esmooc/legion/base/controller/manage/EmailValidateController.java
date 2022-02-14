@@ -1,7 +1,5 @@
 package com.esmooc.legion.base.controller.manage;
 
-import cn.hutool.core.util.StrUtil;
-import cn.hutool.json.JSONUtil;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.constant.SettingConstant;
 import com.esmooc.legion.core.common.exception.LegionException;
@@ -11,15 +9,16 @@ import com.esmooc.legion.core.common.vo.EmailValidate;
 import com.esmooc.legion.core.common.vo.Result;
 import com.esmooc.legion.core.entity.Setting;
 import com.esmooc.legion.core.entity.User;
-import com.esmooc.legion.core.entity.vo.OtherSetting;
 import com.esmooc.legion.core.service.SettingService;
 import com.esmooc.legion.core.service.UserService;
+import com.esmooc.legion.core.vo.OtherSetting;
+import cn.hutool.core.util.StrUtil;
+import com.esmooc.legion.core.common.utils.*;
+import com.google.gson.Gson;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -28,31 +27,40 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @author Daimao
+ * @author DaiMao
  */
 @Slf4j
 @RestController
 @Api(tags = "邮箱验证接口")
 @RequestMapping("/legion/email")
 @Transactional
-@AllArgsConstructor
-@FieldDefaults(makeFinal = true,level = AccessLevel.PRIVATE)
 public class EmailValidateController {
 
-    EmailUtil emailUtil;
-    RedisTemplateHelper redisTemplate;
-    UserService userService;
-    IpInfoUtil ipInfoUtil;
-    SettingService settingService;
-    SecurityUtil securityUtil;
+    @Autowired
+    private EmailUtil emailUtil;
+
+    @Autowired
+    private RedisTemplateHelper redisTemplate;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private IpInfoUtil ipInfoUtil;
+
+    @Autowired
+    private SettingService settingService;
+
+    @Autowired
+    private SecurityUtil securityUtil;
 
     public OtherSetting getOtherSetting() {
 
-        Setting setting = settingService.getById(SettingConstant.OTHER_SETTING);
+        Setting setting = settingService.get(SettingConstant.OTHER_SETTING);
         if (StrUtil.isBlank(setting.getValue())) {
             throw new LegionException("系统未配置访问域名，请联系管理员");
         }
-        return JSONUtil.toBean(setting.getValue(), OtherSetting.class);
+        return new Gson().fromJson(setting.getValue(), OtherSetting.class);
     }
 
     @RequestMapping(value = "/sendEditCode/{email}", method = RequestMethod.GET)
@@ -111,7 +119,7 @@ public class EmailValidateController {
         e.setCode(code);
         e.setEmail(email);
         e.setFullUrl(getOtherSetting().getDomain());
-        redisTemplate.set(CommonConstant.PRE_EMAIL + email, JSONUtil.toJsonStr(e), 10L, TimeUnit.MINUTES);
+        redisTemplate.set(CommonConstant.PRE_EMAIL + email, new Gson().toJson(e, EmailValidate.class), 10L, TimeUnit.MINUTES);
 
         emailUtil.sendTemplateEmail(email, title, template, e);
         // 请求成功 标记限流
@@ -125,7 +133,7 @@ public class EmailValidateController {
 
         User u = securityUtil.getCurrUser();
         u.setEmail(email);
-        userService.updateById(u);
+        userService.update(u);
         // 删除缓存
         redisTemplate.delete("user::" + u.getUsername());
         return ResultUtil.success("修改邮箱成功");
@@ -139,11 +147,10 @@ public class EmailValidateController {
 
         User u = userService.findByEmail(email);
 
-
         String encryptPass = new BCryptPasswordEncoder().encode(password);
         u.setPassword(encryptPass);
         u.setPassStrength(passStrength);
-        userService.updateById(u);
+        userService.update(u);
         // 删除缓存
         redisTemplate.delete("user::" + u.getUsername());
         return ResultUtil.success("重置密码成功");

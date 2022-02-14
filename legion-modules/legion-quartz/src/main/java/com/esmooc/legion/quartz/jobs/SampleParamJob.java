@@ -8,7 +8,7 @@ import org.quartz.JobExecutionException;
 
 /**
  * 示例带参定时任务
- * @author Daimao
+ * @author DaiMao
  */
 @Slf4j
 public class SampleParamJob implements Job {
@@ -25,6 +25,6 @@ public class SampleParamJob implements Job {
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
 
-        log.info(String.format("Hello %s! 欢迎使用Legion前后端分离开发平台!作者:Daimao 时间:" + DateUtil.now(), this.parameter));
+        log.info(String.format("Hello %s! 欢迎使用Legion前后端分离开发平台!作者:DaiMao 时间:" + DateUtil.now(), this.parameter));
     }
 }

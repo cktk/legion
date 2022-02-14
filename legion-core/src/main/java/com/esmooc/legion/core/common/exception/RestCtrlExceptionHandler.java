@@ -11,27 +11,25 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
 
 /**
- * @author Daimao
+ * @author DaiMao
  */
 @Slf4j
 @RestControllerAdvice
 public class RestCtrlExceptionHandler {
 
     @ExceptionHandler(LegionException.class)
-    @ResponseStatus(HttpStatus.OK)
-    public Result<Object> handleLegionException(LegionException e, HttpServletResponse response) {
+    @ResponseStatus(value = HttpStatus.OK)
+    public Result<Object> handleLegionException(LegionException e) {
+
         String errorMsg = "Legion exception";
-        int errorCode = 500;
         if (e != null) {
             errorMsg = e.getMsg();
-            errorCode=  e.getCode();
             log.error(e.toString(), e);
         }
-        return ResultUtil.error(errorCode, errorMsg);
+        return ResultUtil.error(500, errorMsg);
     }
 
     @ExceptionHandler(BindException.class)
@@ -106,6 +104,7 @@ public class RestCtrlExceptionHandler {
             errorMsg = e.getMsg();
             log.warn(e.getMsg(), e);
         }
+
         return ResultUtil.error(500, errorMsg);
     }
 

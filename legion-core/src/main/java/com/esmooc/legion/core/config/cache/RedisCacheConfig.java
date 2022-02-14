@@ -22,7 +22,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 import java.time.Duration;
 
 /**
- * @author Daimao
+ * @author DaiMao
  */
 @Slf4j
 @Configuration

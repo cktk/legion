@@ -1,14 +1,14 @@
 package com.esmooc.legion.core.common.utils;
 
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.json.JSONUtil;
+import com.google.gson.Gson;
 import org.springframework.cglib.beans.BeanMap;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author Daimao
+ * @author DaiMao
  */
 public class ObjectUtil {
 
@@ -25,7 +25,7 @@ public class ObjectUtil {
             String obj = StrUtil.endWithIgnoreCase(param.getKey(), "password") ? "你是看不见我的" : paramValue;
             params.put(key, obj);
         }
-        return JSONUtil.toJsonStr(params);
+        return new Gson().toJson(params);
     }
 
     public static String mapToStringAll(Map<String, String[]> paramMap) {
@@ -40,7 +40,7 @@ public class ObjectUtil {
             String paramValue = (param.getValue() != null && param.getValue().length > 0 ? param.getValue()[0] : "");
             params.put(key, paramValue);
         }
-        return JSONUtil.toJsonStr(params);
+        return new Gson().toJson(params);
     }
 
     public static <T> Map<String, Object> beanToMap(T bean) {

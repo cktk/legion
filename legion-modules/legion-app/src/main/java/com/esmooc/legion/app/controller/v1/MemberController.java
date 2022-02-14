@@ -1,6 +1,5 @@
 package com.esmooc.legion.app.controller.v1;
 
-import cn.hutool.core.util.StrUtil;
 import com.esmooc.legion.core.common.annotation.SystemLog;
 import com.esmooc.legion.core.common.enums.LogType;
 import com.esmooc.legion.core.common.utils.NameUtil;
@@ -11,37 +10,43 @@ import com.esmooc.legion.core.common.vo.Result;
 import com.esmooc.legion.core.config.security.SecurityMemberDetails;
 import com.esmooc.legion.core.entity.Member;
 import com.esmooc.legion.core.service.MemberService;
+import cn.hutool.core.util.StrUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
+import javax.persistence.EntityManager;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author Daimao
+ * @author DaiMao
  */
 @Slf4j
 @RestController
 @Api(tags = "会员接口")
 @RequestMapping(value = "/legion/app/v1/member/")
-@AllArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE,makeFinal = true)
 public class MemberController {
 
-    MemberService memberService;
-    SecurityUtil securityUtil;
+    @Autowired
+    private MemberService memberService;
 
+    @Autowired
+    private SecurityUtil securityUtil;
 
-    @PostMapping("/quickLogin")
+    @Autowired
+    private EntityManager entityManager;
+
+    @RequestMapping(value = "/quickLogin", method = RequestMethod.POST)
     @ApiOperation(value = "手机号快捷登录/注册")
-    @SystemLog(description = "快捷登录", type = LogType.OPERATION)
+    @SystemLog(description = "快捷登录", type = LogType.MEMBER_LOGIN)
     public Result<Object> quickLogin(@RequestParam String mobile,
                                      @RequestParam(required = false) String inviteCode,
                                      @RequestParam(required = false, defaultValue = "-1") Integer platform) {
@@ -80,13 +85,13 @@ public class MemberController {
         return ResultUtil.data(result);
     }
 
-    @GetMapping("/info")
+    @RequestMapping(value = "/info", method = RequestMethod.GET)
     @ApiOperation(value = "获取当前登录会员信息接口")
     public Result<Member> getUserInfo() {
 
         Member member = securityUtil.getCurrMember();
-        //TODO 清除持久上下文环境 避免后面语句导致持久化
-//        entityManager.clear();
+        // 清除持久上下文环境 避免后面语句导致持久化
+        entityManager.clear();
         member.setPassword(null);
         return ResultUtil.data(member);
     }

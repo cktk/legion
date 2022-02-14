@@ -7,7 +7,7 @@ import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
 /**
- * @author Daimao
+ * @author DaiMao
  */
 @Configuration
 @EnableWebSocketMessageBroker
@@ -20,7 +20,7 @@ public class WebSocketStompConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
 
-        // 允许使用socketJs方式访问 即可通过http://IP:PORT/ws来和服务端websocket连接
+        // 允许使用socketJs方式访问 即可通过http://IP:PORT/legion/ws来和服务端websocket连接
         registry.addEndpoint("/ws").setAllowedOriginPatterns("*").withSockJS();
     }
 

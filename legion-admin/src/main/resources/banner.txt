@@ -19,5 +19,3 @@ ${AnsiColor.BRIGHT_YELLOW}
                                     '.    /
                                       '-./
                                              --by DaiMao
-
-

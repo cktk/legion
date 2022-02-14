@@ -1,15 +1,12 @@
 package com.esmooc.legion.autochat.controller;
 
-import cn.hutool.core.util.StrUtil;
-import cn.hutool.json.JSONUtil;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.esmooc.legion.autochat.dao.mapper.AutoChatMapper;
 import com.esmooc.legion.autochat.entity.AutoChat;
-import com.esmooc.legion.autochat.entity.vo.AssociateVo;
-import com.esmooc.legion.autochat.entity.vo.GuessVo;
-import com.esmooc.legion.autochat.entity.vo.MessageVo;
-import com.esmooc.legion.autochat.mapper.AutoChatMapper;
 import com.esmooc.legion.autochat.service.AutoChatService;
+import com.esmooc.legion.autochat.vo.AssociateVo;
+import com.esmooc.legion.autochat.vo.GuessVo;
+import com.esmooc.legion.autochat.vo.MessageVo;
+import com.esmooc.legion.core.base.LegionBaseController;
 import com.esmooc.legion.core.common.constant.SettingConstant;
 import com.esmooc.legion.core.common.utils.PageUtil;
 import com.esmooc.legion.core.common.utils.ResultUtil;
@@ -17,104 +14,70 @@ import com.esmooc.legion.core.common.vo.PageVo;
 import com.esmooc.legion.core.common.vo.Result;
 import com.esmooc.legion.core.common.vo.SearchVo;
 import com.esmooc.legion.core.entity.Setting;
-import com.esmooc.legion.core.entity.vo.AutoChatSetting;
 import com.esmooc.legion.core.service.SettingService;
+import com.esmooc.legion.core.vo.AutoChatSetting;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.HtmlUtil;
+import com.google.gson.Gson;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author Daimao
+ * @author DaiMao
  */
 @Slf4j
 @RestController
 @Api(tags = "问答助手客服管理接口")
 @RequestMapping("/legion/autoChat")
-@AllArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class AutoChatController {
+@Transactional
+public class AutoChatController extends LegionBaseController<AutoChat, String> {
 
-     AutoChatService autoChatService;
-     AutoChatMapper autoChatMapper;
-     SettingService settingService;
+    @Autowired
+    private AutoChatService autoChatService;
 
+    @Autowired
+    private AutoChatMapper autoChatMapper;
 
-    @GetMapping( "/get/{id}")
-    @ApiOperation(value = "通过id获取")
-    public Result<AutoChat> get(@PathVariable String id) {
-        return new ResultUtil<AutoChat>().setData(autoChatService.getById(id));
+    @Autowired
+    private SettingService settingService;
+
+    @Override
+    public AutoChatService getService() {
+        return autoChatService;
     }
-
-    @RequestMapping(value = "/getAll", method = RequestMethod.GET)
-    @ApiOperation(value = "获取全部数据")
-    public Result<List<AutoChat>> getAll() {
-        return new ResultUtil<List<AutoChat>>().setData(autoChatService.list());
-    }
-
-    @RequestMapping(value = "/getByPage", method = RequestMethod.GET)
-    @ApiOperation(value = "分页获取")
-    public Result<Page<AutoChat>> getByPage(PageVo page) {
-        return new ResultUtil<Page<AutoChat>>().setData(autoChatService.page(PageUtil.initPage(page)));
-    }
-
-    @PostMapping("/save")
-    @ApiOperation(value = "保存数据")
-    public Result<AutoChat> save(AutoChat autoChat) {
-
-
-
-        if ( autoChatService.save(autoChat)){
-            return new ResultUtil<AutoChat>().setData(autoChat);
-        }
-        return ResultUtil.error("更新失败");
-    }
-
-    @RequestMapping(value = "/update", method = RequestMethod.PUT)
-    @ApiOperation(value = "更新数据")
-    public Result<AutoChat> update(AutoChat autoChat) {
-        if ( autoChatService.updateById(autoChat)){
-            return new ResultUtil<AutoChat>().setData(autoChat);
-        }
-        return ResultUtil.error("更新失败");
-    }
-
-    @PostMapping("/delByIds")
-    @ApiOperation(value = "批量通过id删除")
-    @Transactional
-    public Result<Object> delByIds(List<String> ids) {
-
-      if (autoChatService.removeByIds(ids)){
-          return ResultUtil.success("批量通过id删除数据成功");
-      }
-
-        return ResultUtil.error("删除失败已回滚");
-
-
-    }
-
 
     public AutoChatSetting getChatSetting() {
 
-        Setting setting = settingService.getById(SettingConstant.CHAT_SETTING);
+        Setting setting = settingService.get(SettingConstant.CHAT_SETTING);
         if (setting == null || StrUtil.isBlank(setting.getValue())) {
             return null;
         }
-        return JSONUtil.toBean(setting.getValue(),AutoChatSetting.class);
+        return new Gson().fromJson(setting.getValue(), AutoChatSetting.class);
     }
 
     @RequestMapping(value = "/getByCondition", method = RequestMethod.GET)
     @ApiOperation(value = "多条件分页获取")
     public Result<Page<AutoChat>> getByCondition(AutoChat autoChat, SearchVo searchVo, PageVo pageVo) {
-        return new ResultUtil<Page<AutoChat>>().setData(autoChatService.page(PageUtil.initPage(pageVo),Wrappers.query(autoChat)));
+
+        Page<AutoChat> page = autoChatService.findByCondition(autoChat, searchVo, PageUtil.initPage(pageVo));
+        page.forEach(e -> {
+            if (StrUtil.isNotBlank(e.getContent())) {
+                e.setContentText(HtmlUtil.cleanHtmlTag(e.getContent()));
+            }
+        });
+        return ResultUtil.data(page);
     }
 
     @RequestMapping(value = "/ask", method = RequestMethod.GET)
@@ -177,14 +140,14 @@ public class AutoChatController {
     @ApiOperation(value = "赞踩")
     public Result<Object> evaluate(String messageId, String evaluateType) {
 
-        AutoChat autoChat = autoChatService.getById(messageId);
+        AutoChat autoChat = autoChatService.get(messageId);
         if (autoChat != null) {
             if ("good".equals(evaluateType)) {
                 autoChat.setGood(autoChat.getGood() + 1);
             } else {
                 autoChat.setBad(autoChat.getBad() + 1);
             }
-            autoChatService.updateById(autoChat);
+            autoChatService.update(autoChat);
         }
         return ResultUtil.success("操作成功");
     }

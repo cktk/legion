@@ -1,21 +1,22 @@
 package com.esmooc.legion.core.service;
 
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.esmooc.legion.core.entity.DTO.UserDTO;
+import com.esmooc.legion.core.base.LegionBaseService;
+import com.esmooc.legion.core.common.vo.SearchVo;
 import com.esmooc.legion.core.entity.User;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 /**
  * 用户接口
- * @author Daimao
+ * @author DaiMao
  */
 @CacheConfig(cacheNames = "user")
-public interface UserService extends IService<User> {
+public interface UserService extends LegionBaseService<User, String> {
 
     /**
      * 通过用户名获取用户
@@ -39,6 +40,14 @@ public interface UserService extends IService<User> {
      */
     User findByEmail(String email);
 
+    /**
+     * 多条件分页获取用户
+     * @param user
+     * @param searchVo
+     * @param pageable
+     * @return
+     */
+    Page<User> findByCondition(User user, SearchVo searchVo, Pageable pageable);
 
     /**
      * 通过部门id获取
@@ -61,7 +70,4 @@ public interface UserService extends IService<User> {
      * @param departmentTitle
      */
     void updateDepartmentTitle(String departmentId, String departmentTitle);
-
-    List<User> bySqlPage(UserDTO user, Integer pageSize, Integer start);
-
 }

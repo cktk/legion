@@ -11,9 +11,9 @@
 
     <artifactId>legion-modules</artifactId>
     <packaging>pom</packaging>
-
     <modules>
         <module>legion-base</module>
+        <module>legion-activiti</module>
         <module>legion-social</module>
         <module>legion-generator</module>
         <module>legion-file</module>
@@ -22,10 +22,8 @@
         <module>legion-your</module>
         <module>legion-app</module>
         <module>legion-autochat</module>
+        <module>legion-screening</module>
         <module>legion-system</module>
-        <module>legion-screw</module>
-        <module>legion-pacs</module>
-        <module>legion-edu</module>
     </modules>
 
     <dependencies>

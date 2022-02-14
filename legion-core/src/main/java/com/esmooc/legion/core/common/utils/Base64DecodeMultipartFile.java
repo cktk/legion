@@ -10,7 +10,7 @@ import java.util.Base64.Decoder;
 
 /**
  * base64转为multipartFile工具类
- * @author Daimao
+ * @author DaiMao
  */
 @Slf4j
 public class Base64DecodeMultipartFile implements MultipartFile {

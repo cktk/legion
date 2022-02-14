@@ -1,10 +1,5 @@
 package com.esmooc.legion.social.controller;
 
-import cn.hutool.core.util.IdUtil;
-import cn.hutool.core.util.StrUtil;
-import cn.hutool.http.HttpUtil;
-import cn.hutool.json.JSONObject;
-import cn.hutool.json.JSONUtil;
 import com.esmooc.legion.core.common.annotation.SystemLog;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.constant.SecurityConstant;
@@ -16,8 +11,14 @@ import com.esmooc.legion.core.common.vo.Result;
 import com.esmooc.legion.core.config.security.SecurityUserDetails;
 import com.esmooc.legion.core.entity.User;
 import com.esmooc.legion.social.entity.Social;
-import com.esmooc.legion.social.entity.vo.WechatUserInfo;
 import com.esmooc.legion.social.service.SocialService;
+import com.esmooc.legion.social.vo.WechatUserInfo;
+import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.HttpUtil;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -25,10 +26,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -36,12 +38,12 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * https://developers.weixin.qq.com/doc/oplatform/Website_App/WeChat_Login/Wechat_Login.html
- * @author Daimao
+ * @author DaiMao
  */
 @Slf4j
 @Api(tags = "微信登录接口")
 @RequestMapping("/legion/social/wechat")
-@RestController
+@Controller
 public class WechatController {
 
     @Value("${legion.social.wechat.appId}")
@@ -89,6 +91,7 @@ public class WechatController {
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     @ApiOperation(value = "获取wechat认证链接")
+    @ResponseBody
     public Result<Object> login() throws UnsupportedEncodingException {
 
         // 生成并保存state 忽略该参数有可能导致CSRF攻击
@@ -127,17 +130,18 @@ public class WechatController {
         if (!result.contains("access_token")) {
             return "redirect:" + callbackFeUrl + "?error=" + URLEncoder.encode("获取access_token失败", "utf-8");
         }
-        JSONObject jsonObject = JSONUtil.parseObj(result);
-        String accessToken = jsonObject.getStr("access_token");
-        String openId = jsonObject.getStr("openid");
+
+        JsonObject jsonObject = JsonParser.parseString(result).getAsJsonObject();
+        String accessToken = jsonObject.get("access_token").getAsString();
+        String openId = jsonObject.get("openid").getAsString();
         // 获取用户信息
         String userInfo = HttpUtil.get(GET_USERINFO_URL + "?access_token=" + accessToken + "&openid=" + openId);
-        WechatUserInfo wu = JSONUtil.toBean(userInfo, WechatUserInfo.class);
+        WechatUserInfo wu = new Gson().fromJson(userInfo, WechatUserInfo.class);
         // 存入数据库
         Social wechat = socialService.findByOpenIdAndPlatform(wu.getOpenid(), TYPE);
         if (wechat == null) {
             Social w = new Social().setOpenId(wu.getOpenid()).setUsername(wu.getNickname()).setAvatar(wu.getHeadimgurl()).setPlatform(TYPE);
-             socialService.save(w);
+            wechat = socialService.save(w);
         }
 
         String url = "";

@@ -1,10 +1,7 @@
 package com.esmooc.legion.base.controller.manage;
 
-import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.util.StrUtil;
-import cn.hutool.json.JSONUtil;
-import com.esmooc.legion.base.entity.vo.MenuVo;
 import com.esmooc.legion.base.utils.VoUtil;
+import com.esmooc.legion.base.vo.MenuVo;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
@@ -16,20 +13,19 @@ import com.esmooc.legion.core.config.security.permission.MySecurityMetadataSourc
 import com.esmooc.legion.core.entity.Permission;
 import com.esmooc.legion.core.entity.RolePermission;
 import com.esmooc.legion.core.entity.User;
-import com.esmooc.legion.core.entity.vo.PermissionVO;
-import com.esmooc.legion.core.service.IPermissionService;
 import com.esmooc.legion.core.service.PermissionService;
 import com.esmooc.legion.core.service.RolePermissionService;
+import com.esmooc.legion.core.service.mybatis.IPermissionService;
+import cn.hutool.core.util.StrUtil;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.security.core.parameters.P;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,7 +36,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
- * @author Daimao
+ * @author DaiMao
  */
 @Slf4j
 @RestController
@@ -48,50 +44,53 @@ import java.util.stream.Collectors;
 @RequestMapping("/legion/permission")
 @CacheConfig(cacheNames = "permission")
 @Transactional
-@FieldDefaults(level = AccessLevel.PRIVATE,makeFinal = true)
-@AllArgsConstructor
 public class PermissionController {
 
-    PermissionService permissionService;
-    RolePermissionService rolePermissionService;
-    IPermissionService iPermissionService;
-    RedisTemplateHelper redisTemplate;
-    SecurityUtil securityUtil;
-    MySecurityMetadataSource mySecurityMetadataSource;
+    @Autowired
+    private PermissionService permissionService;
+
+    @Autowired
+    private RolePermissionService rolePermissionService;
+
+    @Autowired
+    private IPermissionService iPermissionService;
+
+    @Autowired
+    private RedisTemplateHelper redisTemplate;
+
+    @Autowired
+    private SecurityUtil securityUtil;
+
+    @Autowired
+    private MySecurityMetadataSource mySecurityMetadataSource;
 
     @RequestMapping(value = "/getMenuList", method = RequestMethod.GET)
     @ApiOperation(value = "获取用户页面菜单数据")
     public Result<List<MenuVo>> getAllMenuList() {
-        List<MenuVo> menuList =new ArrayList<MenuVo>();
+
+        List<MenuVo> menuList =new ArrayList<>();
         // 读取缓存
         User u = securityUtil.getCurrUser();
         String key = "permission::userMenuList:" + u.getId();
         String v = redisTemplate.get(key);
         if (StrUtil.isNotBlank(v)) {
-            return new ResultUtil<List<MenuVo>>().setData(JSONUtil.toList(v,MenuVo.class));
+            menuList = new Gson().fromJson(v, new TypeToken<List<MenuVo>>() {
+            }.getType());
+            return ResultUtil.data(menuList);
         }
 
         // 用户所有权限 已排序去重
         List<Permission> list = iPermissionService.findByUserId(u.getId());
 
-        log.info("list{}",list);
-
-
         // 筛选0级页面
         menuList = list.stream().filter(p -> CommonConstant.PERMISSION_NAV.equals(p.getType()))
                 .sorted(Comparator.comparing(Permission::getSortOrder))
                 .map(VoUtil::permissionToMenuVo).collect(Collectors.toList());
-
-
-
-
-
-        log.info("menuList{}",menuList);
-
         getMenuByRecursion(menuList, list);
+
         // 缓存
-        redisTemplate.set(key, JSONUtil.toJsonStr(menuList), 15L, TimeUnit.DAYS);
-        return new ResultUtil<List<MenuVo>>().setData(menuList);
+        redisTemplate.set(key, new Gson().toJson(menuList), 15L, TimeUnit.DAYS);
+        return ResultUtil.data(menuList);
     }
 
     private void getMenuByRecursion(List<MenuVo> curr, List<Permission> list) {
@@ -121,12 +120,12 @@ public class PermissionController {
     @Cacheable(key = "'allList'")
     public Result<List<Permission>> getAllList() {
 
-        List<Permission> list = permissionService.list();
+        List<Permission> list = permissionService.getAll();
         // 0级
-        List<Permission> list0 = list.stream().filter(e -> ( e.getLevel()==null ||(CommonConstant.LEVEL_ZERO).equals(e.getLevel())))
+        List<Permission> list0 = list.stream().filter(e -> (CommonConstant.LEVEL_ZERO).equals(e.getLevel()))
                 .sorted(Comparator.comparing(Permission::getSortOrder)).collect(Collectors.toList());
         getAllByRecursion(list0, list);
-        return new ResultUtil<List<Permission>>().setData(list0);
+        return ResultUtil.data(list0);
     }
 
     private void getAllByRecursion(List<Permission> curr, List<Permission> list) {
@@ -152,7 +151,7 @@ public class PermissionController {
         return ResultUtil.data(list);
     }
 
-    @PostMapping( "/add")
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
     @ApiOperation(value = "添加")
     @CacheEvict(key = "'menuList'")
     public Result<Permission> add(Permission permission) {
@@ -164,28 +163,28 @@ public class PermissionController {
         if (CommonConstant.PERMISSION_OPERATION.equals(permission.getType())) {
             List<Permission> list = permissionService.findByTitle(permission.getTitle());
             if (list != null && list.size() > 0) {
-                return new ResultUtil<Permission>().setErrorMsg("名称已存在");
+                return ResultUtil.error("名称已存在");
             }
         }
         // 如果不是添加的一级 判断设置上级为父节点标识
         if (!CommonConstant.PARENT_ID.equals(permission.getParentId())) {
-            Permission parent = permissionService.getById(permission.getParentId());
+            Permission parent = permissionService.get(permission.getParentId());
             if (parent.getIsParent() == null || !parent.getIsParent()) {
                 parent.setIsParent(true);
-                permissionService.updateById(parent);
+                permissionService.update(parent);
             }
         }
-         permissionService.save(permission);
+        Permission u = permissionService.save(permission);
         // 重新加载权限
         mySecurityMetadataSource.loadResourceDefine();
         // 手动删除缓存
         redisTemplate.deleteByPattern("permission:*");
-        return new ResultUtil<Permission>().setData(permission);
+        return ResultUtil.data(u);
     }
 
-    @PostMapping("/edit")
+    @RequestMapping(value = "/edit", method = RequestMethod.POST)
     @ApiOperation(value = "编辑")
-    public Result<Permission> edit(PermissionVO permission) {
+    public Result<Permission> edit(Permission permission) {
 
         if (permission.getId().equals(permission.getParentId())) {
             return ResultUtil.error("上级节点不能为自己");
@@ -193,7 +192,7 @@ public class PermissionController {
         // 判断拦截请求的操作权限按钮名是否已存在
         if (CommonConstant.PERMISSION_OPERATION.equals(permission.getType())) {
             // 若名称修改
-            Permission p = permissionService.getById(permission.getId());
+            Permission p = permissionService.get(permission.getId());
             if (!p.getTitle().equals(permission.getTitle())) {
                 List<Permission> list = permissionService.findByTitle(permission.getTitle());
                 if (list != null && list.size() > 0) {
@@ -201,17 +200,16 @@ public class PermissionController {
                 }
             }
         }
-        Permission old = permissionService.getById(permission.getId());
+        Permission old = permissionService.get(permission.getId());
         String oldParentId = old.getParentId();
-        Permission permission1 = BeanUtil.copyProperties(permission, Permission.class);
-        permissionService.updateById(permission1);
+        Permission u = permissionService.update(permission);
         // 如果该节点不是一级节点 且修改了级别 判断上级还有无子节点
         if (!CommonConstant.PARENT_ID.equals(oldParentId) && !oldParentId.equals(permission.getParentId())) {
-            Permission parent = permissionService.getById(oldParentId);
+            Permission parent = permissionService.get(oldParentId);
             List<Permission> children = permissionService.findByParentIdOrderBySortOrder(parent.getId());
             if (parent != null && (children == null || children.isEmpty())) {
                 parent.setIsParent(false);
-                permissionService.updateById(parent);
+                permissionService.update(parent);
             }
         }
         // 重新加载权限
@@ -219,10 +217,10 @@ public class PermissionController {
         // 手动批量删除缓存
         redisTemplate.deleteByPattern("user:*");
         redisTemplate.deleteByPattern("permission:*");
-        return ResultUtil.data(permission1);
+        return ResultUtil.data(u);
     }
 
-    @PostMapping("/delByIds")
+    @RequestMapping(value = "/delByIds", method = RequestMethod.POST)
     @ApiOperation(value = "批量通过id删除")
     @CacheEvict(key = "'menuList'")
     public Result<Object> delByIds(@RequestParam String[] ids) {
@@ -244,18 +242,18 @@ public class PermissionController {
             throw new LegionException("删除失败，包含正被用户使用关联的菜单");
         }
         // 获得其父节点
-        Permission p = permissionService.getById(id);
+        Permission p = permissionService.get(id);
         Permission parent = null;
         if (p != null && StrUtil.isNotBlank(p.getParentId())) {
-            parent = permissionService.getById(p.getParentId());
+            parent = permissionService.get(p.getParentId());
         }
-        permissionService.removeById(id);
+        permissionService.delete(id);
         // 判断父节点是否还有子节点
         if (parent != null) {
             List<Permission> children = permissionService.findByParentIdOrderBySortOrder(parent.getId());
             if (children == null || children.isEmpty()) {
                 parent.setIsParent(false);
-                permissionService.updateById(parent);
+                permissionService.update(parent);
             }
         }
         // 递归删除
@@ -273,8 +271,10 @@ public class PermissionController {
 
         List<Permission> list = permissionService.findByTitleLikeOrderBySortOrder("%" + title + "%");
         list.forEach(e -> setInfo(e));
-        return new ResultUtil<List<Permission>>().setData(list);
+        return ResultUtil.data(list);
     }
+
+
 
     public void setInfo(Permission permission) {
 
@@ -283,9 +283,11 @@ public class PermissionController {
             return;
         }
 
-        Permission parent = permissionService.getById(permission.getParentId());
+        Permission parent = permissionService.get(permission.getParentId());
         permission.setParentTitle(parent.getTitle());
 
 
     }
+
+
 }

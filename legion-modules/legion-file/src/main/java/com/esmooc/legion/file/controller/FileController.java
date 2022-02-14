@@ -1,37 +1,37 @@
 package com.esmooc.legion.file.controller;
 
-import cn.hutool.core.util.StrUtil;
-import cn.hutool.json.JSONUtil;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.constant.SettingConstant;
 import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
 import com.esmooc.legion.core.common.utils.PageUtil;
 import com.esmooc.legion.core.common.utils.ResultUtil;
-import com.esmooc.legion.core.common.utils.SearchUtil;
 import com.esmooc.legion.core.common.vo.PageVo;
 import com.esmooc.legion.core.common.vo.Result;
-import com.esmooc.legion.core.entity.Setting;
+import com.esmooc.legion.core.common.vo.SearchVo;
 import com.esmooc.legion.core.entity.User;
-import com.esmooc.legion.core.entity.vo.OssSetting;
 import com.esmooc.legion.core.service.SettingService;
 import com.esmooc.legion.core.service.UserService;
+import com.esmooc.legion.core.vo.OssSetting;
 import com.esmooc.legion.file.entity.File;
 import com.esmooc.legion.file.manage.FileManageFactory;
 import com.esmooc.legion.file.manage.impl.LocalFileManage;
 import com.esmooc.legion.file.service.FileService;
+import cn.hutool.core.util.StrUtil;
+import com.google.gson.Gson;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -40,45 +40,48 @@ import java.util.Map;
 
 
 /**
- * @author Daimao
+ * @author DaiMao
  */
 @Slf4j
-@RestController
+@Controller
 @Api(tags = "文件管理管理接口")
 @RequestMapping("/legion/file")
 @Transactional
 @CacheConfig(cacheNames = "file")
-@AllArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE,makeFinal = true)
 public class FileController {
 
-    FileService fileService;
-    FileManageFactory fileManageFactory;
-    SettingService settingService;
-    UserService userService;
-    RedisTemplateHelper redisTemplate;
+    @Autowired
+    private FileService fileService;
 
+    @Autowired
+    private FileManageFactory fileManageFactory;
 
-    @PostMapping("/getByCondition")
+    @Autowired
+    private SettingService settingService;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private RedisTemplateHelper redisTemplate;
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    @RequestMapping(value = "/getByCondition", method = RequestMethod.GET)
     @ApiOperation(value = "多条件分页获取")
-    public Result<Page<File>> getFileList(@RequestBody  Map<String, Object>   search) {
+    @ResponseBody
+    public Result<Page<File>> getFileList(File file,
+                                          SearchVo searchVo,
+                                          PageVo pageVo) {
 
-        Page<File> page = fileService.page(PageUtil.initPage(search), SearchUtil.parseWhereSql(search));
-
-
-        Setting setting = settingService.getById(SettingConstant.OSS_USED);
-        Setting useSetting = settingService.getById(setting.getValue());
-
-
-        OssSetting os =  JSONUtil.toBean(useSetting.getValue(), OssSetting.class);
-
-
+        Page<File> page = fileService.findByCondition(file, searchVo, PageUtil.initPage(pageVo));
+        OssSetting os = new Gson().fromJson(settingService.get(SettingConstant.LOCAL_OSS).getValue(), OssSetting.class);
         Map<String, String> map = new HashMap<>(16);
-
-
-        for (File e : page.getRecords()) {
+        for (File e : page.getContent()) {
             if (e.getLocation() != null && CommonConstant.OSS_LOCAL.equals(e.getLocation())) {
                 String url = os.getHttp() + os.getEndpoint() + "/";
+                entityManager.detach(e);
                 e.setUrl(url + e.getId());
             }
             if (StrUtil.isNotBlank(e.getCreateBy())) {
@@ -95,15 +98,16 @@ public class FileController {
         }
         // GC
         map = null;
-        return new ResultUtil<Page<File>>().setData(page);
+        return ResultUtil.data(page);
     }
 
     @RequestMapping(value = "/copy", method = RequestMethod.POST)
     @ApiOperation(value = "文件复制")
+    @ResponseBody
     public Result<Object> copy(@RequestParam String id,
                                @RequestParam String key) throws Exception {
 
-        File file = fileService.getFile(id);
+        File file = fileService.get(id);
         if (file.getLocation() == null) {
             return ResultUtil.error("存储位置未知");
         }
@@ -122,12 +126,13 @@ public class FileController {
 
     @RequestMapping(value = "/rename", method = RequestMethod.POST)
     @ApiOperation(value = "文件重命名")
+    @ResponseBody
     @CacheEvict(key = "#id")
     public Result<Object> upload(@RequestParam String id,
                                  @RequestParam String newKey,
                                  @RequestParam String newName) throws Exception {
 
-        File file = fileService.getFile(id);
+        File file = fileService.get(id);
         if (file.getLocation() == null) {
             return ResultUtil.error("存储位置未知");
         }
@@ -144,16 +149,17 @@ public class FileController {
         if (!oldKey.equals(newKey)) {
             file.setUrl(newUrl);
         }
-        fileService.updateById(file);
+        fileService.update(file);
         return ResultUtil.data(null);
     }
 
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     @ApiOperation(value = "文件删除")
+    @ResponseBody
     public Result<Object> delete(@RequestParam String[] ids) {
 
         for (String id : ids) {
-            File file = fileService.getFile(id);
+            File file = fileService.get(id);
             if (file == null) {
                 return ResultUtil.error("文件不存在");
             }
@@ -166,7 +172,7 @@ public class FileController {
                 key = file.getUrl();
             }
             fileManageFactory.getFileManage(file.getLocation()).deleteFile(key);
-            fileService.removeById(id);
+            fileService.delete(id);
             redisTemplate.delete("file::" + id);
         }
         return ResultUtil.data(null);
@@ -180,7 +186,7 @@ public class FileController {
                      @RequestParam(required = false, defaultValue = "UTF-8") String charset,
                      HttpServletResponse response) throws IOException {
 
-        File file = fileService.getFile(id);
+        File file = fileService.get(id);
         if (file == null) {
             throw new LegionException("文件ID：" + id + "不存在");
         }

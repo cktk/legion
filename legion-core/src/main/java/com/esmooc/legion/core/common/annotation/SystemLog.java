@@ -6,7 +6,7 @@ import java.lang.annotation.*;
 
 /**
  * 系统日志自定义注解
- * @author Daimao
+ * @author DaiMao
  */
 @Target({ElementType.PARAMETER, ElementType.METHOD})//作用于参数或方法上
 @Retention(RetentionPolicy.RUNTIME)
@@ -23,5 +23,5 @@ public @interface SystemLog {
      * 日志类型
      * @return
      */
-    String type() default LogType.OPERATION;
+    LogType type() default LogType.OPERATION;
 }

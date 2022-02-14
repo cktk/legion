@@ -1,20 +1,20 @@
 package com.esmooc.legion.base.controller.manage;
 
-import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.StrUtil;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.esmooc.legion.base.entity.vo.RedisInfo;
-import com.esmooc.legion.base.entity.vo.RedisVo;
+import com.esmooc.legion.base.vo.RedisInfo;
+import com.esmooc.legion.base.vo.RedisVo;
 import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
 import com.esmooc.legion.core.common.utils.PageUtil;
 import com.esmooc.legion.core.common.utils.ResultUtil;
 import com.esmooc.legion.core.common.vo.PageVo;
 import com.esmooc.legion.core.common.vo.Result;
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 
 /**
- * @author Daimao
+ * @author DaiMao
  */
 @Slf4j
 @RestController
@@ -40,7 +40,7 @@ public class RedisController {
     @Autowired
     private RedisTemplateHelper redisTemplate;
 
-    @GetMapping("/getAllByPage")
+    @RequestMapping(value = "/getAllByPage", method = RequestMethod.GET)
     @ApiOperation(value = "分页获取全部")
     public Result<Page<RedisVo>> getAllByPage(@RequestParam(required = false) String key,
                                               PageVo pageVo) {
@@ -67,16 +67,8 @@ public class RedisController {
             list.add(redisVo);
             i++;
         }
-
-        IPage<RedisVo> page = PageUtil.initPage(pageVo);
-        Page<RedisVo> redisVoPage = new Page<>();
-
-        redisVoPage.setRecords(list);
-        redisVoPage.setPages(page.getPages());
-        redisVoPage.setSize(size);
-        redisVoPage.setTotal(page.getTotal());
-
-        page.getRecords().forEach(e -> {
+        Page<RedisVo> page = new PageImpl<RedisVo>(PageUtil.listToPage(pageVo, list), PageUtil.initPage(pageVo), size);
+        page.getContent().forEach(e -> {
             String value = "";
             try {
                 value = redisTemplate.get(e.getKey());
@@ -89,7 +81,7 @@ public class RedisController {
             e.setValue(value);
             e.setExpireTime(redisTemplate.getExpire(e.getKey(), TimeUnit.SECONDS));
         });
-        return new ResultUtil<Page<RedisVo>>().setData(redisVoPage);
+        return ResultUtil.data(page);
     }
 
     @RequestMapping(value = "/getByKey/{key}", method = RequestMethod.GET)
@@ -104,7 +96,7 @@ public class RedisController {
         return ResultUtil.data(map);
     }
 
-    @PostMapping("/save")
+    @RequestMapping(value = "/save", method = RequestMethod.POST)
     @ApiOperation(value = "添加或编辑")
     public Result<Object> save(@RequestParam String key,
                                @RequestParam String value,
@@ -128,7 +120,7 @@ public class RedisController {
         return ResultUtil.success("删除成功");
     }
 
-    @PostMapping("/delAll")
+    @RequestMapping(value = "/delAll", method = RequestMethod.POST)
     @ApiOperation(value = "全部删除")
     public Result<Object> delAll() {
 

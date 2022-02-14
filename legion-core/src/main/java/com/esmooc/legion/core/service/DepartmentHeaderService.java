@@ -1,16 +1,16 @@
 package com.esmooc.legion.core.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.esmooc.legion.core.base.LegionBaseService;
 import com.esmooc.legion.core.entity.DepartmentHeader;
-import com.esmooc.legion.core.entity.vo.UserVo;
+import com.esmooc.legion.core.vo.UserVo;
 
 import java.util.List;
 
 /**
  * 部门负责人接口
- * @author Daimao
+ * @author DaiMao
  */
-public interface DepartmentHeaderService extends IService<DepartmentHeader> {
+public interface DepartmentHeaderService extends LegionBaseService<DepartmentHeader, String> {
 
     /**
      * 通过部门和负责人类型获取

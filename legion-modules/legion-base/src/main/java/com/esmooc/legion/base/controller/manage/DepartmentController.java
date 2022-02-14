@@ -1,14 +1,14 @@
 package com.esmooc.legion.base.controller.manage;
 
-import cn.hutool.core.util.StrUtil;
-import cn.hutool.json.JSONUtil;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
 import com.esmooc.legion.core.common.utils.CommonUtil;
+import com.esmooc.legion.core.common.utils.HibernateProxyTypeAdapter;
 import com.esmooc.legion.core.common.utils.ResultUtil;
 import com.esmooc.legion.core.common.utils.SecurityUtil;
 import com.esmooc.legion.core.common.vo.Result;
+import com.esmooc.legion.core.dao.mapper.DeleteMapper;
 import com.esmooc.legion.core.entity.Department;
 import com.esmooc.legion.core.entity.DepartmentHeader;
 import com.esmooc.legion.core.entity.User;
@@ -16,13 +16,15 @@ import com.esmooc.legion.core.service.DepartmentHeaderService;
 import com.esmooc.legion.core.service.DepartmentService;
 import com.esmooc.legion.core.service.RoleDepartmentService;
 import com.esmooc.legion.core.service.UserService;
+import cn.hutool.core.util.StrUtil;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +35,7 @@ import java.util.concurrent.TimeUnit;
 
 
 /**
- * @author Daimao
+ * @author DaiMao
  */
 @Slf4j
 @RestController
@@ -41,17 +43,28 @@ import java.util.concurrent.TimeUnit;
 @RequestMapping("/legion/department")
 @CacheConfig(cacheNames = "department")
 @Transactional
-@RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class DepartmentController {
 
-    DepartmentService departmentService;
-    UserService userService;
-    RoleDepartmentService roleDepartmentService;
-    DepartmentHeaderService departmentHeaderService;
-    RedisTemplateHelper redisTemplate;
-    SecurityUtil securityUtil;
+    @Autowired
+    private DepartmentService departmentService;
 
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private RoleDepartmentService roleDepartmentService;
+
+    @Autowired
+    private DepartmentHeaderService departmentHeaderService;
+
+    @Autowired
+    private DeleteMapper deleteMapper;
+
+    @Autowired
+    private RedisTemplateHelper redisTemplate;
+
+    @Autowired
+    private SecurityUtil securityUtil;
 
     @RequestMapping(value = "/getByParentId/{parentId}", method = RequestMethod.GET)
     @ApiOperation(value = "通过parentId获取")
@@ -62,26 +75,29 @@ public class DepartmentController {
         User u = securityUtil.getCurrUser();
         String key = "department::" + parentId + ":" + u.getId() + "_" + openDataFilter;
         String v = redisTemplate.get(key);
-        if (StrUtil.isNotEmpty(v)) {
-            list = JSONUtil.toList(v, Department.class);
-            return new ResultUtil<List<Department>>().setData(list);
+        if (StrUtil.isNotBlank(v)) {
+            list = new Gson().fromJson(v, new TypeToken<List<Department>>() {
+            }.getType());
+            return ResultUtil.data(list);
         }
-        list = departmentService.findByParentIdOrderBySortOrder(parentId, openDataFilter, securityUtil.getDeparmentIds());
+        list = departmentService.findByParentIdOrderBySortOrder(parentId, openDataFilter);
         setInfo(list);
-        redisTemplate.set(key, JSONUtil.toJsonStr(list), 15L, TimeUnit.DAYS);
-        return new ResultUtil<List<Department>>().setData(list);
+        redisTemplate.set(key,
+                new GsonBuilder().registerTypeAdapterFactory(HibernateProxyTypeAdapter.FACTORY).create().toJson(list), 15L, TimeUnit.DAYS);
+        return ResultUtil.data(list);
     }
 
-    @PostMapping( "/add")
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
     @ApiOperation(value = "添加")
     public Result<Object> add(Department department) {
-        departmentService.save(department);
+
+        Department d = departmentService.save(department);
         // 如果不是添加的一级 判断设置上级为父节点标识
         if (!CommonConstant.PARENT_ID.equals(department.getParentId())) {
-            Department parent = departmentService.getById(department.getParentId());
+            Department parent = departmentService.get(department.getParentId());
             if (parent.getIsParent() == null || !parent.getIsParent()) {
                 parent.setIsParent(true);
-                departmentService.updateById(parent);
+                departmentService.update(parent);
             }
         }
         // 更新缓存
@@ -89,17 +105,15 @@ public class DepartmentController {
         return ResultUtil.success("添加成功");
     }
 
-    @PostMapping("/edit")
+    @RequestMapping(value = "/edit", method = RequestMethod.POST)
     @ApiOperation(value = "编辑")
-    @Transactional
     public Result<Object> edit(Department department,
                                @RequestParam(required = false) String[] mainHeader,
                                @RequestParam(required = false) String[] viceHeader) {
 
-        Department old = departmentService.getById(department.getId());
+        Department old = departmentService.get(department.getId());
         String oldParentId = old.getParentId();
-        departmentService.updateById(department);
-        Department d = department;
+        Department d = departmentService.update(department);
         // 先删除原数据
         departmentHeaderService.deleteByDepartmentId(department.getId());
         List<DepartmentHeader> headers = new ArrayList<>();
@@ -118,14 +132,14 @@ public class DepartmentController {
             }
         }
         // 批量保存
-        departmentHeaderService.saveOrUpdateBatch(headers);
+        departmentHeaderService.saveOrUpdateAll(headers);
         // 如果该节点不是一级节点 且修改了级别 判断上级还有无子节点
         if (!"0".equals(oldParentId) && !oldParentId.equals(department.getParentId())) {
-            Department parent = departmentService.getById(oldParentId);
-            List<Department> children = departmentService.findByParentIdOrderBySortOrder(parent.getId(), false, securityUtil.getDeparmentIds());
+            Department parent = departmentService.get(oldParentId);
+            List<Department> children = departmentService.findByParentIdOrderBySortOrder(parent.getId(), false);
             if (parent != null && (children == null || children.isEmpty())) {
                 parent.setIsParent(false);
-                departmentService.updateById(parent);
+                departmentService.update(parent);
             }
         }
         // 若修改了部门名称
@@ -139,7 +153,7 @@ public class DepartmentController {
         return ResultUtil.success("编辑成功");
     }
 
-    @PostMapping(value = "/delByIds")
+    @RequestMapping(value = "/delByIds", method = RequestMethod.POST)
     @ApiOperation(value = "批量通过id删除")
     public Result<Object> delByIds(@RequestParam String[] ids) {
 
@@ -160,26 +174,28 @@ public class DepartmentController {
             throw new LegionException("删除失败，包含正被用户使用关联的部门");
         }
         // 获得其父节点
-        Department dep = departmentService.getById(id);
+        Department dep = departmentService.get(id);
         Department parent = null;
         if (dep != null && StrUtil.isNotBlank(dep.getParentId())) {
-            parent = departmentService.getById(dep.getParentId());
+            parent = departmentService.get(dep.getParentId());
         }
-        departmentService.removeById(id);
+        departmentService.delete(id);
         // 删除关联数据权限
         roleDepartmentService.deleteByDepartmentId(id);
         // 删除关联部门负责人
         departmentHeaderService.deleteByDepartmentId(id);
+        // 删除流程关联节点
+        deleteMapper.deleteActNode(id);
         // 判断父节点是否还有子节点
         if (parent != null) {
-            List<Department> childrenDeps = departmentService.findByParentIdOrderBySortOrder(parent.getId(), false, securityUtil.getDeparmentIds());
+            List<Department> childrenDeps = departmentService.findByParentIdOrderBySortOrder(parent.getId(), false);
             if (childrenDeps == null || childrenDeps.isEmpty()) {
                 parent.setIsParent(false);
-                departmentService.updateById(parent);
+                departmentService.update(parent);
             }
         }
         // 递归删除
-        List<Department> departments = departmentService.findByParentIdOrderBySortOrder(id, false, securityUtil.getDeparmentIds());
+        List<Department> departments = departmentService.findByParentIdOrderBySortOrder(id, false);
         for (Department d : departments) {
             if (!CommonUtil.judgeIds(d.getId(), ids)) {
                 deleteRecursion(d.getId(), ids);
@@ -192,15 +208,17 @@ public class DepartmentController {
     public Result<List<Department>> searchByTitle(@RequestParam String title,
                                                   @ApiParam("是否开始数据权限过滤") @RequestParam(required = false, defaultValue = "true") Boolean openDataFilter) {
 
-        List<Department> list = departmentService.findByTitleLikeOrderBySortOrder("%" + title + "%", openDataFilter, securityUtil.getDeparmentIds());
+        List<Department> list = departmentService.findByTitleLikeOrderBySortOrder("%" + title + "%", openDataFilter);
         setInfo(list);
-        return new ResultUtil<List<Department>>().setData(list);
+        return ResultUtil.data(list);
     }
 
     public void setInfo(List<Department> list) {
+
+        // lambda表达式
         list.forEach(item -> {
             if (!CommonConstant.PARENT_ID.equals(item.getParentId())) {
-                Department parent = departmentService.getById(item.getParentId());
+                Department parent = departmentService.get(item.getParentId());
                 item.setParentTitle(parent.getTitle());
             } else {
                 item.setParentTitle("一级部门");

@@ -5,28 +5,30 @@ import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
 import com.esmooc.legion.core.common.utils.PageUtil;
 import com.esmooc.legion.core.common.utils.ResultUtil;
-import com.esmooc.legion.core.common.utils.SearchUtil;
 import com.esmooc.legion.core.common.utils.SnowFlakeUtil;
+import com.esmooc.legion.core.common.vo.PageVo;
 import com.esmooc.legion.core.common.vo.Result;
+import com.esmooc.legion.core.common.vo.SearchVo;
 import com.esmooc.legion.core.entity.Member;
 import com.esmooc.legion.core.service.MemberService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.util.Map;
 
 
 /**
- * @author Daimao
+ * @author DaiMao
  */
 @Slf4j
 @RestController
@@ -34,20 +36,25 @@ import java.util.Map;
 @RequestMapping("/legion/app/member")
 @CacheConfig(cacheNames = "member")
 @Transactional
-@AllArgsConstructor
-@FieldDefaults(makeFinal = true,level = AccessLevel.PRIVATE)
 public class MemberAdminController {
 
-    MemberService memberService;
-    RedisTemplateHelper redisTemplate;
+    @Autowired
+    private MemberService memberService;
 
-    @GetMapping( "/getByCondition")
+    @Autowired
+    private RedisTemplateHelper redisTemplate;
+
+    @RequestMapping(value = "/getByCondition", method = RequestMethod.GET)
     @ApiOperation(value = "多条件分页获取")
-    public Result<Object> getByCondition(@RequestBody Map<String, Object> search) {
-        return ResultUtil.data(memberService.page(PageUtil.initPage(search), SearchUtil.parseWhereSql(search)));
+    public Result<Page<Member>> getByCondition(Member member,
+                                               SearchVo searchVo,
+                                               PageVo pageVo) {
+
+        Page<Member> page = memberService.findByCondition(member, searchVo, PageUtil.initPage(pageVo));
+        return ResultUtil.data(page);
     }
 
-    @PostMapping("/admin/add")
+    @RequestMapping(value = "/admin/add", method = RequestMethod.POST)
     @ApiOperation(value = "添加用户")
     public Result<Object> add(@Valid Member m) {
 
@@ -59,7 +66,7 @@ public class MemberAdminController {
         // Username/UID 邀请码
         m.setUsername(uid.toString()).setInviteCode(Long.toString(uid, 32).toUpperCase());
 
-        memberService.save(m);
+        Member member = memberService.save(m);
         return ResultUtil.success("添加成功");
     }
 
@@ -68,7 +75,7 @@ public class MemberAdminController {
     @CacheEvict(key = "#m.username")
     public Result<Object> edit(@Valid Member m) {
 
-        Member old = memberService.getById(m.getId());
+        Member old = memberService.get(m.getId());
 
         m.setUsername(old.getUsername()).setPassword(old.getPassword());
         // 若修改了手机和邮箱判断是否唯一
@@ -76,7 +83,7 @@ public class MemberAdminController {
             return ResultUtil.error("该手机号已绑定其他账户");
         }
 
-        memberService.updateById(m);
+        memberService.update(m);
         return ResultUtil.success("修改成功");
     }
 
@@ -85,7 +92,7 @@ public class MemberAdminController {
     public Result<Object> disable(@RequestParam String userId,
                                   @RequestParam Boolean enable) {
 
-        Member member = memberService.getById(userId);
+        Member member = memberService.get(userId);
         if (member == null) {
             return ResultUtil.error("会员不存在");
         }
@@ -94,21 +101,21 @@ public class MemberAdminController {
         } else {
             member.setStatus(MemberConstant.MEMBER_STATUS_LOCK);
         }
-        memberService.updateById(member);
+        memberService.update(member);
         //手动更新缓存
         redisTemplate.delete("member::" + member.getUsername());
         return ResultUtil.success("操作成功");
     }
 
-    @PostMapping("/delByIds")
+    @RequestMapping(value = "/delByIds", method = RequestMethod.POST)
     @ApiOperation(value = "批量通过ids删除")
     public Result<Object> delAllByIds(@RequestParam String[] ids) {
 
         for (String id : ids) {
-            Member m = memberService.getById(id);
+            Member m = memberService.get(id);
             // 删除相关缓存
             redisTemplate.delete("member::" + m.getUsername());
-            memberService.removeById(id);
+            memberService.delete(id);
         }
         return ResultUtil.success("批量通过id删除数据成功");
     }

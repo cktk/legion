@@ -6,7 +6,7 @@ import org.jasypt.encryption.pbe.config.SimpleStringPBEConfig;
 
 
 /**
- * @author Daimao
+ * @author DaiMao
  */
 @Slf4j
 public class JasyptUtil {
@@ -54,19 +54,8 @@ public class JasyptUtil {
     public static void main(String[] args) {
 
         // 加密 若修改了第一个参数加密password记得在配置文件同步修改
-        String pwd="";
-
-        String encCode="";
-
-        String encPwd = encyptPwd(encCode, pwd);
-        System.out.println("加密后密码  "+encPwd);
+        System.out.println(encyptPwd("legion", "123456"));
         // 解密
-
-        String decPwd = decyptPwd(encCode, encPwd);
-
-        System.out.println("解密后密码  "+decPwd);
-
-        System.out.println("解密结果  " +pwd.equals(decPwd));
-
+        System.out.println(decyptPwd("legion", "PYVnAYh+j5C3jkMV1d+myj6JzDaUk7pcfTWUaYsvQdEVkuvIVf7Y0mOU9XkffxT8"));
     }
 }

@@ -1,9 +1,5 @@
 package com.esmooc.legion.social.controller;
 
-import cn.hutool.core.util.IdUtil;
-import cn.hutool.core.util.StrUtil;
-import cn.hutool.http.HttpUtil;
-import cn.hutool.json.JSONUtil;
 import com.esmooc.legion.core.common.annotation.SystemLog;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.constant.SecurityConstant;
@@ -15,8 +11,12 @@ import com.esmooc.legion.core.common.vo.Result;
 import com.esmooc.legion.core.config.security.SecurityUserDetails;
 import com.esmooc.legion.core.entity.User;
 import com.esmooc.legion.social.entity.Social;
-import com.esmooc.legion.social.entity.vo.GithubUserInfo;
 import com.esmooc.legion.social.service.SocialService;
+import com.esmooc.legion.social.vo.GithubUserInfo;
+import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.HttpUtil;
+import com.google.gson.Gson;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -24,10 +24,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -35,12 +36,12 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * https://developer.github.com/apps/building-oauth-apps/authorizing-oauth-apps/
- * @author Daimao
+ * @author DaiMao
  */
 @Slf4j
 @Api(tags = "Github登录接口")
 @RequestMapping("/legion/social/github")
-@RestController
+@Controller
 public class GithubController {
 
     private static final String STATE = SecurityConstant.GITHUB_STATE;
@@ -76,6 +77,7 @@ public class GithubController {
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     @ApiOperation(value = "获取github认证链接")
+    @ResponseBody
     public Result<Object> login() {
 
         // 生成并保存state 忽略该参数有可能导致CSRF攻击
@@ -119,12 +121,12 @@ public class GithubController {
         String accessToken = StrUtil.subBetween(result, "access_token=", "&scope");
         // 获取用户信息
         String userInfo = HttpUtil.get(GET_USERINFO_URL + accessToken);
-        GithubUserInfo gu = JSONUtil.toBean(userInfo, GithubUserInfo.class);
+        GithubUserInfo gu = new Gson().fromJson(userInfo, GithubUserInfo.class);
         // 存入数据库
         Social github = socialService.findByOpenIdAndPlatform(gu.getId(), TYPE);
         if (github == null) {
             Social g = new Social().setOpenId(gu.getId()).setUsername(gu.getLogin()).setAvatar(gu.getAvatar_url()).setPlatform(TYPE);
-            socialService.save(g);
+            github = socialService.save(g);
         }
 
         String url = "";

@@ -8,10 +8,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * @author Daimao
+ * @author DaiMao
  */
 @Configuration
-@MapperScan({"com.esmooc.legion.*.mapper", "com.esmooc.legion.autochat.mapper"})
+@MapperScan({"com.esmooc.legion.*.mapper", "com.esmooc.legion.*.*.mapper"})
 public class MybatisPlusConfig {
 
     /**
@@ -24,5 +24,4 @@ public class MybatisPlusConfig {
         interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
         return interceptor;
     }
-
 }

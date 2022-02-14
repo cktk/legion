@@ -1,13 +1,13 @@
 package com.esmooc.legion.file.manage.impl;
 
-import cn.hutool.core.util.StrUtil;
-import cn.hutool.json.JSONUtil;
 import com.esmooc.legion.core.common.constant.SettingConstant;
 import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.core.entity.Setting;
-import com.esmooc.legion.core.entity.vo.OssSetting;
 import com.esmooc.legion.core.service.SettingService;
+import com.esmooc.legion.core.vo.OssSetting;
 import com.esmooc.legion.file.manage.FileManage;
+import cn.hutool.core.util.StrUtil;
+import com.google.gson.Gson;
 import com.qcloud.cos.COSClient;
 import com.qcloud.cos.ClientConfig;
 import com.qcloud.cos.auth.BasicCOSCredentials;
@@ -23,7 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.InputStream;
 
 /**
- * @author Daimao
+ * @author DaiMao
  */
 @Component
 public class TencentFileManage implements FileManage {
@@ -34,11 +34,11 @@ public class TencentFileManage implements FileManage {
     @Override
     public OssSetting getOssSetting() {
 
-        Setting setting = settingService.getById(SettingConstant.TENCENT_OSS);
+        Setting setting = settingService.get(SettingConstant.TENCENT_OSS);
         if (setting == null || StrUtil.isBlank(setting.getValue())) {
             throw new LegionException("您还未配置腾讯云COS存储");
         }
-        return JSONUtil.toBean(setting.getValue(), OssSetting.class);
+        return new Gson().fromJson(setting.getValue(), OssSetting.class);
     }
 
     @Override

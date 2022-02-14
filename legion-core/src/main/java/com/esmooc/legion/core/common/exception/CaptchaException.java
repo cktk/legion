@@ -3,7 +3,7 @@ package com.esmooc.legion.core.common.exception;
 import lombok.Data;
 
 /**
- * @author Daimao
+ * @author DaiMao
  */
 @Data
 public class CaptchaException extends RuntimeException {

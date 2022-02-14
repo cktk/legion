@@ -1,7 +1,6 @@
 package com.esmooc.legion.core.common.utils;
 
-
-import cn.hutool.json.JSONUtil;
+import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.http.HttpServletResponse;
@@ -9,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author Daimao
+ * @author DaiMao
  */
 @Slf4j
 public class ResponseUtil {
@@ -24,7 +23,7 @@ public class ResponseUtil {
         try {
             response.setCharacterEncoding("UTF-8");
             response.setContentType("application/json;charset=UTF-8");
-            response.getOutputStream().write(JSONUtil.toJsonStr(resultMap).getBytes());
+            response.getOutputStream().write(new Gson().toJson(resultMap).getBytes());
         } catch (Exception e) {
             log.error(e + "，输出JSON出错");
         }

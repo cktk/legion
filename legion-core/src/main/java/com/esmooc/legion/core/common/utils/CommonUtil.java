@@ -5,7 +5,7 @@ import cn.hutool.core.util.IdUtil;
 import java.security.SecureRandom;
 
 /**
- * @author Daimao
+ * @author DaiMao
  */
 public class CommonUtil {
 

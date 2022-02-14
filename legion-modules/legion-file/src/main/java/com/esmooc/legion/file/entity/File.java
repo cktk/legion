@@ -1,28 +1,39 @@
 package com.esmooc.legion.file.entity;
 
+import com.esmooc.legion.core.base.LegionBaseEntity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.esmooc.legion.core.base.BaseEntity;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 
 /**
- * @author Daimao
+ * @author DaiMao
  */
 @Data
 @Accessors(chain = true)
+@Entity
+@DynamicInsert
+@DynamicUpdate
+@Table(name = "t_file")
 @TableName("t_file")
 @ApiModel(value = "文件")
-public class File extends BaseEntity {
+public class File extends LegionBaseEntity {
+
+    private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "原文件名")
     private String name;
 
-    @TableField(value = "f_key")
     @ApiModelProperty(value = "存储文件名")
     private String fKey;
 
@@ -39,6 +50,7 @@ public class File extends BaseEntity {
     @ApiModelProperty(value = "存储位置 0本地 1七牛 2阿里 3腾讯 4MinIO")
     private Integer location;
 
+    @Transient
     @TableField(exist = false)
     @ApiModelProperty(value = "上传者用户名")
     private String nickname;

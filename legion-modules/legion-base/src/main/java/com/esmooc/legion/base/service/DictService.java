@@ -1,15 +1,15 @@
 package com.esmooc.legion.base.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.esmooc.legion.base.entity.Dict;
+import com.esmooc.legion.core.base.LegionBaseService;
 
 import java.util.List;
 
 /**
  * 字典接口
- * @author Daimao
+ * @author DaiMao
  */
-public interface DictService extends IService<Dict> {
+public interface DictService extends LegionBaseService<Dict, String> {
 
     /**
      * 排序获取全部

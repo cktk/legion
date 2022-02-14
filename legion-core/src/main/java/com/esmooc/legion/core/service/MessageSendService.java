@@ -1,17 +1,19 @@
 package com.esmooc.legion.core.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.esmooc.legion.core.base.LegionBaseService;
 import com.esmooc.legion.core.entity.Message;
 import com.esmooc.legion.core.entity.MessageSend;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Map;
 
 /**
  * 消息发送接口
- * @author Daimao
+ * @author DaiMao
  */
-public interface MessageSendService extends IService<MessageSend> {
+public interface MessageSendService extends LegionBaseService<MessageSend, String> {
 
     /**
      * 发送消息 带websock推送
@@ -32,6 +34,7 @@ public interface MessageSendService extends IService<MessageSend> {
      * @param pageable
      * @return
      */
+    Page<MessageSend> findByCondition(MessageSend messageSend, Pageable pageable);
 
     /**
      * 批量更新消息状态

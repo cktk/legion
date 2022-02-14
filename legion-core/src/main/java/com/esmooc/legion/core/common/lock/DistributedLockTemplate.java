@@ -5,7 +5,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 分布式锁模板类
- * @author Daimao
+ * @author DaiMao
  */
 public interface DistributedLockTemplate {
 

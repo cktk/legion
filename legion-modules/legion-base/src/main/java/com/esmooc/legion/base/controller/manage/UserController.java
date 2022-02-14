@@ -1,9 +1,5 @@
 package com.esmooc.legion.base.controller.manage;
 
-import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.util.StrUtil;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.esmooc.legion.base.async.AddMessage;
 import com.esmooc.legion.core.common.annotation.SystemLog;
 import com.esmooc.legion.core.common.constant.CommonConstant;
@@ -15,29 +11,32 @@ import com.esmooc.legion.core.common.vo.PageVo;
 import com.esmooc.legion.core.common.vo.Result;
 import com.esmooc.legion.core.common.vo.SearchVo;
 import com.esmooc.legion.core.config.security.SecurityUserDetails;
-import com.esmooc.legion.core.entity.DTO.UserDTO;
+import com.esmooc.legion.core.dao.mapper.DeleteMapper;
 import com.esmooc.legion.core.entity.Department;
 import com.esmooc.legion.core.entity.Role;
 import com.esmooc.legion.core.entity.User;
 import com.esmooc.legion.core.entity.UserRole;
-import com.esmooc.legion.core.entity.vo.UserVo;
-import com.esmooc.legion.core.mapper.DeleteMapper;
+import com.esmooc.legion.core.service.*;
+import com.esmooc.legion.core.service.mybatis.IUserRoleService;
+import com.esmooc.legion.core.vo.RoleDTO;
+import cn.hutool.core.util.StrUtil;
 import com.esmooc.legion.core.service.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.data.domain.Page;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.validation.Valid;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -48,7 +47,7 @@ import java.util.stream.Collectors;
 
 
 /**
- * @author Daimao
+ * @author DaiMao
  */
 @Slf4j
 @RestController
@@ -56,21 +55,42 @@ import java.util.stream.Collectors;
 @RequestMapping("/legion/user")
 @CacheConfig(cacheNames = "user")
 @Transactional
-@AllArgsConstructor
-@FieldDefaults(makeFinal = true,level = AccessLevel.PRIVATE)
 public class UserController {
 
     public static final String USER = "user::";
-    UserService userService;
-    RoleService roleService;
-    DepartmentService departmentService;
-    DepartmentHeaderService departmentHeaderService;
-    UserRoleService userRoleService;
-    AddMessage addMessage;
-    DeleteMapper deleteMapper;
-    RedisTemplateHelper redisTemplate;
-    SecurityUtil securityUtil;
 
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private RoleService roleService;
+
+    @Autowired
+    private DepartmentService departmentService;
+
+    @Autowired
+    private DepartmentHeaderService departmentHeaderService;
+
+    @Autowired
+    private IUserRoleService iUserRoleService;
+
+    @Autowired
+    private UserRoleService userRoleService;
+
+    @Autowired
+    private AddMessage addMessage;
+
+    @Autowired
+    private DeleteMapper deleteMapper;
+
+    @Autowired
+    private RedisTemplateHelper redisTemplate;
+
+    @Autowired
+    private SecurityUtil securityUtil;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @RequestMapping(value = "/smsLogin", method = RequestMethod.POST)
     @SystemLog(description = "短信登录", type = LogType.LOGIN)
@@ -98,7 +118,7 @@ public class UserController {
         User u = userService.findByMobile(mobile);
         String encryptPass = new BCryptPasswordEncoder().encode(password);
         u.setPassword(encryptPass).setPassStrength(passStrength);
-        userService.updateById(u);
+        userService.update(u);
         // 删除缓存
         redisTemplate.delete(USER + u.getUsername());
         return ResultUtil.success("重置密码成功");
@@ -113,20 +133,20 @@ public class UserController {
 
         String encryptPass = new BCryptPasswordEncoder().encode(u.getPassword());
         u.setPassword(encryptPass).setType(CommonConstant.USER_TYPE_NORMAL);
-         userService.save(u);
+        User user = userService.save(u);
 
         // 默认角色
         List<Role> roleList = roleService.findByDefaultRole(true);
         if (roleList != null && roleList.size() > 0) {
             for (Role role : roleList) {
-                UserRole ur = new UserRole().setUserId(u.getId()).setRoleId(role.getId());
+                UserRole ur = new UserRole().setUserId(user.getId()).setRoleId(role.getId());
                 userRoleService.save(ur);
             }
         }
         // 异步发送创建账号消息
-        addMessage.addSendMessage(u.getId());
+        addMessage.addSendMessage(user.getId());
 
-        return ResultUtil.data(u);
+        return ResultUtil.data(user);
     }
 
     @RequestMapping(value = "/info", method = RequestMethod.GET)
@@ -134,8 +154,10 @@ public class UserController {
     public Result<User> getUserInfo() {
 
         User u = securityUtil.getCurrUser();
+        // 清除持久上下文环境 避免后面语句导致持久化
+        entityManager.clear();
         u.setPassword(null);
-        return new ResultUtil<User>().setData(u);
+        return ResultUtil.data(u);
     }
 
     @RequestMapping(value = "/changeMobile", method = RequestMethod.POST)
@@ -144,7 +166,7 @@ public class UserController {
 
         User u = securityUtil.getCurrUser();
         u.setMobile(mobile);
-        userService.updateById(u);
+        userService.update(u);
         // 删除缓存
         redisTemplate.delete(USER + u.getUsername());
         return ResultUtil.success("修改手机号成功");
@@ -166,15 +188,15 @@ public class UserController {
     public Result<Object> resetPass(@RequestParam String[] ids) {
 
         for (String id : ids) {
-            User u = userService.getById(id);
+            User u = userService.get(id);
             u.setPassword(new BCryptPasswordEncoder().encode("123456"));
-            userService.updateById(u);
+            userService.update(u);
             redisTemplate.delete(USER + u.getUsername());
         }
         return ResultUtil.success("操作成功");
     }
 
-    @PostMapping("/edit")
+    @RequestMapping(value = "/edit", method = RequestMethod.POST)
     @ApiOperation(value = "修改用户自己资料", notes = "用户名密码等不会修改 需要username更新缓存")
     @CacheEvict(key = "#u.username")
     public Result<Object> editOwn(User u) {
@@ -185,22 +207,24 @@ public class UserController {
         if (StrUtil.isBlank(u.getDepartmentId())) {
             u.setDepartmentId(null);
         }
-        userService.updateById(u);
+        userService.update(u);
         return ResultUtil.success("修改成功");
     }
 
     /**
-     * @param password 旧密码
-     * @param newPass 新密码
-     * @return 状态
+     * 线上
+     * @param password
+     * @param newPass
+     * @return
      */
     @RequestMapping(value = "/modifyPass", method = RequestMethod.POST)
     @ApiOperation(value = "修改密码")
-    public Result<String> modifyPass(@ApiParam("旧密码") @RequestParam String password,
+    public Result<Object> modifyPass(@ApiParam("旧密码") @RequestParam String password,
                                      @ApiParam("新密码") @RequestParam String newPass,
                                      @ApiParam("密码强度") @RequestParam String passStrength) {
 
         User user = securityUtil.getCurrUser();
+
 
         if (!new BCryptPasswordEncoder().matches(password, user.getPassword())) {
             return ResultUtil.error("旧密码不正确");
@@ -209,7 +233,7 @@ public class UserController {
         String newEncryptPass = new BCryptPasswordEncoder().encode(newPass);
         user.setPassword(newEncryptPass);
         user.setPassStrength(passStrength);
-        userService.updateById(user);
+        userService.update(user);
 
         // 手动更新缓存
         redisTemplate.delete(USER + user.getUsername());
@@ -219,29 +243,23 @@ public class UserController {
 
     @RequestMapping(value = "/getByCondition", method = RequestMethod.GET)
     @ApiOperation(value = "多条件分页获取用户列表")
-    public Result<Page<User>> getByCondition(UserDTO user,
+    public Result<Object> getByCondition(User user,
                                              SearchVo searchVo,
                                              PageVo pageVo) {
 
-
-        Integer number = pageVo.getPageNumber();
-        Integer pageSize = pageVo.getPageSize();
-        int start = Math.max((number - 1) * pageSize, 0);
-        System.out.println("pageSize  " + pageSize);
-        System.out.println("max  " + start);
-        //LIMIT pageSize OFFSET
-        List<User>  list= userService.bySqlPage(user,pageSize,start);
-        long count = 100000;
-        Page<User> iPage = new Page<User>();
-        iPage.setRecords(list);
-        iPage.setSize(pageSize);
-        iPage.setTotal(count);
-        iPage.setPages(count/pageSize);
-
-
-
-
-        return ResultUtil.data(iPage);
+        Page<User> page = userService.findByCondition(user, searchVo, PageUtil.initPage(pageVo));
+        for (User u : page.getContent()) {
+            // 关联角色
+            List<Role> list = iUserRoleService.findByUserId(u.getId());
+            List<RoleDTO> roleDTOList = list.stream().map(e -> {
+                return new RoleDTO().setId(e.getId()).setName(e.getName()).setDescription(e.getDescription());
+            }).collect(Collectors.toList());
+            u.setRoles(roleDTOList);
+            // 游离态 避免后面语句导致持久化
+            entityManager.detach(u);
+            u.setPassword(null);
+        }
+        return ResultUtil.data(page);
     }
 
     @RequestMapping(value = "/getByDepartmentId/{departmentId}", method = RequestMethod.GET)
@@ -249,10 +267,11 @@ public class UserController {
     public Result<List<User>> getByCondition(@PathVariable String departmentId) {
 
         List<User> list = userService.findByDepartmentId(departmentId);
+        entityManager.clear();
         list.forEach(u -> {
             u.setPassword(null);
         });
-        return new ResultUtil<List<User>>().setData(list);
+        return ResultUtil.data(list);
     }
 
     @RequestMapping(value = "/searchByName/{username}", method = RequestMethod.GET)
@@ -260,22 +279,24 @@ public class UserController {
     public Result<List<User>> searchByName(@PathVariable String username) throws UnsupportedEncodingException {
 
         List<User> list = userService.findByUsernameLikeAndStatus(URLDecoder.decode(username, "utf-8"), CommonConstant.STATUS_NORMAL);
+        entityManager.clear();
         list.forEach(u -> {
             u.setPassword(null);
         });
-        return new ResultUtil<List<User>>().setData(list);
+        return ResultUtil.data(list);
     }
 
     @RequestMapping(value = "/getAll", method = RequestMethod.GET)
     @ApiOperation(value = "获取全部用户数据")
     public Result<List<User>> getAll() {
 
-        List<User> list = userService.list();
+        List<User> list = userService.getAll();
         // 清除持久上下文环境 避免后面语句导致持久化
+        entityManager.clear();
         for (User u : list) {
             u.setPassword(null);
         }
-        return new ResultUtil<List<User>>().setData(list);
+        return ResultUtil.data(list);
     }
 
     @RequestMapping(value = "/admin/add", method = RequestMethod.POST)
@@ -289,7 +310,7 @@ public class UserController {
         String encryptPass = new BCryptPasswordEncoder().encode(u.getPassword());
         u.setPassword(encryptPass);
         if (StrUtil.isNotBlank(u.getDepartmentId())) {
-            Department d = departmentService.getById(u.getDepartmentId());
+            Department d = departmentService.get(u.getDepartmentId());
             if (d != null) {
                 u.setDepartmentTitle(d.getTitle());
             }
@@ -297,15 +318,14 @@ public class UserController {
             u.setDepartmentId(null);
             u.setDepartmentTitle("");
         }
+        User user = userService.save(u);
 
-         userService.save(u);
-        User user =u;
         if (roleIds != null) {
             // 添加角色
             List<UserRole> userRoles = Arrays.asList(roleIds).stream().map(e -> {
                 return new UserRole().setUserId(u.getId()).setRoleId(e);
             }).collect(Collectors.toList());
-            userRoleService.saveOrUpdateBatch(userRoles);
+            userRoleService.saveOrUpdateAll(userRoles);
         }
         // 发送创建账号消息
         addMessage.addSendMessage(user.getId());
@@ -316,11 +336,10 @@ public class UserController {
     @RequestMapping(value = "/admin/edit", method = RequestMethod.POST)
     @ApiOperation(value = "管理员修改资料", notes = "需要通过id获取原用户信息 需要username更新缓存")
     @CacheEvict(key = "#u.username")
-    public Result<Object> edit(UserVo userVo, @RequestParam(required = false) String[] roleIds) {
+    public Result<Object> edit(User u,
+                               @RequestParam(required = false) String[] roleIds) {
 
-
-        User u = BeanUtil.copyProperties(userVo, User.class);
-        User old = userService.getById(u.getId());
+        User old = userService.get(u.getId());
 
         u.setUsername(old.getUsername());
         // 若修改了手机和邮箱判断是否唯一
@@ -332,7 +351,7 @@ public class UserController {
         }
 
         if (StrUtil.isNotBlank(u.getDepartmentId())) {
-            Department d = departmentService.getById(u.getDepartmentId());
+            Department d = departmentService.get(u.getDepartmentId());
             if (d != null) {
                 u.setDepartmentTitle(d.getTitle());
             }
@@ -342,7 +361,7 @@ public class UserController {
         }
 
         u.setPassword(old.getPassword());
-        userService.updateById(u);
+        userService.update(u);
         // 删除该用户角色
         userRoleService.deleteByUserId(u.getId());
         if (roleIds != null) {
@@ -350,12 +369,12 @@ public class UserController {
             List<UserRole> userRoles = Arrays.asList(roleIds).stream().map(e -> {
                 return new UserRole().setRoleId(e).setUserId(u.getId());
             }).collect(Collectors.toList());
-            userRoleService.saveOrUpdateBatch(userRoles);
+            userRoleService.saveOrUpdateAll(userRoles);
         }
         // 手动删除缓存
-        //redisTemplate.delete("userRole::" + u.getId());
-        //redisTemplate.delete("userRole::depIds:" + u.getId());
-        //redisTemplate.delete("permission::userMenuList:" + u.getId());
+        redisTemplate.delete("userRole::" + u.getId());
+        redisTemplate.delete("userRole::depIds:" + u.getId());
+        redisTemplate.delete("permission::userMenuList:" + u.getId());
         return ResultUtil.success("修改成功");
     }
 
@@ -363,9 +382,9 @@ public class UserController {
     @ApiOperation(value = "后台禁用用户")
     public Result<Object> disable(@ApiParam("用户唯一id标识") @PathVariable String userId) {
 
-        User user = userService.getById(userId);
+        User user = userService.get(userId);
         user.setStatus(CommonConstant.USER_STATUS_LOCK);
-        userService.updateById(user);
+        userService.update(user);
         // 手动更新缓存
         redisTemplate.delete(USER + user.getUsername());
         return ResultUtil.success("操作成功");
@@ -375,20 +394,20 @@ public class UserController {
     @ApiOperation(value = "后台启用用户")
     public Result<Object> enable(@ApiParam("用户唯一id标识") @PathVariable String userId) {
 
-        User user = userService.getById(userId);
+        User user = userService.get(userId);
         user.setStatus(CommonConstant.USER_STATUS_NORMAL);
-        userService.updateById(user);
+        userService.update(user);
         // 手动更新缓存
         redisTemplate.delete(USER + user.getUsername());
         return ResultUtil.success("操作成功");
     }
 
-    @PostMapping("/delByIds")
+    @RequestMapping(value = "/delByIds", method = RequestMethod.POST)
     @ApiOperation(value = "批量通过ids删除")
     public Result<Object> delAllByIds(@RequestParam String[] ids) {
 
         for (String id : ids) {
-            User u = userService.getById(id);
+            User u = userService.get(id);
             // 删除相关缓存
             redisTemplate.delete(USER + u.getUsername());
             redisTemplate.delete("userRole::" + u.getId());
@@ -396,7 +415,7 @@ public class UserController {
             redisTemplate.delete("permission::userMenuList:" + u.getId());
             redisTemplate.deleteByPattern("department::*");
 
-            userService.removeById(id);
+            userService.delete(id);
 
             // 删除关联角色
             userRoleService.deleteByUserId(id);
@@ -405,6 +424,8 @@ public class UserController {
 
             // 删除关联流程、社交账号数据
             try {
+                deleteMapper.deleteActNode(u.getId());
+                deleteMapper.deleteActStarter(u.getId());
                 deleteMapper.deleteSocial(u.getUsername());
             } catch (Exception e) {
                 log.warn(e.toString());
@@ -440,7 +461,7 @@ public class UserController {
             u.setPassword(new BCryptPasswordEncoder().encode(u.getPassword()));
             // 验证部门id正确性
             if (StrUtil.isNotBlank(u.getDepartmentId())) {
-                Department department = departmentService.getById(u.getDepartmentId());
+                Department department = departmentService.get(u.getDepartmentId());
                 if (department == null) {
                     errors.add(count);
                     reasons.add("部门id不存在");

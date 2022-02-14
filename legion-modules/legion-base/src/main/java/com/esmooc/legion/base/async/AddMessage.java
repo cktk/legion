@@ -13,7 +13,7 @@ import java.util.List;
 
 /**
  * 异步添加消息
- * @author Daimao
+ * @author DaiMao
  */
 @Component
 public class AddMessage {
@@ -40,6 +40,6 @@ public class AddMessage {
             ms.setMessageId(item.getId());
             messageSends.add(ms);
         });
-        messageSendService.saveOrUpdateBatch(messageSends);
+        messageSendService.saveOrUpdateAll(messageSends);
     }
 }

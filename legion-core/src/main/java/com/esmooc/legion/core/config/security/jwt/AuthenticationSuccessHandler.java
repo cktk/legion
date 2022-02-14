@@ -1,15 +1,16 @@
 package com.esmooc.legion.core.config.security.jwt;
 
-import cn.hutool.core.util.IdUtil;
-import cn.hutool.core.util.StrUtil;
-import cn.hutool.json.JSONUtil;
 import com.esmooc.legion.core.common.annotation.SystemLog;
 import com.esmooc.legion.core.common.constant.SecurityConstant;
 import com.esmooc.legion.core.common.enums.LogType;
 import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
+import com.esmooc.legion.core.common.utils.IpInfoUtil;
 import com.esmooc.legion.core.common.utils.ResponseUtil;
 import com.esmooc.legion.core.common.vo.TokenUser;
 import com.esmooc.legion.core.config.properties.LegionTokenProperties;
+import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.StrUtil;
+import com.google.gson.Gson;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +32,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 登录成功处理类
- * @author Daimao
+ * @author DaiMao
  */
 @Slf4j
 @Component
@@ -40,6 +41,8 @@ public class AuthenticationSuccessHandler extends SavedRequestAwareAuthenticatio
     @Autowired
     private LegionTokenProperties tokenProperties;
 
+    @Autowired
+    private IpInfoUtil ipInfoUtil;
 
     @Autowired
     private RedisTemplateHelper redisTemplate;
@@ -50,8 +53,8 @@ public class AuthenticationSuccessHandler extends SavedRequestAwareAuthenticatio
 
         // 用户选择保存登录状态几天（记住我）
         String saveLogin = request.getParameter(SecurityConstant.SAVE_LOGIN);
-        boolean saved = false;
-        if (StrUtil.isNotBlank(saveLogin) && Boolean.parseBoolean(saveLogin)) {
+        Boolean saved = false;
+        if (StrUtil.isNotBlank(saveLogin) && Boolean.valueOf(saveLogin)) {
             saved = true;
             if (!tokenProperties.getRedis()) {
                 tokenProperties.setTokenExpireTime(tokenProperties.getSaveLoginTime() * 60 * 24);
@@ -63,6 +66,7 @@ public class AuthenticationSuccessHandler extends SavedRequestAwareAuthenticatio
         for (GrantedAuthority g : authorities) {
             list.add(g.getAuthority());
         }
+        ipInfoUtil.getInfo(request, "");
         // 登陆成功生成token
         String token;
         if (tokenProperties.getRedis()) {
@@ -82,19 +86,20 @@ public class AuthenticationSuccessHandler extends SavedRequestAwareAuthenticatio
             }
             if (saved) {
                 redisTemplate.set(SecurityConstant.USER_TOKEN + username, token, tokenProperties.getSaveLoginTime(), TimeUnit.DAYS);
-                redisTemplate.set(SecurityConstant.TOKEN_PRE + token, JSONUtil.toJsonStr(user), tokenProperties.getSaveLoginTime(), TimeUnit.DAYS);
+                redisTemplate.set(SecurityConstant.TOKEN_PRE + token, new Gson().toJson(user), tokenProperties.getSaveLoginTime(), TimeUnit.DAYS);
             } else {
                 redisTemplate.set(SecurityConstant.USER_TOKEN + username, token, tokenProperties.getTokenExpireTime(), TimeUnit.MINUTES);
-                redisTemplate.set(SecurityConstant.TOKEN_PRE + token, JSONUtil.toJsonStr(user), tokenProperties.getTokenExpireTime(), TimeUnit.MINUTES);
+                redisTemplate.set(SecurityConstant.TOKEN_PRE + token, new Gson().toJson(user), tokenProperties.getTokenExpireTime(), TimeUnit.MINUTES);
             }
         } else {
             // JWT不缓存权限 避免JWT长度过长
+            list = null;
             // JWT
             token = SecurityConstant.TOKEN_SPLIT + Jwts.builder()
                     // 主题 放入用户名
                     .setSubject(username)
                     // 自定义属性 放入用户拥有请求权限
-                    .claim(SecurityConstant.AUTHORITIES, null)
+                    .claim(SecurityConstant.AUTHORITIES, new Gson().toJson(list))
                     // 失效时间
                     .setExpiration(new Date(System.currentTimeMillis() + tokenProperties.getTokenExpireTime() * 60 * 1000))
                     // 签名算法和密钥

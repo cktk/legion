@@ -1,13 +1,15 @@
 package com.esmooc.legion.core.common.sms;
 
-import cn.hutool.core.util.StrUtil;
-import cn.hutool.json.JSONUtil;
 import com.esmooc.legion.core.common.constant.SettingConstant;
 import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.core.common.utils.NameUtil;
 import com.esmooc.legion.core.entity.Setting;
-import com.esmooc.legion.core.entity.vo.SmsSetting;
 import com.esmooc.legion.core.service.SettingService;
+import com.esmooc.legion.core.vo.SmsSetting;
+import cn.hutool.core.util.StrUtil;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import com.tencentcloudapi.common.Credential;
 import com.tencentcloudapi.common.exception.TencentCloudSDKException;
 import com.tencentcloudapi.sms.v20190711.SmsClient;
@@ -21,7 +23,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * @author Daimao
+ * @author DaiMao
  */
 @Slf4j
 @Component
@@ -33,11 +35,11 @@ public class TencentSms implements Sms {
     @Override
     public SmsSetting getSmsSetting() {
 
-        Setting setting = settingService.getById(SettingConstant.TENCENT_SMS);
+        Setting setting = settingService.get(SettingConstant.TENCENT_SMS);
         if (setting == null || StrUtil.isBlank(setting.getValue())) {
             throw new LegionException("您还未配置腾讯云短信服务");
         }
-        return JSONUtil.toBean(setting.getValue(), SmsSetting.class);
+        return new Gson().fromJson(setting.getValue(), SmsSetting.class);
     }
 
     @Override
@@ -86,9 +88,15 @@ public class TencentSms implements Sms {
     }
 
     public static String[] getParams(String params) {
-        Set<Map.Entry<String, Object>> entries = JSONUtil.parseObj(params).entrySet();
+
+        Set<Map.Entry<String, JsonElement>> entries = JsonParser.parseString(params).getAsJsonObject().entrySet();
         String[] templateParams = new String[entries.size()];
-        log.info("模板参数==>{}", entries);
+        int i = 0;
+        for (Map.Entry<String, JsonElement> entry : entries) {
+            String value = entry.getValue().getAsString();
+            templateParams[i] = value;
+            i++;
+        }
         return templateParams;
     }
 }

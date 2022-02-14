@@ -1,15 +1,15 @@
 package com.esmooc.legion.base.controller.common;
 
-import cn.hutool.http.HttpUtil;
 import com.esmooc.legion.core.common.utils.ResultUtil;
 import com.esmooc.legion.core.common.vo.Result;
+import cn.hutool.http.HttpUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author Daimao
+ * @author DaiMao
  */
 @Slf4j
 @RestController
@@ -26,14 +26,14 @@ import java.util.Map;
 @Transactional
 public class SecurityController {
 
-    @GetMapping( "/needLogin")
+    @RequestMapping(value = "/needLogin", method = RequestMethod.GET)
     @ApiOperation(value = "没有登录")
     public Result<Object> needLogin() {
 
         return ResultUtil.error(401, "您还未登录");
     }
 
-    @GetMapping("/swagger/login")
+    @RequestMapping(value = "/swagger/login", method = RequestMethod.GET)
     @ApiOperation(value = "Swagger接口文档专用登录接口 方便测试")
     public Result<Object> swaggerLogin(@RequestParam String username, @RequestParam String password,
                                        @ApiParam("图片验证码ID") @RequestParam(required = false) String captchaId,

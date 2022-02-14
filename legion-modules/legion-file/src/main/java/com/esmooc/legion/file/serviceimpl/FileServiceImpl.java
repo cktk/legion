@@ -1,152 +1,112 @@
 package com.esmooc.legion.file.serviceimpl;
 
-import cn.hutool.core.util.StrUtil;
-import cn.hutool.json.JSONUtil;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.esmooc.legion.core.common.constant.CommonConstant;
-import com.esmooc.legion.core.common.constant.SettingConstant;
-import com.esmooc.legion.core.common.exception.LegionException;
-import com.esmooc.legion.core.common.limit.RedisRaterLimiter;
 import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
-import com.esmooc.legion.core.common.utils.*;
-import com.esmooc.legion.core.common.vo.Result;
-import com.esmooc.legion.core.entity.Setting;
-import com.esmooc.legion.core.entity.vo.OssSetting;
-import com.esmooc.legion.core.service.SettingService;
+import com.esmooc.legion.core.common.vo.SearchVo;
+import com.esmooc.legion.file.dao.FileDao;
 import com.esmooc.legion.file.entity.File;
-import com.esmooc.legion.file.manage.FileManageFactory;
-import com.esmooc.legion.file.mapper.FileMapper;
 import com.esmooc.legion.file.service.FileService;
-import io.swagger.annotations.ApiOperation;
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.InputStream;
-import java.util.Objects;
+import javax.persistence.criteria.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
  * 文件管理接口实现
- *
- * @author Daimao
+ * @author DaiMao
  */
 @Slf4j
 @Service
 @Transactional
 @CacheConfig(cacheNames = "file")
-public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements FileService {
+public class FileServiceImpl implements FileService {
 
+    @Autowired
+    private FileDao fileDao;
 
     @Autowired
     private RedisTemplateHelper redisTemplate;
 
-    @Value("${legion.maxUploadFile}")
-    private Long maxUploadFile;
+    @Override
+    public FileDao getRepository() {
+        return fileDao;
+    }
 
-    @Autowired
-    private RedisRaterLimiter redisRaterLimiter;
-
-    @Autowired
-    private IpInfoUtil ipInfoUtil;
-
-    @Autowired
-    private FileManageFactory fileManageFactory;
-
-    @Autowired
-    private SettingService settingService;
-
-    @Autowired
-    private FileService fileService;
-    @Autowired
-    private SecurityUtil securityUtil;
-
-
+    @Override
     @Cacheable(key = "#id")
-    public File getFile(String id) {
+    public File get(String id) {
 
         // 避免缓存穿透
         String result = redisTemplate.get("file::" + id);
         if ("null".equals(result)) {
             return null;
         }
-        File file = this.getById(id);
+        File file = fileDao.findById(id).orElse(null);
         if (file == null) {
             redisTemplate.set("file::" + id, "null", 5L, TimeUnit.MINUTES);
         }
         return file;
     }
 
+    @Override
+    public Page<File> findByCondition(File file, SearchVo searchVo, Pageable pageable) {
 
+        return fileDao.findAll(new Specification<File>() {
+            @Nullable
+            @Override
+            public Predicate toPredicate(Root<File> root, CriteriaQuery<?> cq, CriteriaBuilder cb) {
 
-    public File upload(MultipartFile file, String base64) {
+                Path<String> nameField = root.get("name");
+                Path<String> fKeyField = root.get("fKey");
+                Path<String> typeField = root.get("type");
+                Path<String> createByField = root.get("createBy");
+                Path<Integer> locationField = root.get("location");
+                Path<Date> createTimeField = root.get("createTime");
 
-        if (file.getSize() > maxUploadFile * 1024 *1024 ) {
-            throw new LegionException("文件大小过大，不能超过" + maxUploadFile + "MB");
-        }
-        Setting setting = settingService.getById(SettingConstant.OSS_USED);
-        if (setting == null || StrUtil.isBlank(setting.getValue())) {
-            throw new LegionException( "您还未配置OSS存储服务",500);
-        }
+                List<Predicate> list = new ArrayList<>();
 
-        if (StrUtil.isNotBlank(base64)) {
-            // base64上传
-            file = Base64DecodeMultipartFile.base64Convert(base64);
-        }
+                // 模糊搜素
+                if (StrUtil.isNotBlank(file.getName())) {
+                    list.add(cb.like(nameField, '%' + file.getName() + '%'));
+                }
+                if (StrUtil.isNotBlank(file.getFKey())) {
+                    list.add(cb.like(fKeyField, '%' + file.getFKey() + '%'));
+                }
+                if (StrUtil.isNotBlank(file.getType())) {
+                    list.add(cb.like(typeField, '%' + file.getType() + '%'));
+                }
+                if (StrUtil.isNotBlank(file.getCreateBy())) {
+                    list.add(cb.like(createByField, '%' + file.getCreateBy() + '%'));
+                }
 
-        String result = "";
-        String fKey = CommonUtil.renamePic(Objects.requireNonNull(file.getOriginalFilename()));
-        File f = new File();
-        try {
-            InputStream inputStream = file.getInputStream();
-            // 上传至第三方云服务或服务器
-            result = fileManageFactory.getFileManage(null).inputStreamUpload(inputStream, fKey, file);
-            // 保存数据信息至数据库
-            f.setLocation(getType(setting.getValue())).setName(file.getOriginalFilename()).setSize(file.getSize())
-                    .setType(file.getContentType()).setFKey(fKey).setUrl(result).setNickname(securityUtil.getCurrUser().getNickname());
-            fileService.save(f);
-        } catch (Exception e) {
-            log.error(e.toString());
-            throw new LegionException( e.toString());
-        }
+                if (file.getLocation() != null) {
+                    list.add(cb.equal(locationField, file.getLocation()));
+                }
 
-        if (setting.getValue().equals(SettingConstant.LOCAL_OSS)) {
-            OssSetting os =  JSONUtil.toBean(settingService.getById(SettingConstant.LOCAL_OSS).getValue(), OssSetting.class);
-            result = os.getHttp() + os.getEndpoint() + "/" + f.getId();
-        }
+                // 创建时间
+                if (StrUtil.isNotBlank(searchVo.getStartDate()) && StrUtil.isNotBlank(searchVo.getEndDate())) {
+                    Date start = DateUtil.parse(searchVo.getStartDate());
+                    Date end = DateUtil.parse(searchVo.getEndDate());
+                    list.add(cb.between(createTimeField, start, DateUtil.endOfDay(end)));
+                }
 
-        return f;
+                Predicate[] arr = new Predicate[list.size()];
+                cq.where(list.toArray(arr));
+                return null;
+            }
+        }, pageable);
     }
-
-
-    public Integer getType(String type) {
-        switch (type) {
-            case SettingConstant.QINIU_OSS:
-                return CommonConstant.OSS_QINIU;
-            case SettingConstant.ALI_OSS:
-                return CommonConstant.OSS_ALI;
-            case SettingConstant.TENCENT_OSS:
-                return CommonConstant.OSS_TENCENT;
-            case SettingConstant.MINIO_OSS:
-                return CommonConstant.OSS_MINIO;
-            case SettingConstant.LOCAL_OSS:
-                return CommonConstant.OSS_LOCAL;
-            default:
-                return -1;
-        }
-    }
-
-
-
-
-
 }

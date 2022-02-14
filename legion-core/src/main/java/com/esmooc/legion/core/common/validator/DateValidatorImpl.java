@@ -8,7 +8,7 @@ import javax.validation.ConstraintValidatorContext;
 import java.util.Date;
 
 /**
- * @author Daimao
+ * @author DaiMao
  */
 public class DateValidatorImpl implements ConstraintValidator<DateValidator, String> {
 

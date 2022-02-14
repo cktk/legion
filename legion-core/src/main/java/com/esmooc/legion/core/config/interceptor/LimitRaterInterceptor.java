@@ -1,7 +1,5 @@
 package com.esmooc.legion.core.config.interceptor;
 
-import cn.hutool.core.util.StrUtil;
-import cn.hutool.json.JSONUtil;
 import com.esmooc.legion.core.common.annotation.RateLimiter;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.constant.SettingConstant;
@@ -11,14 +9,16 @@ import com.esmooc.legion.core.common.utils.IpInfoUtil;
 import com.esmooc.legion.core.config.properties.LegionIpLimitProperties;
 import com.esmooc.legion.core.config.properties.LegionLimitProperties;
 import com.esmooc.legion.core.entity.Setting;
-import com.esmooc.legion.core.entity.vo.OtherSetting;
 import com.esmooc.legion.core.service.SettingService;
+import com.esmooc.legion.core.vo.OtherSetting;
+import cn.hutool.core.util.StrUtil;
+import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,11 +26,11 @@ import java.lang.reflect.Method;
 
 /**
  * 限流拦截器
- * @author Daimao
+ * @author DaiMao
  */
 @Slf4j
 @Component
-public class LimitRaterInterceptor implements HandlerInterceptor {
+public class LimitRaterInterceptor extends HandlerInterceptorAdapter {
 
     @Autowired
     private LegionLimitProperties limitProperties;
@@ -49,11 +49,11 @@ public class LimitRaterInterceptor implements HandlerInterceptor {
 
     public OtherSetting getOtherSetting() {
 
-        Setting setting = settingService.getById(SettingConstant.OTHER_SETTING);
-        if (setting==null || StrUtil.isBlank(setting.getValue())) {
+        Setting setting = settingService.get(SettingConstant.OTHER_SETTING);
+        if (StrUtil.isBlank(setting.getValue())) {
             return null;
         }
-        return JSONUtil.toBean(setting.getValue(), OtherSetting.class);
+        return new Gson().fromJson(setting.getValue(), OtherSetting.class);
     }
 
     /**
@@ -72,7 +72,7 @@ public class LimitRaterInterceptor implements HandlerInterceptor {
             Boolean token1 = redisRaterLimiter.acquireByRedis(ip,
                     ipLimitProperties.getLimit(), ipLimitProperties.getTimeout());
             if (!token1) {
-                //throw new LimitException("你手速怎么这么快，请点慢一点");
+                throw new LimitException("你手速怎么这么快，请点慢一点");
             }
         }
 
@@ -80,7 +80,7 @@ public class LimitRaterInterceptor implements HandlerInterceptor {
             Boolean token2 = redisRaterLimiter.acquireByRedis(CommonConstant.LIMIT_ALL,
                     limitProperties.getLimit(), limitProperties.getTimeout());
             if (!token2) {
-                //throw new LimitException("当前访问总人数太多啦，请稍后再试");
+                throw new LimitException("当前访问总人数太多啦，请稍后再试");
             }
         }
 
@@ -90,7 +90,7 @@ public class LimitRaterInterceptor implements HandlerInterceptor {
             String[] list = os.getBlacklist().split("\n");
             for (String item : list) {
                 if (item.equals(ip)) {
-                    //throw new LimitException("您的IP已被添加至黑名单");
+                    throw new LimitException("您的IP已被添加至黑名单，请滚");
                 }
             }
         }
@@ -112,7 +112,7 @@ public class LimitRaterInterceptor implements HandlerInterceptor {
                 }
                 Boolean token3 = redisRaterLimiter.acquireByRedis(name, limit, timeout);
                 if (!token3) {
-                    //throw new LimitException("当前访问人数太多啦，请稍后再试");
+                    throw new LimitException("当前访问人数太多啦，请稍后再试");
                 }
             }
         } catch (LimitException e) {

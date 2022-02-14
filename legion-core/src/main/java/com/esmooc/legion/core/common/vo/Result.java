@@ -4,12 +4,14 @@ package com.esmooc.legion.core.common.vo;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
- * @author Daimao
+ * @author DaiMao
  * 前后端交互数据标准
  */
 @Data
-public class Result<T>  {
+public class Result<T> implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

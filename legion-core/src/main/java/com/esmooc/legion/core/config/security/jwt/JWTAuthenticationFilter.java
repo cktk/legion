@@ -1,7 +1,5 @@
 package com.esmooc.legion.core.config.security.jwt;
 
-import cn.hutool.core.util.StrUtil;
-import cn.hutool.json.JSONUtil;
 import com.esmooc.legion.core.common.constant.SecurityConstant;
 import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
 import com.esmooc.legion.core.common.utils.ResponseUtil;
@@ -10,6 +8,8 @@ import com.esmooc.legion.core.common.vo.TokenMember;
 import com.esmooc.legion.core.common.vo.TokenUser;
 import com.esmooc.legion.core.config.properties.LegionAppTokenProperties;
 import com.esmooc.legion.core.config.properties.LegionTokenProperties;
+import cn.hutool.core.util.StrUtil;
+import com.google.gson.Gson;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @author Daimao
+ * @author DaiMao
  */
 @Slf4j
 public class JWTAuthenticationFilter extends BasicAuthenticationFilter {
@@ -110,7 +110,7 @@ public class JWTAuthenticationFilter extends BasicAuthenticationFilter {
                 ResponseUtil.out(response, ResponseUtil.resultMap(false, 401, "登录已失效，请重新登录"));
                 return null;
             }
-            TokenUser user = JSONUtil.toBean(v, TokenUser.class);
+            TokenUser user = new Gson().fromJson(v, TokenUser.class);
             username = user.getUsername();
             if (tokenProperties.getStorePerms()) {
                 // 缓存了权限
@@ -165,7 +165,7 @@ public class JWTAuthenticationFilter extends BasicAuthenticationFilter {
             ResponseUtil.out(response, ResponseUtil.resultMap(false, 401, "会员登录已失效，请重新登录"));
             return null;
         }
-        TokenMember member = JSONUtil.toBean(v, TokenMember.class);
+        TokenMember member = new Gson().fromJson(v, TokenMember.class);
         username = member.getUsername();
         // 权限
         List<GrantedAuthority> authorities = securityUtil.getCurrMemberPerms(username);

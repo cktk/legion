@@ -1,7 +1,7 @@
 package com.esmooc.legion.core.common.constant;
 
 /**
- * @author Daimao
+ * @author DaiMao
  */
 public interface SettingConstant {
 
@@ -110,7 +110,10 @@ public interface SettingConstant {
      */
     String SMS_RESET_PASS = "SMS_RESET_PASS";
 
-
+    /**
+     * 短信 工作流消息
+     */
+    String SMS_ACTIVITI = "SMS_ACTIVITI";
 
     /**
      * 邮箱配置

@@ -1,10 +1,10 @@
 package com.esmooc.legion.core.config.security;
 
-import cn.hutool.core.util.StrUtil;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.entity.User;
-import com.esmooc.legion.core.entity.vo.PermissionDTO;
-import com.esmooc.legion.core.entity.vo.RoleDTO;
+import com.esmooc.legion.core.vo.PermissionDTO;
+import com.esmooc.legion.core.vo.RoleDTO;
+import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -15,12 +15,12 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * @author Daimao
+ * @author DaiMao
  */
 @Slf4j
 public class SecurityUserDetails extends User implements UserDetails {
 
-
+    private static final long serialVersionUID = 1L;
 
     private List<PermissionDTO> permissions;
 
