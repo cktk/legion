@@ -31,7 +31,7 @@ public class LogController {
     private LogService logService;
 
     @ApiOperation(value = "分页获取全部")
-    @PostMapping("/getAllByPage")
+    @GetMapping("/getAllByPage")
     public Result<Object> getAllByPage(@RequestParam(required = false) Integer type,
                                         String key,
                                        SearchVo searchVo,

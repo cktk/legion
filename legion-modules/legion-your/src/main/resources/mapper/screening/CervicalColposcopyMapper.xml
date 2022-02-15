@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.esmooc.legion.your.mapper.CervicalColposcopyMapper">
+  <resultMap id="BaseResultMap" type="com.esmooc.legion.your.entity.cervicalcolposcopy.CervicalColposcopy">
+    <!--@mbg.generated-->
+    <!--@Table cervical_colposcopy-->
+    <id column="id" property="id" />
+    <result column="status" property="status" />
+    <result column="user_id" property="userId" />
+    <result column="accept" property="accept" />
+    <result column="reason" property="reason" />
+    <result column="evaluate" property="evaluate" />
+    <result column="preliminary" property="preliminary" />
+    <result column="pathology" property="pathology" />
+    <result column="checkOrg" property="checkOrg" />
+    <result column="checkUser" property="checkUser" />
+    <result column="checkDate" property="checkDate" />
+    <result column="preliminary2" property="preliminary2" />
+    <result column="ADDTIME" property="addTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, `status`, user_id, accept, reason, evaluate, preliminary, pathology, checkOrg, 
+    checkUser, checkDate, preliminary2, ADDTIME
+  </sql>
+</mapper>

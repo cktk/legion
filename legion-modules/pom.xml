@@ -22,7 +22,6 @@
         <module>legion-your</module>
         <module>legion-app</module>
         <module>legion-autochat</module>
-        <module>legion-screening</module>
         <module>legion-system</module>
     </modules>
 

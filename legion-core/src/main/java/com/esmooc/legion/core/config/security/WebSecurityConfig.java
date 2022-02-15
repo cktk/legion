@@ -98,7 +98,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         registry.and()
                 // 表单登录方式
                 .formLogin()
-                .loginPage("/legion/common/needLogin")
+                .loginPage("/common/needLogin")
                 // 登录请求url
                 .loginProcessingUrl("/legion/login")
                 .permitAll()

@@ -139,7 +139,7 @@ public class Swagger2Config {
                 .groupName("两癌新接口")
                 .apiInfo(apiInfo()).select()
                 .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
-                .paths(regex(".*/v2/.*"))
+                .paths(regex(".*/screening/.*"))
                 .build()
                 .securitySchemes(securitySchemes)
                 .securityContexts(securityContexts());

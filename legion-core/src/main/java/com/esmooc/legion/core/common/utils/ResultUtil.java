@@ -18,9 +18,7 @@ public class ResultUtil<T> {
     }
 
     public static <T> Result<T> data(T t) {
-        if (t instanceof org.springframework.data.domain.Page ){
-            return new ResultUtil<T>().setData((T) PageConvert.jpaToMb(t));
-        }
+
         return new ResultUtil<T>().setData(t);
     }
 

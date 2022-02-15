@@ -24,4 +24,8 @@ public enum LogType {
      * 3会员登录
      */
     MEMBER_LOGIN,
+    /**
+     * 4两癌
+     */
+    SCREENING
 }

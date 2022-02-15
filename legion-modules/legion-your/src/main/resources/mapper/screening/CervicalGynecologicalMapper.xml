@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.esmooc.legion.your.mapper.CervicalGynecologicalMapper">
+  <resultMap id="BaseResultMap" type="com.esmooc.legion.your.entity.cervicalGynecological.CervicalGynecological">
+    <!--@mbg.generated-->
+    <!--@Table cervical_gynecological_context-->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="vulva" jdbcType="VARCHAR" property="vulva" />
+    <result column="vagina" jdbcType="VARCHAR" property="vagina" />
+    <result column="uterus" jdbcType="VARCHAR" property="uterus" />
+    <result column="secretion" jdbcType="VARCHAR" property="secretion" />
+    <result column="inspect" jdbcType="VARCHAR" property="inspect" />
+    <result column="enclosure" jdbcType="VARCHAR" property="enclosure" />
+    <result column="clinical" jdbcType="VARCHAR" property="clinical" />
+    <result column="cervix" jdbcType="VARCHAR" property="cervix" />
+    <result column="fjdx1" jdbcType="VARCHAR" property="fjdx1" />
+    <result column="fjdx2" jdbcType="VARCHAR" property="fjdx2" />
+    <result column="fjxz" jdbcType="VARCHAR" property="fjxz" />
+    <result column="fjwz" jdbcType="VARCHAR" property="fjwz" />
+    <result column="zgjdx1" jdbcType="VARCHAR" property="zgjdx1" />
+    <result column="zgjzwdx1" jdbcType="VARCHAR" property="zgjzwdx1" />
+    <result column="zgjzwdx2" jdbcType="VARCHAR" property="zgjzwdx2" />
+    <result column="zgjzwxz" jdbcType="VARCHAR" property="zgjzwxz" />
+    <result column="zgjzwwz" jdbcType="VARCHAR" property="zgjzwwz" />
+    <result column="wqi" jdbcType="VARCHAR" property="wqi" />
+    <result column="yqita" jdbcType="VARCHAR" property="yqita" />
+    <result column="fqita" jdbcType="VARCHAR" property="fqita" />
+    <result column="zgjqita" jdbcType="VARCHAR" property="zgjqita" />
+    <result column="zgqita" jdbcType="VARCHAR" property="zgqita" />
+    <result column="fjqita" jdbcType="VARCHAR" property="fjqita" />
+    <result column="jcqita" jdbcType="VARCHAR" property="jcqita" />
+    <result column="zdqita" jdbcType="VARCHAR" property="zdqita" />
+    <result column="ADDTIME" jdbcType="TIMESTAMP" property="addtime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    cgc.id, cgc.user_id, cgc.vulva, cgc.vagina, cgc.uterus, cgc.secretion, cgc.inspect, cgc.enclosure, cgc.clinical, cgc.cervix,
+    cgc.fjdx1, cgc.fjdx2, cgc.fjxz,cgc.fjwz, cgc.zgjdx1, cgc.zgjzwdx1, cgc.zgjzwdx2, cgc.zgjzwxz, cgc.zgjzwwz, cgc.wqi, cgc.yqita,
+    cgc.fqita, cgc.zgjqita, cgc.zgqita, cgc.fjqita, cgc.jcqita, cgc.zdqita, cgc.ADDTIME
+  </sql>
+
+
+  <select id="getAllByUserId" resultType="com.esmooc.legion.your.entity.cervicalGynecological.GynecologicalDto">
+    select
+   <include refid="Base_Column_List"/>
+    cy.checkOrg,
+    cy.checkUser,
+    cy.checkDate,
+    u.upload
+    from cervical_gynecological_context cgc
+    left join cervical_gynaecology cy on cgc.user_id = cy.user_id
+    left join user_user u on cgc.user_id = u.id
+    where cgc.user_id = #{userId}
+  </select>
+</mapper>

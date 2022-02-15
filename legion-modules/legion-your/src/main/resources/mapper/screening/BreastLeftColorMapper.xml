@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.esmooc.legion.your.mapper.BreastLeftColorMapper">
+  <resultMap id="BaseResultMap" type="com.esmooc.legion.your.entity.breastleftandrightcolor.BreastLeftColor">
+    <!--@mbg.generated-->
+    <!--@Table breast_left_color-->
+    <id column="id" property="id" />
+    <result column="user_id" property="userId" />
+    <result column="ev1" property="ev1" />
+    <result column="ev2" property="ev2" />
+    <result column="ev3" property="ev3" />
+    <result column="ev4" property="ev4" />
+    <result column="level" property="level" />
+    <result column="nang" property="nang" />
+    <result column="shixing" property="shixing" />
+    <result column="xingtai" property="xingtai" />
+    <result column="fangxiang" property="fangxiang" />
+    <result column="bianjie" property="bianjie" />
+    <result column="bianyuan" property="bianyuan" />
+    <result column="neihui" property="neihui" />
+    <result column="houhui" property="houhui" />
+    <result column="gaihua" property="gaihua" />
+    <result column="xueliu" property="xueliu" />
+    <result column="ADDTIME" property="addTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, user_id, ev1, ev2, ev3, ev4, `level`, nang, shixing, xingtai, fangxiang, bianjie, 
+    bianyuan, neihui, houhui, gaihua, xueliu, ADDTIME
+  </sql>
+</mapper>

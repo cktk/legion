@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.esmooc.legion.your.mapper.UserUserMapper">
+  <resultMap id="BaseResultMap" type="com.esmooc.legion.your.entity.UserUser">
+    <!--@mbg.generated-->
+    <!--@Table screening.user_user-->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="card" jdbcType="VARCHAR" property="card" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="gender" jdbcType="VARCHAR" property="gender" />
+    <result column="nation" jdbcType="VARCHAR" property="nation" />
+    <result column="birthday" jdbcType="DATE" property="birthday" />
+    <result column="idcard" jdbcType="VARCHAR" property="idcard" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="education" jdbcType="VARCHAR" property="education" />
+    <result column="upload" jdbcType="VARCHAR" property="upload" />
+    <result column="imgurl" jdbcType="VARCHAR" property="imgurl" />
+    <result column="ADDTIME" jdbcType="TIMESTAMP" property="addtime" />
+    <result column="upload_flag" jdbcType="VARCHAR" property="uploadFlag" />
+    <result column="download_flag" jdbcType="VARCHAR" property="downloadFlag" />
+    <result column="area_code" jdbcType="VARCHAR" property="areaCode" />
+    <result column="town_code" jdbcType="VARCHAR" property="townCode" />
+    <result column="village_code" jdbcType="VARCHAR" property="villageCode" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="district" jdbcType="VARCHAR" property="district" />
+    <result column="town" jdbcType="VARCHAR" property="town" />
+    <result column="community" jdbcType="VARCHAR" property="community" />
+    <result column="addr" jdbcType="VARCHAR" property="addr" />
+    <result column="number" jdbcType="INTEGER" property="number" />
+    <result column="department_id" jdbcType="VARCHAR" property="departmentId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, card, `name`, gender, nation, birthday, idcard, phone, education, upload, imgurl,
+    ADDTIME, upload_flag, download_flag, area_code, town_code, village_code, address,
+    district, town, community, addr, `number`, department_id
+  </sql>
+
+  <select id="getGynecologicalUser" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    from user_user WHERE id in (
+    SELECT u.user_id FROM user_deadline u
+    left join cervical_gynecological_context c on c.user_id = u.user_id
+    WHERE u.upTime between #{startTime} and #{endTime} and c.clinical like concat('%',#{diagnose},'%')
+    ) and (name like concat('%',#{input},'%') or idcard = #{input})
+
+  </select>
+
+  <select id="getTctUser" resultMap="BaseResultMap">
+
+    SELECT <include refid="Base_Column_List"/> FROM user_user uu
+    LEFT JOIN user_deadline ud on uu.id = ud.user_id
+    LEFT JOIN cervical_tct ct on uu.upload = ct.upload
+    WHERE ud.upTime between #{startTime} and #{endTime}
+    and (uu.name like concat('%',#{input},'%') or uu.idcard = #{input})
+    AND result like concat('%',#{tct},'%')
+
+  </select>
+
+  <select id="getMuBaAndBreastUserNew" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"/> from user_user where id in
+    (select user_id from user_deadline where upTime between #{startTime} and #{endTime})
+    and (name like concat('%',#{input},'%') or idcard = #{input})
+  </select>
+
+  <select id="getMuBaUserNew" resultMap="BaseResultMap">
+
+    SELECT * from user_user WHERE id in (
+    SELECT u.user_id FROM user_deadline u
+    left join breast_muba b on b.user_id = u.user_id
+    WHERE u.upTime between #{startTime} and #{endTime} and b.lji like concat('%',#{mubale},'%')
+
+    ) and (name like concat('%',#{input},'%') or idcard = #{input})
+
+  </select>
+
+  <select id="getBreastUserNew" resultMap="BaseResultMap">
+    SELECT * from user_user WHERE id in (
+    SELECT u.user_id FROM user_deadline u
+    left join breast_left_color l on l.user_id = u.user_id
+    WHERE u.upTime between #{startTime} and #{endTime} and l.`level` like concat('%',#{colorle},'%')
+    UNION
+    SELECT u.user_id FROM user_deadline u
+    left join breast_right_color r on r.user_id = u.user_id
+    WHERE u.upTime between #{startTime} and #{endTime} and r.`level` like concat('%',#{colorle},'%')
+    ) and (name like concat('%',#{input},'%') or idcard = #{input})
+
+  </select>
+</mapper>

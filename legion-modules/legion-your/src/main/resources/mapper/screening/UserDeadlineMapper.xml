@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.esmooc.legion.your.mapper.UserDeadlineMapper">
+  <resultMap id="BaseResultMap" type="com.esmooc.legion.your.entity.UserDeadline">
+    <!--@mbg.generated-->
+    <!--@Table screening.user_deadline-->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="upTime" jdbcType="DATE" property="uptime" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="ADDTIME" jdbcType="TIMESTAMP" property="addtime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, `status`, upTime, user_id, ADDTIME
+  </sql>
+</mapper>

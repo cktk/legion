@@ -1,0 +1,464 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.esmooc.legion.your.mapper.CountMapper">
+    <select id="TCT_count"
+            resultType="com.esmooc.legion.your.entity.count.TCTCount_Model">
+        <!--SELECT SUM(result LIKE CONCAT('%','ASCUS','%')) AS-->
+        SELECT SUM(result LIKE CONCAT('%','US','%')) AS
+        'ASC_US',
+        SUM(result LIKE CONCAT('%','ASC-H','%')) AS 'ASC_H',
+        SUM(result LIKE CONCAT('%','LSIL','%')) AS 'LSIL',
+        SUM(result LIKE
+        CONCAT('%','HSIL','%')) AS 'HSIL',
+        SUM(result LIKE
+        CONCAT('%','SCC','%')) AS 'SCC',
+        SUM(result LIKE CONCAT('%','AGC','%'))
+        AS 'AGC'
+        FROM `cervical_tct`
+        LEFT JOIN `user_user` u
+        ON
+        `cervical_tct`.`upload`=u.`upload`
+        LEFT JOIN `user_deadline` d
+        ON
+        d.`user_id`=u.`id`
+        WHERE d.`upTime` BETWEEN #{startTime} AND #{endTime}
+        <if test="areaCode != null and areaCode != ''">
+            AND u.area_code = #{areaCode}
+        </if>
+
+        <if test="townCode != null and townCode != ''">
+            AND u.town_code = #{townCode}
+        </if>
+    </select>
+    <select id="tct_total" resultType="java.lang.Integer">
+        <!--SELECT COUNT(1) FROM
+        `cervical_tct`
+        LEFT JOIN `user_user` u
+        ON
+        `cervical_tct`.`upload`=u.`upload`
+        LEFT JOIN `user_deadline` d
+        ON
+        d.`user_id`=u.`id`
+        WHERE d.`upTime` BETWEEN #{0} AND #{1}-->
+        SELECT
+        count(1)
+        FROM
+        user_user
+        LEFT JOIN `user_deadline` ON `user_user`.id = `user_deadline`.`user_id`
+        WHERE
+        user_user.upload IS NOT NULL
+        AND `user_deadline`.`upTime` BETWEEN #{startTime} AND #{endTime}
+        <if test="areaCode != null and areaCode != ''">
+            AND user_user.area_code = #{areaCode}
+        </if>
+
+        <if test="townCode != null and townCode != ''">
+            AND user_user.town_code = #{townCode}
+        </if>
+    </select>
+
+    <select id="Hist_count"
+            resultType="com.esmooc.legion.your.entity.count.HistCount_Model">
+        SELECT SUM(context LIKE CONCAT('%','未见异常','%')) AS
+        'weijian',
+        SUM(context LIKE CONCAT('%','炎症','%')) AS 'yanzheng',
+        SUM(context LIKE CONCAT('%','低级别病变','%')) AS 'diji',
+        SUM(context LIKE
+        CONCAT('%','高级别病变','%')) AS 'gaoji',
+        SUM(context LIKE
+        CONCAT('%','宫颈原位腺癌','%')) AS 'gj_yuanwei',
+        SUM(context LIKE
+        CONCAT('%','宫颈微小浸润癌','%')) AS 'gj_weixiao',
+        SUM(context LIKE
+        CONCAT('%','宫颈浸润癌','%')) AS 'gj_jinrui',
+        COUNT(1) AS 'total'
+        FROM
+        `cervical_histopathology`
+        LEFT JOIN `user_deadline`
+        ON
+        `user_deadline`.`user_id`=`cervical_histopathology`.`user_id`
+        LEFT JOIN user_user u ON u.id = `user_deadline`.`user_id`
+        WHERE
+        `user_deadline`.`upTime` BETWEEN #{startTime} AND #{endTime}
+        <if test="areaCode != null and areaCode != ''">
+            AND `user_user`.area_code = #{areaCode}
+        </if>
+
+        <if test="townCode != null and townCode != ''">
+            AND `user_user`.town_code = #{townCode}
+        </if>
+    </select>
+    <select id="Col_Total" resultType="java.lang.Integer">
+        SELECT COUNT(1)
+        FROM`cervical_colposcopy` c
+        LEFT JOIN `user_deadline` d
+        ON
+        d.`user_id`=c.`user_id`
+        LEFT JOIN user_user u ON u.id = d.`user_id`
+        WHERE d.`upTime` BETWEEN #{startTime} AND #{endTime}
+        <if test="areaCode != null and areaCode != ''">
+            AND u.area_code = #{areaCode}
+        </if>
+
+        <if test="townCode != null and townCode != ''">
+            AND u.town_code = #{townCode}
+        </if>
+    </select>
+    <select id="muba_jibie"
+            resultType="com.esmooc.legion.your.entity.count.MubaJibie">
+        SELECT lji,rji FROM `breast_muba`
+        LEFT JOIN `user_deadline`
+        d
+        ON d.`user_id`=`breast_muba`.`user_id`
+        LEFT JOIN user_user u ON u.id = d.`user_id`
+        WHERE d.`upTime` BETWEEN #{startTime}
+        AND #{endTime}
+        <if test="areaCode != null and areaCode != ''">
+            AND u.area_code = #{areaCode}
+        </if>
+
+        <if test="townCode != null and townCode != ''">
+            AND u.town_code = #{townCode}
+        </if>
+    </select>
+    <select id="muba_total" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM
+        `breast_muba`
+        INNER JOIN `user_deadline` d
+        ON
+        d.`user_id`=`breast_muba`.`user_id`
+        LEFT JOIN user_user u ON u.id = d.`user_id`
+        WHERE d.`upTime` BETWEEN #{startTime} AND
+        #{endTime}
+        <if test="areaCode != null and areaCode != ''">
+            AND u.area_code = #{areaCode}
+        </if>
+
+        <if test="townCode != null and townCode != ''">
+            AND u.town_code = #{townCode}
+        </if>
+    </select>
+
+    <select id="bre_jibie"
+            resultType="com.esmooc.legion.your.entity.count.BreJibie">
+        <!--SELECT l.level lji,r.level rji FROM `breast_left_color` l
+        LEFT JOIN `breast_right_color` r
+        ON l.`user_id`=r.`user_id`
+        LEFT JOIN
+        `user_deadline` d
+        ON l.`user_id`= d.`user_id`
+        WHERE d.`upTime` BETWEEN
+        #{0} AND #{1}-->
+        select
+        distinct d.user_id,
+        l.LEVEL lji,
+        r.LEVEL rji
+        from
+        (
+        select
+        user_id,
+        level
+        from
+        breast_left_color
+        where
+        ADDTIME in (
+        select
+        max(ADDTIME)
+        from
+        breast_left_color
+        group by
+        user_id )) as l
+        left join (
+        select
+        user_id,
+        level
+        from
+        breast_right_color
+        where
+        ADDTIME in (
+        select
+        max(ADDTIME)
+        from
+        breast_right_color
+        group by
+        user_id )) as r on
+        l.`user_id` = r.`user_id`
+        left join user_deadline d on
+        l.`user_id` = d.`user_id`
+        LEFT JOIN user_user u ON u.id = d.`user_id`
+        where
+        d.`upTime` between #{startTime} AND #{endTime}
+        <if test="areaCode != null and areaCode != ''">
+            AND u.area_code = #{areaCode}
+        </if>
+
+        <if test="townCode != null and townCode != ''">
+            AND u.town_code = #{townCode}
+        </if>
+    </select>
+
+    <select id="bre_total_r" resultType="java.lang.Integer">
+        SELECT COUNT(DISTINCT `breast_right_color`.`user_id`) FROM
+        `breast_right_color`
+        LEFT JOIN `user_deadline`
+        ON
+        `breast_right_color`.`user_id`=`user_deadline`.`user_id`
+        LEFT JOIN user_user u ON u.id = `user_deadline`.`user_id`
+        WHERE
+        `user_deadline`.`upTime` BETWEEN #{startTime} AND #{endTime}
+        AND `breast_right_color`.ADDTIME BETWEEN #{startTime} AND #{endTime}
+        <if test="areaCode != null and areaCode != ''">
+            AND u.area_code = #{areaCode}
+        </if>
+
+        <if test="townCode != null and townCode != ''">
+            AND u.town_code = #{townCode}
+        </if>
+    </select>
+    <select id="bre_total_l" resultType="java.lang.Integer">
+        SELECT COUNT(DISTINCT `breast_left_color`.`user_id`) FROM
+        `breast_left_color`
+        LEFT JOIN `user_deadline`
+        ON
+        `breast_left_color`.`user_id`=`user_deadline`.`user_id`
+        LEFT JOIN user_user u ON u.id = `user_deadline`.`user_id`
+        WHERE
+        `user_deadline`.`upTime` BETWEEN #{startTime} AND #{endTime}
+        AND `breast_left_color`.ADDTIME BETWEEN #{startTime} AND #{endTime}
+        <if test="areaCode != null and areaCode != ''">
+            AND u.area_code = #{areaCode}
+        </if>
+
+        <if test="townCode != null and townCode != ''">
+            AND u.town_code = #{townCode}
+        </if>
+    </select>
+
+    <select id="Pal_Total"
+            resultType="com.esmooc.legion.your.entity.count.PalCount_Model">
+        SELECT SUM(`last` LIKE CONCAT('%','乳腺纤维腺瘤','%')) AS
+        'xianwei',
+        SUM(`last` LIKE CONCAT('%','乳腺导管内乳头状瘤','%')) AS 'zhuang',
+        SUM(`last` LIKE CONCAT('%','导管不典型增生','%')) AS 'daoguan',
+        SUM(`last`
+        LIKE CONCAT('%','小叶不典型增生','%')) AS 'xiaoyebu',
+        SUM(`last` LIKE
+        CONCAT('%','小叶原位癌','%')) AS 'xiaoyeyuan',
+        SUM(`last` LIKE
+        CONCAT('%','导管原位癌','%')) AS 'daoguanyuan',
+        SUM(`last` LIKE
+        CONCAT('%','浸润性导管癌','%')) AS 'jinrundaoguan',
+        SUM(`last` LIKE
+        CONCAT('%','浸润性小叶癌','%')) AS 'jinrunxiaoye',
+        SUM(`last` LIKE
+        CONCAT('%','其他','%')) AS 'qita',
+        COUNT(*) total
+        FROM `palpation_last` p
+        LEFT JOIN
+        `user_deadline`
+        ON `user_deadline`.`user_id`=p.`user_id`
+        LEFT JOIN user_user u ON u.id = `user_deadline`.`user_id`
+        WHERE
+        `user_deadline`.`upTime` BETWEEN #{startTime} AND #{endTime}
+        <if test="areaCode != null and areaCode != ''">
+            AND u.area_code = #{areaCode}
+        </if>
+
+        <if test="townCode != null and townCode != ''">
+            AND u.town_code = #{townCode}
+        </if>
+    </select>
+
+    <select id="all_count" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM
+        `user_user`
+        LEFT JOIN `user_deadline`
+        ON
+        `user_user`.`id`=`user_deadline`.`user_id`
+        WHERE
+        `user_deadline`.`upTime` BETWEEN #{startTime} AND #{endTime}
+        <if test="areaCode != null and areaCode != ''">
+            AND `user_user`.area_code = #{areaCode}
+        </if>
+
+        <if test="townCode != null and townCode != ''">
+            AND `user_user`.town_code = #{townCode}
+        </if>
+    </select>
+
+    <select id="bre_count" resultType="java.lang.Integer">
+        <!--SELECT COUNT(*) FROM
+        `breast_left_color`
+        LEFT JOIN `user_deadline`
+        ON
+        `breast_left_color`.`user_id`=`user_deadline`.`user_id`
+        WHERE
+        `user_deadline`.`upTime` BETWEEN #{0} AND #{1}
+
+        SELECT COUNT(1)
+        FROM (
+        SELECT 1 FROM
+        `breast_left_color`
+        LEFT JOIN `user_deadline`
+        ON
+        `breast_left_color`.`user_id`=`user_deadline`.`user_id`
+        WHERE
+        `user_deadline`.`upTime` BETWEEN #{0} AND #{1}
+        GROUP BY `breast_left_color`.user_id
+        HAVING COUNT(1)=1
+        ) a;-->
+
+        SELECT COUNT(DISTINCT `breast_left_color`.user_id) FROM
+        `breast_left_color`
+        LEFT JOIN `user_deadline`
+        ON
+        `breast_left_color`.`user_id`=`user_deadline`.`user_id`
+        LEFT JOIN user_user u ON u.id = `user_deadline`.`user_id`
+        WHERE
+        `user_deadline`.`upTime` BETWEEN #{startTime} AND #{endTime}
+        and `breast_left_color`.`addtime` BETWEEN #{startTime} AND #{endTime}
+        <if test="areaCode != null and areaCode != ''">
+            AND u.area_code = #{areaCode}
+        </if>
+
+        <if test="townCode != null and townCode != ''">
+            AND u.town_code = #{townCode}
+        </if>
+    </select>
+    <select id="bre_r_count" resultType="java.lang.Integer">
+        <!--SELECT COUNT(*) FROM
+        `breast_right_color`
+        LEFT JOIN `user_deadline`
+        ON
+        `breast_right_color`.`user_id`=`user_deadline`.`user_id`
+        WHERE
+        `user_deadline`.`upTime` BETWEEN #{0} AND #{1}
+        SELECT COUNT(1)
+        FROM (
+        SELECT 1 FROM
+        `breast_right_color`
+        LEFT JOIN `user_deadline`
+        ON
+        `breast_right_color`.`user_id`=`user_deadline`.`user_id`
+        WHERE
+        `user_deadline`.`upTime` BETWEEN #{0} AND #{1}
+        GROUP BY `breast_right_color`.user_id
+        HAVING COUNT(1)=1
+        ) a;-->
+
+        SELECT COUNT(DISTINCT `breast_right_color`.user_id) FROM
+        `breast_right_color`
+        LEFT JOIN `user_deadline`
+        ON
+        `breast_right_color`.`user_id`=`user_deadline`.`user_id`
+        LEFT JOIN user_user u ON u.id = `user_deadline`.`user_id`
+        WHERE
+        `user_deadline`.`upTime` BETWEEN #{startTime} AND #{endTime}
+        and `breast_right_color`.`addtime` BETWEEN #{startTime} AND #{endTime}
+        <if test="areaCode != null and areaCode != ''">
+            AND u.area_code = #{areaCode}
+        </if>
+
+        <if test="townCode != null and townCode != ''">
+            AND u.town_code = #{townCode}
+        </if>
+    </select>
+    <!--宫颈检查人数 按照tct-upload -->
+    <select id="gyna_count" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM
+        user_user
+        LEFT JOIN `user_deadline`
+        ON
+        `user_user`.id=`user_deadline`.`user_id`
+        WHERE user_user.upload IS NOT
+        NULL
+        AND`user_deadline`.`upTime` BETWEEN #{startTime} AND #{endTime}
+        <if test="areaCode != null and areaCode != ''">
+            AND `user_user`.area_code = #{areaCode}
+        </if>
+
+        <if test="townCode != null and townCode != ''">
+            AND `user_user`.town_code = #{townCode}
+        </if>
+    </select>
+
+    <select id="Gyna_Total"
+            resultType="com.esmooc.legion.your.entity.count.GynaCount_Model">
+        SELECT SUM(clinical LIKE CONCAT('%','外生殖器尖锐湿疣','%')) AS
+        'waisheng',
+        SUM(clinical LIKE CONCAT('%','滴虫性阴道炎','%')) AS 'dicong',
+        SUM(clinical
+        LIKE CONCAT('%','外阴阴道假丝酵母菌病','%')) AS 'waiyin',
+        SUM(clinical LIKE
+        CONCAT('%','细菌性阴道病','%')) AS 'xijun',
+        SUM(clinical
+        LIKE
+        CONCAT('%','黏液脓性宫颈炎','%')) AS 'nianye',
+        SUM(clinical LIKE
+        CONCAT('%','宫颈息肉','%')) AS 'xirou',
+        SUM(clinical LIKE
+        CONCAT('%','子宫肌瘤','%')) AS 'zigong',
+        COUNT(*) total
+        FROM
+        `cervical_gynecological_context` g
+        LEFT JOIN `user_deadline`
+        ON
+        `user_deadline`.`user_id`=g.`user_id`
+        LEFT JOIN user_user u ON u.id = `user_deadline`.`user_id`
+        WHERE `user_deadline`.`upTime`
+        BETWEEN #{startTime} AND #{endTime}
+        <if test="areaCode != null and areaCode != ''">
+            AND u.area_code = #{areaCode}
+        </if>
+
+        <if test="townCode != null and townCode != ''">
+            AND u.town_code = #{townCode}
+        </if>
+    </select>
+    <select id="both_count" resultType="java.lang.Integer">
+        <!--SELECT COUNT(*)
+        FROM user_user u
+        INNER JOIN breast_left_color l
+        ON l.user_id=u.id
+        INNER JOIN breast_right_color r
+        ON r.user_id=u.id
+        INNER JOIN user_deadline d
+        ON d.user_id=u.id
+        WHERE u.upload IS NOT NULL
+        AND d.upTime BETWEEN #{0} AND #{1}-->
+        SELECT COUNT(DISTINCT u.idcard)
+        FROM user_user u
+        INNER JOIN breast_left_color l
+        ON l.user_id=u.id
+        INNER JOIN breast_right_color r
+        ON r.user_id=u.id
+        INNER JOIN user_deadline d
+        ON d.user_id=u.id
+        WHERE u.upload IS NOT NULL
+        AND d.upTime BETWEEN #{startTime} AND #{endTime}
+        <if test="areaCode != null and areaCode != ''">
+            AND u.area_code = #{areaCode}
+        </if>
+
+        <if test="townCode != null and townCode != ''">
+            AND u.town_code = #{townCode}
+        </if>
+    </select>
+
+
+    <select id="Gyna_Count" resultType="java.lang.Integer">
+        select count(1) from user_deadline
+        LEFT JOIN user_user u ON u.id = `user_deadline`.`user_id`
+        WHERE `user_deadline`.`upTime`
+        BETWEEN #{startTime} AND #{endTime}
+        <if test="areaCode != null and areaCode != ''">
+            AND u.area_code = #{areaCode}
+        </if>
+
+        <if test="townCode != null and townCode != ''">
+            AND u.town_code = #{townCode}
+        </if>
+    </select>
+</mapper>
