@@ -206,7 +206,7 @@ legion:
     # 缓存过期时间 Duration类型 D–天 H小时 M–分钟 S–秒 永久不过期设为非正值
     timeToLive: 15D
   # 文件大小上传配置 单位MB
-  maxUploadFile: 5
+  maxUploadFile: 1024
   # 腾讯位置服务key配置 腾讯位置服务官网注册添加key
   qqlbs:
     key: 你的腾讯位置服务key

@@ -95,9 +95,6 @@ public class ActProcessServiceImpl implements ActProcessService {
     private DepartmentHeaderService departmentHeaderService;
 
     @Autowired
-    private ActProcessService actProcessService;
-
-    @Autowired
     private ActStarterService actStarterService;
 
     @Autowired
@@ -205,7 +202,7 @@ public class ActProcessServiceImpl implements ActProcessService {
 
         String userId = securityUtil.getCurrUser().getId();
         // 权限判断
-        ActProcess actProcess = actProcessService.get(actBusiness.getProcDefId());
+        ActProcess actProcess = this.get(actBusiness.getProcDefId());
         if (actProcess == null) {
             throw new LegionException("流程定义不存在");
         }

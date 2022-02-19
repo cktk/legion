@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ResultAop {
 
-    @Pointcut("execution(* *..legion..controller..*Controller*.*(..))")
+    @Pointcut("execution(* *..controller..*Controller*.*(..))")
     public void BrokerAspect(){
 
     }
