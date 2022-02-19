@@ -1,37 +1,33 @@
 package com.esmooc.legion.core.entity;
 
-import com.esmooc.legion.core.base.LegionBaseEntity;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.esmooc.legion.core.base.LegionBaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import java.util.Date;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
-
-import javax.persistence.Entity;
-import javax.persistence.Table;
 
 /**
- * @author DaiMao
+ * @Author 呆猫
+ * @Date: 2022/02/18/ 03:52
+ * @Description:
  */
+@ApiModel(value = "t_setting")
 @Data
-@Entity
-@DynamicInsert
-@DynamicUpdate
-@Table(name = "t_setting")
-@TableName("t_setting")
-@ApiModel(value = "配置")
+@EqualsAndHashCode(callSuper = true)
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
+@TableName(value = "t_setting")
 public class Setting extends LegionBaseEntity {
-
-    private static final long serialVersionUID = 1L;
-
-    @ApiModelProperty(value = "配置值value")
+    @TableField(value = "`value`")
+    @ApiModelProperty(value = "")
     private String value;
-
-    public Setting(String id) {
-
-        super.setId(id);
-    }
 }

@@ -2,6 +2,7 @@ package com.esmooc.legion.core.common.sms;
 
 import com.esmooc.legion.core.common.constant.SettingConstant;
 import com.esmooc.legion.core.common.exception.LegionException;
+import com.esmooc.legion.core.entity.MessageSmsSend;
 import com.esmooc.legion.core.entity.Setting;
 import com.esmooc.legion.core.service.SettingService;
 import com.esmooc.legion.core.vo.SmsSetting;
@@ -73,6 +74,8 @@ public class SmsUtil {
                 return SettingConstant.SMS_RESET_PASS;
             case 6:
                 return SettingConstant.SMS_ACTIVITI;
+            case 7:
+                return SettingConstant.SMS_SCREEN_ING;
             default:
                 return SettingConstant.SMS_COMMON;
         }
@@ -134,8 +137,16 @@ public class SmsUtil {
      *                     若启用腾讯短信会自动按顺序转换为逗号分隔的数组值如[1234]
      * @param templateCode 短信模板code/id
      */
-    public void sendSms(String mobile, String params, String templateCode) {
+    public MessageSmsSend sendSms(String mobile, String params, String templateCode) {
 
-        smsFactory.getSms().sendSms(mobile, params, templateCode);
+       return smsFactory.getSms().sendSms(mobile, params, templateCode);
+    }
+
+
+    /**
+     * 再次保存发送短信记录 一个发送前保存 然后一个发送后保存
+     */
+    public Boolean saveMsgLog(MessageSmsSend messageSmsSend) {
+        return smsFactory.getSms().saveMsgLog(messageSmsSend);
     }
 }

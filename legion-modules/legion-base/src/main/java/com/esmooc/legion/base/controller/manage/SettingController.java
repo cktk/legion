@@ -98,7 +98,8 @@ public class SettingController {
     public Result<SmsSetting> sms(@PathVariable String serviceName) {
 
         Setting setting = new Setting();
-        if (serviceName.equals(SettingConstant.ALI_SMS) || serviceName.equals(SettingConstant.TENCENT_SMS)) {
+        //TODO 加短信运营商需要加
+        if (serviceName.equals(SettingConstant.CHINA_MOBILE_TA_SMS)||serviceName.equals(SettingConstant.ALI_SMS) || serviceName.equals(SettingConstant.TENCENT_SMS)) {
             setting = settingService.get(serviceName);
         }
         if (setting == null || StrUtil.isBlank(setting.getValue())) {
@@ -187,7 +188,8 @@ public class SettingController {
             return ResultUtil.data(null);
         }
         NoticeSetting noticeSetting = new Gson().fromJson(setting.getValue(), NoticeSetting.class);
-        return ResultUtil.data(noticeSetting);
+
+         return ResultUtil.data(noticeSetting);
     }
 
     @RequestMapping(value = "/oss/set", method = RequestMethod.POST)
@@ -206,11 +208,11 @@ public class SettingController {
             }
         }
         setting.setValue(new Gson().toJson(ossSetting));
-        settingService.saveOrUpdate(setting);
+        settingService.saveOrUpdateById(setting);
         // 保存启用的OSS服务商
         Setting used = settingService.get(SettingConstant.OSS_USED);
         used.setValue(name);
-        settingService.saveOrUpdate(used);
+        settingService.saveOrUpdateById(used);
         return ResultUtil.data(null);
     }
 
@@ -220,7 +222,7 @@ public class SettingController {
 
         String name = smsSetting.getServiceName();
         Setting setting = settingService.get(name);
-        if (name.equals(SettingConstant.ALI_SMS) || name.equals(SettingConstant.TENCENT_SMS)) {
+        if (name.equals(SettingConstant.CHINA_MOBILE_TA_SMS) ||name.equals(SettingConstant.ALI_SMS) || name.equals(SettingConstant.TENCENT_SMS)) {
             // 判断是否修改secrectKey 保留原secrectKey 避免保存***加密字符
             if (StrUtil.isNotBlank(setting.getValue()) && !smsSetting.getChanged()) {
                 String secrectKey = new Gson().fromJson(setting.getValue(), SmsSetting.class).getSecretKey();
@@ -230,14 +232,14 @@ public class SettingController {
         if (smsSetting.getType() != null) {
             Setting codeSetting = settingService.get(name + "_" + SmsUtil.getTemplateSuffix(smsSetting.getType()));
             codeSetting.setValue(smsSetting.getTemplateCode());
-            settingService.saveOrUpdate(codeSetting);
+            settingService.saveOrUpdateById(codeSetting);
         }
         setting.setValue(new Gson().toJson(smsSetting.setType(null).setTemplateCode(null)));
-        settingService.saveOrUpdate(setting);
+        settingService.saveOrUpdateById(setting);
         // 保存启用的短信服务商
         Setting used = settingService.get(SettingConstant.SMS_USED);
         used.setValue(name);
-        settingService.saveOrUpdate(used);
+        settingService.saveOrUpdateById(used);
         return ResultUtil.data(null);
     }
 
@@ -251,7 +253,7 @@ public class SettingController {
             emailSetting.setPassword(password);
         }
         setting.setValue(new Gson().toJson(emailSetting));
-        settingService.saveOrUpdate(setting);
+        settingService.saveOrUpdateById(setting);
         return ResultUtil.data(null);
     }
 
@@ -265,7 +267,7 @@ public class SettingController {
             vaptchaSetting.setSecretKey(key);
         }
         setting.setValue(new Gson().toJson(vaptchaSetting));
-        settingService.saveOrUpdate(setting);
+        settingService.saveOrUpdateById(setting);
         return ResultUtil.data(null);
     }
 
@@ -275,7 +277,7 @@ public class SettingController {
 
         Setting setting = settingService.get(SettingConstant.OTHER_SETTING);
         setting.setValue(new Gson().toJson(otherSetting));
-        settingService.saveOrUpdate(setting);
+        settingService.saveOrUpdateById(setting);
         return ResultUtil.data(null);
     }
 
@@ -285,7 +287,7 @@ public class SettingController {
 
         Setting setting = settingService.get(SettingConstant.CHAT_SETTING);
         setting.setValue(new Gson().toJson(chatSetting));
-        settingService.saveOrUpdate(setting);
+        settingService.saveOrUpdateById(setting);
         return ResultUtil.data(null);
     }
 
@@ -295,7 +297,7 @@ public class SettingController {
 
         Setting setting = settingService.get(SettingConstant.NOTICE_SETTING);
         setting.setValue(new Gson().toJson(noticeSetting));
-        settingService.saveOrUpdate(setting);
+        settingService.saveOrUpdateById(setting);
         return ResultUtil.data(null);
     }
 }

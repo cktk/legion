@@ -2,6 +2,8 @@ package com.esmooc.legion.base.dao;
 
 import com.esmooc.legion.base.entity.DictData;
 import com.esmooc.legion.core.base.LegionBaseDao;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
@@ -28,4 +30,11 @@ public interface DictDataDao extends LegionBaseDao<DictData, String> {
     @Modifying
     @Query("delete from DictData d where d.dictId = ?1")
     void deleteByDictId(String dictId);
+
+    DictData findByTypeCodeAndStatusOrderBySortOrder(String typeCode, Integer statusNormal);
+
+
+    List<DictData> findByTypeAndStatusOrderBySortOrder(String type, Integer statusNormal);
+
+
 }

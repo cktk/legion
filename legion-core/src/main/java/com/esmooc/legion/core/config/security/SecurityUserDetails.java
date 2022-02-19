@@ -26,14 +26,19 @@ public class SecurityUserDetails extends User implements UserDetails {
 
     private List<RoleDTO> roles;
 
-    public SecurityUserDetails(User user) {
+    private String  id;
 
+    public String getId(){
+        return this.id;
+    }
+
+    public SecurityUserDetails(User user) {
         if (user != null) {
             // Principal用户信息
             this.setUsername(user.getUsername());
             this.setPassword(user.getPassword());
             this.setStatus(user.getStatus());
-
+            this.id=user.getId();
             this.permissions = user.getPermissions();
             this.roles = user.getRoles();
         }

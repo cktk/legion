@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Date;
+
 /**
  * @author DaiMao
  */
@@ -54,10 +56,14 @@ public class StopWordController {
     public Result<StopWord> update(StopWord stopWord) {
 
         StopWord old = stopWordService.get(stopWord.getId());
-        StopWord s = stopWordService.update(stopWord);
+        stopWordService.delete(stopWord.getId());
+        stopWord.setCreateBy(old.getCreateBy());
+        stopWord.setCreateTime(new Date());
+        stopWordService.save(stopWord);
+
         StopWordsUtil.removeWord(old.getTitle());
         StopWordsUtil.addWord(stopWord.getTitle());
-        return ResultUtil.data(s);
+        return ResultUtil.data(stopWord);
     }
 
     @RequestMapping(value = "/delByIds", method = RequestMethod.POST)

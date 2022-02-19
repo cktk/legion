@@ -7,6 +7,7 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import springfox.documentation.oas.annotations.EnableOpenApi;
 
 /**
  * @author DaiMao
@@ -22,6 +23,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 // 启用Admin监控
 @EnableAdminServer
+@EnableOpenApi
 public class LegionApplication {
 
     public static void main(String[] args) {

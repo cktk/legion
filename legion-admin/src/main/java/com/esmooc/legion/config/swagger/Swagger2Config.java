@@ -27,7 +27,6 @@ import static springfox.documentation.builders.PathSelectors.regex;
  */
 @Slf4j
 @Configuration
-@EnableSwagger2WebMvc
 public class Swagger2Config {
 
     @Value("${swagger.title:Legion}")
@@ -36,7 +35,7 @@ public class Swagger2Config {
     @Value("${swagger.description:Api Documentation}")
     private String description;
 
-    @Value("${swagger.version:1.0}")
+    @Value("${swagger.version:1}")
     private String version;
 
     @Value("${swagger.termsOfServiceUrl:http://www.esmooc.com}")
@@ -136,7 +135,7 @@ public class Swagger2Config {
         List<SecurityScheme> securitySchemes = Collections.singletonList(
                 new ApiKey("Authorization", "appToken", "header"));
         return new Docket(DocumentationType.SWAGGER_2)
-                .groupName("两癌新接口")
+                .groupName("screen")
                 .apiInfo(apiInfo()).select()
                 .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
                 .paths(regex(".*/screening/.*"))

@@ -50,7 +50,7 @@ public class LimitRaterInterceptor extends HandlerInterceptorAdapter {
     public OtherSetting getOtherSetting() {
 
         Setting setting = settingService.get(SettingConstant.OTHER_SETTING);
-        if (StrUtil.isBlank(setting.getValue())) {
+        if (setting==null||StrUtil.isBlank(setting.getValue())) {
             return null;
         }
         return new Gson().fromJson(setting.getValue(), OtherSetting.class);

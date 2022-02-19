@@ -33,4 +33,8 @@ public interface DictDataService extends LegionBaseService<DictData, String> {
      * @param dictId
      */
     void deleteByDictId(String dictId);
+
+    DictData findByTypeCode(String typeCode);
+    List<DictData> findByType(String type);
+
 }

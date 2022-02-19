@@ -32,6 +32,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashSet;
@@ -64,6 +65,35 @@ public class SecurityUtil {
 
     @Autowired
     private RedisTemplateHelper redisTemplate;
+
+    // 声明对象
+    public static SecurityUtil securityUtil;
+
+    @PostConstruct // 初始化
+    public void init() {
+        securityUtil = this;
+        securityUtil.userService = this.userService;
+    }
+
+
+
+    /**
+     * 获取当前登录用户
+     *
+     * @return
+     */
+    public static User getUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated() || authentication.getName() == null
+                || authentication instanceof AnonymousAuthenticationToken) {
+            throw new LegionException("未检测到登录用户");
+        }
+        return securityUtil.userService.findByUsername(authentication.getName());
+    }
+
+
+
+
 
     public String getToken(String username, Boolean saveLogin) {
 

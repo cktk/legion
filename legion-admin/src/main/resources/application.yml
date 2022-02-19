@@ -1,10 +1,10 @@
 # 配置文件加密key 生产环境中可通过环境变量、命令行等形式进行设置
 jasypt:
   encryptor:
-    password: ${ENC_CODE}   # Jasypt加密 可到common-utils中找到JasyptUtil加解密工具类生成加密结果 格式为  ENC(加密结果)
+    password: legion
 
 server:
-  port: 8881
+  port: 8888
   servlet:
     context-path: /api
   tomcat:
@@ -18,14 +18,19 @@ server:
   shutdown: graceful
 
 spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher #解决SpringBoot2.6.3与Swagger3版本冲突问题
+  autoconfigure:
+    exclude:
+      - org.activiti.spring.boot.SecurityAutoConfiguration
+      - com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure
   lifecycle:
     # 配置优雅停机后的缓冲器 最大等待时间
     timeout-per-shutdown-phase: 10S
-  autoconfigure:
-    exclude:
-      - com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure
   # 数据源
   datasource:
+    # Druid StatViewServlet配置
     druid:
       stat-view-servlet:
         # 默认true 内置监控页面首页/druid/index.html
@@ -53,6 +58,7 @@ spring:
             # 允许多条sql同时执行
             multi-statement-allow: true
     dynamic:
+      lazy: true #默认false非懒启动，系统加载到数据源立即初始化连接池
       druid:
         initial-size: 5
         min-idle: 5
@@ -69,25 +75,29 @@ spring:
         connectionProperties: druid.stat.mergeSql\=true;druid.stat.slowSqlMillis\=5000
       datasource:
         master:
-          url: jdbc:mysql://mysql.c0c0.cc:3306/legion?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2B8
+          url: jdbc:mysql://127.0.0.1:3306/legion?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=GMT%2B8&nullCatalogMeansCurrent=true&allowPublicKeyRetrieval=true
           username: root
-          password: ENC(exkPOsFJXdqEWIsxnywiobE2SuF0/5jBwAli/GdHqreAiDIuAd+2LYRrN0x4G7NKCrcuoOngSriSOBpDVJ6uJQ==)
-          driver-class-name: com.mysql.cj.jdbc.Driver
-#        pgsql:
-#          url: jdbc:postgresql://localhost:5432/pacs
-#          username: postgres
-#          password: postgres
-#          driver-class-name: org.postgresql.Driver
-
-
-
+          password: root
+          driverClassName: com.mysql.cj.jdbc.Driver
+  jpa:
+    # 显示sql
+    show-sql: true
+    # 自动生成表结构 关闭设为  none create
+    hibernate:
+      ddl-auto: none
+  # Redis
   redis:
-    host: redis.c0c0.cc
-    password: ENC(WWl1ZUCSZB6tQIZCIY5lpW0EjHJfTfEZa72UqKdt1znKshVluvU0CkMKIChwJ8g2k29uBW6SvMj/MJZKHoaQDw==)
-    database: 3
+    host: 127.0.0.1
+#    password:
     port: 6379
-    # 超时时间 Duration类型 3秒
-    timeout: 3S
+    database: 0
+    timeout: 10s
+    lettuce:
+      pool:
+        min-idle: 0
+        max-idle: 8
+        max-active: 8
+        max-wait: -1ms
   # 定时任务
   quartz:
     # 任务信息存储至数据库
@@ -106,6 +116,18 @@ spring:
             acquireTriggersWithinLock: true
             # “容忍”触发器经过下一次触发时间的毫秒数
             misfireThreshold: 10000
+  # 工作流
+  activiti:
+    async-executor-activate: false
+    check-process-definitions: false
+    db-identity-used: true
+    database-schema-update: false
+    history-level: none
+    # 扩展配置
+    legion:
+      # 流程图字体 默认宋体
+      activityFontName: Microsoft YaHei
+      labelFontName: Microsoft YaHei
   # 文件大小上传配置
   servlet:
     multipart:
@@ -118,10 +140,10 @@ spring:
   boot:
     admin:
       # 修改上下文路径
-      context-path: /admin
+      context-path: /legion/admin
       client:
         # 服务端url
-        url: http://127.0.0.1:${server.port}/admin
+        url: http://127.0.0.1:${server.port}/legion/admin
         instance:
           # 实例url
           service-base-url: http://127.0.0.1:${server.port}/
@@ -133,6 +155,14 @@ spring:
           max-age: 30D
 
 legion:
+  xsequence:    #发号器相关配置
+#    snowflake:
+#      datacenterId : #数据中心 1-31
+#      workerId:  # 当前机器ID 1-31
+#    redis :
+    db:
+      retry-times: 3  # 重试次数
+      table-name: t_sequence #表名
   # 全局限流
   ratelimit:
     # 开启
@@ -151,15 +181,15 @@ legion:
     limit: 20
   # 后台token交互方式
   token:
-    # 默认为true，token将存入redis，并具有单设备登录、自动刷新token过期时间功能 设为false使用JWT交互
+    # 默认为true，token将存入redis，并具有单点登录功能 设为false使用JWT交互
     redis: true
-    # 是否开启单设备登陆 一个账号仅支持同时一台设备登录 仅当token交互方式为redis时生效
+    # 是否开启单设备登陆 仅当token交互方式为redis时生效
     sdl: false
-    # token中存储用户权限数据 开启后可避免每次请求再获取用户权限，但有可能导致编辑权限菜单后无法读取到最新权限数据（需用户重新登录）
+    # token中存储用户权限数据 设为true开启后可避免每次请求再获取用户权限，但有可能导致编辑权限菜单后无法读取到最新权限数据（需用户重新登录）
     storePerms: true
-    # token过期时间 redis模式有请求自动刷新过期时间（分钟）
+    # token过期时间 redis模式有请求自动刷新（分钟）
     tokenExpireTime: 60
-    # 用户选择 保存登录状态/记住我 对应token过期时间 不会自动刷新过期时间（天）
+    # 用户选择 保存登录状态/记住我 对应token过期时间（天）
     saveLoginTime: 7
     # 限制用户登陆错误次数（次）
     loginTimeLimit: 10
@@ -167,7 +197,7 @@ legion:
     loginAfterTime: 10
   # app应用 token交互配置
   appToken:
-    # 是否开启同一平台单设备登陆（如安卓设备只允许登录一个相同账号，IOS设备可允许一个设备同时登陆）
+    # 是否开启同一平台单设备登陆（如安卓设备只允许登录一个相同账号，同时IOS设备可允许一个设备登陆）
     spl: true
     # token过期时间 有请求自动刷新（天）
     tokenExpireTime: 30
@@ -179,7 +209,7 @@ legion:
   maxUploadFile: 5
   # 腾讯位置服务key配置 腾讯位置服务官网注册添加key
   qqlbs:
-    key: 7QPBZ-5TXKO-HADWR-SSJ5R-F5HIE-FJFN6
+    key: 你的腾讯位置服务key
   # 第三方社交登录配置
   social:
     # 前端回调登录地址
@@ -188,95 +218,94 @@ legion:
     callbackFeRelateUrl: http://127.0.0.1:9999/relate
     # github
     github:
-      clientId: 8fa14bd32a0f73c74627
-      clientSecret: cbd204bf8f390af6ee5bb1fa4b051e0275334f22
-      callbackUrl: http://escort.esmooc.com/api/social/github/callback
+      clientId: 你的clientId
+      clientSecret: 你的clientSecret
+      callbackUrl: http://127.0.0.1:8888/legion/social/github/callback
     # qq
     qq:
-      appId: 101953791
-      appKey: a8a54f76ffd94552cd8388dee3e933d4
-      callbackUrl: http://escort.esmooc.com/api/social/qq/callback
+      appId: 你的appId
+      appKey: 你的appKey
+      callbackUrl: http://127.0.0.1:8888/legion/social/qq/callback
     # weibo
     weibo:
-      appKey: 1974961732
-      appSecret: 89a4a4ae675cec8f76e0244a8002d349
-      callbackUrl: http://escort.esmooc.com/api/social/weibo/callback
+      appKey: 你的appKey
+      appSecret: 你的appSecret
+      callbackUrl: http://127.0.0.1:8888/legion/social/weibo/callback
     # wechat
     wechat:
       appId: 你的appId
       appSecret: 你的appSecret
-      callbackUrl: http://escort.esmooc.com/api/social/wechat/callback
+      callbackUrl: http://127.0.0.1:8888/legion/social/wechat/callback
     # 钉钉
     dingding:
       # 扫码登录应用
-      appId: dingoaswmfaffvk7w2jwi9
-      appSecret: I67-1um9wYQRI8In3yY6x-9MPGnAOAWYV48R9WpfLaUJjKt5UYqMuAE3FrNFsYJr
-      callbackUrl: http://escort.esmooc.com/api/social/dingding/callback
+      appId: 你的appId
+      appSecret: 你的appSecret
+      callbackUrl: http://127.0.0.1:8888/legion/social/dingding/callback
     # 企业微信
     workwechat:
       appId: 你的appId 企业的CorpID
       agentId: 你的应用ID
       appSecret: 你的应用Secret
-      callbackUrl: http://escort.esmooc.com/api/social/workwechat/callback
-    # 小程序
-    smallprogram:
-      appid: wx5f28339f5302b65e
-      secret: 26987873ecc97d58f34959d9567161a9
-      granttype: authorization_code
-      callbackUrl: http://escort.esmooc.com/api/social/workwechat/callback
+      callbackUrl: http://127.0.0.1:8888/legion/social/workwechat/callback
 
 # 需要验证码校验的接口路径 支持通配符 自动过滤拦截校验 无需开发人员再次校验
 captcha:
   # 图片验证码验证
   image:
-    - /legion/login # 登录接口
-    - /legion/oauth2/authorize # 认证接口
+    - /api/legion/login # 登录接口
+    - /api/legion/oauth2/authorize # 认证接口
   # 短信验证码验证
   sms:
-    - /legion/user/regist # 注册接口
-    - /legion/user/smsLogin # 短信登录接口
-    - /legion/user/resetByMobile # 手机重置密码
-    - /legion/user/changeMobile # 更换绑定手机
-    - /legion/app/v1/member/quickLogin # 会员快捷登录注册接口
+    - /api/legion/user/regist # 注册接口
+    - /api/legion/user/smsLogin # 短信登录接口
+    - /api/legion/user/resetByMobile # 手机重置密码
+    - /api/legion/user/changeMobile # 更换绑定手机
+    - /api/legion/app/v1/member/quickLogin # 会员快捷登录注册接口
   # Vaptcha验证码验证
   vaptcha:
-    - /legion/common/captcha/sendRegistSms/** # 发送注册短信
-    - /legion/common/captcha/sendResetSms/** # 发送重置密码短信
-    - /legion/email/sendResetCode/** # 发送重置密码邮件
-    - /legion/social/relate # 绑定第三方账号
+    - /api/legion/common/captcha/sendRegistSms/** # 发送注册短信
+    - /api/legion/common/captcha/sendResetSms/** # 发送重置密码短信
+    - /api/legion/email/sendResetCode/** # 发送重置密码邮件
+    - /api/legion/social/relate # 绑定第三方账号
+  # Email验证码验证
   email:
-    - /legion/email/resetByEmail # 邮件重置密码
-    - /legion/email/editEmail # 修改绑定邮箱
+    - /api/legion/email/resetByEmail # 邮件重置密码
+    - /api/legion/email/editEmail # 修改绑定邮箱
 
 # 忽略url
 ignored:
   # 无需登录认证的请求
   urls:
     - /**
+    - /legion/app/v1/**
     - /legion/oauth2/**
     - /legion/actuator/**
     - /legion/admin/**
-    - /legion/chat/**
+    - /chat/**
+    - /modeler/**
+    - /editor-app/**
+    - /legion/act/**
     - /legion/dictData/getByType/**
     - /legion/email/sendResetCode/**
     - /legion/email/resetByEmail
     - /legion/file/view/**
     - /legion/social/**
+    - /legion/ws/**
     - /legion/setting/notice
     - /legion/user/regist
     - /legion/user/smsLogin
     - /legion/user/resetByMobile
     - /legion/common/**
-    - /ws/**
     - /druid/**
     - /doc.html
-    - /swagger-ui.html
     - /swagger-resources/**
     - /v2/api-docs
     - /**/*.js
     - /**/*.css
     - /**/*.png
     - /**/*.ico
+    - /legion/test/**
   # 限流及黑名单不拦截的路径
   limitUrls:
     - /**/*.js
@@ -284,18 +313,44 @@ ignored:
     - /**/*.png
     - /**/*.ico
 
+# Actuator
+management:
+  endpoint:
+    health:
+      show-details: always
+      status:
+        http-mapping:
+          DOWN: 200
+          OUT_OF_SERVICE: 200
+          FATAL: 200
+          UNKNOWN: 200
+  endpoints:
+    web:
+      base-path: /legion/actuator/
+      exposure:
+        include: '*'
 
 # 接口文档增强UI Swagger界面内容配置
 knife4j:
   enable: true
 
-
-
+swagger:
+  title: legion
+  description: miaoshu
+  version: 1
+  termsOfServiceUrl: http://www.langting.com
+  contact:
+    name: mao
+    url: http://www.langting.com
+    email: cktk@qq.com
+  # 分组名
+  group:  Admin
+  group2: App
+  group3: yewu
 # Mybatis-plus
 mybatis-plus:
   mapper-locations: classpath*:mapper/**/*.xml
   configuration:
-  #  这个是干嘛的
     map-underscore-to-camel-case: false
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   global-config:
@@ -310,11 +365,10 @@ logging:
   level:
     root: info
   file:
-    # 指定路径
-    path: legion-admin/src/main/resources/logs/legion/logs
+    path: legion-logs
   logback:
     rollingpolicy:
       # 最大保存天数
-      max-history: 7
+      max-history: 30
       # 每个文件最大大小
       max-file-size: 500MB

@@ -19,7 +19,7 @@ public class CreateVerifyCode {
     /**
      * 随机字符
      */
-    public static final String STRING = "ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnrstuvwxyz123456789";
+    public static final String STRING = "123456789";
 
     /**
      * 图片的宽度

@@ -23,6 +23,8 @@ public class SmsFactory {
 
     @Autowired
     private TencentSms tencentSms;
+    @Autowired
+    private ChinaMobileTASms chinaMobileTASms;
 
     public Sms getSms() {
 
@@ -35,8 +37,10 @@ public class SmsFactory {
             return aliSms;
         } else if (type.equals(SettingConstant.TENCENT_SMS)) {
             return tencentSms;
-        } else {
-            throw new LegionException("暂不支持该存储配置，请检查配置");
+        }else if (type.equals(SettingConstant.CHINA_MOBILE_TA_SMS)){
+            return chinaMobileTASms;
+        }else {
+            throw new LegionException("暂不支持该短信配置，请检查配置");
         }
     }
 }

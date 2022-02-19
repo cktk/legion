@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -93,6 +94,10 @@ public class SearchUtil {
 							queryWrapper.or(true);
 							break;
 					}
+
+
+
+
 				}
 
 			});
@@ -109,7 +114,21 @@ public class SearchUtil {
 		Map<String, Object> maps = BeanUtil.beanToMap(obj);
 		//TODO 现在传对象默认为 eq
 		map.forEach((k, v) -> {
-			maps.put("like_" + k, v);
+
+			if (v instanceof Date){
+
+			}else if (v instanceof  String){
+				maps.put("eq_" + k, v);
+			}else if (v instanceof  Boolean){
+				maps.put("eq_" + k, v);
+			}else if (v instanceof  Integer){
+				maps.put("eq_" + k, v);
+			}else if (v instanceof Double){
+				maps.put("eq_" + k, v);
+			}else if (v instanceof Byte){
+				maps.put("eq_" + k, v);
+			}
+
 
 		});
 		return maps;

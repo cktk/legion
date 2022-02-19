@@ -1,5 +1,6 @@
 package com.esmooc.legion.base.controller.manage;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.esmooc.legion.base.entity.Dict;
 import com.esmooc.legion.base.entity.DictData;
 import com.esmooc.legion.base.service.DictDataService;
@@ -56,11 +57,8 @@ public class DictDataController {
     @Cacheable(key = "#type")
     public Result<Object> getByType(@PathVariable String type) {
 
-        Dict dict = dictService.findByType(type);
-        if (dict == null) {
-            return ResultUtil.error("字典类型 " + type + " 不存在");
-        }
-        List<DictData> list = dictDataService.findByDictId(dict.getId());
+
+        List<DictData> list = dictDataService.findByDictId(type);
         return ResultUtil.data(list);
     }
 
@@ -71,6 +69,13 @@ public class DictDataController {
         Dict dict = dictService.get(dictData.getDictId());
         if (dict == null) {
             return ResultUtil.error("字典类型id不存在");
+        }
+        dictData.setType(dict.getType());
+        String typeCode = dict.getType()+"_"+dictData.getValue();
+        dictData.setTypeCode(typeCode);
+        DictData data = dictDataService.findByTypeCode(typeCode);
+        if(data!=null){
+            return ResultUtil.error("类型编码重复");
         }
         dictDataService.save(dictData);
         // 删除缓存
@@ -85,6 +90,14 @@ public class DictDataController {
         dictDataService.update(dictData);
         // 删除缓存
         Dict dict = dictService.get(dictData.getDictId());
+        String typeCode = dict.getType()+"_"+dictData.getValue();
+        dictData.setTypeCode(typeCode);
+        DictData data = dictDataService.findByTypeCode(typeCode);
+        if(data!=null){
+            return ResultUtil.error("类型编码重复");
+        }
+        dictDataService.update(dictData);
+
         redisTemplate.delete("dictData::" + dict.getType());
         return ResultUtil.success("编辑成功");
     }

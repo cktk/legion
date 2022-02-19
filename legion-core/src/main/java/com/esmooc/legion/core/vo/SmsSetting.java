@@ -13,6 +13,7 @@ import java.io.Serializable;
 @Accessors(chain = true)
 public class SmsSetting implements Serializable {
 
+
     @ApiModelProperty(value = "服务商")
     private String serviceName;
 
@@ -36,4 +37,15 @@ public class SmsSetting implements Serializable {
 
     @ApiModelProperty(value = "是否改变secrectKey")
     private Boolean changed;
+
+    @ApiModelProperty(value = "服务商请求地址")
+    private String  url;
+
+    @ApiModelProperty(value = "服务商请求地址")
+    private String  content;
+
+    @ApiModelProperty(value = "用户名称")
+    private String  useName;
+
+
 }

@@ -1,5 +1,8 @@
 package com.esmooc.legion.core.common.utils;
 
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.bean.copier.CopyOptions;
+import cn.hutool.core.map.MapUtil;
 import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.core.common.vo.PageVo;
 import cn.hutool.core.util.StrUtil;
@@ -11,6 +14,7 @@ import org.springframework.data.domain.Sort;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author DaiMao
@@ -109,6 +113,13 @@ public class PageUtil {
         return p;
     }
 
+
+    public static Page initMpPage(Map<String,Object> condition){
+
+        PageVo pageVo = BeanUtil.mapToBean(condition, PageVo.class, false, CopyOptions.create().ignoreCase());
+
+        return initMpPage(pageVo);
+    }
     /**
      * List 手动分页
      * @param page

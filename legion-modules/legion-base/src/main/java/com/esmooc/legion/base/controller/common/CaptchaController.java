@@ -1,5 +1,7 @@
 package com.esmooc.legion.base.controller.common;
 
+import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.StrUtil;
 import com.esmooc.legion.core.common.annotation.RateLimiter;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
@@ -9,10 +11,7 @@ import com.esmooc.legion.core.common.utils.CreateVerifyCode;
 import com.esmooc.legion.core.common.utils.IpInfoUtil;
 import com.esmooc.legion.core.common.utils.ResultUtil;
 import com.esmooc.legion.core.common.vo.Result;
-import com.esmooc.legion.core.service.SettingService;
 import com.esmooc.legion.core.service.UserService;
-import cn.hutool.core.util.IdUtil;
-import cn.hutool.core.util.StrUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -50,8 +49,7 @@ public class CaptchaController {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private SettingService settingService;
+
 
     @RequestMapping(value = "/init", method = RequestMethod.GET)
     @ApiOperation(value = "初始化验证码")

@@ -1,6 +1,7 @@
 package com.esmooc.legion.core.common.sms;
 
 
+import com.esmooc.legion.core.entity.MessageSmsSend;
 import com.esmooc.legion.core.vo.SmsSetting;
 
 /**
@@ -22,5 +23,12 @@ public interface Sms {
      *               若启用腾讯短信会自动按顺序转换为逗号分隔的数组值如[1234]
      * @param templateCode 短信模板code/id
      */
-    void sendSms(String mobile, String params, String templateCode);
+    MessageSmsSend sendSms(String mobile, String params, String templateCode);
+
+    /**
+     * 保存发送短信记录
+     * @return
+     */
+     Boolean saveMsgLog(MessageSmsSend messageSmsSend);
+
 }
