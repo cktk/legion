@@ -1,7 +1,7 @@
 package com.esmooc.legion.activiti.entity.business;
 
-import com.esmooc.legion.core.base.LegionBaseEntity;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.esmooc.legion.core.base.LegionBaseEntity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

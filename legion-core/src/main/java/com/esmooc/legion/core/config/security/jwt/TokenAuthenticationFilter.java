@@ -1,5 +1,6 @@
 package com.esmooc.legion.core.config.security.jwt;
 
+import cn.hutool.core.util.StrUtil;
 import com.esmooc.legion.core.common.constant.SecurityConstant;
 import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
 import com.esmooc.legion.core.common.utils.ResponseUtil;
@@ -8,7 +9,6 @@ import com.esmooc.legion.core.common.vo.TokenMember;
 import com.esmooc.legion.core.common.vo.TokenUser;
 import com.esmooc.legion.core.config.properties.LegionAppTokenProperties;
 import com.esmooc.legion.core.config.properties.LegionTokenProperties;
-import cn.hutool.core.util.StrUtil;
 import com.google.gson.Gson;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -19,7 +19,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
@@ -158,20 +157,20 @@ public class TokenAuthenticationFilter extends BasicAuthenticationFilter {
 
         if (appTokenProperties.getRedis()) {
             // redis
-        String v = redisTemplate.get(SecurityConstant.TOKEN_MEMBER_PRE + appHeader);
-        if (StrUtil.isBlank(v)) {
-            ResponseUtil.out(response, ResponseUtil.resultMap(false, 401, "会员登录已失效，请重新登录"));
-            return null;
-        }
+            String v = redisTemplate.get(SecurityConstant.TOKEN_MEMBER_PRE + appHeader);
+            if (StrUtil.isBlank(v)) {
+                ResponseUtil.out(response, ResponseUtil.resultMap(false, 401, "会员登录已失效，请重新登录"));
+                return null;
+            }
             tokenMember = new Gson().fromJson(v, TokenMember.class);
-        // 权限
+            // 权限
             if (StrUtil.isNotBlank(tokenMember.getPermissions())) {
                 authorities = Arrays.stream(tokenMember.getPermissions().split(",")).map(e -> new SimpleGrantedAuthority(e))
                         .collect(Collectors.toList());
             }
-        // 重新设置失效时间
+            // 重新设置失效时间
             redisTemplate.set(SecurityConstant.MEMBER_TOKEN + tokenMember.getUsername() + ":" + tokenMember.getPlatform(), appHeader, appTokenProperties.getTokenExpireTime(), TimeUnit.DAYS);
-        redisTemplate.set(SecurityConstant.TOKEN_MEMBER_PRE + appHeader, v, appTokenProperties.getTokenExpireTime(), TimeUnit.DAYS);
+            redisTemplate.set(SecurityConstant.TOKEN_MEMBER_PRE + appHeader, v, appTokenProperties.getTokenExpireTime(), TimeUnit.DAYS);
         } else {
             // JWT
             try {

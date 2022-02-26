@@ -19,9 +19,9 @@ import java.util.regex.Pattern;
 @Slf4j
 public class AddressResolutionUtil {
 
-    public static  ArrayList<Address>  addressResolution(String ress) {
+    public static ArrayList<Address> addressResolution(String ress) {
 
-        String regex="^(?<province>[^省]+省|.+自治区)?(?<city>[^市]+市|.+自治州)?(?<county>[^县]+县|.+区|.+市)?(?<town>[^区]+区|.+镇)?(?<village>.*)";
+        String regex = "^(?<province>[^省]+省|.+自治区)?(?<city>[^市]+市|.+自治州)?(?<county>[^县]+县|.+区|.+市)?(?<town>[^区]+区|.+镇)?(?<village>.*)";
 
         Matcher m = Pattern.compile(regex).matcher(ress);
         String province = null, city = null, county = null, town = null, village = null;
@@ -57,7 +57,7 @@ public class AddressResolutionUtil {
             } catch (Exception e) {
 
             }
-            address.setVillage( village == null ? "" : village.trim());
+            address.setVillage(village == null ? "" : village.trim());
             addresses.add(address);
         }
 
@@ -66,9 +66,9 @@ public class AddressResolutionUtil {
     }
 
 
-    public static  Address  addressResolutionOne(String ress) {
+    public static Address addressResolutionOne(String ress) {
 
-        String regex="^(?<province>[^省]+省|.+自治区)?(?<city>[^市]+市|.+自治州)?(?<county>[^县]+县|.+区|.+市)?(?<town>[^区]+区|.+镇)?(?<village>.*)";
+        String regex = "^(?<province>[^省]+省|.+自治区)?(?<city>[^市]+市|.+自治州)?(?<county>[^县]+县|.+区|.+市)?(?<town>[^区]+区|.+镇)?(?<village>.*)";
         Matcher m = Pattern.compile(regex).matcher(ress);
 
         String add = "";
@@ -171,34 +171,34 @@ public class AddressResolutionUtil {
     }
 
     public static String toDBStr(String ress) {
-        String str ="中国";
+        String str = "中国";
         try {
             String regex = "^(?<province>[^省]+省|.+自治区)?(?<city>[^市]+市|.+自治州)?(?<county>[^县]+县|.+区|.+市)?(?<town>[^区]+区|.+镇)?(?<village>.*)";
             Matcher m = Pattern.compile(regex).matcher(ress);
             while (m.find()) {
                 log.info("{}", m);
                 if (!StrUtil.isBlank(m.group("province"))) {
-                    str=str+"-"+m.group("province");
+                    str = str + "-" + m.group("province");
                 }
 
 
                 if (!StrUtil.isBlank(m.group("city"))) {
-                    str=str+"-"+m.group("city");
+                    str = str + "-" + m.group("city");
                 }
 
 
                 if (!StrUtil.isBlank(m.group("county"))) {
-                    str=str+"-"+m.group("county");
+                    str = str + "-" + m.group("county");
                 }
 
 
                 if (!StrUtil.isBlank(m.group("town"))) {
-                    str=str+"-"+m.group("town");
+                    str = str + "-" + m.group("town");
                 }
 
 
                 if (!StrUtil.isBlank(m.group("village"))) {
-                    str=str+"-"+m.group("village");
+                    str = str + "-" + m.group("village");
                 }
 
                 System.out.println(str);
@@ -212,6 +212,7 @@ public class AddressResolutionUtil {
 
         return str;
     }
+
     public static void main(String[] args) {
         System.out.println(addressResolutionOne("中国山东省泰安市新泰市汶南镇西鲁村委会"));
     }

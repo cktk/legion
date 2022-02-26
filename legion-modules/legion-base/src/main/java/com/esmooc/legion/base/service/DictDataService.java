@@ -9,12 +9,14 @@ import java.util.List;
 
 /**
  * 字典数据接口
+ *
  * @author DaiMao
  */
 public interface DictDataService extends LegionBaseService<DictData, String> {
 
     /**
      * 多条件获取
+     *
      * @param dictData
      * @param pageable
      * @return
@@ -23,6 +25,7 @@ public interface DictDataService extends LegionBaseService<DictData, String> {
 
     /**
      * 通过dictId获取启用字典 已排序
+     *
      * @param dictId
      * @return
      */
@@ -30,11 +33,13 @@ public interface DictDataService extends LegionBaseService<DictData, String> {
 
     /**
      * 通过dictId删除
+     *
      * @param dictId
      */
     void deleteByDictId(String dictId);
 
     DictData findByTypeCode(String typeCode);
+
     List<DictData> findByType(String type);
 
 }

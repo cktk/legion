@@ -1,8 +1,8 @@
 package com.esmooc.legion.core.entity;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.esmooc.legion.core.base.LegionBaseEntity;
 import com.esmooc.legion.core.common.utils.ObjectUtil;
-import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -59,6 +59,7 @@ public class Log extends LegionBaseEntity {
 
     /**
      * 转换请求参数为Json
+     *
      * @param paramMap
      */
     public void setMapToParams(Map<String, String[]> paramMap) {

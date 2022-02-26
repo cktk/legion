@@ -17,16 +17,17 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnMissingBean(Sequence.class)
 public class SequenceAutoConfiguration {
 
-	/**
-	 * snowflak 算法作为发号器实现
-	 * @param properties
-	 * @return
-	 */
-	@Bean
-	@ConditionalOnBean(SequenceSnowflakeProperties.class)
-	public Sequence snowflakeSequence(SequenceSnowflakeProperties properties) {
-		return SnowflakeSeqBuilder.create().datacenterId(properties.getDatacenterId())
-				.workerId(properties.getWorkerId()).build();
-	}
+    /**
+     * snowflak 算法作为发号器实现
+     *
+     * @param properties
+     * @return
+     */
+    @Bean
+    @ConditionalOnBean(SequenceSnowflakeProperties.class)
+    public Sequence snowflakeSequence(SequenceSnowflakeProperties properties) {
+        return SnowflakeSeqBuilder.create().datacenterId(properties.getDatacenterId())
+                .workerId(properties.getWorkerId()).build();
+    }
 
 }

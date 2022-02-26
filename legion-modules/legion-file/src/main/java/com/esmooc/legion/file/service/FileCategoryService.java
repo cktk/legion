@@ -8,6 +8,7 @@ import java.util.List;
 
 /**
  * 文件分类接口
+ *
  * @author Exrick
  */
 public interface FileCategoryService extends LegionBaseService<FileCategory, String> {
@@ -15,6 +16,7 @@ public interface FileCategoryService extends LegionBaseService<FileCategory, Str
 
     /**
      * 通过父id和创建人获取
+     *
      * @param parentId
      * @param createBy
      * @return
@@ -23,6 +25,7 @@ public interface FileCategoryService extends LegionBaseService<FileCategory, Str
 
     /**
      * 通过名称和创建人模糊搜索
+     *
      * @param title
      * @param createBy
      * @return

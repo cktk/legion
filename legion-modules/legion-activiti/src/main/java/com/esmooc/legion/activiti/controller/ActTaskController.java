@@ -1,5 +1,7 @@
 package com.esmooc.legion.activiti.controller;
 
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
 import com.esmooc.legion.activiti.entity.ActBusiness;
 import com.esmooc.legion.activiti.entity.ActProcess;
 import com.esmooc.legion.activiti.service.ActBusinessService;
@@ -7,8 +9,11 @@ import com.esmooc.legion.activiti.service.ActProcessService;
 import com.esmooc.legion.activiti.service.mybatis.IHistoryIdentityService;
 import com.esmooc.legion.activiti.service.mybatis.IRunIdentityService;
 import com.esmooc.legion.activiti.utils.MessageUtil;
-import com.esmooc.legion.activiti.vo.*;
-import com.esmooc.legion.activiti.vo.*;
+import com.esmooc.legion.activiti.vo.ActPage;
+import com.esmooc.legion.activiti.vo.Assignee;
+import com.esmooc.legion.activiti.vo.HistoricTaskVo;
+import com.esmooc.legion.activiti.vo.ProcessNodeVo;
+import com.esmooc.legion.activiti.vo.TaskVo;
 import com.esmooc.legion.core.common.constant.ActivitiConstant;
 import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.core.common.utils.ResultUtil;
@@ -19,13 +24,15 @@ import com.esmooc.legion.core.common.vo.Result;
 import com.esmooc.legion.core.common.vo.SearchVo;
 import com.esmooc.legion.core.entity.User;
 import com.esmooc.legion.core.service.UserService;
-import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.StrUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import org.activiti.engine.*;
+import org.activiti.engine.HistoryService;
+import org.activiti.engine.ManagementService;
+import org.activiti.engine.RepositoryService;
+import org.activiti.engine.RuntimeService;
+import org.activiti.engine.TaskService;
 import org.activiti.engine.history.HistoricIdentityLink;
 import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.history.HistoricTaskInstance;
@@ -38,10 +45,19 @@ import org.activiti.engine.impl.persistence.entity.ProcessDefinitionEntity;
 import org.activiti.engine.impl.pvm.process.ActivityImpl;
 import org.activiti.engine.impl.pvm.process.ProcessDefinitionImpl;
 import org.activiti.engine.runtime.ProcessInstance;
-import org.activiti.engine.task.*;
+import org.activiti.engine.task.Comment;
+import org.activiti.engine.task.DelegationState;
+import org.activiti.engine.task.IdentityLink;
+import org.activiti.engine.task.IdentityLinkType;
+import org.activiti.engine.task.Task;
+import org.activiti.engine.task.TaskQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -542,29 +558,6 @@ public class ActTaskController {
         }
     }
 
-    public class JumpTask implements Command<ExecutionEntity> {
-
-        private String procInstId;
-        private String activityId;
-
-        public JumpTask(String procInstId, String activityId) {
-            this.procInstId = procInstId;
-            this.activityId = activityId;
-        }
-
-        @Override
-        public ExecutionEntity execute(CommandContext commandContext) {
-
-            ExecutionEntity executionEntity = commandContext.getExecutionEntityManager().findExecutionById(procInstId);
-            executionEntity.destroyScope(ActivitiConstant.BACKED_FLAG);
-            ProcessDefinitionImpl processDefinition = executionEntity.getProcessDefinition();
-            ActivityImpl activity = processDefinition.findActivity(activityId);
-            executionEntity.executeActivity(activity);
-
-            return executionEntity;
-        }
-    }
-
     @RequestMapping(value = "/back", method = RequestMethod.POST)
     @ApiOperation(value = "任务节点审批驳回至发起人")
     public Result<Object> back(@ApiParam("任务id") @RequestParam String id,
@@ -656,5 +649,28 @@ public class ActTaskController {
             historyService.deleteHistoricTaskInstance(id);
         }
         return ResultUtil.success("操作成功");
+    }
+
+    public class JumpTask implements Command<ExecutionEntity> {
+
+        private String procInstId;
+        private String activityId;
+
+        public JumpTask(String procInstId, String activityId) {
+            this.procInstId = procInstId;
+            this.activityId = activityId;
+        }
+
+        @Override
+        public ExecutionEntity execute(CommandContext commandContext) {
+
+            ExecutionEntity executionEntity = commandContext.getExecutionEntityManager().findExecutionById(procInstId);
+            executionEntity.destroyScope(ActivitiConstant.BACKED_FLAG);
+            ProcessDefinitionImpl processDefinition = executionEntity.getProcessDefinition();
+            ActivityImpl activity = processDefinition.findActivity(activityId);
+            executionEntity.executeActivity(activity);
+
+            return executionEntity;
+        }
     }
 }

@@ -36,7 +36,7 @@ public class StopWordController {
 
     @RequestMapping(value = "/getByCondition", method = RequestMethod.GET)
     @ApiOperation(value = "多条件分页获取")
-    public Result<Page<StopWord>> getByCondition(StopWord stopWord, SearchVo searchVo, PageVo pageVo){
+    public Result<Page<StopWord>> getByCondition(StopWord stopWord, SearchVo searchVo, PageVo pageVo) {
 
         Page<StopWord> page = stopWordService.findByCondition(stopWord, searchVo, PageUtil.initPage(pageVo));
         return ResultUtil.data(page);

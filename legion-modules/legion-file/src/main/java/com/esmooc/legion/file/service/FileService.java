@@ -8,12 +8,14 @@ import org.springframework.data.domain.Pageable;
 
 /**
  * 文件管理接口
+ *
  * @author DaiMao
  */
 public interface FileService extends LegionBaseService<File, String> {
 
     /**
      * 多条件获取列表
+     *
      * @param file
      * @param searchVo
      * @param pageable
@@ -23,6 +25,7 @@ public interface FileService extends LegionBaseService<File, String> {
 
     /**
      * 通过categoryId删除
+     *
      * @param categoryId
      */
     void deleteByCategoryId(String categoryId);

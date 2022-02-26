@@ -4,12 +4,17 @@ import cn.hutool.core.util.IdUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Base64;
 import java.util.Base64.Decoder;
 
 /**
  * base64转为multipartFile工具类
+ *
  * @author DaiMao
  */
 @Slf4j
@@ -21,6 +26,20 @@ public class Base64DecodeMultipartFile implements MultipartFile {
     public Base64DecodeMultipartFile(byte[] imgContent, String header) {
         this.imgContent = imgContent;
         this.header = header.split(";")[0];
+    }
+
+    public static MultipartFile base64Convert(String base64) {
+
+        String[] baseStrs = base64.split(",");
+        Decoder decoder = Base64.getDecoder();
+        byte[] b = decoder.decode(baseStrs[1]);
+
+        for (int i = 0; i < b.length; ++i) {
+            if (b[i] < 0) {
+                b[i] += 256;
+            }
+        }
+        return new Base64DecodeMultipartFile(b, baseStrs[0]);
     }
 
     @Override
@@ -66,20 +85,6 @@ public class Base64DecodeMultipartFile implements MultipartFile {
         } catch (Exception e) {
             log.error(e.toString());
         }
-    }
-
-    public static MultipartFile base64Convert(String base64) {
-
-        String[] baseStrs = base64.split(",");
-        Decoder decoder = Base64.getDecoder();
-        byte[] b = decoder.decode(baseStrs[1]);
-
-        for (int i = 0; i < b.length; ++i) {
-            if (b[i] < 0) {
-                b[i] += 256;
-            }
-        }
-        return new Base64DecodeMultipartFile(b, baseStrs[0]);
     }
 }
 

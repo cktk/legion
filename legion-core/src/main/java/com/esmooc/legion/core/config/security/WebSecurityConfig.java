@@ -5,8 +5,8 @@ import com.esmooc.legion.core.common.utils.SecurityUtil;
 import com.esmooc.legion.core.config.properties.IgnoredUrlsProperties;
 import com.esmooc.legion.core.config.properties.LegionAppTokenProperties;
 import com.esmooc.legion.core.config.properties.LegionTokenProperties;
-import com.esmooc.legion.core.config.security.jwt.TokenAuthenticationFilter;
 import com.esmooc.legion.core.config.security.jwt.RestAccessDeniedHandler;
+import com.esmooc.legion.core.config.security.jwt.TokenAuthenticationFilter;
 import com.esmooc.legion.core.config.security.permission.MyFilterSecurityInterceptor;
 import com.esmooc.legion.core.config.security.validate.EmailValidateFilter;
 import com.esmooc.legion.core.config.security.validate.ImageValidateFilter;
@@ -15,19 +15,18 @@ import com.esmooc.legion.core.config.security.validate.VaptchaValidateFilter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
  * Security 核心配置类
  * 开启注解控制权限至Controller
+ *
  * @author DaiMao
  */
 @Slf4j
@@ -69,7 +68,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private SecurityUtil securityUtil;
 
 
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
@@ -78,9 +76,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         // 除配置文件忽略路径其它所有请求都需经过认证和授权
         for (String url : ignoredUrlsProperties.getUrls()) {
-            log.info(" url {} ",url);
+            log.info(" url {} ", url);
             registry.antMatchers(url).permitAll();
-            log.info(" 测试 {} ",registry.antMatchers(url).permitAll());
+            log.info(" 测试 {} ", registry.antMatchers(url).permitAll());
         }
 
         registry.and()

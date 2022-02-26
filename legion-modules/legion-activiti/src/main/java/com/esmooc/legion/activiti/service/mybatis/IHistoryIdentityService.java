@@ -9,6 +9,7 @@ public interface IHistoryIdentityService {
 
     /**
      * 添加历史任务关联用户信息
+     *
      * @param id
      * @param type
      * @param userId
@@ -21,6 +22,7 @@ public interface IHistoryIdentityService {
 
     /**
      * 通过类型和任务id查找用户id
+     *
      * @param type
      * @param taskId
      * @return

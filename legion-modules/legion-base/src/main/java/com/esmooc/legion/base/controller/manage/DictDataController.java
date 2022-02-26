@@ -1,6 +1,5 @@
 package com.esmooc.legion.base.controller.manage;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.esmooc.legion.base.entity.Dict;
 import com.esmooc.legion.base.entity.DictData;
 import com.esmooc.legion.base.service.DictDataService;
@@ -18,7 +17,11 @@ import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -70,10 +73,10 @@ public class DictDataController {
             return ResultUtil.error("字典类型id不存在");
         }
         dictData.setType(dict.getType());
-        String typeCode = dict.getType()+"_"+dictData.getValue();
+        String typeCode = dict.getType() + "_" + dictData.getValue();
         dictData.setTypeCode(typeCode);
         DictData data = dictDataService.findByTypeCode(typeCode);
-        if(data!=null){
+        if (data != null) {
             return ResultUtil.error("类型编码重复");
         }
         dictDataService.save(dictData);
@@ -89,10 +92,10 @@ public class DictDataController {
         dictDataService.update(dictData);
         // 删除缓存
         Dict dict = dictService.get(dictData.getDictId());
-        String typeCode = dict.getType()+"_"+dictData.getValue();
+        String typeCode = dict.getType() + "_" + dictData.getValue();
         dictData.setTypeCode(typeCode);
         DictData data = dictDataService.findByTypeCode(typeCode);
-        if(data!=null){
+        if (data != null) {
             return ResultUtil.error("类型编码重复");
         }
         dictDataService.update(dictData);

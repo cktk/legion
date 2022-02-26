@@ -1,10 +1,10 @@
 package com.esmooc.legion.core.common.utils;
 
-import com.esmooc.legion.core.common.exception.LegionException;
-import com.esmooc.legion.core.service.StopWordService;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.dfa.WordTree;
 import cn.hutool.extra.spring.SpringUtil;
+import com.esmooc.legion.core.common.exception.LegionException;
+import com.esmooc.legion.core.service.StopWordService;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -16,12 +16,11 @@ import java.util.List;
 public class StopWordsUtil {
 
     private static StopWordService stopWordService = SpringUtil.getBean(StopWordService.class);
+    private static WordTree wordTree;
 
     private StopWordsUtil() {
 
     }
-
-    private static WordTree wordTree;
 
     public static WordTree getInstance() {
 
@@ -45,6 +44,7 @@ public class StopWordsUtil {
 
     /**
      * 返回匹配的词
+     *
      * @param param
      * @return
      */
@@ -55,6 +55,7 @@ public class StopWordsUtil {
 
     /**
      * 检测到禁用词直接抛出异常
+     *
      * @param param
      * @return
      */
@@ -67,6 +68,7 @@ public class StopWordsUtil {
 
     /**
      * 返回所有匹配的词
+     *
      * @param param
      * @return
      */
@@ -77,6 +79,7 @@ public class StopWordsUtil {
 
     /**
      * 将匹配词过滤为*
+     *
      * @param param
      * @return
      */
@@ -87,13 +90,14 @@ public class StopWordsUtil {
 
     /**
      * 自定义替换符号字符
+     *
      * @param param
      * @param replacement
      * @return
      */
     public static String filter(String param, String replacement) {
 
-        for(String e : matchAll(param)){
+        for (String e : matchAll(param)) {
             param = param.replaceAll(e, replacement);
         }
         return param;

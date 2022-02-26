@@ -18,7 +18,11 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -46,7 +50,6 @@ public class CaptchaController {
 
     @Autowired
     private UserService userService;
-
 
 
     @RequestMapping(value = "/init", method = RequestMethod.GET)
@@ -88,7 +91,7 @@ public class CaptchaController {
 
     @RequestMapping(value = "/sendLoginSms/{mobile}", method = RequestMethod.GET)
     @ApiOperation(value = "发送登录短信验证码")
-    @RateLimiter(name="sendLoginSms", rate = 1, ipLimit = true)
+    @RateLimiter(name = "sendLoginSms", rate = 1, ipLimit = true)
     public Result<Object> sendLoginSmsCode(@PathVariable String mobile, HttpServletRequest request) {
 
         return sendSms(mobile, 1, 0, request);

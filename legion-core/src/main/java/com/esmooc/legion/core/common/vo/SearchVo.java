@@ -17,8 +17,7 @@ public class SearchVo implements Serializable {
     private String startDate = DateUtil.formatDate(DateUtil.yesterday());
 
     @ApiModelProperty(value = "结束日期")
-    private String endDate =DateUtil.formatDateTime(new Date()) ;
-
+    private String endDate = DateUtil.formatDateTime(new Date());
 
 
     @ApiModelProperty(value = "模糊查询条件")

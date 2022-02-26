@@ -1,5 +1,8 @@
 package com.esmooc.legion.social.controller;
 
+import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.HttpUtil;
 import com.esmooc.legion.core.common.annotation.SystemLog;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.constant.SecurityConstant;
@@ -8,22 +11,15 @@ import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
 import com.esmooc.legion.core.common.utils.ResultUtil;
 import com.esmooc.legion.core.common.utils.SecurityUtil;
 import com.esmooc.legion.core.common.vo.Result;
-import com.esmooc.legion.core.config.security.SecurityUserDetails;
-import com.esmooc.legion.core.entity.User;
 import com.esmooc.legion.social.entity.Social;
 import com.esmooc.legion.social.service.SocialService;
 import com.esmooc.legion.social.vo.GithubUserInfo;
-import cn.hutool.core.util.IdUtil;
-import cn.hutool.core.util.StrUtil;
-import cn.hutool.http.HttpUtil;
 import com.google.gson.Gson;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -36,6 +32,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * https://developer.github.com/apps/building-oauth-apps/authorizing-oauth-apps/
+ *
  * @author DaiMao
  */
 @Slf4j
@@ -96,7 +93,7 @@ public class GithubController {
     @ApiOperation(value = "获取accessToken")
     @SystemLog(description = "Github关联登录", type = LogType.LOGIN)
     public String callback(@RequestParam(required = false) String code,
-                                 @RequestParam(required = false) String state) throws UnsupportedEncodingException {
+                           @RequestParam(required = false) String state) throws UnsupportedEncodingException {
 
         if (StrUtil.isBlank(code)) {
             return "redirect:" + callbackFeUrl + "?error=" + URLEncoder.encode("您未同意授权", "utf-8");

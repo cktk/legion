@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * 异步方法
+ *
  * @author DaiMao
  */
 @Component

@@ -4,6 +4,7 @@ import lombok.Data;
 
 /**
  * http://open.weibo.com/wiki/2/users/show
+ *
  * @author DaiMao
  */
 @Data

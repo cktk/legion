@@ -1,26 +1,29 @@
 package com.esmooc.legion.base.controller.manage;
 
+import cn.hutool.core.util.StrUtil;
 import com.esmooc.legion.base.async.AddMessage;
-import com.esmooc.legion.core.common.annotation.SystemLog;
 import com.esmooc.legion.core.common.constant.CommonConstant;
-import com.esmooc.legion.core.common.enums.LogType;
-import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
-import com.esmooc.legion.core.common.utils.*;
+import com.esmooc.legion.core.common.utils.NameUtil;
+import com.esmooc.legion.core.common.utils.PageUtil;
+import com.esmooc.legion.core.common.utils.ResultUtil;
+import com.esmooc.legion.core.common.utils.SecurityUtil;
+import com.esmooc.legion.core.common.utils.StopWordsUtil;
 import com.esmooc.legion.core.common.vo.PageVo;
 import com.esmooc.legion.core.common.vo.Result;
 import com.esmooc.legion.core.common.vo.SearchVo;
-import com.esmooc.legion.core.config.security.SecurityUserDetails;
 import com.esmooc.legion.core.dao.mapper.DeleteMapper;
 import com.esmooc.legion.core.entity.Department;
 import com.esmooc.legion.core.entity.Role;
 import com.esmooc.legion.core.entity.User;
 import com.esmooc.legion.core.entity.UserRole;
-import com.esmooc.legion.core.service.*;
+import com.esmooc.legion.core.service.DepartmentHeaderService;
+import com.esmooc.legion.core.service.DepartmentService;
+import com.esmooc.legion.core.service.RoleService;
+import com.esmooc.legion.core.service.UserRoleService;
+import com.esmooc.legion.core.service.UserService;
 import com.esmooc.legion.core.service.mybatis.IUserRoleService;
 import com.esmooc.legion.core.vo.RoleDTO;
-import cn.hutool.core.util.StrUtil;
-import com.esmooc.legion.core.service.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -29,11 +32,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -134,6 +140,7 @@ public class UserController {
 
     /**
      * 线上
+     *
      * @param password
      * @param newPass
      * @return
@@ -190,8 +197,8 @@ public class UserController {
     @RequestMapping(value = "/getByCondition", method = RequestMethod.GET)
     @ApiOperation(value = "多条件分页获取用户列表")
     public Result<Object> getByCondition(User user,
-                                             SearchVo searchVo,
-                                             PageVo pageVo) {
+                                         SearchVo searchVo,
+                                         PageVo pageVo) {
 
         Page<User> page = userService.findByCondition(user, searchVo, PageUtil.initPage(pageVo));
         for (User u : page.getContent()) {
@@ -242,7 +249,7 @@ public class UserController {
             entityManager.detach(u);
             u.setPassword(null);
         });
-        return  ResultUtil.data(list);
+        return ResultUtil.data(list);
     }
 
     @RequestMapping(value = "/admin/add", method = RequestMethod.POST)

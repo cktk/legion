@@ -10,10 +10,11 @@ import com.esmooc.legion.core.common.sequence.Sequence;
  */
 public interface SeqBuilder {
 
-	/**
-	 * 构建一个序列号生成器
-	 * @return 序列号生成器
-	 */
-	Sequence build();
+    /**
+     * 构建一个序列号生成器
+     *
+     * @return 序列号生成器
+     */
+    Sequence build();
 
 }

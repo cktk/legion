@@ -8,12 +8,14 @@ import java.util.List;
 
 /**
  * Github登录数据处理层
+ *
  * @author DaiMao
  */
 public interface SocialDao extends LegionBaseDao<Social, String> {
 
     /**
      * 通过openId和平台获取
+     *
      * @param openId
      * @param platform
      * @return
@@ -22,6 +24,7 @@ public interface SocialDao extends LegionBaseDao<Social, String> {
 
     /**
      * 通过userId和平台获取
+     *
      * @param relateUsername
      * @param platform
      * @return
@@ -30,6 +33,7 @@ public interface SocialDao extends LegionBaseDao<Social, String> {
 
     /**
      * 通过relateUsername获取
+     *
      * @param relateUsername
      * @return
      */

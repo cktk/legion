@@ -1,6 +1,6 @@
 package com.esmooc.legion.generator.vue;
 
-import com.esmooc.legion.core.common.exception.LimitException;
+import cn.hutool.core.util.StrUtil;
 import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.core.common.limit.RedisRaterLimiter;
 import com.esmooc.legion.core.common.utils.IpInfoUtil;
@@ -8,7 +8,6 @@ import com.esmooc.legion.core.common.utils.ResultUtil;
 import com.esmooc.legion.core.common.vo.Result;
 import com.esmooc.legion.generator.LegionGenerator;
 import com.esmooc.legion.generator.bean.Field;
-import cn.hutool.core.util.StrUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
@@ -18,12 +17,21 @@ import org.beetl.core.GroupTemplate;
 import org.beetl.core.Template;
 import org.beetl.core.resource.ClasspathResourceLoader;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author nikou

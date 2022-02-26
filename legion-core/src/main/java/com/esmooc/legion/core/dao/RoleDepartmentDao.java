@@ -9,12 +9,14 @@ import java.util.List;
 
 /**
  * 角色部门数据处理层
+ *
  * @author DaiMao
  */
 public interface RoleDepartmentDao extends LegionBaseDao<RoleDepartment, String> {
 
     /**
      * 通过roleId获取
+     *
      * @param roleId
      * @return
      */
@@ -22,6 +24,7 @@ public interface RoleDepartmentDao extends LegionBaseDao<RoleDepartment, String>
 
     /**
      * 通过角色id删除
+     *
      * @param roleId
      */
     @Modifying
@@ -30,6 +33,7 @@ public interface RoleDepartmentDao extends LegionBaseDao<RoleDepartment, String>
 
     /**
      * 通过角色id删除
+     *
      * @param departmentId
      */
     @Modifying

@@ -1,5 +1,6 @@
 package com.esmooc.legion.activiti.controller;
 
+import cn.hutool.core.util.StrUtil;
 import com.esmooc.legion.activiti.entity.ActCategory;
 import com.esmooc.legion.activiti.entity.ActProcess;
 import com.esmooc.legion.activiti.service.ActCategoryService;
@@ -10,7 +11,6 @@ import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
 import com.esmooc.legion.core.common.utils.CommonUtil;
 import com.esmooc.legion.core.common.utils.ResultUtil;
 import com.esmooc.legion.core.common.vo.Result;
-import cn.hutool.core.util.StrUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +18,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -49,7 +53,7 @@ public class ActCategoryController {
 
         List<ActCategory> list = actCategoryService.findByParentIdOrderBySortOrder(parentId);
         setInfo(list);
-       return ResultUtil.data(list);
+        return ResultUtil.data(list);
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
@@ -146,7 +150,7 @@ public class ActCategoryController {
 
         List<ActCategory> list = actCategoryService.findByTitleLikeOrderBySortOrder("%" + title + "%");
         setInfo(list);
-       return ResultUtil.data(list);
+        return ResultUtil.data(list);
     }
 
     public void setInfo(List<ActCategory> list) {

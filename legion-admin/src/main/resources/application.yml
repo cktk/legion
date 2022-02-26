@@ -88,7 +88,7 @@ spring:
   # Redis 若设有密码自行添加配置password
   redis:
     host: 127.0.0.1
-#    password:
+    #    password:
     port: 6379
     database: 1
     timeout: 10s
@@ -156,11 +156,11 @@ spring:
           max-age: 30D
 
 legion:
-  xsequence:    #发号器相关配置
-#    snowflake:
-#      datacenterId : #数据中心 1-31
-#      workerId:  # 当前机器ID 1-31
-#    redis :
+  xsequence: #发号器相关配置
+    #    snowflake:
+    #      datacenterId : #数据中心 1-31
+    #      workerId:  # 当前机器ID 1-31
+    #    redis :
     db:
       retry-times: 3  # 重试次数
       table-name: t_sequence #表名
@@ -344,7 +344,7 @@ swagger:
     url: http://www.langting.com
     email: cktk@qq.com
   # 分组名
-  group:  Admin
+  group: Admin
   group2: App
   group3: yewu
 # Mybatis-plus

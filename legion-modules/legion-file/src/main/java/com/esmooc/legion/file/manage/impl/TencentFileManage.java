@@ -1,18 +1,22 @@
 package com.esmooc.legion.file.manage.impl;
 
+import cn.hutool.core.util.StrUtil;
 import com.esmooc.legion.core.common.constant.SettingConstant;
 import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.core.entity.Setting;
 import com.esmooc.legion.core.service.SettingService;
 import com.esmooc.legion.core.vo.OssSetting;
 import com.esmooc.legion.file.manage.FileManage;
-import cn.hutool.core.util.StrUtil;
 import com.google.gson.Gson;
 import com.qcloud.cos.COSClient;
 import com.qcloud.cos.ClientConfig;
 import com.qcloud.cos.auth.BasicCOSCredentials;
 import com.qcloud.cos.auth.COSCredentials;
-import com.qcloud.cos.model.*;
+import com.qcloud.cos.model.CopyObjectRequest;
+import com.qcloud.cos.model.CopyResult;
+import com.qcloud.cos.model.ObjectMetadata;
+import com.qcloud.cos.model.PutObjectRequest;
+import com.qcloud.cos.model.PutObjectResult;
 import com.qcloud.cos.region.Region;
 import com.qcloud.cos.transfer.Copy;
 import com.qcloud.cos.transfer.TransferManager;

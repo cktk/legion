@@ -1,13 +1,13 @@
 package com.esmooc.legion.core.common.sms;
 
+import cn.hutool.core.util.StrUtil;
+import com.aliyuncs.exceptions.ClientException;
 import com.esmooc.legion.core.common.constant.SettingConstant;
 import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.core.entity.MessageSmsSend;
 import com.esmooc.legion.core.entity.Setting;
 import com.esmooc.legion.core.service.SettingService;
 import com.esmooc.legion.core.vo.SmsSetting;
-import cn.hutool.core.util.StrUtil;
-import com.aliyuncs.exceptions.ClientException;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,34 +26,9 @@ public class SmsUtil {
     @Autowired
     private SmsFactory smsFactory;
 
-    public String getSmsUsed() {
-
-        Setting setting = settingService.get(SettingConstant.SMS_USED);
-        if (setting == null || StrUtil.isBlank(setting.getValue())) {
-            throw new LegionException("您还未配置短信服务");
-        }
-        String type = setting.getValue();
-        return type;
-    }
-
-    public SmsSetting getSmsSetting() {
-
-        Setting sms = settingService.get(getSmsUsed());
-        return new Gson().fromJson(sms.getValue(), SmsSetting.class);
-    }
-
-    /**
-     * 获得对应完整短信模版Key
-     * @param type
-     * @return
-     */
-    public String getTemplate(Integer type) {
-
-        return getSmsUsed() + "_" + getTemplateSuffix(type);
-    }
-
     /**
      * 获得对应模版Key后缀
+     *
      * @param type
      * @return
      */
@@ -81,7 +56,34 @@ public class SmsUtil {
         }
     }
 
-    public String getTemplateCode(Integer type){
+    public String getSmsUsed() {
+
+        Setting setting = settingService.get(SettingConstant.SMS_USED);
+        if (setting == null || StrUtil.isBlank(setting.getValue())) {
+            throw new LegionException("您还未配置短信服务");
+        }
+        String type = setting.getValue();
+        return type;
+    }
+
+    public SmsSetting getSmsSetting() {
+
+        Setting sms = settingService.get(getSmsUsed());
+        return new Gson().fromJson(sms.getValue(), SmsSetting.class);
+    }
+
+    /**
+     * 获得对应完整短信模版Key
+     *
+     * @param type
+     * @return
+     */
+    public String getTemplate(Integer type) {
+
+        return getSmsUsed() + "_" + getTemplateSuffix(type);
+    }
+
+    public String getTemplateCode(Integer type) {
 
         Setting setting = settingService.get(getTemplate(type));
         if (StrUtil.isBlank(setting.getValue())) {
@@ -92,6 +94,7 @@ public class SmsUtil {
 
     /**
      * 发送验证码 模版变量为单个 code 无需模版编号
+     *
      * @param mobile
      * @param code
      * @param type   0通用模版 1注册 2登录 3修改手机 4修改密码 5重置密码 6工作流模版
@@ -105,6 +108,7 @@ public class SmsUtil {
 
     /**
      * 发送验证码 模版变量为单个 code 需传入模版编号
+     *
      * @param mobile
      * @param code
      * @param templateCode
@@ -118,6 +122,7 @@ public class SmsUtil {
 
     /**
      * 发送工作流消息 模版变量为 content
+     *
      * @param mobile
      * @param content
      * @return
@@ -131,6 +136,7 @@ public class SmsUtil {
 
     /**
      * 发送短信
+     *
      * @param mobile       手机号 多个,逗号分隔 若为11位国内手机号无需加国家区号86
      *                     国际号码需加上区号 [国家或地区码][手机号] 如8109012345678、86为日本、09012345678为手机号
      * @param params       参数 JSON格式，如{"code": "1234"}
@@ -139,7 +145,7 @@ public class SmsUtil {
      */
     public MessageSmsSend sendSms(String mobile, String params, String templateCode) {
 
-       return smsFactory.getSms().sendSms(mobile, params, templateCode);
+        return smsFactory.getSms().sendSms(mobile, params, templateCode);
     }
 
 

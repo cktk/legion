@@ -1,11 +1,11 @@
 package com.esmooc.legion.social.serviceimpl;
 
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
 import com.esmooc.legion.core.common.vo.SearchVo;
 import com.esmooc.legion.social.dao.SocialDao;
 import com.esmooc.legion.social.entity.Social;
 import com.esmooc.legion.social.service.SocialService;
-import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,13 +15,18 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.criteria.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 /**
  * Github登录接口实现
+ *
  * @author DaiMao
  */
 @Slf4j

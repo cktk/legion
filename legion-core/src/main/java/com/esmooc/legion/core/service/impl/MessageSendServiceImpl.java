@@ -1,5 +1,6 @@
 package com.esmooc.legion.core.service.impl;
 
+import cn.hutool.core.util.StrUtil;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.core.dao.MessageDao;
@@ -7,7 +8,6 @@ import com.esmooc.legion.core.dao.MessageSendDao;
 import com.esmooc.legion.core.entity.Message;
 import com.esmooc.legion.core.entity.MessageSend;
 import com.esmooc.legion.core.service.MessageSendService;
-import cn.hutool.core.util.StrUtil;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,13 +19,18 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.criteria.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 /**
  * 消息发送接口实现
+ *
  * @author DaiMao
  */
 @Slf4j

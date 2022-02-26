@@ -1,5 +1,6 @@
 package com.esmooc.legion.app.controller.v1;
 
+import cn.hutool.core.util.StrUtil;
 import com.esmooc.legion.core.common.annotation.SystemLog;
 import com.esmooc.legion.core.common.enums.LogType;
 import com.esmooc.legion.core.common.utils.NameUtil;
@@ -7,16 +8,12 @@ import com.esmooc.legion.core.common.utils.ResultUtil;
 import com.esmooc.legion.core.common.utils.SecurityUtil;
 import com.esmooc.legion.core.common.utils.SnowFlakeUtil;
 import com.esmooc.legion.core.common.vo.Result;
-import com.esmooc.legion.core.config.security.SecurityMemberDetails;
 import com.esmooc.legion.core.entity.Member;
 import com.esmooc.legion.core.service.MemberService;
-import cn.hutool.core.util.StrUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;

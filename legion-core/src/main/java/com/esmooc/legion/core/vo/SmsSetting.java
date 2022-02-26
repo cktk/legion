@@ -39,13 +39,13 @@ public class SmsSetting implements Serializable {
     private Boolean changed;
 
     @ApiModelProperty(value = "服务商请求地址")
-    private String  url;
+    private String url;
 
     @ApiModelProperty(value = "服务商请求地址")
-    private String  content;
+    private String content;
 
     @ApiModelProperty(value = "用户名称")
-    private String  useName;
+    private String useName;
 
 
 }

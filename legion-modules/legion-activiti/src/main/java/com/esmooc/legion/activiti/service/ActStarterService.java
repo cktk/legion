@@ -8,12 +8,14 @@ import java.util.Set;
 
 /**
  * 流程可发起人接口
+ *
  * @author DaiMao
  */
 public interface ActStarterService extends LegionBaseService<ActStarter, String> {
 
     /**
      * 通过用户id获取其可发起流程id
+     *
      * @param userId
      * @return
      */
@@ -21,6 +23,7 @@ public interface ActStarterService extends LegionBaseService<ActStarter, String>
 
     /**
      * 判断用户有无该流程权限
+     *
      * @param processDefId
      * @param userId
      * @return
@@ -29,6 +32,7 @@ public interface ActStarterService extends LegionBaseService<ActStarter, String>
 
     /**
      * 通过流程定义id删除
+     *
      * @param processDefId
      */
     void deleteByProcessDefId(String processDefId);

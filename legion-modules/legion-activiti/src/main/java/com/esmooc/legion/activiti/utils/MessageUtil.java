@@ -1,5 +1,7 @@
 package com.esmooc.legion.activiti.utils;
 
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.HtmlUtil;
 import com.esmooc.legion.activiti.dao.ActProcessDao;
 import com.esmooc.legion.activiti.entity.ActBusiness;
 import com.esmooc.legion.activiti.entity.ActProcess;
@@ -15,8 +17,6 @@ import com.esmooc.legion.core.service.MessageSendService;
 import com.esmooc.legion.core.service.SettingService;
 import com.esmooc.legion.core.service.UserService;
 import com.esmooc.legion.core.vo.OtherSetting;
-import cn.hutool.core.util.StrUtil;
-import cn.hutool.http.HtmlUtil;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +64,7 @@ public class MessageUtil {
 
     /**
      * 发送工作流消息
+     *
      * @param userId      发送用户
      * @param messageId   消息ID
      * @param actBusiness 业务关联表

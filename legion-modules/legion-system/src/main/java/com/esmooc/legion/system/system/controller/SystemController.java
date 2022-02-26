@@ -23,8 +23,8 @@ public class SystemController {
     @GetMapping("/info")
     @ApiOperation(value = "获取系统信息")
     public Result delAllByIds() {
-            Server server = new Server();
-            server.copyTo();
-            return ResultUtil.data(server);
+        Server server = new Server();
+        server.copyTo();
+        return ResultUtil.data(server);
     }
 }

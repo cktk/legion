@@ -9,12 +9,14 @@ import java.util.List;
 
 /**
  * 字典数据处理层
+ *
  * @author DaiMao
  */
 public interface DictDao extends LegionBaseDao<Dict, String> {
 
     /**
      * 排序获取全部
+     *
      * @return
      */
     @Query(value = "select d from Dict d order by d.sortOrder")
@@ -22,6 +24,7 @@ public interface DictDao extends LegionBaseDao<Dict, String> {
 
     /**
      * 通过type获取
+     *
      * @param type
      * @return
      */
@@ -29,6 +32,7 @@ public interface DictDao extends LegionBaseDao<Dict, String> {
 
     /**
      * 模糊搜索
+     *
      * @param key
      * @return
      */

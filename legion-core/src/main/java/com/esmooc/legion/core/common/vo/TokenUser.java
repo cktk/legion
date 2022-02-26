@@ -39,7 +39,7 @@ public class TokenUser implements UserDetails, Serializable {
 
     private Boolean saveLogin;
 
-    public TokenUser(User user, Boolean storePerms, Boolean saveLogin){
+    public TokenUser(User user, Boolean storePerms, Boolean saveLogin) {
 
         this.id = user.getId();
         this.username = user.getUsername();
@@ -63,7 +63,7 @@ public class TokenUser implements UserDetails, Serializable {
             }
             this.setPermissions(list);
         }
-}
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -1,5 +1,7 @@
 package com.esmooc.legion.core.config.security.validate;
 
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.HttpUtil;
 import com.esmooc.legion.core.common.constant.SettingConstant;
 import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
 import com.esmooc.legion.core.common.utils.IpInfoUtil;
@@ -8,8 +10,6 @@ import com.esmooc.legion.core.config.properties.CaptchaProperties;
 import com.esmooc.legion.core.entity.Setting;
 import com.esmooc.legion.core.service.SettingService;
 import com.esmooc.legion.core.vo.VaptchaSetting;
-import cn.hutool.core.util.StrUtil;
-import cn.hutool.http.HttpUtil;
 import com.google.gson.Gson;
 import com.google.gson.JsonParser;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +26,7 @@ import java.io.IOException;
 
 /**
  * 图形验证码过滤器
+ *
  * @author DaiMao
  */
 @Slf4j

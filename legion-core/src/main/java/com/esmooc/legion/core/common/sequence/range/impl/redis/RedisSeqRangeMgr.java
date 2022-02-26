@@ -13,126 +13,126 @@ import redis.clients.jedis.Jedis;
  */
 public class RedisSeqRangeMgr implements SeqRangeMgr {
 
-	/**
-	 * 前缀防止key重复
-	 */
-	private final static String KEY_PREFIX = "x_sequence_";
+    /**
+     * 前缀防止key重复
+     */
+    private final static String KEY_PREFIX = "x_sequence_";
 
-	/**
-	 * redis客户端
-	 */
-	private Jedis jedis;
+    /**
+     * redis客户端
+     */
+    private Jedis jedis;
 
-	/**
-	 * IP
-	 */
-	private String ip;
+    /**
+     * IP
+     */
+    private String ip;
 
-	/**
-	 * PORT
-	 */
-	private Integer port;
+    /**
+     * PORT
+     */
+    private Integer port;
 
-	/**
-	 * 验证权限
-	 */
-	private String auth;
+    /**
+     * 验证权限
+     */
+    private String auth;
 
-	/**
-	 * 区间步长
-	 */
-	private int step = 1000;
+    /**
+     * 区间步长
+     */
+    private int step = 1000;
 
-	/**
-	 * 区间起始位置，真实从stepStart+1开始
-	 */
-	private long stepStart = 0;
+    /**
+     * 区间起始位置，真实从stepStart+1开始
+     */
+    private long stepStart = 0;
 
-	/**
-	 * 标记业务key是否存在，如果false，在取nextRange时，会取check一把 这个boolean只为提高性能，不用每次都取redis check
-	 */
-	private volatile boolean keyAlreadyExist;
+    /**
+     * 标记业务key是否存在，如果false，在取nextRange时，会取check一把 这个boolean只为提高性能，不用每次都取redis check
+     */
+    private volatile boolean keyAlreadyExist;
 
-	@Override
-	public SeqRange nextRange(String name) throws SeqException {
-		if (!keyAlreadyExist) {
-			Boolean isExists = jedis.exists(getRealKey(name));
-			if (!isExists) {
-				// 第一次不存在，进行初始化,setnx不存在就set，存在就忽略
-				jedis.setnx(getRealKey(name), String.valueOf(stepStart));
-			}
-			keyAlreadyExist = true;
-		}
+    @Override
+    public SeqRange nextRange(String name) throws SeqException {
+        if (!keyAlreadyExist) {
+            Boolean isExists = jedis.exists(getRealKey(name));
+            if (!isExists) {
+                // 第一次不存在，进行初始化,setnx不存在就set，存在就忽略
+                jedis.setnx(getRealKey(name), String.valueOf(stepStart));
+            }
+            keyAlreadyExist = true;
+        }
 
-		Long max = jedis.incrBy(getRealKey(name), step);
-		Long min = max - step + 1;
-		return new SeqRange(min, max);
-	}
+        Long max = jedis.incrBy(getRealKey(name), step);
+        Long min = max - step + 1;
+        return new SeqRange(min, max);
+    }
 
-	@Override
-	public void init() {
-		checkParam();
-		jedis = new Jedis(ip, port);
-		if (StrUtil.isNotBlank(auth)) {
-			jedis.auth(auth);
-		}
-	}
+    @Override
+    public void init() {
+        checkParam();
+        jedis = new Jedis(ip, port);
+        if (StrUtil.isNotBlank(auth)) {
+            jedis.auth(auth);
+        }
+    }
 
-	private void checkParam() {
-		if (isEmpty(ip)) {
-			throw new SecurityException("[RedisSeqRangeMgr-checkParam] ip is empty.");
-		}
-		if (null == port) {
-			throw new SecurityException("[RedisSeqRangeMgr-checkParam] port is null.");
-		}
-	}
+    private void checkParam() {
+        if (isEmpty(ip)) {
+            throw new SecurityException("[RedisSeqRangeMgr-checkParam] ip is empty.");
+        }
+        if (null == port) {
+            throw new SecurityException("[RedisSeqRangeMgr-checkParam] port is null.");
+        }
+    }
 
-	private String getRealKey(String name) {
-		return KEY_PREFIX + name;
-	}
+    private String getRealKey(String name) {
+        return KEY_PREFIX + name;
+    }
 
-	private boolean isEmpty(String str) {
-		return null == str || str.trim().length() == 0;
-	}
+    private boolean isEmpty(String str) {
+        return null == str || str.trim().length() == 0;
+    }
 
-	public String getIp() {
-		return ip;
-	}
+    public String getIp() {
+        return ip;
+    }
 
-	public void setIp(String ip) {
-		this.ip = ip;
-	}
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
 
-	public int getPort() {
-		return port;
-	}
+    public int getPort() {
+        return port;
+    }
 
-	public void setPort(int port) {
-		this.port = port;
-	}
+    public void setPort(int port) {
+        this.port = port;
+    }
 
-	public int getStep() {
-		return step;
-	}
+    public int getStep() {
+        return step;
+    }
 
-	public void setStep(int step) {
-		this.step = step;
-	}
+    public void setStep(int step) {
+        this.step = step;
+    }
 
-	public String getAuth() {
-		return auth;
-	}
+    public String getAuth() {
+        return auth;
+    }
 
-	public void setAuth(String auth) {
-		this.auth = auth;
-	}
+    public void setAuth(String auth) {
+        this.auth = auth;
+    }
 
-	public long getStepStart() {
-		return stepStart;
-	}
+    public long getStepStart() {
+        return stepStart;
+    }
 
-	public void setStepStart(long stepStart) {
-		this.stepStart = stepStart;
-	}
+    public void setStepStart(long stepStart) {
+        this.stepStart = stepStart;
+    }
 
 }

@@ -1,5 +1,7 @@
 package com.esmooc.legion.activiti.serviceimpl;
 
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
 import com.esmooc.legion.activiti.dao.ActProcessDao;
 import com.esmooc.legion.activiti.entity.ActBusiness;
 import com.esmooc.legion.activiti.entity.ActProcess;
@@ -21,12 +23,20 @@ import com.esmooc.legion.core.service.DepartmentHeaderService;
 import com.esmooc.legion.core.service.DepartmentService;
 import com.esmooc.legion.core.service.UserRoleService;
 import com.esmooc.legion.core.service.UserService;
-import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.activiti.bpmn.model.BpmnModel;
+import org.activiti.bpmn.model.ExclusiveGateway;
+import org.activiti.bpmn.model.FlowElement;
+import org.activiti.bpmn.model.ParallelGateway;
 import org.activiti.bpmn.model.Process;
-import org.activiti.bpmn.model.*;
-import org.activiti.engine.*;
+import org.activiti.bpmn.model.SequenceFlow;
+import org.activiti.bpmn.model.StartEvent;
+import org.activiti.bpmn.model.UserTask;
+import org.activiti.engine.HistoryService;
+import org.activiti.engine.IdentityService;
+import org.activiti.engine.RepositoryService;
+import org.activiti.engine.RuntimeService;
+import org.activiti.engine.TaskService;
 import org.activiti.engine.history.HistoricIdentityLink;
 import org.activiti.engine.impl.RepositoryServiceImpl;
 import org.activiti.engine.impl.persistence.entity.ProcessDefinitionEntity;
@@ -46,11 +56,21 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.criteria.*;
-import java.util.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.LinkedHashSet;
+import java.util.List;
 
 /**
  * 流程管理接口实现
+ *
  * @author DaiMao
  */
 @Slf4j
@@ -420,6 +440,7 @@ public class ActProcessServiceImpl implements ActProcessService {
 
     /**
      * 设置节点审批人
+     *
      * @param nodeId
      */
     public List<User> getNodetUsers(String nodeId) {
@@ -468,6 +489,7 @@ public class ActProcessServiceImpl implements ActProcessService {
 
     /**
      * 去重
+     *
      * @param list
      * @return
      */

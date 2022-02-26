@@ -21,7 +21,11 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
 
@@ -43,14 +47,13 @@ public class MessageSendController extends LegionBaseController<MessageSend, Str
 
     @Autowired
     private MessageSendService messageSendService;
+    @Autowired
+    private SecurityUtil securityUtil;
 
     @Override
     public MessageSendService getService() {
         return messageSendService;
     }
-
-    @Autowired
-    private SecurityUtil securityUtil;
 
     @ApiOperation(value = "多条件分页获取")
     @GetMapping("/getByCondition")

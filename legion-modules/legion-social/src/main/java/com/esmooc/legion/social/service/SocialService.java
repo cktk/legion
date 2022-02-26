@@ -10,12 +10,14 @@ import java.util.List;
 
 /**
  * Github登录接口
+ *
  * @author DaiMao
  */
 public interface SocialService extends LegionBaseService<Social, String> {
 
     /**
      * 通过openId和平台获取
+     *
      * @param openId
      * @param platform
      * @return
@@ -24,6 +26,7 @@ public interface SocialService extends LegionBaseService<Social, String> {
 
     /**
      * 通过userId和平台获取
+     *
      * @param relateUsername
      * @param platform
      * @return
@@ -32,6 +35,7 @@ public interface SocialService extends LegionBaseService<Social, String> {
 
     /**
      * 通过relateUsername获取
+     *
      * @param relateUsername
      * @return
      */
@@ -39,6 +43,7 @@ public interface SocialService extends LegionBaseService<Social, String> {
 
     /**
      * 分页多条件获取
+     *
      * @param social
      * @param searchVo
      * @param pageable

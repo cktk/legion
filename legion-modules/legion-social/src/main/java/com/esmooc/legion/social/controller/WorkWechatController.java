@@ -1,5 +1,8 @@
 package com.esmooc.legion.social.controller;
 
+import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.HttpUtil;
 import com.esmooc.legion.core.common.annotation.SystemLog;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.constant.SecurityConstant;
@@ -8,14 +11,9 @@ import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
 import com.esmooc.legion.core.common.utils.ResultUtil;
 import com.esmooc.legion.core.common.utils.SecurityUtil;
 import com.esmooc.legion.core.common.vo.Result;
-import com.esmooc.legion.core.config.security.SecurityUserDetails;
-import com.esmooc.legion.core.entity.User;
 import com.esmooc.legion.social.entity.Social;
 import com.esmooc.legion.social.service.SocialService;
 import com.esmooc.legion.social.vo.WokWechatUserInfo;
-import cn.hutool.core.util.IdUtil;
-import cn.hutool.core.util.StrUtil;
-import cn.hutool.http.HttpUtil;
 import com.google.gson.Gson;
 import com.google.gson.JsonParser;
 import io.swagger.annotations.Api;
@@ -23,8 +21,6 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -37,6 +33,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * https://work.weixin.qq.com/api/doc/90000/90135/91020
+ *
  * @author DaiMao
  */
 @Slf4j
@@ -45,56 +42,42 @@ import java.util.concurrent.TimeUnit;
 @Controller
 public class WorkWechatController {
 
-    @Value("${legion.social.workwechat.appId}")
-    private String appId;
-
-    @Value("${legion.social.workwechat.agentId}")
-    private String agentId;
-
-    @Value("${legion.social.workwechat.appSecret}")
-    private String appSecret;
-
-    @Value("${legion.social.workwechat.callbackUrl}")
-    private String callbackUrl;
-
-    @Value("${legion.social.callbackFeUrl}")
-    private String callbackFeUrl;
-
-    @Value("${legion.social.callbackFeRelateUrl}")
-    private String callbackFeRelateUrl;
-
     private static final String STATE = SecurityConstant.WORKWECHAT_STATE;
-
     private static final Integer TYPE = CommonConstant.SOCIAL_TYPE_WORKWECHAT;
-
-    @Autowired
-    private SocialService socialService;
-
-    @Autowired
-    private SecurityUtil securityUtil;
-
-    @Autowired
-    private RedisTemplateHelper redisTemplate;
-
     /**
      * 申请令牌地址
      */
     private static final String AUTHORIZE_URL = "https://open.work.weixin.qq.com/wwopen/sso/qrConnect";
-
     /**
      * 获取access_token地址
      */
     private static final String ACCESS_TOKEN_URL = "https://qyapi.weixin.qq.com/cgi-bin/gettoken";
-
     /**
      * 获取用户ID地址
      */
     private static final String GET_USERINFO_URL = "https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo";
-
     /**
      * 获取用户信息地址
      */
     private static final String GET_USER_URL = "https://qyapi.weixin.qq.com/cgi-bin/user/get";
+    @Value("${legion.social.workwechat.appId}")
+    private String appId;
+    @Value("${legion.social.workwechat.agentId}")
+    private String agentId;
+    @Value("${legion.social.workwechat.appSecret}")
+    private String appSecret;
+    @Value("${legion.social.workwechat.callbackUrl}")
+    private String callbackUrl;
+    @Value("${legion.social.callbackFeUrl}")
+    private String callbackFeUrl;
+    @Value("${legion.social.callbackFeRelateUrl}")
+    private String callbackFeRelateUrl;
+    @Autowired
+    private SocialService socialService;
+    @Autowired
+    private SecurityUtil securityUtil;
+    @Autowired
+    private RedisTemplateHelper redisTemplate;
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     @ApiOperation(value = "获取企业微信认证链接")
@@ -116,7 +99,7 @@ public class WorkWechatController {
     @ApiOperation(value = "获取accessToken")
     @SystemLog(description = "企业微信关联登录", type = LogType.LOGIN)
     public String callback(@RequestParam(required = false) String code,
-                                 @RequestParam(required = false) String state) throws UnsupportedEncodingException {
+                           @RequestParam(required = false) String state) throws UnsupportedEncodingException {
 
         if (StrUtil.isBlank(code)) {
             return "redirect:" + callbackFeUrl + "?error=" + URLEncoder.encode("您未同意授权", "utf-8");
@@ -129,7 +112,7 @@ public class WorkWechatController {
         }
 
         // 申请令牌 get请求 传递参数appId、appSecret
-        String result = HttpUtil.get(ACCESS_TOKEN_URL + "?corpid=" + appId +"&corpsecret=" + appSecret);
+        String result = HttpUtil.get(ACCESS_TOKEN_URL + "?corpid=" + appId + "&corpsecret=" + appSecret);
         if (!result.contains("access_token")) {
             return "redirect:" + callbackFeUrl + "?error=" + URLEncoder.encode("获取access_token失败", "utf-8");
         }

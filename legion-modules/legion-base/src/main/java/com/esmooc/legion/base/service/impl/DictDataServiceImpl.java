@@ -1,10 +1,10 @@
 package com.esmooc.legion.base.service.impl;
 
+import cn.hutool.core.util.StrUtil;
 import com.esmooc.legion.base.dao.DictDataDao;
 import com.esmooc.legion.base.entity.DictData;
 import com.esmooc.legion.base.service.DictDataService;
 import com.esmooc.legion.core.common.constant.CommonConstant;
-import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -14,12 +14,17 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.criteria.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * 字典数据接口实现
+ *
  * @author DaiMao
  */
 @Slf4j

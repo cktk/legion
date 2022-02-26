@@ -8,12 +8,14 @@ import org.springframework.data.domain.Pageable;
 
 /**
  * 问答助手客服接口
+ *
  * @author DaiMao
  */
 public interface AutoChatService extends LegionBaseService<AutoChat, String> {
 
     /**
      * 多条件分页获取
+     *
      * @param autoChat
      * @param searchVo
      * @param pageable
@@ -23,6 +25,7 @@ public interface AutoChatService extends LegionBaseService<AutoChat, String> {
 
     /**
      * 完全匹配
+     *
      * @param title
      * @return
      */

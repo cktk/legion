@@ -4,6 +4,7 @@ import lombok.Data;
 
 /**
  * https://ding-doc.dingtalk.com/doc#/serverapi2/ege851/AaRQe
+ *
  * @author DaiMao
  */
 @Data

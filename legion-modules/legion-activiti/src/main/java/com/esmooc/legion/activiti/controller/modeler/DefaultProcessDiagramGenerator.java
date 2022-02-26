@@ -12,7 +12,12 @@ import org.activiti.image.impl.DefaultProcessDiagramCanvas.SHAPE_TYPE;
 
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 public class DefaultProcessDiagramGenerator implements ProcessDiagramGenerator {
 

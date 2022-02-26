@@ -10,12 +10,14 @@ import java.util.List;
 
 /**
  * 业务申请接口
+ *
  * @author DaiMao
  */
 public interface ActBusinessService extends LegionBaseService<ActBusiness, String> {
 
     /**
      * 多条件分页获取申请列表
+     *
      * @param actBusiness
      * @param searchVo
      * @param pageable
@@ -25,6 +27,7 @@ public interface ActBusinessService extends LegionBaseService<ActBusiness, Strin
 
     /**
      * 通过流程定义id获取
+     *
      * @param procDefId
      * @return
      */

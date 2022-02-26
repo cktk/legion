@@ -1,9 +1,9 @@
 package com.esmooc.legion.generator;
 
-import com.esmooc.legion.generator.bean.Entity;
-import com.esmooc.legion.generator.bean.Item;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.esmooc.legion.generator.bean.Entity;
+import com.esmooc.legion.generator.bean.Item;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.beetl.core.Configuration;
@@ -20,10 +20,13 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.esmooc.legion.generator.LegionGenerator.*;
+import static com.esmooc.legion.generator.LegionGenerator.camel2Underline;
+import static com.esmooc.legion.generator.LegionGenerator.dotToLine;
+import static com.esmooc.legion.generator.LegionGenerator.name;
 
 /**
  * 代码生成器 Mybatis-Plus
+ *
  * @author DaiMao
  */
 @Slf4j
@@ -113,6 +116,7 @@ public class LegionMPGenerator {
 
     /**
      * 运行该主函数即可生成代码
+     *
      * @param args
      * @throws IOException
      */
@@ -135,6 +139,7 @@ public class LegionMPGenerator {
 
     /**
      * 生成代码
+     *
      * @param gt
      * @throws IOException
      */
@@ -179,7 +184,7 @@ public class LegionMPGenerator {
         if (!entityDir.exists()) {
             entityDir.mkdirs();
         }
-        if (!entityFile.exists()&&entityFile.createNewFile()) {
+        if (!entityFile.exists() && entityFile.createNewFile()) {
             // 若文件存在则不重新生成
             out = new FileOutputStream(entityFile);
             entityTemplate.renderTo(out);
@@ -196,7 +201,7 @@ public class LegionMPGenerator {
         if (!daoDir.exists()) {
             daoDir.mkdirs();
         }
-        if (!daoFile.exists()&&daoFile.createNewFile()) {
+        if (!daoFile.exists() && daoFile.createNewFile()) {
             // 若文件存在则不重新生成
             out = new FileOutputStream(daoFile);
             daoTemplate.renderTo(out);
@@ -213,7 +218,7 @@ public class LegionMPGenerator {
         if (!serviceDir.exists()) {
             serviceDir.mkdirs();
         }
-        if (!serviceFile.exists()&&serviceFile.createNewFile()) {
+        if (!serviceFile.exists() && serviceFile.createNewFile()) {
             // 若文件存在则不重新生成
             out = new FileOutputStream(serviceFile);
             serviceTemplate.renderTo(out);
@@ -230,7 +235,7 @@ public class LegionMPGenerator {
         if (!serviceImplDir.exists()) {
             serviceImplDir.mkdirs();
         }
-        if (!serviceImplFile.exists()&&serviceImplFile.createNewFile()) {
+        if (!serviceImplFile.exists() && serviceImplFile.createNewFile()) {
             // 若文件存在则不重新生成
             out = new FileOutputStream(serviceImplFile);
             serviceImplTemplate.renderTo(out);
@@ -247,7 +252,7 @@ public class LegionMPGenerator {
         if (!controllerDir.exists()) {
             controllerDir.mkdirs();
         }
-        if (!controllerFile.exists()&&controllerFile.createNewFile()) {
+        if (!controllerFile.exists() && controllerFile.createNewFile()) {
             // 若文件存在则不重新生成
             out = new FileOutputStream(controllerFile);
             controllerTemplate.renderTo(out);
@@ -264,7 +269,7 @@ public class LegionMPGenerator {
         if (!mapperXmlDir.exists()) {
             mapperXmlDir.mkdirs();
         }
-        if (!mapperXmlFile.exists()&&mapperXmlFile.createNewFile()) {
+        if (!mapperXmlFile.exists() && mapperXmlFile.createNewFile()) {
             // 若文件存在则不重新生成
             out = new FileOutputStream(mapperXmlFile);
             mapperXmlTemplate.renderTo(out);
@@ -278,6 +283,7 @@ public class LegionMPGenerator {
 
     /**
      * 删除指定类代码
+     *
      * @param className
      * @throws IOException
      */

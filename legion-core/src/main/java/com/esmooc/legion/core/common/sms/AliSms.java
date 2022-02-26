@@ -38,6 +38,7 @@ public class AliSms implements Sms {
     private SettingService settingService;
     @Autowired
     private MessageSmsSendService messageSmsSendService;
+
     @Override
     public SmsSetting getSmsSetting() {
 
@@ -91,7 +92,7 @@ public class AliSms implements Sms {
         request.putQueryParameter("TemplateCode", templateCode);
         request.putQueryParameter("TemplateParam", params);
 
-        CommonResponse response =null;
+        CommonResponse response = null;
         try {
             response = client.getCommonResponse(request);
             JsonObject result = JsonParser.parseString(response.getData()).getAsJsonObject();

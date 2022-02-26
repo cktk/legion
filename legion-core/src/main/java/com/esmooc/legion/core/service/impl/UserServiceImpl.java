@@ -1,5 +1,7 @@
 package com.esmooc.legion.core.service.impl;
 
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.utils.SecurityUtil;
 import com.esmooc.legion.core.common.vo.SearchVo;
@@ -12,8 +14,6 @@ import com.esmooc.legion.core.entity.User;
 import com.esmooc.legion.core.service.UserService;
 import com.esmooc.legion.core.vo.PermissionDTO;
 import com.esmooc.legion.core.vo.RoleDTO;
-import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,7 +23,11 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.criteria.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -31,6 +35,7 @@ import java.util.stream.Collectors;
 
 /**
  * 用户接口实现
+ *
  * @author DaiMao
  */
 @Slf4j

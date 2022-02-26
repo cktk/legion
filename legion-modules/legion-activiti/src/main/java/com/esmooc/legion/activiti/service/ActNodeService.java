@@ -10,12 +10,14 @@ import java.util.List;
 
 /**
  * 流程节点用户接口
+ *
  * @author DaiMao
  */
 public interface ActNodeService extends LegionBaseService<ActNode, String> {
 
     /**
      * 通过nodeId获取用户
+     *
      * @param nodeId
      * @return
      */
@@ -23,6 +25,7 @@ public interface ActNodeService extends LegionBaseService<ActNode, String> {
 
     /**
      * 通过nodeId获取角色
+     *
      * @param nodeId
      * @return
      */
@@ -30,6 +33,7 @@ public interface ActNodeService extends LegionBaseService<ActNode, String> {
 
     /**
      * 通过nodeId获取部门
+     *
      * @param nodeId
      * @return
      */
@@ -37,6 +41,7 @@ public interface ActNodeService extends LegionBaseService<ActNode, String> {
 
     /**
      * 通过nodeId获取部门id
+     *
      * @param nodeId
      * @return
      */
@@ -44,6 +49,7 @@ public interface ActNodeService extends LegionBaseService<ActNode, String> {
 
     /**
      * 是否多级连续主管
+     *
      * @param nodeId
      * @return
      */
@@ -51,6 +57,7 @@ public interface ActNodeService extends LegionBaseService<ActNode, String> {
 
     /**
      * 是否自选用户
+     *
      * @param nodeId
      * @return
      */
@@ -58,12 +65,14 @@ public interface ActNodeService extends LegionBaseService<ActNode, String> {
 
     /**
      * 通过nodeId删除
+     *
      * @param nodeId
      */
     void deleteByNodeId(String nodeId);
 
     /**
      * 通过relateId删除
+     *
      * @param relateId
      */
     void deleteByRelateId(String relateId);

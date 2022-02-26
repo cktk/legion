@@ -5,6 +5,7 @@ import com.esmooc.legion.core.entity.Log;
 
 /**
  * 日志数据处理层
+ *
  * @author DaiMao
  */
 public interface LogDao extends LegionBaseDao<Log, String> {

@@ -38,6 +38,11 @@ public class QuartzJobController {
     @Autowired
     private Scheduler scheduler;
 
+    public static Job getClass(String classname) throws Exception {
+        Class<?> class1 = Class.forName(classname);
+        return (Job) class1.newInstance();
+    }
+
     @RequestMapping(value = "/getAllByPage", method = RequestMethod.GET)
     @ApiOperation(value = "获取所有定时任务")
     public Result<Page<QuartzJob>> getAllByPage(String key, PageVo page) {
@@ -112,6 +117,7 @@ public class QuartzJobController {
 
     /**
      * 添加定时任务
+     *
      * @param jobClassName
      * @param cronExpression
      * @param parameter
@@ -143,6 +149,7 @@ public class QuartzJobController {
 
     /**
      * 删除定时任务
+     *
      * @param jobClassName
      */
     public void delete(String jobClassName) {
@@ -154,11 +161,6 @@ public class QuartzJobController {
         } catch (Exception e) {
             throw new LegionException("删除定时任务失败");
         }
-    }
-
-    public static Job getClass(String classname) throws Exception {
-        Class<?> class1 = Class.forName(classname);
-        return (Job) class1.newInstance();
     }
 
 }

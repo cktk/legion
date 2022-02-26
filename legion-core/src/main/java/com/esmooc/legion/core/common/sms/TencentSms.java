@@ -41,6 +41,33 @@ public class TencentSms implements Sms {
     @Autowired
     private MessageSmsSendService messageSmsSendService;
 
+    public static String[] getPhoneNumbers(String mobile) {
+
+        String[] phoneNumbers = mobile.split(",");
+        for (int i = 0; i < phoneNumbers.length; i++) {
+            String number = phoneNumbers[i];
+            if (NameUtil.mobile(number)) {
+                phoneNumbers[i] = "+86" + number;
+            } else {
+                phoneNumbers[i] = "+" + number;
+            }
+        }
+        return phoneNumbers;
+    }
+
+    public static String[] getParams(String params) {
+
+        Set<Map.Entry<String, JsonElement>> entries = JsonParser.parseString(params).getAsJsonObject().entrySet();
+        String[] templateParams = new String[entries.size()];
+        int i = 0;
+        for (Map.Entry<String, JsonElement> entry : entries) {
+            String value = entry.getValue().getAsString();
+            templateParams[i] = value;
+            i++;
+        }
+        return templateParams;
+    }
+
     @Override
     public SmsSetting getSmsSetting() {
 
@@ -134,32 +161,5 @@ public class TencentSms implements Sms {
     public Boolean saveMsgLog(MessageSmsSend messageSmsSend) {
 
         return messageSmsSendService.saveOrUpdate(messageSmsSend);
-    }
-
-    public static String[] getPhoneNumbers(String mobile) {
-
-        String[] phoneNumbers = mobile.split(",");
-        for (int i = 0; i < phoneNumbers.length; i++) {
-            String number = phoneNumbers[i];
-            if (NameUtil.mobile(number)) {
-                phoneNumbers[i] = "+86" + number;
-            } else {
-                phoneNumbers[i] = "+" + number;
-            }
-        }
-        return phoneNumbers;
-    }
-
-    public static String[] getParams(String params) {
-
-        Set<Map.Entry<String, JsonElement>> entries = JsonParser.parseString(params).getAsJsonObject().entrySet();
-        String[] templateParams = new String[entries.size()];
-        int i = 0;
-        for (Map.Entry<String, JsonElement> entry : entries) {
-            String value = entry.getValue().getAsString();
-            templateParams[i] = value;
-            i++;
-        }
-        return templateParams;
     }
 }

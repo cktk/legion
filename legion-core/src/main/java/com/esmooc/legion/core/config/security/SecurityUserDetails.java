@@ -1,10 +1,10 @@
 package com.esmooc.legion.core.config.security;
 
+import cn.hutool.core.util.StrUtil;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.entity.User;
 import com.esmooc.legion.core.vo.PermissionDTO;
 import com.esmooc.legion.core.vo.RoleDTO;
-import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -26,11 +26,7 @@ public class SecurityUserDetails extends User implements UserDetails {
 
     private List<RoleDTO> roles;
 
-    private String  id;
-
-    public String getId(){
-        return this.id;
-    }
+    private String id;
 
     public SecurityUserDetails(User user) {
         if (user != null) {
@@ -38,14 +34,19 @@ public class SecurityUserDetails extends User implements UserDetails {
             this.setUsername(user.getUsername());
             this.setPassword(user.getPassword());
             this.setStatus(user.getStatus());
-            this.id=user.getId();
+            this.id = user.getId();
             this.permissions = user.getPermissions();
             this.roles = user.getRoles();
         }
     }
 
+    public String getId() {
+        return this.id;
+    }
+
     /**
      * 添加用户拥有的权限和角色
+     *
      * @return
      */
     @Override
@@ -74,6 +75,7 @@ public class SecurityUserDetails extends User implements UserDetails {
 
     /**
      * 账户是否过期
+     *
      * @return
      */
     @Override
@@ -84,6 +86,7 @@ public class SecurityUserDetails extends User implements UserDetails {
 
     /**
      * 是否禁用
+     *
      * @return
      */
     @Override
@@ -94,6 +97,7 @@ public class SecurityUserDetails extends User implements UserDetails {
 
     /**
      * 密码是否过期
+     *
      * @return
      */
     @Override
@@ -104,6 +108,7 @@ public class SecurityUserDetails extends User implements UserDetails {
 
     /**
      * 是否启用
+     *
      * @return
      */
     @Override

@@ -8,12 +8,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SubmitRep {
-        private String ecName;
-        private String apId;
-        private String secretKey;
-        private String content;
-        private String mobile;
-        private String sign;
-        private String addSerial;
-        private String mac;
-    }
+    private String ecName;
+    private String apId;
+    private String secretKey;
+    private String content;
+    private String mobile;
+    private String sign;
+    private String addSerial;
+    private String mac;
+}

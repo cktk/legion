@@ -4,6 +4,7 @@ import lombok.Data;
 
 /**
  * http://wiki.connect.qq.com/get_user_info
+ *
  * @author DaiMao
  */
 @Data

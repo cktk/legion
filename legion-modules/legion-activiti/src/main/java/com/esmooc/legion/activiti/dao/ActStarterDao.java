@@ -9,12 +9,14 @@ import java.util.List;
 
 /**
  * 流程可发起人数据处理层
+ *
  * @author DaiMao
  */
 public interface ActStarterDao extends LegionBaseDao<ActStarter, String> {
 
     /**
      * 通过用户id获取
+     *
      * @param userId
      * @return
      */
@@ -22,6 +24,7 @@ public interface ActStarterDao extends LegionBaseDao<ActStarter, String> {
 
     /**
      * 通过流程定义和用户id获取
+     *
      * @param processDefId
      * @param userId
      * @return
@@ -30,6 +33,7 @@ public interface ActStarterDao extends LegionBaseDao<ActStarter, String> {
 
     /**
      * 通过流程定义id删除
+     *
      * @param processDefId
      */
     @Modifying

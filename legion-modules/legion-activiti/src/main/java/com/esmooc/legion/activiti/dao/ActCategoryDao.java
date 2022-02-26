@@ -7,12 +7,14 @@ import java.util.List;
 
 /**
  * 流程分类数据处理层
+ *
  * @author DaiMao
  */
 public interface ActCategoryDao extends LegionBaseDao<ActCategory, String> {
 
     /**
      * 通过父id获取
+     *
      * @param parentId
      * @return
      */
@@ -20,6 +22,7 @@ public interface ActCategoryDao extends LegionBaseDao<ActCategory, String> {
 
     /**
      * 通过名称模糊搜索
+     *
      * @param title
      * @return
      */

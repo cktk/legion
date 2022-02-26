@@ -1,9 +1,9 @@
 package com.esmooc.legion.core.config.security.permission;
 
+import cn.hutool.core.util.StrUtil;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.entity.Permission;
 import com.esmooc.legion.core.service.PermissionService;
-import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.ConfigAttribute;
@@ -13,11 +13,17 @@ import org.springframework.security.web.access.intercept.FilterInvocationSecurit
 import org.springframework.stereotype.Component;
 import org.springframework.util.PathMatcher;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 权限资源管理器
  * 为权限决断器提供支持
+ *
  * @author DaiMao
  */
 @Slf4j
@@ -58,6 +64,7 @@ public class MySecurityMetadataSource implements FilterInvocationSecurityMetadat
      * 判定用户请求的url是否在权限表中
      * 如果在权限表中，则返回给decide方法，用来判定用户是否有此权限
      * 如果不在权限表中则放行
+     *
      * @param o
      * @return
      * @throws IllegalArgumentException

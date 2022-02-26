@@ -19,15 +19,17 @@ public interface LegionBaseService<E, ID extends Serializable> {
 
     /**
      * 根据ID获取
+     *
      * @param id
      * @return
      */
-     public default E get(ID id) {
+    public default E get(ID id) {
         return getRepository().getById(id);
     }
 
     /**
      * 根据ID获取 不存在则返回null
+     *
      * @param id
      * @return
      */
@@ -37,6 +39,7 @@ public interface LegionBaseService<E, ID extends Serializable> {
 
     /**
      * 获取所有列表
+     *
      * @return
      */
     public default List<E> getAll() {
@@ -45,6 +48,7 @@ public interface LegionBaseService<E, ID extends Serializable> {
 
     /**
      * 获取总数
+     *
      * @return
      */
     public default Long getTotalCount() {
@@ -53,6 +57,7 @@ public interface LegionBaseService<E, ID extends Serializable> {
 
     /**
      * 保存
+     *
      * @param entity
      * @return
      */
@@ -63,6 +68,7 @@ public interface LegionBaseService<E, ID extends Serializable> {
 
     /**
      * 修改
+     *
      * @param entity
      * @return
      */
@@ -72,6 +78,7 @@ public interface LegionBaseService<E, ID extends Serializable> {
 
     /**
      * 批量保存与修改
+     *
      * @param entities
      * @return
      */
@@ -81,6 +88,7 @@ public interface LegionBaseService<E, ID extends Serializable> {
 
     /**
      * 删除
+     *
      * @param entity
      */
     public default void delete(E entity) {
@@ -89,6 +97,7 @@ public interface LegionBaseService<E, ID extends Serializable> {
 
     /**
      * 根据Id删除
+     *
      * @param id
      */
     public default void delete(ID id) {
@@ -97,6 +106,7 @@ public interface LegionBaseService<E, ID extends Serializable> {
 
     /**
      * 批量根据id删除
+     *
      * @param ids
      */
     public default void deleteAllById(Iterable<ID> ids) {
@@ -105,6 +115,7 @@ public interface LegionBaseService<E, ID extends Serializable> {
 
     /**
      * 批量删除
+     *
      * @param entities
      */
     public default void delete(Iterable<E> entities) {
@@ -120,6 +131,7 @@ public interface LegionBaseService<E, ID extends Serializable> {
 
     /**
      * 根据条件查询获取
+     *
      * @param spec
      * @return
      */
@@ -129,6 +141,7 @@ public interface LegionBaseService<E, ID extends Serializable> {
 
     /**
      * 分页获取
+     *
      * @param pageable
      * @return
      */
@@ -138,6 +151,7 @@ public interface LegionBaseService<E, ID extends Serializable> {
 
     /**
      * 根据查询条件分页获取
+     *
      * @param spec
      * @param pageable
      * @return
@@ -148,6 +162,7 @@ public interface LegionBaseService<E, ID extends Serializable> {
 
     /**
      * 获取查询条件的结果数
+     *
      * @param spec
      * @return
      */

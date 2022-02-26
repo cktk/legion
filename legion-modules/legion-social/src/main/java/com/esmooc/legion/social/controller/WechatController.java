@@ -1,5 +1,8 @@
 package com.esmooc.legion.social.controller;
 
+import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.HttpUtil;
 import com.esmooc.legion.core.common.annotation.SystemLog;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.constant.SecurityConstant;
@@ -8,14 +11,9 @@ import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
 import com.esmooc.legion.core.common.utils.ResultUtil;
 import com.esmooc.legion.core.common.utils.SecurityUtil;
 import com.esmooc.legion.core.common.vo.Result;
-import com.esmooc.legion.core.config.security.SecurityUserDetails;
-import com.esmooc.legion.core.entity.User;
 import com.esmooc.legion.social.entity.Social;
 import com.esmooc.legion.social.service.SocialService;
 import com.esmooc.legion.social.vo.WechatUserInfo;
-import cn.hutool.core.util.IdUtil;
-import cn.hutool.core.util.StrUtil;
-import cn.hutool.http.HttpUtil;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -24,8 +22,6 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -38,6 +34,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * https://developers.weixin.qq.com/doc/oplatform/Website_App/WeChat_Login/Wechat_Login.html
+ *
  * @author DaiMao
  */
 @Slf4j
@@ -46,48 +43,36 @@ import java.util.concurrent.TimeUnit;
 @Controller
 public class WechatController {
 
-    @Value("${legion.social.wechat.appId}")
-    private String appId;
-
-    @Value("${legion.social.wechat.appSecret}")
-    private String appSecret;
-
-    @Value("${legion.social.wechat.callbackUrl}")
-    private String callbackUrl;
-
-    @Value("${legion.social.callbackFeUrl}")
-    private String callbackFeUrl;
-
-    @Value("${legion.social.callbackFeRelateUrl}")
-    private String callbackFeRelateUrl;
-
     private static final String STATE = SecurityConstant.WECHAT_STATE;
-
     private static final Integer TYPE = CommonConstant.SOCIAL_TYPE_WECHAT;
-
-    @Autowired
-    private SocialService socialService;
-
-    @Autowired
-    private SecurityUtil securityUtil;
-
-    @Autowired
-    private RedisTemplateHelper redisTemplate;
-
     /**
      * 微信认证服务器地址
      */
     private static final String AUTHORIZE_URL = "https://open.weixin.qq.com/connect/qrconnect";
-
     /**
      * 申请令牌地址
      */
     private static final String ACCESS_TOKEN_URL = "https://api.weixin.qq.com/sns/oauth2/access_token";
-
     /**
      * 获取用户信息地址
      */
     private static final String GET_USERINFO_URL = "https://api.weixin.qq.com/sns/userinfo";
+    @Value("${legion.social.wechat.appId}")
+    private String appId;
+    @Value("${legion.social.wechat.appSecret}")
+    private String appSecret;
+    @Value("${legion.social.wechat.callbackUrl}")
+    private String callbackUrl;
+    @Value("${legion.social.callbackFeUrl}")
+    private String callbackFeUrl;
+    @Value("${legion.social.callbackFeRelateUrl}")
+    private String callbackFeRelateUrl;
+    @Autowired
+    private SocialService socialService;
+    @Autowired
+    private SecurityUtil securityUtil;
+    @Autowired
+    private RedisTemplateHelper redisTemplate;
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     @ApiOperation(value = "获取wechat认证链接")

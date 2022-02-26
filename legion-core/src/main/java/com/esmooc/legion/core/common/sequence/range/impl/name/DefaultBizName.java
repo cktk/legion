@@ -10,14 +10,14 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class DefaultBizName implements BizName {
 
-	private String bizName;
+    private String bizName;
 
-	/**
-	 * 生成空间名称
-	 */
-	@Override
-	public String create() {
-		return bizName;
-	}
+    /**
+     * 生成空间名称
+     */
+    @Override
+    public String create() {
+        return bizName;
+    }
 
 }

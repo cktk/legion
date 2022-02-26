@@ -12,6 +12,7 @@ import java.util.List;
 
 /**
  * 字典接口实现
+ *
  * @author DaiMao
  */
 @Slf4j

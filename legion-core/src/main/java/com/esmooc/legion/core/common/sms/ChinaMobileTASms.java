@@ -40,6 +40,58 @@ public class ChinaMobileTASms implements Sms {
     @Autowired
     private MessageSmsSendService messageSmsSendService;
 
+    /**
+     * 在业务代码里面填上ip限流
+     *
+     * @param submitReq
+     * @param url
+     * @return
+     */
+    public static MessageResp sendMessage(SubmitRep submitReq, String url) {
+
+        String key = "sendSms:" + submitReq.getMobile();
+       /* // IP限流 1分钟限1个请求
+        String key = "sendSms:" + ipInfoUtil.getIpAddr(request);
+        String value = redisTemplate.get(key);
+        if (StrUtil.isNotBlank(value)) {
+            return ResultUtil.error("您发送的太频繁啦，请稍后再试");
+        }
+        // 生成6位数验证码
+        String code = CommonUtil.getRandomNum();
+        // 缓存验证码
+        redisTemplate.set(CommonConstant.PRE_SMS + mobile, code, 5L, TimeUnit.MINUTES);
+        // 发送验证码
+        smsUtil.sendCode(mobile, code, templateType);
+        // 请求成功 标记限流
+        redisTemplate.set(key, "sended", 1L, TimeUnit.MINUTES);*/
+
+
+        log.info("中国移动泰安短信平台 请求参数 {} 请求地址 {} ", submitReq, url);
+        String stringBuffer = submitReq.getEcName() +
+                submitReq.getApId() +
+                submitReq.getSecretKey() +
+                submitReq.getMobile() +
+                submitReq.getContent() +
+                submitReq.getSign() +
+                submitReq.getAddSerial();
+        submitReq.setMac(MD5Util.MD5(stringBuffer));
+        //有顺序要求
+        String reqText = "{\"addSerial\":\""
+                + submitReq.getAddSerial() + "\", \"apId\":\""
+                + submitReq.getApId() + "\", \"content\":\""
+                + submitReq.getContent() + "\", \"ecName\":\""
+                + submitReq.getEcName() + "\", \"mac\":\""
+                + submitReq.getMac().toLowerCase() + "\",\"mobiles\":\""
+                + submitReq.getMobile() + "\", \"secretKey\":\""
+                + submitReq.getSecretKey() + "\" , \"sign\":\""
+                + submitReq.getSign() + "\"}";
+        String encode = Base64Util.encode(reqText);
+        log.info("中国移动配置信息 加密参数  {} reqText {} stringBuffer {}", encode, reqText, stringBuffer);
+        String msg = HttpUtil.post(url, encode);
+        System.out.println(JSONUtil.toBean(msg, MessageResp.class));
+        log.info("中国移动泰安短信平台返回数据 {} ,", msg);
+        return JSONUtil.toBean(msg, MessageResp.class);
+    }
 
     /**
      * 获取配置
@@ -67,19 +119,18 @@ public class ChinaMobileTASms implements Sms {
      */
     @Override
     public MessageSmsSend sendSms(String mobile, String params, String templateCode) {
-        log.info("{中国移动泰安短信平台开始发送短信 手机号 {},参数 {}, 模板code {}",mobile,params,templateCode);
+        log.info("{中国移动泰安短信平台开始发送短信 手机号 {},参数 {}, 模板code {}", mobile, params, templateCode);
         if (mobile.length() > 11) {
             throw new LegionException("最多能批量发送1个手机号");
         }
 
 
         SmsSetting setting = getSmsSetting();
-        log.info("中国移动配置信息 {}",setting);
+        log.info("中国移动配置信息 {}", setting);
 
-        if (StrUtil.isBlank(setting.getUrl())){
+        if (StrUtil.isBlank(setting.getUrl())) {
             throw new LegionException("中国移动泰安平台地址未配置");
         }
-
 
 
 //        MessageSms template = messageSmsService.getTemplate(templateCode);
@@ -98,9 +149,9 @@ public class ChinaMobileTASms implements Sms {
         User user = SecurityUtil.securityUtil.getCurrUser();
         messageSmsSend.setSendUserId(user.getId());
         messageSmsSend.setSendUserName(user.getUsername());
-        MessageResp resp =new MessageResp();
+        MessageResp resp = new MessageResp();
 
-        log.info("中国移动配置信息 构建业务信息  {}",messageSmsSend);
+        log.info("中国移动配置信息 构建业务信息  {}", messageSmsSend);
         try {
             messageSmsSend.setSendStatus(SystemConstant.FLAG_Y); //是否已发送
             String templateContent = setting.getContent();//模板获取
@@ -111,7 +162,7 @@ public class ChinaMobileTASms implements Sms {
                 String param = object.getStr(key, "");
                 templateContent = StrUtil.replace(templateContent, "${" + key + "}", param);
             }
-            log.info("中国移动配置信息 短信内容 {}",templateContent);
+            log.info("中国移动配置信息 短信内容 {}", templateContent);
             SubmitRep submitReq = new SubmitRep();
             submitReq.setApId(setting.getAppId()); //apID
             submitReq.setEcName(setting.getUseName()); //ecName
@@ -120,8 +171,8 @@ public class ChinaMobileTASms implements Sms {
             submitReq.setMobile(mobile);
             submitReq.setAddSerial(setting.getAccessKey()); //addSerial
             submitReq.setSign(setting.getSignName()); //sign
-             resp = sendMessage(submitReq,setting.getUrl());
-            log.info("中国移动配置信息 返回参数 {}",resp);
+            resp = sendMessage(submitReq, setting.getUrl());
+            log.info("中国移动配置信息 返回参数 {}", resp);
             if (resp.getSuccess()) {
                 messageSmsSend.setStatus(SystemConstant.FLAG_Y);
                 messageSmsSend.setBizId(resp.getMsgGroup()); //腾讯的流水号
@@ -138,14 +189,14 @@ public class ChinaMobileTASms implements Sms {
             log.error("中国移动泰安 原始信息 {}", e);
             messageSmsSend.setErrMsg(e.getMessage());
             messageSmsSend.setErrType(SystemConstant.SMS_ERROR_ERR);
-        }finally {
+        } finally {
             messageSmsSend.setBizId(resp.getMsgGroup());
-            messageSmsSend.setCode(resp.getSuccess()+"");
+            messageSmsSend.setCode(resp.getSuccess() + "");
             messageSmsSend.setSendRes(JSONUtil.toJsonStr(resp));
-            messageSmsSend.setErrCode(resp.getSuccess()+"");
+            messageSmsSend.setErrCode(resp.getSuccess() + "");
             messageSmsSend.setErrType(SystemConstant.SMS_ERROR_TYPE);
             messageSmsSend.setErrMsg(resp.getRspcod());
-            log.info("中国移动配置信息 最终构建参数 {}",messageSmsSend);
+            log.info("中国移动配置信息 最终构建参数 {}", messageSmsSend);
         }
         saveMsgLog(messageSmsSend);
         return messageSmsSend;
@@ -162,61 +213,6 @@ public class ChinaMobileTASms implements Sms {
 
         return messageSmsSendService.saveOrUpdate(messageSmsSend);
     }
-
-
-    /**
-     * 在业务代码里面填上ip限流
-     * @param submitReq
-     * @param url
-     * @return
-     */
-    public static MessageResp sendMessage(SubmitRep submitReq,String url) {
-
-        String key = "sendSms:" + submitReq.getMobile();
-       /* // IP限流 1分钟限1个请求
-        String key = "sendSms:" + ipInfoUtil.getIpAddr(request);
-        String value = redisTemplate.get(key);
-        if (StrUtil.isNotBlank(value)) {
-            return ResultUtil.error("您发送的太频繁啦，请稍后再试");
-        }
-        // 生成6位数验证码
-        String code = CommonUtil.getRandomNum();
-        // 缓存验证码
-        redisTemplate.set(CommonConstant.PRE_SMS + mobile, code, 5L, TimeUnit.MINUTES);
-        // 发送验证码
-        smsUtil.sendCode(mobile, code, templateType);
-        // 请求成功 标记限流
-        redisTemplate.set(key, "sended", 1L, TimeUnit.MINUTES);*/
-
-
-
-        log.info("中国移动泰安短信平台 请求参数 {} 请求地址 {} "  ,submitReq,url);
-        String stringBuffer = submitReq.getEcName() +
-                submitReq.getApId() +
-                submitReq.getSecretKey() +
-                submitReq.getMobile() +
-                submitReq.getContent() +
-                submitReq.getSign() +
-                submitReq.getAddSerial();
-        submitReq.setMac(MD5Util.MD5(stringBuffer));
-        //有顺序要求
-        String reqText = "{\"addSerial\":\""
-                + submitReq.getAddSerial() + "\", \"apId\":\""
-                + submitReq.getApId() + "\", \"content\":\""
-                + submitReq.getContent() + "\", \"ecName\":\""
-                + submitReq.getEcName() + "\", \"mac\":\""
-                + submitReq.getMac().toLowerCase() + "\",\"mobiles\":\""
-                + submitReq.getMobile() + "\", \"secretKey\":\""
-                + submitReq.getSecretKey() + "\" , \"sign\":\""
-                + submitReq.getSign() + "\"}";
-        String encode = Base64Util.encode(reqText);
-        log.info("中国移动配置信息 加密参数  {} reqText {} stringBuffer {}",encode,reqText,stringBuffer);
-        String msg = HttpUtil.post(url, encode);
-        System.out.println(JSONUtil.toBean(msg, MessageResp.class));
-        log.info("中国移动泰安短信平台返回数据 {} ," ,msg );
-        return JSONUtil.toBean(msg, MessageResp.class);
-    }
-
 
 
 }

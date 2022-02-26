@@ -1,5 +1,8 @@
 package com.esmooc.legion.social.controller;
 
+import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.HttpUtil;
 import com.esmooc.legion.core.common.annotation.SystemLog;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.constant.SecurityConstant;
@@ -8,14 +11,9 @@ import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
 import com.esmooc.legion.core.common.utils.ResultUtil;
 import com.esmooc.legion.core.common.utils.SecurityUtil;
 import com.esmooc.legion.core.common.vo.Result;
-import com.esmooc.legion.core.config.security.SecurityUserDetails;
-import com.esmooc.legion.core.entity.User;
 import com.esmooc.legion.social.entity.Social;
 import com.esmooc.legion.social.service.SocialService;
 import com.esmooc.legion.social.vo.WeiboUserInfo;
-import cn.hutool.core.util.IdUtil;
-import cn.hutool.core.util.StrUtil;
-import cn.hutool.http.HttpUtil;
 import com.google.gson.Gson;
 import com.google.gson.JsonParser;
 import io.swagger.annotations.Api;
@@ -23,8 +21,6 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -37,6 +33,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * http://open.weibo.com/wiki/Connect/login
+ *
  * @author DaiMao
  */
 @Slf4j
@@ -45,53 +42,40 @@ import java.util.concurrent.TimeUnit;
 @Controller
 public class WeiboController {
 
-    @Value("${legion.social.weibo.appKey}")
-    private String appKey;
-
-    @Value("${legion.social.weibo.appSecret}")
-    private String appSecret;
-
-    @Value("${legion.social.weibo.callbackUrl}")
-    private String callbackUrl;
-
-    @Value("${legion.social.callbackFeUrl}")
-    private String callbackFeUrl;
-
-    @Value("${legion.social.callbackFeRelateUrl}")
-    private String callbackFeRelateUrl;
-
     private static final String STATE = SecurityConstant.WEIBO_STATE;
-
     private static final Integer TYPE = CommonConstant.SOCIAL_TYPE_WEIBO;
-
-    @Autowired
-    private SocialService socialService;
-
-    @Autowired
-    private SecurityUtil securityUtil;
-
-    @Autowired
-    private RedisTemplateHelper redisTemplate;
-
     /**
      * 微博认证服务器地址
      */
     private static final String AUTHORIZE_URL = "https://api.weibo.com/oauth2/authorize";
-
     /**
      * 申请令牌地址
      */
     private static final String ACCESS_TOKEN_URL = "https://api.weibo.com/oauth2/access_token";
-
     /**
      * 获取用户uid
      */
     private static final String GET_USERINFO_URL = "https://api.weibo.com/oauth2/get_token_info";
-
     /**
      * 获取用户详细信息地址
      */
     private static final String GET_USERINFO_DETAIL_URL = "https://api.weibo.com/2/users/show.json";
+    @Value("${legion.social.weibo.appKey}")
+    private String appKey;
+    @Value("${legion.social.weibo.appSecret}")
+    private String appSecret;
+    @Value("${legion.social.weibo.callbackUrl}")
+    private String callbackUrl;
+    @Value("${legion.social.callbackFeUrl}")
+    private String callbackFeUrl;
+    @Value("${legion.social.callbackFeRelateUrl}")
+    private String callbackFeRelateUrl;
+    @Autowired
+    private SocialService socialService;
+    @Autowired
+    private SecurityUtil securityUtil;
+    @Autowired
+    private RedisTemplateHelper redisTemplate;
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     @ApiOperation(value = "获取微博认证链接")

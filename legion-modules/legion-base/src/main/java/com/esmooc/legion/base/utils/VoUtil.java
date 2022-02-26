@@ -15,6 +15,6 @@ public class VoUtil {
         } catch (Exception e) {
             System.out.println("报错了");
         }
-        return  menuVo;
+        return menuVo;
     }
 }

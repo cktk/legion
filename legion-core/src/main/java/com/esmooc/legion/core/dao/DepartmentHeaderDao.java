@@ -9,12 +9,14 @@ import java.util.List;
 
 /**
  * 部门负责人数据处理层
+ *
  * @author DaiMao
  */
 public interface DepartmentHeaderDao extends LegionBaseDao<DepartmentHeader, String> {
 
     /**
      * 通过部门和负责人类型获取
+     *
      * @param departmentId
      * @param type
      * @return
@@ -23,6 +25,7 @@ public interface DepartmentHeaderDao extends LegionBaseDao<DepartmentHeader, Str
 
     /**
      * 通过部门获取
+     *
      * @param departmentIds
      * @return
      */
@@ -30,6 +33,7 @@ public interface DepartmentHeaderDao extends LegionBaseDao<DepartmentHeader, Str
 
     /**
      * 通过部门id删除
+     *
      * @param departmentId
      */
     @Modifying
@@ -38,6 +42,7 @@ public interface DepartmentHeaderDao extends LegionBaseDao<DepartmentHeader, Str
 
     /**
      * 通过userId删除
+     *
      * @param userId
      */
     @Modifying
@@ -46,6 +51,7 @@ public interface DepartmentHeaderDao extends LegionBaseDao<DepartmentHeader, Str
 
     /**
      * 通过部门id和userId类型获取
+     *
      * @param userId
      * @param departmentId
      * @return

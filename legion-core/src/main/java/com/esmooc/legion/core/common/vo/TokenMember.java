@@ -32,7 +32,7 @@ public class TokenMember implements UserDetails, Serializable {
 
     private Integer platform;
 
-    public TokenMember(Member member, Integer platform){
+    public TokenMember(Member member, Integer platform) {
 
         this.id = member.getId();
         this.username = member.getUsername();
@@ -58,7 +58,7 @@ public class TokenMember implements UserDetails, Serializable {
     @Override
     public boolean isAccountNonExpired() {
         return true;
-}
+    }
 
     @Override
     public boolean isAccountNonLocked() {

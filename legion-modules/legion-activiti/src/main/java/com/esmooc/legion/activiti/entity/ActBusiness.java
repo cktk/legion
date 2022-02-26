@@ -1,9 +1,9 @@
 package com.esmooc.legion.activiti.entity;
 
-import com.esmooc.legion.core.base.LegionBaseEntity;
-import com.esmooc.legion.core.common.constant.ActivitiConstant;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.esmooc.legion.core.base.LegionBaseEntity;
+import com.esmooc.legion.core.common.constant.ActivitiConstant;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;

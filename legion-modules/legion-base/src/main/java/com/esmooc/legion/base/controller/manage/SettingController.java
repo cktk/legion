@@ -1,14 +1,19 @@
 package com.esmooc.legion.base.controller.manage;
 
+import cn.hutool.core.util.StrUtil;
 import com.esmooc.legion.core.common.constant.SettingConstant;
 import com.esmooc.legion.core.common.sms.SmsUtil;
 import com.esmooc.legion.core.common.utils.ResultUtil;
 import com.esmooc.legion.core.common.vo.Result;
 import com.esmooc.legion.core.entity.Setting;
 import com.esmooc.legion.core.service.SettingService;
-import com.esmooc.legion.core.vo.*;
-import cn.hutool.core.util.StrUtil;
-import com.esmooc.legion.core.vo.*;
+import com.esmooc.legion.core.vo.AutoChatSetting;
+import com.esmooc.legion.core.vo.EmailSetting;
+import com.esmooc.legion.core.vo.NoticeSetting;
+import com.esmooc.legion.core.vo.OssSetting;
+import com.esmooc.legion.core.vo.OtherSetting;
+import com.esmooc.legion.core.vo.SmsSetting;
+import com.esmooc.legion.core.vo.VaptchaSetting;
 import com.google.gson.Gson;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -99,7 +104,7 @@ public class SettingController {
 
         Setting setting = new Setting();
         //TODO 加短信运营商需要加
-        if (serviceName.equals(SettingConstant.CHINA_MOBILE_TA_SMS)||serviceName.equals(SettingConstant.ALI_SMS) || serviceName.equals(SettingConstant.TENCENT_SMS)) {
+        if (serviceName.equals(SettingConstant.CHINA_MOBILE_TA_SMS) || serviceName.equals(SettingConstant.ALI_SMS) || serviceName.equals(SettingConstant.TENCENT_SMS)) {
             setting = settingService.get(serviceName);
         }
         if (setting == null || StrUtil.isBlank(setting.getValue())) {
@@ -189,7 +194,7 @@ public class SettingController {
         }
         NoticeSetting noticeSetting = new Gson().fromJson(setting.getValue(), NoticeSetting.class);
 
-         return ResultUtil.data(noticeSetting);
+        return ResultUtil.data(noticeSetting);
     }
 
     @RequestMapping(value = "/oss/set", method = RequestMethod.POST)
@@ -222,7 +227,7 @@ public class SettingController {
 
         String name = smsSetting.getServiceName();
         Setting setting = settingService.get(name);
-        if (name.equals(SettingConstant.CHINA_MOBILE_TA_SMS) ||name.equals(SettingConstant.ALI_SMS) || name.equals(SettingConstant.TENCENT_SMS)) {
+        if (name.equals(SettingConstant.CHINA_MOBILE_TA_SMS) || name.equals(SettingConstant.ALI_SMS) || name.equals(SettingConstant.TENCENT_SMS)) {
             // 判断是否修改secrectKey 保留原secrectKey 避免保存***加密字符
             if (StrUtil.isNotBlank(setting.getValue()) && !smsSetting.getChanged()) {
                 String secrectKey = new Gson().fromJson(setting.getValue(), SmsSetting.class).getSecretKey();

@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConfigurationProperties(prefix = "legion.app-token")
 public class LegionAppTokenProperties {
-/**
+    /**
      * 使用redis存储token
      */
     private Boolean redis = true;

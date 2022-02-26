@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
@@ -8,7 +8,6 @@
     <artifactId>legion</artifactId>
     <packaging>pom</packaging>
     <version>M1</version>
-
 
 
     <modules>
@@ -46,7 +45,7 @@
         <tencentcloud.version>3.1.260</tencentcloud.version>
         <activiti.version>5.22.0</activiti.version>
         <dynamic.version>3.5.0</dynamic.version>
-         <extentreports.testng.version>1.2.2</extentreports.testng.version>
+        <extentreports.testng.version>1.2.2</extentreports.testng.version>
         <selenuim.version>4.0.0-beta-4</selenuim.version>
     </properties>
 
@@ -212,7 +211,7 @@
                 <artifactId>dynamic-datasource-spring-boot-starter</artifactId>
                 <version>${dynamic.version}</version>
             </dependency>
-              <dependency>
+            <dependency>
                 <groupId>com.aventstack</groupId>
                 <artifactId>extentreports-testng-adapter</artifactId>
                 <version>${extentreports.testng.version}</version>

@@ -1,12 +1,12 @@
 package com.esmooc.legion.base.controller.common;
 
-import com.esmooc.legion.core.common.constant.SettingConstant;
-import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.digest.DigestAlgorithm;
 import cn.hutool.crypto.digest.Digester;
 import cn.hutool.http.HttpUtil;
+import com.esmooc.legion.core.common.constant.SettingConstant;
+import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
 import com.google.gson.JsonParser;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -33,6 +33,16 @@ public class VaptchaController {
 
     @Autowired
     private RedisTemplateHelper redisTemplate;
+
+    public static String getRandomStr() {
+
+        SecureRandom random = new SecureRandom();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 4; i++) {
+            sb.append(CHAR.charAt(random.nextInt(16)));
+        }
+        return sb.toString();
+    }
 
     @RequestMapping(value = "/offline", method = RequestMethod.GET)
     @ApiOperation(value = "vaptcha离线模式接口")
@@ -86,15 +96,5 @@ public class VaptchaController {
             }
             return result;
         }
-    }
-
-    public static String getRandomStr() {
-
-        SecureRandom random = new SecureRandom();
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < 4; i++) {
-            sb.append(CHAR.charAt(random.nextInt(16)));
-        }
-        return sb.toString();
     }
 }

@@ -2,8 +2,8 @@
 
 # Legion 使用的开源组件
 
-Legion 完全基于开源产品打造。以下我们从两个方面来阐述 Legion 使用了哪些开源产品和工具：
-升级SpringBoot版本至SpringBoot2.6.3
+Legion 完全基于开源产品打造。以下我们从两个方面来阐述 Legion 使用了哪些开源产品和工具： 升级SpringBoot版本至SpringBoot2.6.3
+
 ## 应用框架使用的开源工具集
 
 Legion 的应用系统架构由四个不同的层组成，从应用程序代码到所需运行平台和连接服务。这些应用程序和服务通过一致的调度和监督进行管理。
@@ -25,7 +25,8 @@ Legion 的后端使用 Spring Boot 作为开发核心脚手架。
 
 核心组件有：
 
-- **Spring Boot**：Spring Boot 是由 Pivotal 团队提供的全新框架，其设计目的是用来简化新 Spring 应用的初始搭建以及开发过程。该框架使用了特定的方式来进行配置，从而使开发人员不再需要定义样板化的配置。
+- **Spring Boot**：Spring Boot 是由 Pivotal 团队提供的全新框架，其设计目的是用来简化新 Spring
+  应用的初始搭建以及开发过程。该框架使用了特定的方式来进行配置，从而使开发人员不再需要定义样板化的配置。
 
 ### 数据服务层
 
@@ -68,7 +69,8 @@ Legion 采用多个代码检查和测试工具，其中，TestNG 作为后端 Ja
 核心组件有：
 
 - **TestNG**：TestNG 是一个测试 Java 应用程序的新框架，相比于JUnit更加强大、创新、可扩展、灵活。
-- **Selenium**：Selenium 是一套完整的 web 应用程序测试系统，包含了测试的录制（selenium IDE），编写及运行（Selenium Remote Control）和测试的并行处理（Selenium Grid）。
+- **Selenium**：Selenium 是一套完整的 web 应用程序测试系统，包含了测试的录制（selenium IDE），编写及运行（Selenium Remote Control）和测试的并行处理（Selenium
+  Grid）。
 
 ### 部署和运营
 
@@ -90,27 +92,19 @@ Legion 的监控包括了全生命周期的状态、反馈、监控等，帮助�
 - **Spring Boot Admin**：Spring Boot Admin 用于监控基于 Spring Boot 的应用，它是在 Spring Boot Actuator 的基础上提供简洁的可视化 WEB UI。
 - **Apache Druid**：Apache Druid是一个高性能的实时分析数据库，可以很好的监控DB池连接和SQL的执行情况，可以说是针对监控而生的DB连接池
 
-
-
 ### Legion 角色控制访问权限(RBAC)
+
 #### Legion 对资源的管理是基于角色控制的，并从部门组织层、菜单权限层和用户层对角色进行划分。
 
 包含如下的特点：
 
-基于角色的权限访问控制
-基于部门组织层、菜单权限层和用户层的三层权限体系
-自定义角色创建和绑定
-架构
+基于角色的权限访问控制 基于部门组织层、菜单权限层和用户层的三层权限体系 自定义角色创建和绑定 架构
 ![img](https://c0c0.oss-cn-qingdao.aliyuncs.com/sdskh.png)
 
-###  资源
- 遵循REST原则，视HTTP-based REST API为一个或一组资源。
- 对资源的引用和操作则视为权限。
- 角色是资源的超集。
+### 资源
 
-角色和资源之间通过 RBAC 关联起来。
- 一个角色严格遵循只能访问所属资源的原则。
- 角色支持自定义角色。
- 用户是资源的实际使用者。
+遵循REST原则，视HTTP-based REST API为一个或一组资源。 对资源的引用和操作则视为权限。 角色是资源的超集。
+
+角色和资源之间通过 RBAC 关联起来。 一个角色严格遵循只能访问所属资源的原则。 角色支持自定义角色。 用户是资源的实际使用者。
 
 用户和角色之间通过 RBAC 关联起来。

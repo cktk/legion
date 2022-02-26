@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MessageResp {
     private String rspcod = SystemConstant.SMS_ERROR_ERR;
-    private Boolean success =false;
-    private String msgGroup ="";
+    private Boolean success = false;
+    private String msgGroup = "";
 }

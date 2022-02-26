@@ -3,7 +3,6 @@ package com.esmooc.legion.core.common.aop;
 import com.esmooc.legion.core.base.LegionBaseEntity;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
@@ -14,15 +13,15 @@ import org.springframework.stereotype.Component;
 public class ResultAop {
 
     @Pointcut("execution(* *..controller..*Controller*.*(..))")
-    public void BrokerAspect(){
+    public void BrokerAspect() {
 
     }
 
     @Before("BrokerAspect()")
-    public void doBefore(JoinPoint joinPoint){
+    public void doBefore(JoinPoint joinPoint) {
         Object[] args = joinPoint.getArgs();
         for (Object arg : args) {
-            if (arg instanceof LegionBaseEntity){
+            if (arg instanceof LegionBaseEntity) {
                 try {
                     LegionBaseEntity base = (LegionBaseEntity) arg;
                     base.setCreateId(null);
@@ -41,8 +40,6 @@ public class ResultAop {
 
 
     }
-
-
 
 
 }

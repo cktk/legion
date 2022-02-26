@@ -11,6 +11,7 @@ import org.springframework.util.PathMatcher;
 
 /**
  * 声明bean
+ *
  * @author DaiMao
  */
 @Configuration

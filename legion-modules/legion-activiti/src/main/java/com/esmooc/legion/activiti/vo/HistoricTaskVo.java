@@ -1,7 +1,7 @@
 package com.esmooc.legion.activiti.vo;
 
-import com.esmooc.legion.core.common.constant.ActivitiConstant;
 import cn.hutool.core.util.StrUtil;
+import com.esmooc.legion.core.common.constant.ActivitiConstant;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.experimental.Accessors;

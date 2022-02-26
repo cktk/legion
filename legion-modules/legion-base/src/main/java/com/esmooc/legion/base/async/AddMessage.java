@@ -13,6 +13,7 @@ import java.util.List;
 
 /**
  * 异步添加消息
+ *
  * @author DaiMao
  */
 @Component
@@ -26,6 +27,7 @@ public class AddMessage {
 
     /**
      * 初始化消息
+     *
      * @param userId
      */
     @Async

@@ -5,12 +5,14 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 分布式锁模板类
+ *
  * @author DaiMao
  */
 public interface DistributedLockTemplate {
 
     /**
      * 执行方法
+     *
      * @param lockId    锁id（对应唯一业务ID）
      * @param timeout   最大等待获取锁时间
      * @param leaseTime 最长占用锁时间 <=0或null时将启用看门狗机制（程序未执行完自动续期锁）

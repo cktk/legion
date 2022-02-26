@@ -1,12 +1,11 @@
 package com.esmooc.legion.core.service.impl;
 
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.dfa.WordTree;
 import com.esmooc.legion.core.common.vo.SearchVo;
 import com.esmooc.legion.core.dao.StopWordDao;
 import com.esmooc.legion.core.entity.StopWord;
 import com.esmooc.legion.core.service.StopWordService;
-import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.StrUtil;
-import cn.hutool.dfa.WordTree;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -16,13 +15,18 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.criteria.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 /**
  * 禁用词管理接口实现
+ *
  * @author DaiMao
  */
 @Slf4j
@@ -30,6 +34,7 @@ import java.util.List;
 @Transactional
 public class StopWordServiceImpl implements StopWordService {
 
+    private static WordTree wordTree;
     @Autowired
     private StopWordDao stopWordDao;
 
@@ -37,8 +42,6 @@ public class StopWordServiceImpl implements StopWordService {
     public StopWordDao getRepository() {
         return stopWordDao;
     }
-
-    private static WordTree wordTree;
 
     public WordTree getInstance() {
 

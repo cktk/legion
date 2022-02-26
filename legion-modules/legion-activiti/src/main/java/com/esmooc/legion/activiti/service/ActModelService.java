@@ -7,12 +7,14 @@ import org.springframework.data.domain.Pageable;
 
 /**
  * 模型管理接口
+ *
  * @author DaiMao
  */
 public interface ActModelService extends LegionBaseService<ActModel, String> {
 
     /**
      * 多条件分页获取
+     *
      * @param actModel
      * @param pageable
      * @return

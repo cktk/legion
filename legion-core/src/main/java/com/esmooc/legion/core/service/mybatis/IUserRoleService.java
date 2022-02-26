@@ -1,8 +1,8 @@
 package com.esmooc.legion.core.service.mybatis;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.esmooc.legion.core.entity.Role;
 import com.esmooc.legion.core.entity.UserRole;
-import com.baomidou.mybatisplus.extension.service.IService;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 
@@ -16,6 +16,7 @@ public interface IUserRoleService extends IService<UserRole> {
 
     /**
      * 通过用户id获取
+     *
      * @param userId
      * @return
      */
@@ -24,6 +25,7 @@ public interface IUserRoleService extends IService<UserRole> {
 
     /**
      * 通过用户id获取用户角色关联的部门数据
+     *
      * @param userId
      * @return
      */

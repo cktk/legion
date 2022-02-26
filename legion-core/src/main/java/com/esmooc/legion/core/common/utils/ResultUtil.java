@@ -35,16 +35,16 @@ public class ResultUtil<T> {
         return new ResultUtil<T>().setSuccessMsg(msg);
     }
 
-    public static <T> Result<T> success(Integer code,String msg) {
-        return new ResultUtil<T>().setSuccessMsg(code,msg);
+    public static <T> Result<T> success(Integer code, String msg) {
+        return new ResultUtil<T>().setSuccessMsg(code, msg);
     }
 
-    public static <T> Result<T> success(String msg,T data) {
-        return new ResultUtil<T>().setSuccessMsg(msg,data);
+    public static <T> Result<T> success(String msg, T data) {
+        return new ResultUtil<T>().setSuccessMsg(msg, data);
     }
 
-    public static <T> Result<T> success(Integer code,String msg,T data) {
-        return new ResultUtil<T>().setSuccessMsg(code,msg,data);
+    public static <T> Result<T> success(Integer code, String msg, T data) {
+        return new ResultUtil<T>().setSuccessMsg(code, msg, data);
     }
 
 
@@ -79,7 +79,7 @@ public class ResultUtil<T> {
         return this.result;
     }
 
-    private Result<T> setSuccessMsg(Integer code,String msg) {
+    private Result<T> setSuccessMsg(Integer code, String msg) {
         this.result.setSuccess(true);
         this.result.setMessage(msg);
         this.result.setCode(code);
@@ -88,7 +88,7 @@ public class ResultUtil<T> {
     }
 
 
-    private Result<T> setSuccessMsg(String msg,T t) {
+    private Result<T> setSuccessMsg(String msg, T t) {
         this.result.setSuccess(true);
         this.result.setMessage(msg);
         this.result.setCode(200);
@@ -97,7 +97,7 @@ public class ResultUtil<T> {
     }
 
 
-    private Result<T> setSuccessMsg(Integer code,String msg,T t) {
+    private Result<T> setSuccessMsg(Integer code, String msg, T t) {
         this.result.setSuccess(true);
         this.result.setMessage(msg);
         this.result.setCode(code);

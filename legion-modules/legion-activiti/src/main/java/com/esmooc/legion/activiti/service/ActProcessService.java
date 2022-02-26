@@ -12,12 +12,14 @@ import java.util.List;
 
 /**
  * 流程管理接口
+ *
  * @author DaiMao
  */
 public interface ActProcessService extends LegionBaseService<ActProcess, String> {
 
     /**
      * 多条件分页获取
+     *
      * @param showLatest
      * @param actProcess
      * @param searchVo
@@ -28,6 +30,7 @@ public interface ActProcessService extends LegionBaseService<ActProcess, String>
 
     /**
      * 通过key和latest获取
+     *
      * @param processKey
      * @return
      */
@@ -35,18 +38,21 @@ public interface ActProcessService extends LegionBaseService<ActProcess, String>
 
     /**
      * 通过key设置所有版本为旧
+     *
      * @param processKey
      */
     void setAllOldByProcessKey(String processKey);
 
     /**
      * 通过key设置最新版本
+     *
      * @param processKey
      */
     void setLatestByProcessKey(String processKey);
 
     /**
      * 通过分类获取
+     *
      * @param categoryId
      * @return
      */
@@ -54,6 +60,7 @@ public interface ActProcessService extends LegionBaseService<ActProcess, String>
 
     /**
      * 通过流程定义id启动流程 返回流程实例id
+     *
      * @param actBusiness
      * @return
      */
@@ -61,6 +68,7 @@ public interface ActProcessService extends LegionBaseService<ActProcess, String>
 
     /**
      * 通过流程定义id获取第一个任务节点
+     *
      * @param procDefId
      * @return
      */
@@ -68,6 +76,7 @@ public interface ActProcessService extends LegionBaseService<ActProcess, String>
 
     /**
      * 获取下一节点
+     *
      * @param procDefId
      * @param procInstId
      * @return
@@ -76,6 +85,7 @@ public interface ActProcessService extends LegionBaseService<ActProcess, String>
 
     /**
      * 获取节点审批人
+     *
      * @param nodeId
      * @return
      */
@@ -83,6 +93,7 @@ public interface ActProcessService extends LegionBaseService<ActProcess, String>
 
     /**
      * 获取节点审批人
+     *
      * @param nodeId
      * @param taskId
      * @param hisTaskId
@@ -92,6 +103,7 @@ public interface ActProcessService extends LegionBaseService<ActProcess, String>
 
     /**
      * 更新分类名称
+     *
      * @param categoryId
      * @param categoryTitle
      */

@@ -1,14 +1,21 @@
 package com.esmooc.legion.file.manage.impl;
 
+import cn.hutool.core.util.StrUtil;
 import com.esmooc.legion.core.common.constant.SettingConstant;
 import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.core.entity.Setting;
 import com.esmooc.legion.core.service.SettingService;
 import com.esmooc.legion.core.vo.OssSetting;
 import com.esmooc.legion.file.manage.FileManage;
-import cn.hutool.core.util.StrUtil;
 import com.google.gson.Gson;
-import io.minio.*;
+import io.minio.BucketExistsArgs;
+import io.minio.CopyObjectArgs;
+import io.minio.CopySource;
+import io.minio.MakeBucketArgs;
+import io.minio.MinioClient;
+import io.minio.PutObjectArgs;
+import io.minio.RemoveObjectArgs;
+import io.minio.SetBucketPolicyArgs;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -38,6 +45,7 @@ public class MinioFileManage implements FileManage {
 
     /**
      * 如果存储桶不存在 创建存储通
+     *
      * @param os
      * @param minioClient
      * @throws Exception

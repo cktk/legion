@@ -1,5 +1,6 @@
 package com.esmooc.legion.base.controller.manage;
 
+import cn.hutool.http.HtmlUtil;
 import com.esmooc.legion.core.common.constant.ActivitiConstant;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.utils.PageUtil;
@@ -13,7 +14,6 @@ import com.esmooc.legion.core.entity.User;
 import com.esmooc.legion.core.service.MessageSendService;
 import com.esmooc.legion.core.service.MessageService;
 import com.esmooc.legion.core.service.UserService;
-import cn.hutool.http.HtmlUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +21,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +60,7 @@ public class MessageController {
                                                 PageVo pageVo) {
 
         Page<Message> page = messageService.findByCondition(message, searchVo, PageUtil.initPage(pageVo));
-        page.forEach(e->{
+        page.forEach(e -> {
             e.setContentText(HtmlUtil.cleanHtmlTag(e.getContent()));
         });
         return ResultUtil.data(page);

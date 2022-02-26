@@ -9,12 +9,14 @@ import java.util.List;
 
 /**
  * 流程管理数据处理层
+ *
  * @author DaiMao
  */
 public interface ActProcessDao extends LegionBaseDao<ActProcess, String> {
 
     /**
      * 通过key获取
+     *
      * @param processKey
      * @return
      */
@@ -22,6 +24,7 @@ public interface ActProcessDao extends LegionBaseDao<ActProcess, String> {
 
     /**
      * 通过key和latest获取
+     *
      * @param processKey
      * @return
      */
@@ -29,6 +32,7 @@ public interface ActProcessDao extends LegionBaseDao<ActProcess, String> {
 
     /**
      * 通过key获取按版本排序
+     *
      * @param processKey
      * @return
      */
@@ -36,6 +40,7 @@ public interface ActProcessDao extends LegionBaseDao<ActProcess, String> {
 
     /**
      * 通过分类获取
+     *
      * @param categoryId
      * @return
      */
@@ -43,6 +48,7 @@ public interface ActProcessDao extends LegionBaseDao<ActProcess, String> {
 
     /**
      * 更新分类名称
+     *
      * @param categoryId
      * @param categoryTitle
      */

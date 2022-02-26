@@ -1,7 +1,7 @@
 package com.esmooc.legion.autochat.dao.mapper;
 
-import com.esmooc.legion.autochat.entity.AutoChat;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.esmooc.legion.autochat.entity.AutoChat;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -12,6 +12,7 @@ public interface AutoChatMapper extends BaseMapper<AutoChat> {
 
     /**
      * 查询
+     *
      * @param question
      * @param pageSize
      * @return

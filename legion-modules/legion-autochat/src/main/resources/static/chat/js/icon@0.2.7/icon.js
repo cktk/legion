@@ -1,4 +1,4 @@
-(function(doc) {
+(function (doc) {
     var id = '__CHATUI_ICONS__';
     var svgSprite =
         '<svg xmlns="http://www.w3.org/2000/svg" id="' +

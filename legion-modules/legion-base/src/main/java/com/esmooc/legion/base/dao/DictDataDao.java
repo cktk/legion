@@ -2,8 +2,6 @@ package com.esmooc.legion.base.dao;
 
 import com.esmooc.legion.base.entity.DictData;
 import com.esmooc.legion.core.base.LegionBaseDao;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
@@ -11,12 +9,14 @@ import java.util.List;
 
 /**
  * 字典数据数据处理层
+ *
  * @author DaiMao
  */
 public interface DictDataDao extends LegionBaseDao<DictData, String> {
 
     /**
      * 通过dictId和状态获取
+     *
      * @param dictId
      * @param status
      * @return
@@ -25,6 +25,7 @@ public interface DictDataDao extends LegionBaseDao<DictData, String> {
 
     /**
      * 通过dictId删除
+     *
      * @param dictId
      */
     @Modifying

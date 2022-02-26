@@ -10,12 +10,14 @@ import java.util.List;
 
 /**
  * 消息内容接口
+ *
  * @author DaiMao
  */
 public interface MessageService extends LegionBaseService<Message, String> {
 
     /**
      * 多条件分页获取
+     *
      * @param message
      * @param searchVo
      * @param pageable
@@ -25,6 +27,7 @@ public interface MessageService extends LegionBaseService<Message, String> {
 
     /**
      * 通过创建发送标识获取
+     *
      * @param createSend
      * @return
      */

@@ -1,8 +1,8 @@
 package com.esmooc.legion.core.common.limit;
 
 //import com.esmooc.legion.core.common.annotation.RateLimiter;
+
 import com.esmooc.legion.core.common.constant.CommonConstant;
-//import com.google.common.util.concurrent.RateLimiter;
 import com.google.common.util.concurrent.RateLimiter;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RRateLimiter;
@@ -16,6 +16,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 令牌桶算法限流
+ *
  * @author DaiMao
  */
 @Slf4j
@@ -29,6 +30,7 @@ public class RedisRaterLimiter {
 
     /**
      * 基于Redis令牌桶算法
+     *
      * @param name         限流标识（限流点）
      * @param rate         限制的数量 速率
      * @param rateInterval 单位时间内（毫秒）
@@ -50,6 +52,7 @@ public class RedisRaterLimiter {
 
     /**
      * 基于内存令牌桶算法
+     *
      * @param permitsPerSecond 1秒内限制的数量（QPS）
      * @return
      */

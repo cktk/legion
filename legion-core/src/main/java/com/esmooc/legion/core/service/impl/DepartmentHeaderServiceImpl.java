@@ -16,6 +16,7 @@ import java.util.List;
 
 /**
  * 部门负责人接口实现
+ *
  * @author DaiMao
  */
 @Slf4j

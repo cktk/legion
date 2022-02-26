@@ -8,10 +8,11 @@ package com.esmooc.legion.core.common.sequence.range;
  */
 public interface BizName {
 
-	/**
-	 * 生成名称
-	 * @return 返回文本序号
-	 */
-	String create();
+    /**
+     * 生成名称
+     *
+     * @return 返回文本序号
+     */
+    String create();
 
 }

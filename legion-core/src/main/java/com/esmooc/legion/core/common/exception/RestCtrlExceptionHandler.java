@@ -116,8 +116,8 @@ public class RestCtrlExceptionHandler {
 
         String errorMsg = "请求参数不正确   ";
         if (e != null) {
-            errorMsg= errorMsg+e.getMessage();
-            log.error("错误详情{},{}",e.getMessage(), e);
+            errorMsg = errorMsg + e.getMessage();
+            log.error("错误详情{},{}", e.getMessage(), e);
         }
 
         return ResultUtil.error(415, errorMsg);

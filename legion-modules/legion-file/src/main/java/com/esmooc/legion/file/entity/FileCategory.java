@@ -1,6 +1,5 @@
 package com.esmooc.legion.file.entity;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.esmooc.legion.core.base.LegionBaseEntity;
@@ -47,7 +46,7 @@ public class FileCategory extends LegionBaseEntity {
     private BigDecimal sortOrder;
 
     @Transient
-    @TableField(exist=false)
+    @TableField(exist = false)
     @ApiModelProperty(value = "父节点名称")
     private String parentTitle;
 }

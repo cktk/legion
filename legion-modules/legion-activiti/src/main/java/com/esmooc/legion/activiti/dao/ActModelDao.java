@@ -5,6 +5,7 @@ import com.esmooc.legion.core.base.LegionBaseDao;
 
 /**
  * 模型管理数据处理层
+ *
  * @author DaiMao
  */
 public interface ActModelDao extends LegionBaseDao<ActModel, String> {

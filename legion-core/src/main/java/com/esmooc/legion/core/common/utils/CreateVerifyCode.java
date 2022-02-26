@@ -1,10 +1,12 @@
 package com.esmooc.legion.core.common.utils;
 
-import com.esmooc.legion.core.common.exception.CaptchaException;
 import cn.hutool.core.util.StrUtil;
+import com.esmooc.legion.core.common.exception.CaptchaException;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -12,6 +14,7 @@ import java.security.SecureRandom;
 
 /**
  * 随机字符验证码生成工具类
+ *
  * @author DaiMao
  */
 public class CreateVerifyCode {
@@ -25,7 +28,7 @@ public class CreateVerifyCode {
      * 随机数字
      */
     public static final String DIGIT = "1234567890";
-
+    SecureRandom random = new SecureRandom();
     /**
      * 图片的宽度
      */
@@ -50,8 +53,6 @@ public class CreateVerifyCode {
      * 验证码图片Buffer
      */
     private BufferedImage buffImg = null;
-
-    SecureRandom random = new SecureRandom();
 
     public CreateVerifyCode() {
         creatImage();
@@ -202,6 +203,7 @@ public class CreateVerifyCode {
 
     /**
      * 得到随机字符
+     *
      * @param n
      * @return
      */
@@ -219,6 +221,7 @@ public class CreateVerifyCode {
 
     /**
      * 得到随机数字
+     *
      * @param n
      * @return
      */
@@ -236,6 +239,7 @@ public class CreateVerifyCode {
 
     /**
      * 得到随机颜色
+     *
      * @param fc
      * @param bc
      * @return

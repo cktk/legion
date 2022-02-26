@@ -1,5 +1,6 @@
 package com.esmooc.legion.activiti.controller;
 
+import cn.hutool.core.util.StrUtil;
 import com.esmooc.legion.activiti.entity.ActBusiness;
 import com.esmooc.legion.activiti.entity.ActProcess;
 import com.esmooc.legion.activiti.entity.business.Leave;
@@ -14,7 +15,6 @@ import com.esmooc.legion.core.common.utils.ResultUtil;
 import com.esmooc.legion.core.common.vo.PageVo;
 import com.esmooc.legion.core.common.vo.Result;
 import com.esmooc.legion.core.common.vo.SearchVo;
-import cn.hutool.core.util.StrUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -135,6 +135,7 @@ public class ActBusinessController {
     /**
      * 放入相应流程所需变量 此处仅做演示
      * 【推荐使用绑定监听器设置变量 更加灵活】
+     *
      * @param act
      * @return
      */

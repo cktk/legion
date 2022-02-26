@@ -1,5 +1,6 @@
 package com.esmooc.legion.open.controller;
 
+import cn.hutool.core.util.IdUtil;
 import com.esmooc.legion.core.base.LegionBaseController;
 import com.esmooc.legion.core.common.utils.PageUtil;
 import com.esmooc.legion.core.common.utils.ResultUtil;
@@ -8,7 +9,6 @@ import com.esmooc.legion.core.common.vo.Result;
 import com.esmooc.legion.core.common.vo.SearchVo;
 import com.esmooc.legion.open.entity.Client;
 import com.esmooc.legion.open.service.ClientService;
-import cn.hutool.core.util.IdUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -44,7 +44,7 @@ public class ClientController extends LegionBaseController<Client, String> {
                                                PageVo pageVo) {
 
         Page<Client> page = clientService.findByCondition(client, searchVo, PageUtil.initPage(pageVo));
-       return ResultUtil.data(page);
+        return ResultUtil.data(page);
     }
 
     @RequestMapping(value = "/getSecretKey", method = RequestMethod.GET)

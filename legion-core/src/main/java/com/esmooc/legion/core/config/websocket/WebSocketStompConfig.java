@@ -15,6 +15,7 @@ public class WebSocketStompConfig implements WebSocketMessageBrokerConfigurer {
 
     /**
      * 注册stomp端点
+     *
      * @param registry
      */
     @Override
@@ -26,6 +27,7 @@ public class WebSocketStompConfig implements WebSocketMessageBrokerConfigurer {
 
     /**
      * 配置信息代理
+     *
      * @param registry
      */
     @Override

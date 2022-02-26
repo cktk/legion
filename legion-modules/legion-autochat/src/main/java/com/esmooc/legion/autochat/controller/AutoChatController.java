@@ -1,5 +1,7 @@
 package com.esmooc.legion.autochat.controller;
 
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.HtmlUtil;
 import com.esmooc.legion.autochat.dao.mapper.AutoChatMapper;
 import com.esmooc.legion.autochat.entity.AutoChat;
 import com.esmooc.legion.autochat.service.AutoChatService;
@@ -16,8 +18,6 @@ import com.esmooc.legion.core.common.vo.SearchVo;
 import com.esmooc.legion.core.entity.Setting;
 import com.esmooc.legion.core.service.SettingService;
 import com.esmooc.legion.core.vo.AutoChatSetting;
-import cn.hutool.core.util.StrUtil;
-import cn.hutool.http.HtmlUtil;
 import com.google.gson.Gson;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -115,7 +115,7 @@ public class AutoChatController extends LegionBaseController<AutoChat, String> {
             } else if (list.size() > 4) {
                 list = list.subList(0, 4);
             }
-            list.forEach(e->{
+            list.forEach(e -> {
                 e.setContent(e.getTitle());
             });
             List<GuessVo> promotions = new ArrayList<>();
@@ -141,12 +141,12 @@ public class AutoChatController extends LegionBaseController<AutoChat, String> {
     public Result<Object> evaluate(String messageId, String evaluateType) {
 
         AutoChat autoChat = autoChatService.get(messageId);
-            if ("good".equals(evaluateType)) {
-                autoChat.setGood(autoChat.getGood() + 1);
-            } else {
-                autoChat.setBad(autoChat.getBad() + 1);
-            }
-            autoChatService.update(autoChat);
+        if ("good".equals(evaluateType)) {
+            autoChat.setGood(autoChat.getGood() + 1);
+        } else {
+            autoChat.setBad(autoChat.getBad() + 1);
+        }
+        autoChatService.update(autoChat);
         return ResultUtil.success("操作成功");
     }
 }

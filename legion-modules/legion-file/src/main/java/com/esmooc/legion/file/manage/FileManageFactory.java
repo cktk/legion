@@ -1,18 +1,22 @@
 package com.esmooc.legion.file.manage;
 
+import cn.hutool.core.util.StrUtil;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.constant.SettingConstant;
 import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.core.entity.Setting;
 import com.esmooc.legion.core.service.SettingService;
-import com.esmooc.legion.file.manage.impl.*;
-import cn.hutool.core.util.StrUtil;
-import com.esmooc.legion.file.manage.impl.*;
+import com.esmooc.legion.file.manage.impl.AliFileManage;
+import com.esmooc.legion.file.manage.impl.LocalFileManage;
+import com.esmooc.legion.file.manage.impl.MinioFileManage;
+import com.esmooc.legion.file.manage.impl.QiniuFileManage;
+import com.esmooc.legion.file.manage.impl.TencentFileManage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
  * 工厂模式
+ *
  * @author DaiMao
  */
 @Component
@@ -38,6 +42,7 @@ public class FileManageFactory {
 
     /**
      * 使用配置的服务上传时location传入null 管理文件时需传入存储位置location
+     *
      * @param location
      * @return
      */

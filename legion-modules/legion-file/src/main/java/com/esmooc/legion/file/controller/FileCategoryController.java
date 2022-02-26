@@ -18,7 +18,11 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -51,7 +55,7 @@ public class FileCategoryController {
         User user = securityUtil.getCurrUserSimple();
         List<FileCategory> list = fileCategoryService.findByParentIdAndCreateBy(parentId, user.getUsername());
         setInfo(list);
-        return  ResultUtil.data(list);
+        return ResultUtil.data(list);
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
@@ -102,7 +106,7 @@ public class FileCategoryController {
                                     @RequestParam String categoryId) {
 
         User user = securityUtil.getCurrUserSimple();
-        if(!CommonConstant.PARENT_ID.equals(categoryId)) {
+        if (!CommonConstant.PARENT_ID.equals(categoryId)) {
             FileCategory fileCategory = fileCategoryService.get(categoryId);
             if (!user.getUsername().equals(fileCategory.getCreateBy())) {
                 return ResultUtil.error("你无权移动至该文件夹");

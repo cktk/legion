@@ -1,5 +1,7 @@
 package com.esmooc.legion.core.common.utils;
 
+import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.StrUtil;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.constant.SecurityConstant;
 import com.esmooc.legion.core.common.exception.LegionException;
@@ -17,9 +19,6 @@ import com.esmooc.legion.core.service.MemberService;
 import com.esmooc.legion.core.service.UserService;
 import com.esmooc.legion.core.service.mybatis.IUserRoleService;
 import com.esmooc.legion.core.vo.PermissionDTO;
-import com.esmooc.legion.core.vo.RoleDTO;
-import cn.hutool.core.util.IdUtil;
-import cn.hutool.core.util.StrUtil;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import io.jsonwebtoken.Jwts;
@@ -48,37 +47,22 @@ import java.util.stream.Collectors;
 @Component
 public class SecurityUtil {
 
-    @Autowired
-    private LegionTokenProperties tokenProperties;
-
-    @Autowired
-    private LegionAppTokenProperties appTokenProperties;
-
-    @Autowired
-    private MemberService memberService;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private IUserRoleService iUserRoleService;
-
-    @Autowired
-    private DepartmentService departmentService;
-
-    @Autowired
-    private RedisTemplateHelper redisTemplate;
-
     // 声明对象
     public static SecurityUtil securityUtil;
-
-    @PostConstruct // 初始化
-    public void init() {
-        securityUtil = this;
-        securityUtil.userService = this.userService;
-    }
-
-
+    @Autowired
+    private LegionTokenProperties tokenProperties;
+    @Autowired
+    private LegionAppTokenProperties appTokenProperties;
+    @Autowired
+    private MemberService memberService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private IUserRoleService iUserRoleService;
+    @Autowired
+    private DepartmentService departmentService;
+    @Autowired
+    private RedisTemplateHelper redisTemplate;
 
     /**
      * -------------------ToB-------------------------
@@ -92,7 +76,11 @@ public class SecurityUtil {
         return securityUtil.userService.findByUsername(authentication.getName());
     }
 
-
+    @PostConstruct // 初始化
+    public void init() {
+        securityUtil = this;
+        securityUtil.userService = this.userService;
+    }
 
     public User checkUserPassword(String username, String password) {
 
@@ -182,6 +170,7 @@ public class SecurityUtil {
 
     /**
      * 获取当前登录用户 包含所有信息
+     *
      * @return
      */
     public User getCurrUser() {
@@ -196,6 +185,7 @@ public class SecurityUtil {
 
     /**
      * 获取当前登录用户部分基本信息 id、username、nickname、mobile、email、departmentId、type、permissions（角色和菜单名）
+     *
      * @return
      */
     public User getCurrUserSimple() {
@@ -300,6 +290,7 @@ public class SecurityUtil {
 
     /**
      * 通过用户名获取用户拥有权限
+     *
      * @param username
      */
     public List<GrantedAuthority> getCurrUserPerms(String username) {
@@ -344,14 +335,14 @@ public class SecurityUtil {
             token = IdUtil.simpleUUID();
             tokenMember = new TokenMember(member, platform);
             String key = SecurityConstant.MEMBER_TOKEN + tokenMember.getUsername() + ":" + platform;
-        // 单平台登录 之前的token失效
-        if (appTokenProperties.getSpl()) {
-            String oldToken = redisTemplate.get(key);
-            if (StrUtil.isNotBlank(oldToken)) {
-                redisTemplate.delete(SecurityConstant.TOKEN_MEMBER_PRE + oldToken);
+            // 单平台登录 之前的token失效
+            if (appTokenProperties.getSpl()) {
+                String oldToken = redisTemplate.get(key);
+                if (StrUtil.isNotBlank(oldToken)) {
+                    redisTemplate.delete(SecurityConstant.TOKEN_MEMBER_PRE + oldToken);
+                }
             }
-        }
-        redisTemplate.set(key, token, appTokenProperties.getTokenExpireTime(), TimeUnit.DAYS);
+            redisTemplate.set(key, token, appTokenProperties.getTokenExpireTime(), TimeUnit.DAYS);
             redisTemplate.set(SecurityConstant.TOKEN_MEMBER_PRE + token, new Gson().toJson(tokenMember), appTokenProperties.getTokenExpireTime(), TimeUnit.DAYS);
         } else {
             // JWT
@@ -373,6 +364,7 @@ public class SecurityUtil {
 
     /**
      * 获取当前登录会员信息 包含所有
+     *
      * @return
      */
     public Member getCurrMember() {
@@ -387,6 +379,7 @@ public class SecurityUtil {
 
     /**
      * 获取当前登录会员部分信息 id、username、nickname、mobile、email、type、permissions、platform
+     *
      * @return
      */
     public Member getCurrMemberSimple() {

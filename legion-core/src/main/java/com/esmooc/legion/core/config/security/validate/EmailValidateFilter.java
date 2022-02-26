@@ -1,11 +1,11 @@
 package com.esmooc.legion.core.config.security.validate;
 
+import cn.hutool.core.util.StrUtil;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
 import com.esmooc.legion.core.common.utils.ResponseUtil;
 import com.esmooc.legion.core.common.vo.EmailValidate;
 import com.esmooc.legion.core.config.properties.CaptchaProperties;
-import cn.hutool.core.util.StrUtil;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +21,7 @@ import java.io.IOException;
 
 /**
  * 图形验证码过滤器
+ *
  * @author DaiMao
  */
 @Slf4j

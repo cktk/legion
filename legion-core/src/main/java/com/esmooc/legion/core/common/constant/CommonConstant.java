@@ -2,6 +2,7 @@ package com.esmooc.legion.core.common.constant;
 
 /**
  * 常量
+ *
  * @author DaiMao
  */
 public interface CommonConstant {

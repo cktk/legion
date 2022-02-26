@@ -1,10 +1,15 @@
 package com.esmooc.legion.base.controller.manage;
 
+import cn.hutool.core.util.StrUtil;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.constant.SettingConstant;
 import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
-import com.esmooc.legion.core.common.utils.*;
+import com.esmooc.legion.core.common.utils.CommonUtil;
+import com.esmooc.legion.core.common.utils.EmailUtil;
+import com.esmooc.legion.core.common.utils.IpInfoUtil;
+import com.esmooc.legion.core.common.utils.ResultUtil;
+import com.esmooc.legion.core.common.utils.SecurityUtil;
 import com.esmooc.legion.core.common.vo.EmailValidate;
 import com.esmooc.legion.core.common.vo.Result;
 import com.esmooc.legion.core.entity.Setting;
@@ -12,16 +17,17 @@ import com.esmooc.legion.core.entity.User;
 import com.esmooc.legion.core.service.SettingService;
 import com.esmooc.legion.core.service.UserService;
 import com.esmooc.legion.core.vo.OtherSetting;
-import cn.hutool.core.util.StrUtil;
-import com.esmooc.legion.core.common.utils.*;
 import com.google.gson.Gson;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.concurrent.TimeUnit;
@@ -81,6 +87,7 @@ public class EmailValidateController {
 
     /**
      * 发送邮件验证码
+     *
      * @param email
      * @param operation
      * @param title

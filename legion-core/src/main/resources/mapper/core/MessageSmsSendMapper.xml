@@ -1,38 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.esmooc.legion.core.mapper.MessageSmsSendMapper">
-  <resultMap id="BaseResultMap" type="com.esmooc.legion.core.entity.MessageSmsSend">
-    <!--@mbg.generated-->
-    <!--@Table t_message_sms_send-->
-    <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="template_type" jdbcType="VARCHAR" property="templateType" />
-    <result column="template_id" jdbcType="VARCHAR" property="templateId" />
-    <result column="type" jdbcType="VARCHAR" property="type" />
-    <result column="setting_id" jdbcType="VARCHAR" property="settingId" />
-    <result column="content" jdbcType="VARCHAR" property="content" />
-    <result column="phone" jdbcType="VARCHAR" property="phone" />
-    <result column="send_time" jdbcType="TIMESTAMP" property="sendTime" />
-    <result column="send_user_id" jdbcType="BIGINT" property="sendUserId" />
-    <result column="send_user_name" jdbcType="VARCHAR" property="sendUserName" />
-    <result column="send_status" jdbcType="TIMESTAMP" property="sendStatus" />
-    <result column="send_res" jdbcType="VARCHAR" property="sendRes" />
-    <result column="work_type" jdbcType="VARCHAR" property="workType" />
-    <result column="work_id" jdbcType="VARCHAR" property="workId" />
-    <result column="retry_send" jdbcType="VARCHAR" property="retrySend" />
-    <result column="biz_id" jdbcType="VARCHAR" property="bizId" />
-    <result column="retry_id" jdbcType="BIGINT" property="retryId" />
-    <result column="create_id" jdbcType="BIGINT" property="createId" />
-    <result column="create_by" jdbcType="VARCHAR" property="createBy" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
-    <result column="update_id" jdbcType="BIGINT" property="updateId" />
-    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
-    <result column="del_flag" jdbcType="BOOLEAN" property="delFlag" />
-  </resultMap>
-  <sql id="Base_Column_List">
-    <!--@mbg.generated-->
-    id, template_type, template_id, `type`, setting_id, content, phone, send_time, send_user_id, 
-    send_user_name, send_status, send_res, work_type, work_id, retry_send, retry_id, 
-    create_id, create_by, create_time, update_by, update_id, update_time, del_flag,biz_id
-  </sql>
+    <resultMap id="BaseResultMap" type="com.esmooc.legion.core.entity.MessageSmsSend">
+        <!--@mbg.generated-->
+        <!--@Table t_message_sms_send-->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="template_type" jdbcType="VARCHAR" property="templateType"/>
+        <result column="template_id" jdbcType="VARCHAR" property="templateId"/>
+        <result column="type" jdbcType="VARCHAR" property="type"/>
+        <result column="setting_id" jdbcType="VARCHAR" property="settingId"/>
+        <result column="content" jdbcType="VARCHAR" property="content"/>
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        <result column="send_time" jdbcType="TIMESTAMP" property="sendTime"/>
+        <result column="send_user_id" jdbcType="BIGINT" property="sendUserId"/>
+        <result column="send_user_name" jdbcType="VARCHAR" property="sendUserName"/>
+        <result column="send_status" jdbcType="TIMESTAMP" property="sendStatus"/>
+        <result column="send_res" jdbcType="VARCHAR" property="sendRes"/>
+        <result column="work_type" jdbcType="VARCHAR" property="workType"/>
+        <result column="work_id" jdbcType="VARCHAR" property="workId"/>
+        <result column="retry_send" jdbcType="VARCHAR" property="retrySend"/>
+        <result column="biz_id" jdbcType="VARCHAR" property="bizId"/>
+        <result column="retry_id" jdbcType="BIGINT" property="retryId"/>
+        <result column="create_id" jdbcType="BIGINT" property="createId"/>
+        <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_by" jdbcType="VARCHAR" property="updateBy"/>
+        <result column="update_id" jdbcType="BIGINT" property="updateId"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="del_flag" jdbcType="BOOLEAN" property="delFlag"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        id, template_type, template_id, `type`, setting_id, content, phone, send_time, send_user_id,
+        send_user_name, send_status, send_res, work_type, work_id, retry_send, retry_id,
+        create_id, create_by, create_time, update_by, update_id, update_time, del_flag,biz_id
+    </sql>
 </mapper>

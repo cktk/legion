@@ -7,12 +7,14 @@ import java.util.List;
 
 /**
  * 权限接口
+ *
  * @author DaiMao
  */
 public interface PermissionService extends LegionBaseService<Permission, String> {
 
     /**
      * 通过parendId查找
+     *
      * @param parentId
      * @return
      */
@@ -20,6 +22,7 @@ public interface PermissionService extends LegionBaseService<Permission, String>
 
     /**
      * 通过类型和状态获取
+     *
      * @param type
      * @param status
      * @return
@@ -28,6 +31,7 @@ public interface PermissionService extends LegionBaseService<Permission, String>
 
     /**
      * 通过名称获取
+     *
      * @param title
      * @return
      */
@@ -35,6 +39,7 @@ public interface PermissionService extends LegionBaseService<Permission, String>
 
     /**
      * 模糊搜索
+     *
      * @param title
      * @return
      */

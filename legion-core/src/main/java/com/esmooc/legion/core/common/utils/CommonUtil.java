@@ -9,14 +9,15 @@ import java.security.SecureRandom;
  */
 public class CommonUtil {
 
+    private static SecureRandom random = new SecureRandom();
+
     private CommonUtil() {
         throw new IllegalStateException("Utility class");
     }
 
-    private static SecureRandom random = new SecureRandom();
-
     /**
      * 以UUID重命名
+     *
      * @param fileName
      * @return
      */
@@ -42,6 +43,7 @@ public class CommonUtil {
 
     /**
      * 批量递归删除时 判断target是否在ids中 避免重复删除
+     *
      * @param target
      * @param ids
      * @return

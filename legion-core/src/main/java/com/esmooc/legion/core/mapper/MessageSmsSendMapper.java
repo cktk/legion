@@ -6,9 +6,8 @@ import org.apache.ibatis.annotations.Mapper;
 
 /**
  * @Author 呆猫
- *
  * @Date: 2022/02/17/ 23:37
- * @Description: 
+ * @Description:
  */
 @Mapper
 public interface MessageSmsSendMapper extends BaseMapper<MessageSmsSend> {

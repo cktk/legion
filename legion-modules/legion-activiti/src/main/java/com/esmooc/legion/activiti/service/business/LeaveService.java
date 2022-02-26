@@ -5,6 +5,7 @@ import com.esmooc.legion.core.base.LegionBaseService;
 
 /**
  * 请假接口
+ *
  * @author DaiMao
  */
 public interface LeaveService extends LegionBaseService<Leave, String> {

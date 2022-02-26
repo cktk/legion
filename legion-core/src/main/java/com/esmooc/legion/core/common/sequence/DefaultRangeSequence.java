@@ -2,10 +2,10 @@ package com.esmooc.legion.core.common.sequence;
 
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
+import com.esmooc.legion.core.common.sequence.exception.SeqException;
 import com.esmooc.legion.core.common.sequence.range.BizName;
 import com.esmooc.legion.core.common.sequence.range.SeqRange;
 import com.esmooc.legion.core.common.sequence.range.SeqRangeMgr;
-import com.esmooc.legion.core.common.sequence.exception.SeqException;
 
 import java.util.Date;
 import java.util.Map;
@@ -22,96 +22,91 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class DefaultRangeSequence implements RangeSequence {
 
-	/**
-	 * 获取区间是加一把独占锁防止资源冲突
-	 */
-	private final Lock lock = new ReentrantLock();
+    private static Map<String, SeqRange> seqRangeMap = new ConcurrentHashMap<>(8);
+    /**
+     * 获取区间是加一把独占锁防止资源冲突
+     */
+    private final Lock lock = new ReentrantLock();
+    /**
+     * 序列号区间管理器
+     */
+    private SeqRangeMgr seqRangeMgr;
+    /**
+     * 当前序列号区间
+     */
+    private volatile SeqRange currentRange;
+    /**
+     * 需要获取区间的业务名称
+     */
+    private BizName bizName;
 
-	/**
-	 * 序列号区间管理器
-	 */
-	private SeqRangeMgr seqRangeMgr;
+    @Override
+    public long nextValue() throws SeqException {
+        String name = bizName.create();
 
-	/**
-	 * 当前序列号区间
-	 */
-	private volatile SeqRange currentRange;
+        currentRange = seqRangeMap.get(name);
+        // 当前区间不存在，重新获取一个区间
+        if (null == currentRange) {
+            lock.lock();
+            try {
+                if (null == currentRange) {
+                    currentRange = seqRangeMgr.nextRange(name);
+                    seqRangeMap.put(name, currentRange);
+                }
+            } finally {
+                lock.unlock();
+            }
+        }
 
-	private static Map<String, SeqRange> seqRangeMap = new ConcurrentHashMap<>(8);
+        // 当value值为-1时，表明区间的序列号已经分配完，需要重新获取区间
+        long value = currentRange.getAndIncrement();
+        if (value == -1) {
+            lock.lock();
+            try {
+                for (; ; ) {
+                    if (currentRange.isOver()) {
+                        currentRange = seqRangeMgr.nextRange(name);
+                        seqRangeMap.put(name, currentRange);
+                    }
 
-	/**
-	 * 需要获取区间的业务名称
-	 */
-	private BizName bizName;
+                    value = currentRange.getAndIncrement();
+                    if (value == -1) {
+                        continue;
+                    }
 
-	@Override
-	public long nextValue() throws SeqException {
-		String name = bizName.create();
+                    break;
+                }
+            } finally {
+                lock.unlock();
+            }
+        }
 
-		currentRange = seqRangeMap.get(name);
-		// 当前区间不存在，重新获取一个区间
-		if (null == currentRange) {
-			lock.lock();
-			try {
-				if (null == currentRange) {
-					currentRange = seqRangeMgr.nextRange(name);
-					seqRangeMap.put(name, currentRange);
-				}
-			}
-			finally {
-				lock.unlock();
-			}
-		}
+        if (value < 0) {
+            throw new SeqException("Sequence value overflow, value = " + value);
+        }
 
-		// 当value值为-1时，表明区间的序列号已经分配完，需要重新获取区间
-		long value = currentRange.getAndIncrement();
-		if (value == -1) {
-			lock.lock();
-			try {
-				for (;;) {
-					if (currentRange.isOver()) {
-						currentRange = seqRangeMgr.nextRange(name);
-						seqRangeMap.put(name, currentRange);
-					}
+        return value;
+    }
 
-					value = currentRange.getAndIncrement();
-					if (value == -1) {
-						continue;
-					}
+    /**
+     * 下一个生成序号（带格式）
+     *
+     * @return
+     * @throws SeqException
+     */
+    @Override
+    public String nextNo() throws SeqException {
+        return String.format("%s%05d", DateUtil.format(new Date(), DatePattern.PURE_DATE_FORMAT), nextValue());
+    }
 
-					break;
-				}
-			}
-			finally {
-				lock.unlock();
-			}
-		}
+    @Override
+    public void setSeqRangeMgr(SeqRangeMgr seqRangeMgr) {
+        this.seqRangeMgr = seqRangeMgr;
+    }
 
-		if (value < 0) {
-			throw new SeqException("Sequence value overflow, value = " + value);
-		}
-
-		return value;
-	}
-
-	/**
-	 * 下一个生成序号（带格式）
-	 * @return
-	 * @throws SeqException
-	 */
-	@Override
-	public String nextNo() throws SeqException {
-		return String.format("%s%05d", DateUtil.format(new Date(), DatePattern.PURE_DATE_FORMAT), nextValue());
-	}
-
-	@Override
-	public void setSeqRangeMgr(SeqRangeMgr seqRangeMgr) {
-		this.seqRangeMgr = seqRangeMgr;
-	}
-
-	@Override
-	public void setName(BizName name) {
-		this.bizName = name;
-	}
+    @Override
+    public void setName(BizName name) {
+        this.bizName = name;
+    }
 
 }

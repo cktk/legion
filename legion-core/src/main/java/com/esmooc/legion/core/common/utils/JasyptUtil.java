@@ -13,6 +13,7 @@ public class JasyptUtil {
 
     /**
      * Jasypt生成加密结果
+     *
      * @param password 配置文件中设定的加密密码 jasypt.encryptor.password
      * @param value    待加密值
      * @return
@@ -26,6 +27,7 @@ public class JasyptUtil {
 
     /**
      * 解密
+     *
      * @param password 配置文件中设定的加密密码 jasypt.encryptor.password
      * @param value    待解密密文
      * @return

@@ -1,8 +1,8 @@
 package com.esmooc.legion.activiti.entity;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.esmooc.legion.core.base.LegionBaseEntity;
 import com.esmooc.legion.core.common.constant.ActivitiConstant;
-import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

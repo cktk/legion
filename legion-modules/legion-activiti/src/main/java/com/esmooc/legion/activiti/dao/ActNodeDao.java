@@ -9,12 +9,14 @@ import java.util.List;
 
 /**
  * 流程节点用户数据处理层
+ *
  * @author DaiMao
  */
 public interface ActNodeDao extends LegionBaseDao<ActNode, String> {
 
     /**
      * 通过nodeId获取
+     *
      * @param nodeId
      * @param type
      * @return
@@ -23,6 +25,7 @@ public interface ActNodeDao extends LegionBaseDao<ActNode, String> {
 
     /**
      * 通过nodeId删除
+     *
      * @param nodeId
      */
     @Modifying
@@ -31,6 +34,7 @@ public interface ActNodeDao extends LegionBaseDao<ActNode, String> {
 
     /**
      * 通过relateId删除
+     *
      * @param relateId
      */
     @Modifying

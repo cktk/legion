@@ -1,12 +1,12 @@
 package com.esmooc.legion.file.serviceimpl;
 
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
 import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
 import com.esmooc.legion.core.common.vo.SearchVo;
 import com.esmooc.legion.file.dao.FileDao;
 import com.esmooc.legion.file.entity.File;
 import com.esmooc.legion.file.service.FileService;
-import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
@@ -18,7 +18,11 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.criteria.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -26,6 +30,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 文件管理接口实现
+ *
  * @author DaiMao
  */
 @Slf4j

@@ -1,8 +1,8 @@
 package com.esmooc.legion.core.dao.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.esmooc.legion.core.entity.Role;
 import com.esmooc.legion.core.entity.UserRole;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -16,6 +16,7 @@ public interface UserRoleMapper extends BaseMapper<UserRole> {
 
     /**
      * 通过用户id获取
+     *
      * @param userId
      * @return
      */
@@ -23,6 +24,7 @@ public interface UserRoleMapper extends BaseMapper<UserRole> {
 
     /**
      * 通过用户id获取用户角色关联的部门数据
+     *
      * @param userId
      * @return
      */

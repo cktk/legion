@@ -1,8 +1,6 @@
 package com.esmooc.legion.base.controller.common;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.esmooc.legion.base.common.utils.Address;
-import com.esmooc.legion.base.common.utils.AddressResolutionUtil;
 import com.esmooc.legion.base.entity.City;
 import com.esmooc.legion.base.service.CityService;
 import com.esmooc.legion.core.common.utils.ResultUtil;
@@ -11,11 +9,13 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -37,7 +37,7 @@ public class CityController {
 
     @GetMapping("/{pid}")
     @ApiOperation(value = "通过地址父id获取地址列表")
-    public Result<List<City>> getByPid( @PathVariable String pid) {
+    public Result<List<City>> getByPid(@PathVariable String pid) {
         return ResultUtil.data(cityService.list(new QueryWrapper<City>().lambda().eq(City::getParentId, pid)));
     }
 
@@ -58,8 +58,6 @@ public class CityController {
     public Result<Boolean> updateById(City city) {
         return ResultUtil.data(cityService.updateById(city));
     }
-
-
 
 
 }
