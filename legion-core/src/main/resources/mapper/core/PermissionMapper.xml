@@ -36,7 +36,7 @@
         `status`, url, show_always, is_menu, is_parent, localize, i18n
     </sql>
     <select id="findByUserId" resultMap="BaseResultMap">
-      SELECT DISTINCT p.id, p.name, p.show_always , p.title, p.path, p.icon, p.type, p.component, p.level,, p.localize, p.i18n
+      SELECT DISTINCT p.id, p.name, p.show_always , p.title, p.path, p.icon, p.type, p.component, p.level, p.localize, p.i18n,
         p.button_type  , p.parent_id , p.sort_order, p.description, p.status, p.url, p.is_menu
       FROM t_user u
       LEFT JOIN t_user_role ur ON u.id = ur.user_id

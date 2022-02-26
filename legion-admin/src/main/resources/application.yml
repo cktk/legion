@@ -4,7 +4,7 @@ jasypt:
     password: legion
 
 server:
-  port: 8888
+  port: 8080
   servlet:
     context-path: /api
   tomcat:
@@ -82,15 +82,15 @@ spring:
   jpa:
     # 显示sql
     show-sql: true
-    # 自动生成表结构 关闭设为  none create
+    # 自动生成表结构 关闭设为  none create update
     hibernate:
       ddl-auto: none
-  # Redis
+  # Redis 若设有密码自行添加配置password
   redis:
     host: 127.0.0.1
 #    password:
     port: 6379
-    database: 0
+    database: 1
     timeout: 10s
     lettuce:
       pool:
@@ -121,6 +121,7 @@ spring:
     async-executor-activate: false
     check-process-definitions: false
     db-identity-used: true
+    # 自动生成Activiti相关表 第一次生成后建议关闭提高运行速度
     database-schema-update: false
     history-level: none
     # 扩展配置
@@ -253,13 +254,13 @@ legion:
 captcha:
   # 图片验证码验证
   image:
-    - /api/legion/login # 登录接口
+    - /api/legion/auth/login # 登录接口
     - /api/legion/oauth2/authorize # 认证接口
   # 短信验证码验证
   sms:
-    - /api/legion/user/regist # 注册接口
-    - /api/legion/user/smsLogin # 短信登录接口
-    - /api/legion/user/resetByMobile # 手机重置密码
+    - /api/legion/auth/regist # 注册接口
+    - /api/legion/auth/smsLogin # 短信登录接口
+    - /api/legion/auth/resetByMobile # 手机重置密码
     - /api/legion/user/changeMobile # 更换绑定手机
     - /api/legion/app/v1/member/quickLogin # 会员快捷登录注册接口
   # Vaptcha验证码验证
@@ -270,33 +271,29 @@ captcha:
     - /api/legion/social/relate # 绑定第三方账号
   # Email验证码验证
   email:
-    - /api/legion/email/resetByEmail # 邮件重置密码
+    - /api/legion/auth/resetByEmail # 邮件重置密码
     - /api/legion/email/editEmail # 修改绑定邮箱
 
 # 忽略url
 ignored:
   # 无需登录认证的请求
   urls:
-    - /**
+    - /legion/test/**
+    - /legion/common/**
+    - /legion/auth/**
     - /legion/app/v1/**
     - /legion/oauth2/**
     - /legion/actuator/**
     - /legion/admin/**
     - /chat/**
     - /modeler/**
-    - /editor-app/**
     - /legion/act/**
     - /legion/dictData/getByType/**
     - /legion/email/sendResetCode/**
-    - /legion/email/resetByEmail
     - /legion/file/view/**
     - /legion/social/**
     - /legion/ws/**
     - /legion/setting/notice
-    - /legion/user/regist
-    - /legion/user/smsLogin
-    - /legion/user/resetByMobile
-    - /legion/common/**
     - /druid/**
     - /doc.html
     - /swagger-resources/**
@@ -305,7 +302,6 @@ ignored:
     - /**/*.css
     - /**/*.png
     - /**/*.ico
-    - /legion/test/**
   # 限流及黑名单不拦截的路径
   limitUrls:
     - /**/*.js
@@ -315,6 +311,10 @@ ignored:
 
 # Actuator
 management:
+  health:
+    # 暂未用到ES 关闭其健康检查
+    elasticsearch:
+      enabled: false
   endpoint:
     health:
       show-details: always
