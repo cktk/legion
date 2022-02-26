@@ -76,9 +76,6 @@ public class MemberController {
         }
         // 登录
         String appToken = securityUtil.getAppToken(member.getUsername(), platform);
-        // 记录日志使用
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(new SecurityMemberDetails(member), null, null);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
         Map<String, Object> result = new HashMap<>(16);
         result.put("isNew", isNew);
         result.put("token", appToken);
@@ -91,7 +88,7 @@ public class MemberController {
 
         Member member = securityUtil.getCurrMember();
         // 清除持久上下文环境 避免后面语句导致持久化
-        entityManager.clear();
+        entityManager.detach(member);
         member.setPassword(null);
         return ResultUtil.data(member);
     }

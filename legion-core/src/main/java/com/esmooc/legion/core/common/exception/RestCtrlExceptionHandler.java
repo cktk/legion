@@ -1,5 +1,6 @@
 package com.esmooc.legion.core.common.exception;
 
+import cn.hutool.core.util.StrUtil;
 import com.esmooc.legion.core.common.utils.ResultUtil;
 import com.esmooc.legion.core.common.vo.Result;
 import lombok.extern.slf4j.Slf4j;
@@ -142,6 +143,9 @@ public class RestCtrlExceptionHandler {
         if (e != null) {
             errorMsg = e.getMessage();
             log.error(e.toString(), e);
+            if (StrUtil.isBlank(errorMsg)) {
+                errorMsg = e.toString();
+            }
         }
         return ResultUtil.error(500, errorMsg);
     }

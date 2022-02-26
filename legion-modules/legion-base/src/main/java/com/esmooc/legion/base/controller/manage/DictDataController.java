@@ -56,8 +56,7 @@ public class DictDataController {
     @ApiOperation(value = "通过类型获取")
     @Cacheable(key = "#type")
     public Result<Object> getByType(@PathVariable String type) {
-
-
+        //TODO 这个地方一直不太理想
         List<DictData> list = dictDataService.findByDictId(type);
         return ResultUtil.data(list);
     }

@@ -26,15 +26,17 @@
         <result column="show_always" jdbcType="BIT" property="showAlways" />
         <result column="is_menu" jdbcType="BIT" property="isMenu" />
         <result column="is_parent" jdbcType="BIT" property="isParent" />
+        <result column="localize" jdbcType="BIT" property="localize" />
+        <result column="i18n" jdbcType="BIT" property="i18n" />
     </resultMap>
     <sql id="Base_Column_List">
         <!--@mbg.generated-->
         id, create_by, create_time, del_flag, update_by, update_time, description, `name`,
         parent_id, `type`, sort_order, component, `path`, title, icon, `level`, button_type,
-        `status`, url, show_always, is_menu, is_parent
+        `status`, url, show_always, is_menu, is_parent, localize, i18n
     </sql>
     <select id="findByUserId" resultMap="BaseResultMap">
-      SELECT DISTINCT p.id, p.name, p.show_always , p.title, p.path, p.icon, p.type, p.component, p.level,
+      SELECT DISTINCT p.id, p.name, p.show_always , p.title, p.path, p.icon, p.type, p.component, p.level,, p.localize, p.i18n
         p.button_type  , p.parent_id , p.sort_order, p.description, p.status, p.url, p.is_menu
       FROM t_user u
       LEFT JOIN t_user_role ur ON u.id = ur.user_id

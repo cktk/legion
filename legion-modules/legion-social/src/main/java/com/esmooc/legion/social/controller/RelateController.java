@@ -56,7 +56,7 @@ public class RelateController {
 
         if (isLogin) {
             // 用户已登录
-            User user = securityUtil.getCurrUser();
+            User user = securityUtil.getCurrUserSimple();
             username = user.getUsername();
         } else {
             // 用户未登录
@@ -65,10 +65,10 @@ public class RelateController {
             }
             User user = userService.findByUsername(username);
             if (user == null) {
-                return ResultUtil.error("账号不存在");
+                return ResultUtil.error("账号或密码错误");
             }
             if (!new BCryptPasswordEncoder().matches(password, user.getPassword())) {
-                return ResultUtil.error("密码不正确");
+                return ResultUtil.error("账号或密码错误");
             }
         }
 
@@ -78,25 +78,12 @@ public class RelateController {
             return ResultUtil.error("无效的id");
         }
 
-        String platform = "";
-        if (CommonConstant.SOCIAL_TYPE_GITHUB.equals(socialType)) {
-            platform = "Github";
-        } else if (CommonConstant.SOCIAL_TYPE_WECHAT.equals(socialType)) {
-            platform = "微信";
-        } else if (CommonConstant.SOCIAL_TYPE_QQ.equals(socialType)) {
-            platform = "QQ";
-        } else if (CommonConstant.SOCIAL_TYPE_WEIBO.equals(socialType)) {
-            platform = "微博";
-        } else if (CommonConstant.SOCIAL_TYPE_DINGDING.equals(socialType)) {
-            platform = "钉钉";
-        } else if (CommonConstant.SOCIAL_TYPE_WORKWECHAT.equals(socialType)) {
-            platform = "企业微信";
-        }
+        String platform = getPlatform(socialType);
         Social s = socialService.findByRelateUsernameAndPlatform(username, socialType);
         if (s != null) {
             return ResultUtil.error("该账户已绑定有" + platform + "账号，请先进行解绑操作");
         }
-        Social social = socialService.get(ID);
+        Social social = socialService.findById(ID);
         if (social == null) {
             return ResultUtil.error("绑定失败，请先进行第三方授权认证");
         }
@@ -126,5 +113,24 @@ public class RelateController {
             return ResultUtil.error("获取JWT失败");
         }
         return ResultUtil.data(JWT);
+    }
+
+    public String getPlatform(Integer socialType) {
+
+        String platform = "";
+        if (CommonConstant.SOCIAL_TYPE_GITHUB.equals(socialType)) {
+            platform = "Github";
+        } else if (CommonConstant.SOCIAL_TYPE_WECHAT.equals(socialType)) {
+            platform = "微信";
+        } else if (CommonConstant.SOCIAL_TYPE_QQ.equals(socialType)) {
+            platform = "QQ";
+        } else if (CommonConstant.SOCIAL_TYPE_WEIBO.equals(socialType)) {
+            platform = "微博";
+        } else if (CommonConstant.SOCIAL_TYPE_DINGDING.equals(socialType)) {
+            platform = "钉钉";
+        } else if (CommonConstant.SOCIAL_TYPE_WORKWECHAT.equals(socialType)) {
+            platform = "企业微信";
+        }
+        return platform;
     }
 }

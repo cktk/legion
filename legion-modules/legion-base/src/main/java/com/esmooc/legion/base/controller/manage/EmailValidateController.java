@@ -99,7 +99,7 @@ public class EmailValidateController {
             if (user != null) {
                 return ResultUtil.error("该邮箱已绑定账号");
             }
-            User u = securityUtil.getCurrUser();
+            User u = securityUtil.getCurrUserSimple();
             e.setUsername(u.getUsername());
         } else if ("重置密码".equals(operation)) {
             if (user == null) {
@@ -137,22 +137,5 @@ public class EmailValidateController {
         // 删除缓存
         redisTemplate.delete("user::" + u.getUsername());
         return ResultUtil.success("修改邮箱成功");
-    }
-
-    @RequestMapping(value = "/resetByEmail", method = RequestMethod.POST)
-    @ApiOperation(value = "通过邮箱重置密码")
-    public Result<Object> resetByEmail(@RequestParam String email,
-                                       @RequestParam String password,
-                                       @RequestParam String passStrength) {
-
-        User u = userService.findByEmail(email);
-
-        String encryptPass = new BCryptPasswordEncoder().encode(password);
-        u.setPassword(encryptPass);
-        u.setPassStrength(passStrength);
-        userService.update(u);
-        // 删除缓存
-        redisTemplate.delete("user::" + u.getUsername());
-        return ResultUtil.success("重置密码成功");
     }
 }

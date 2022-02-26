@@ -1,6 +1,7 @@
 package com.esmooc.legion.core.common.redis;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.DataType;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -32,10 +33,12 @@ public class RedisTemplateHelper {
     private void scan(String pattern, Consumer<byte[]> consumer) {
 
         redisTemplate.execute((RedisConnection connection) -> {
-            Cursor<byte[]> cursor = connection.scan(ScanOptions.scanOptions().count(Long.MAX_VALUE).match(pattern).build());
+            try (Cursor<byte[]> cursor = connection.scan(ScanOptions.scanOptions().count(Long.MAX_VALUE).match(pattern).build())) {
                 cursor.forEachRemaining(consumer);
                 return null;
-
+            } catch (DataAccessException e) {
+                throw new RuntimeException(e);
+            }
         });
     }
 

@@ -12,6 +12,11 @@ import java.util.Map;
  */
 public class ObjectUtil {
 
+    /**
+     * 屏蔽字段
+     */
+    public static final String SCRECT_FIELDS[] = {"password", "accessToken", "appToken"};
+
     public static String mapToString(Map<String, String[]> paramMap) {
 
         if (paramMap == null) {
@@ -22,7 +27,7 @@ public class ObjectUtil {
 
             String key = param.getKey();
             String paramValue = (param.getValue() != null && param.getValue().length > 0 ? param.getValue()[0] : "");
-            String obj = StrUtil.endWithIgnoreCase(param.getKey(), "password") ? "你是看不见我的" : paramValue;
+            String obj = StrUtil.endWithAnyIgnoreCase(param.getKey(), SCRECT_FIELDS) ? "***" : paramValue;
             params.put(key, obj);
         }
         return new Gson().toJson(params);

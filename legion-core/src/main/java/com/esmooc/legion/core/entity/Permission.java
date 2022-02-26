@@ -64,6 +64,12 @@ public class Permission extends LegionBaseEntity {
     @ApiModelProperty(value = "网页链接")
     private String url;
 
+    @ApiModelProperty(value = "是否启用多语言 默认false")
+    private Boolean localize = false;
+
+    @ApiModelProperty(value = "i18n渲染key")
+    private String i18n;
+
     @ApiModelProperty(value = "说明备注")
     private String description;
 

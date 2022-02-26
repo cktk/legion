@@ -47,6 +47,12 @@ public class MenuVo {
     @ApiModelProperty(value = "网页链接")
     private String url;
 
+    @ApiModelProperty(value = "是否启用多语言 默认false")
+    private Boolean localize = false;
+
+    @ApiModelProperty(value = "i18n渲染key")
+    private String i18n;
+
     @ApiModelProperty(value = "描述/备注")
     private String description;
 

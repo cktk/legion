@@ -33,7 +33,7 @@ public class LogController {
     @ApiOperation(value = "分页获取全部")
     @GetMapping("/getAllByPage")
     public Result<Object> getAllByPage(@RequestParam(required = false) Integer type,
-                                        String key,
+                                       @RequestParam String key,
                                        SearchVo searchVo,
                                        PageVo pageVo) {
         Page<Log> log = logService.findByConfition(type, key, searchVo, PageUtil.initPage(pageVo));

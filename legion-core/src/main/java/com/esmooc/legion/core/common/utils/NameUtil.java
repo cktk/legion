@@ -1,6 +1,9 @@
 package com.esmooc.legion.core.common.utils;
 
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.extra.spring.SpringUtil;
+import com.esmooc.legion.core.common.exception.LegionException;
+import com.esmooc.legion.core.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.regex.Matcher;
@@ -13,7 +16,9 @@ import java.util.regex.Pattern;
 @Slf4j
 public class NameUtil {
 
-    public static final String regUsername = "^[a-zA-Z0-9_\\u4e00-\\u9fa5]{1,16}$";
+    private static UserService userService = SpringUtil.getBean(UserService.class);
+
+    public static final String regUsername = "^[a-zA-Z0-9_]{1,16}$";
 
     public static final String regMobile = "^[1][3,4,5,6,7,8,9][0-9]{9}$";
 
@@ -70,5 +75,29 @@ public class NameUtil {
             return true;
         }
         return false;
+    }
+
+    /**
+     * 校验
+     * @param username 用户名 不校验传空字符或null 下同
+     * @param mobile   手机号
+     * @param email    邮箱
+     */
+    public static void checkUserInfo(String username, String mobile, String email) {
+
+        // 由于支持手机密码登录 登录账号不能为他人手机号
+        if (NameUtil.mobile(username) && !username.equals(mobile)) {
+            throw new LegionException("登录账号不能为他人手机号");
+}
+
+        if (StrUtil.isNotBlank(username) && userService.findByUsername(username) != null) {
+            throw new LegionException("该登录账号已被注册");
+        }
+        if (StrUtil.isNotBlank(email) && userService.findByEmail(email) != null) {
+            throw new LegionException("该邮箱已被注册");
+        }
+        if (StrUtil.isNotBlank(mobile) && userService.findByMobile(mobile) != null) {
+            throw new LegionException("该手机号已被注册");
+        }
     }
 }

@@ -160,10 +160,6 @@ public class WeiboController {
             String JWTKey = IdUtil.simpleUUID();
             redisTemplate.set(JWTKey, JWT, 2L, TimeUnit.MINUTES);
             url = callbackFeUrl + "?related=1&JWTKey=" + JWTKey;
-            // 记录日志使用
-            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                    new SecurityUserDetails(new User().setUsername(w.getRelateUsername())), null, null);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
         } else {
             // 未绑定 Redis存入id
             String idToken = IdUtil.simpleUUID();

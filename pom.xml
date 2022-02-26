@@ -7,7 +7,7 @@
     <groupId>com.esmooc</groupId>
     <artifactId>legion</artifactId>
     <packaging>pom</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>M1</version>
 
 
 
@@ -46,6 +46,8 @@
         <tencentcloud.version>3.1.260</tencentcloud.version>
         <activiti.version>5.22.0</activiti.version>
         <dynamic.version>3.5.0</dynamic.version>
+         <extentreports.testng.version>1.2.2</extentreports.testng.version>
+        <selenuim.version>4.0.0-beta-4</selenuim.version>
     </properties>
 
     <dependencyManagement>
@@ -209,6 +211,17 @@
                 <groupId>com.baomidou</groupId>
                 <artifactId>dynamic-datasource-spring-boot-starter</artifactId>
                 <version>${dynamic.version}</version>
+            </dependency>
+              <dependency>
+                <groupId>com.aventstack</groupId>
+                <artifactId>extentreports-testng-adapter</artifactId>
+                <version>${extentreports.testng.version}</version>
+            </dependency>
+            <!-- 自动化测试 -->
+            <dependency>
+                <groupId>org.seleniumhq.selenium</groupId>
+                <artifactId>selenium-java</artifactId>
+                <version>${selenuim.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -55,7 +55,7 @@ public class SocialController {
                 r.setQqId(e.getId()).setQqUsername(e.getUsername()).setQq(true);
             }
             if (CommonConstant.SOCIAL_TYPE_WEIBO.equals(e.getPlatform())) {
-                r.setWechatId(e.getId()).setWeiboUsername(e.getUsername()).setWeibo(true);
+                r.setWeiboId(e.getId()).setWeiboUsername(e.getUsername()).setWeibo(true);
             }
             if (CommonConstant.SOCIAL_TYPE_DINGDING.equals(e.getPlatform())) {
                 r.setDingdingId(e.getId()).setDingdingUsername(e.getUsername()).setDingding(true);

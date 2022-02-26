@@ -80,6 +80,7 @@ public class SystemLogAspect {
     public void after(JoinPoint joinPoint) {
 
         try {
+            String username = "", device = "", isMobile = "PC端";
             String description = getControllerMethodInfo(joinPoint).get("description").toString();
             int type = (int) getControllerMethodInfo(joinPoint).get("type");
             Map<String, String[]> logParams = request.getParameterMap();
@@ -88,9 +89,8 @@ public class SystemLogAspect {
                     || (authentication instanceof AnonymousAuthenticationToken)) {
                 return;
             }
-            String  username = authentication.getName();
+            username = authentication.getName();
 
-            String device = "", isMobile = "PC端";
             UserAgent ua = UserAgentUtil.parse(request.getHeader("user-agent"));
             if (ua != null) {
                 if (ua.isMobile()) {

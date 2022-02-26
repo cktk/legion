@@ -72,7 +72,7 @@ public class DepartmentController {
                                                   @ApiParam("是否开始数据权限过滤") @RequestParam(required = false, defaultValue = "true") Boolean openDataFilter) {
 
         List<Department> list;
-        User u = securityUtil.getCurrUser();
+        User u = securityUtil.getCurrUserSimple();
         String key = "department::" + parentId + ":" + u.getId() + "_" + openDataFilter;
         String v = redisTemplate.get(key);
         if (StrUtil.isNotBlank(v)) {
@@ -111,8 +111,12 @@ public class DepartmentController {
                                @RequestParam(required = false) String[] mainHeader,
                                @RequestParam(required = false) String[] viceHeader) {
 
+        if (department.getId().equals(department.getParentId())) {
+            return ResultUtil.error("上级节点不能为自己");
+        }
         Department old = departmentService.get(department.getId());
         String oldParentId = old.getParentId();
+        String oldTitle = old.getTitle();
         Department d = departmentService.update(department);
         // 先删除原数据
         departmentHeaderService.deleteByDepartmentId(department.getId());
@@ -134,7 +138,7 @@ public class DepartmentController {
         // 批量保存
         departmentHeaderService.saveOrUpdateAll(headers);
         // 如果该节点不是一级节点 且修改了级别 判断上级还有无子节点
-        if (!"0".equals(oldParentId) && !oldParentId.equals(department.getParentId())) {
+        if (!CommonConstant.PARENT_ID.equals(oldParentId) && !oldParentId.equals(department.getParentId())) {
             Department parent = departmentService.get(oldParentId);
             List<Department> children = departmentService.findByParentIdOrderBySortOrder(parent.getId(), false);
             if (parent != null && (children == null || children.isEmpty())) {
@@ -143,7 +147,7 @@ public class DepartmentController {
             }
         }
         // 若修改了部门名称
-        if (!old.getTitle().equals(department.getTitle())) {
+        if (!oldTitle.equals(department.getTitle())) {
             userService.updateDepartmentTitle(department.getId(), department.getTitle());
             // 删除所有用户缓存
             redisTemplate.deleteByPattern("user:*");
@@ -176,8 +180,8 @@ public class DepartmentController {
         // 获得其父节点
         Department dep = departmentService.get(id);
         Department parent = null;
-        if (dep != null && StrUtil.isNotBlank(dep.getParentId())) {
-            parent = departmentService.get(dep.getParentId());
+        if (StrUtil.isNotBlank(dep.getParentId())) {
+            parent = departmentService.findById(dep.getParentId());
         }
         departmentService.delete(id);
         // 删除关联数据权限
@@ -188,8 +192,8 @@ public class DepartmentController {
         deleteMapper.deleteActNode(id);
         // 判断父节点是否还有子节点
         if (parent != null) {
-            List<Department> childrenDeps = departmentService.findByParentIdOrderBySortOrder(parent.getId(), false);
-            if (childrenDeps == null || childrenDeps.isEmpty()) {
+            List<Department> children = departmentService.findByParentIdOrderBySortOrder(parent.getId(), false);
+            if (children == null || children.isEmpty()) {
                 parent.setIsParent(false);
                 departmentService.update(parent);
             }

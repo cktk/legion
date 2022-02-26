@@ -68,9 +68,9 @@ public class PermissionController {
     @ApiOperation(value = "获取用户页面菜单数据")
     public Result<List<MenuVo>> getAllMenuList() {
 
-        List<MenuVo> menuList =new ArrayList<>();
+        List<MenuVo> menuList;
         // 读取缓存
-        User u = securityUtil.getCurrUser();
+        User u = securityUtil.getCurrUserSimple();
         String key = "permission::userMenuList:" + u.getId();
         String v = redisTemplate.get(key);
         if (StrUtil.isNotBlank(v)) {
@@ -155,7 +155,8 @@ public class PermissionController {
     @ApiOperation(value = "添加")
     @CacheEvict(key = "'menuList'")
     public Result<Permission> add(Permission permission) {
-        if (StrUtil.isNotBlank(permission.getId()) && permission.getId().equals(permission.getParentId())){
+
+        if (permission.getId().equals(permission.getParentId())) {
             return ResultUtil.error("上级节点不能为自己");
         }
         // 判断拦截请求的操作权限按钮名是否已存在
@@ -243,8 +244,8 @@ public class PermissionController {
         // 获得其父节点
         Permission p = permissionService.get(id);
         Permission parent = null;
-        if (p != null && StrUtil.isNotBlank(p.getParentId())) {
-            parent = permissionService.get(p.getParentId());
+        if (StrUtil.isNotBlank(p.getParentId())) {
+            parent = permissionService.findById(p.getParentId());
         }
         permissionService.delete(id);
         // 判断父节点是否还有子节点
@@ -277,16 +278,11 @@ public class PermissionController {
 
     public void setInfo(Permission permission) {
 
-        if (StrUtil.isBlank(permission.getParentId()) || CommonConstant.PARENT_ID.equals(permission.getParentId())) {
-            permission.setParentTitle("一级菜单");
-            return;
-        }
-
+        if (!CommonConstant.PARENT_ID.equals(permission.getParentId())) {
         Permission parent = permissionService.get(permission.getParentId());
         permission.setParentTitle(parent.getTitle());
-
-
+        } else {
+            permission.setParentTitle("一级菜单");
     }
-
-
+    }
 }

@@ -93,9 +93,6 @@ public class MemberAdminController {
                                   @RequestParam Boolean enable) {
 
         Member member = memberService.get(userId);
-        if (member == null) {
-            return ResultUtil.error("会员不存在");
-        }
         if (enable) {
             member.setStatus(MemberConstant.MEMBER_STATUS_NORMAL);
         } else {

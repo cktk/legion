@@ -20,4 +20,10 @@ public interface FileService extends LegionBaseService<File, String> {
      * @return
      */
     Page<File> findByCondition(File file, SearchVo searchVo, Pageable pageable);
+
+    /**
+     * 通过categoryId删除
+     * @param categoryId
+     */
+    void deleteByCategoryId(String categoryId);
 }

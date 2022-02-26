@@ -13,6 +13,6 @@ WORKDIR /legion-admin
 
 EXPOSE 8888
 
-ADD ./target/legion-admin-1.0-SNAPSHOT.jar ./
+ADD ./target/legion-admin-M1.jar ./
 
-CMD sleep 6;java  $JAVA_OPTS -jar legion-admin-1.0-SNAPSHOT.jar
+CMD sleep 6;java  $JAVA_OPTS -jar legion-admin-M1.jar

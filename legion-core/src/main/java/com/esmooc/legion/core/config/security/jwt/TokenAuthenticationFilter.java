@@ -29,14 +29,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * @author DaiMao
  */
 @Slf4j
-public class JWTAuthenticationFilter extends BasicAuthenticationFilter {
+public class TokenAuthenticationFilter extends BasicAuthenticationFilter {
 
     private LegionTokenProperties tokenProperties;
 
@@ -46,10 +48,10 @@ public class JWTAuthenticationFilter extends BasicAuthenticationFilter {
 
     private SecurityUtil securityUtil;
 
-    public JWTAuthenticationFilter(AuthenticationManager authenticationManager,
-                                   LegionTokenProperties tokenProperties,
-                                   LegionAppTokenProperties appTokenProperties,
-                                   RedisTemplateHelper redisTemplate, SecurityUtil securityUtil) {
+    public TokenAuthenticationFilter(AuthenticationManager authenticationManager,
+                                     LegionTokenProperties tokenProperties,
+                                     LegionAppTokenProperties appTokenProperties,
+                                     RedisTemplateHelper redisTemplate, SecurityUtil securityUtil) {
         super(authenticationManager);
         this.tokenProperties = tokenProperties;
         this.appTokenProperties = appTokenProperties;
@@ -57,7 +59,7 @@ public class JWTAuthenticationFilter extends BasicAuthenticationFilter {
         this.securityUtil = securityUtil;
     }
 
-    public JWTAuthenticationFilter(AuthenticationManager authenticationManager, AuthenticationEntryPoint authenticationEntryPoint) {
+    public TokenAuthenticationFilter(AuthenticationManager authenticationManager, AuthenticationEntryPoint authenticationEntryPoint) {
         super(authenticationManager, authenticationEntryPoint);
     }
 
@@ -98,9 +100,7 @@ public class JWTAuthenticationFilter extends BasicAuthenticationFilter {
 
     private UsernamePasswordAuthenticationToken getAuthentication(String header, HttpServletResponse response) {
 
-        // 用户名
-        String username = null;
-        // 权限
+        TokenUser tokenUser = null;
         List<GrantedAuthority> authorities = new ArrayList<>();
 
         if (tokenProperties.getRedis()) {
@@ -110,20 +110,19 @@ public class JWTAuthenticationFilter extends BasicAuthenticationFilter {
                 ResponseUtil.out(response, ResponseUtil.resultMap(false, 401, "登录已失效，请重新登录"));
                 return null;
             }
-            TokenUser user = new Gson().fromJson(v, TokenUser.class);
-            username = user.getUsername();
+            tokenUser = new Gson().fromJson(v, TokenUser.class);
             if (tokenProperties.getStorePerms()) {
                 // 缓存了权限
-                for (String ga : user.getPermissions()) {
+                for (String ga : tokenUser.getPermissions()) {
                     authorities.add(new SimpleGrantedAuthority(ga));
                 }
             } else {
                 // 未缓存 读取权限数据
-                authorities = securityUtil.getCurrUserPerms(username);
+                authorities = securityUtil.getCurrUserPerms(tokenUser.getUsername());
             }
-            if (!user.getSaveLogin()) {
+            if (!tokenUser.getSaveLogin()) {
                 // 若未保存登录状态重新设置失效时间
-                redisTemplate.set(SecurityConstant.USER_TOKEN + username, header, tokenProperties.getTokenExpireTime(), TimeUnit.MINUTES);
+                redisTemplate.set(SecurityConstant.USER_TOKEN + tokenUser.getUsername(), header, tokenProperties.getTokenExpireTime(), TimeUnit.MINUTES);
                 redisTemplate.set(SecurityConstant.TOKEN_PRE + header, v, tokenProperties.getTokenExpireTime(), TimeUnit.MINUTES);
             }
         } else {
@@ -134,11 +133,10 @@ public class JWTAuthenticationFilter extends BasicAuthenticationFilter {
                         .setSigningKey(SecurityConstant.JWT_SIGN_KEY)
                         .parseClaimsJws(header.replace(SecurityConstant.TOKEN_SPLIT, ""))
                         .getBody();
-
-                // 获取用户名
-                username = claims.getSubject();
+                // 获取用户
+                tokenUser = new Gson().fromJson(claims.getSubject(), TokenUser.class);
                 // JWT不缓存权限 读取权限数据 避免JWT长度过长
-                authorities = securityUtil.getCurrUserPerms(username);
+                authorities = securityUtil.getCurrUserPerms(tokenUser.getUsername());
             } catch (ExpiredJwtException e) {
                 ResponseUtil.out(response, ResponseUtil.resultMap(false, 401, "登录已失效，请重新登录"));
             } catch (Exception e) {
@@ -147,37 +145,57 @@ public class JWTAuthenticationFilter extends BasicAuthenticationFilter {
             }
         }
 
-        if (StrUtil.isNotBlank(username)) {
-            // 踩坑提醒 此处password不能为null
-            User principal = new User(username, "", authorities);
-            return new UsernamePasswordAuthenticationToken(principal, null, authorities);
+        if (tokenUser != null && StrUtil.isNotBlank(tokenUser.getUsername())) {
+            return new UsernamePasswordAuthenticationToken(tokenUser, null, authorities);
         }
         return null;
     }
 
     private UsernamePasswordAuthenticationToken getAppAuthentication(String appHeader, HttpServletResponse response) {
 
-        // 用户名
-        String username = null;
+        TokenMember tokenMember = null;
+        List<GrantedAuthority> authorities = new ArrayList<>();
 
+        if (appTokenProperties.getRedis()) {
+            // redis
         String v = redisTemplate.get(SecurityConstant.TOKEN_MEMBER_PRE + appHeader);
         if (StrUtil.isBlank(v)) {
             ResponseUtil.out(response, ResponseUtil.resultMap(false, 401, "会员登录已失效，请重新登录"));
             return null;
         }
-        TokenMember member = new Gson().fromJson(v, TokenMember.class);
-        username = member.getUsername();
+            tokenMember = new Gson().fromJson(v, TokenMember.class);
         // 权限
-        List<GrantedAuthority> authorities = securityUtil.getCurrMemberPerms(username);
-
+            if (StrUtil.isNotBlank(tokenMember.getPermissions())) {
+                authorities = Arrays.stream(tokenMember.getPermissions().split(",")).map(e -> new SimpleGrantedAuthority(e))
+                        .collect(Collectors.toList());
+            }
         // 重新设置失效时间
-        redisTemplate.set(SecurityConstant.MEMBER_TOKEN + username + ":" + member.getPlatform(), appHeader, appTokenProperties.getTokenExpireTime(), TimeUnit.DAYS);
+            redisTemplate.set(SecurityConstant.MEMBER_TOKEN + tokenMember.getUsername() + ":" + tokenMember.getPlatform(), appHeader, appTokenProperties.getTokenExpireTime(), TimeUnit.DAYS);
         redisTemplate.set(SecurityConstant.TOKEN_MEMBER_PRE + appHeader, v, appTokenProperties.getTokenExpireTime(), TimeUnit.DAYS);
-
-        if (StrUtil.isNotBlank(username)) {
-            // 踩坑提醒 此处password不能为null
-            User principal = new User(username, "", authorities);
-            return new UsernamePasswordAuthenticationToken(principal, null, authorities);
+        } else {
+            // JWT
+            try {
+                // 解析token
+                Claims claims = Jwts.parser()
+                        .setSigningKey(SecurityConstant.JWT_SIGN_KEY)
+                        .parseClaimsJws(appHeader.replace(SecurityConstant.TOKEN_SPLIT, ""))
+                        .getBody();
+                // 获取用户
+                tokenMember = new Gson().fromJson(claims.getSubject(), TokenMember.class);
+                // 权限
+                if (StrUtil.isNotBlank(tokenMember.getPermissions())) {
+                    authorities = Arrays.stream(tokenMember.getPermissions().split(",")).map(e -> new SimpleGrantedAuthority(e))
+                            .collect(Collectors.toList());
+                }
+            } catch (ExpiredJwtException e) {
+                ResponseUtil.out(response, ResponseUtil.resultMap(false, 401, "登录已失效，请重新登录"));
+            } catch (Exception e) {
+                log.error(e.toString());
+                ResponseUtil.out(response, ResponseUtil.resultMap(false, 500, "解析token错误"));
+            }
+        }
+        if (tokenMember != null && StrUtil.isNotBlank(tokenMember.getUsername())) {
+            return new UsernamePasswordAuthenticationToken(tokenMember, null, authorities);
         }
         return null;
     }

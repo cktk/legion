@@ -64,6 +64,7 @@ public class UploadController {
     @ApiOperation(value = "文件上传")
     public Result<Object> upload(@RequestParam(required = false) MultipartFile file,
                                  @RequestParam(required = false) String base64,
+                                 @RequestParam(required = false, defaultValue = "0") String categoryId,
                                  HttpServletRequest request) {
 
         if (file.getSize() > maxUploadFile * 1024 * 1024) {
@@ -88,7 +89,7 @@ public class UploadController {
             result = fileManageFactory.getFileManage(null).inputStreamUpload(inputStream, fKey, file);
             // 保存数据信息至数据库
             f.setLocation(getType(setting.getValue())).setName(file.getOriginalFilename()).setSize(file.getSize())
-                    .setType(file.getContentType()).setFKey(fKey).setUrl(result);
+                    .setType(file.getContentType()).setFKey(fKey).setUrl(result).setCategoryId(categoryId);
             fileService.save(f);
         } catch (Exception e) {
             log.error(e.toString());

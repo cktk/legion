@@ -50,7 +50,7 @@ public class LimitRaterInterceptor extends HandlerInterceptorAdapter {
     public OtherSetting getOtherSetting() {
 
         Setting setting = settingService.get(SettingConstant.OTHER_SETTING);
-        if (setting==null||StrUtil.isBlank(setting.getValue())) {
+        if (StrUtil.isBlank(setting.getValue())) {
             return null;
         }
         return new Gson().fromJson(setting.getValue(), OtherSetting.class);
@@ -112,7 +112,11 @@ public class LimitRaterInterceptor extends HandlerInterceptorAdapter {
                 }
                 Boolean token3 = redisRaterLimiter.acquireByRedis(name, limit, timeout);
                 if (!token3) {
-                    throw new LimitException("当前访问人数太多啦，请稍后再试");
+                    String msg = "当前访问人数太多啦，请稍后再试";
+                    if (rateLimiter.ipLimit()) {
+                        msg = "你手速怎么这么快，请点慢一点";
+                    }
+                    throw new LimitException(msg);
                 }
             }
         } catch (LimitException e) {

@@ -92,84 +92,15 @@ public class UserController {
     @PersistenceContext
     private EntityManager entityManager;
 
-    @RequestMapping(value = "/smsLogin", method = RequestMethod.POST)
-    @SystemLog(description = "短信登录", type = LogType.LOGIN)
-    @ApiOperation(value = "短信登录接口")
-    public Result<Object> smsLogin(@RequestParam String mobile,
-                                   @RequestParam(required = false) Boolean saveLogin) {
-
-        User u = userService.findByMobile(mobile);
-        if (u == null) {
-            throw new LegionException("手机号不存在");
-        }
-        String accessToken = securityUtil.getToken(u.getUsername(), saveLogin);
-        // 记录日志使用
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(new SecurityUserDetails(u), null, null);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        return ResultUtil.data(accessToken);
-    }
-
-    @RequestMapping(value = "/resetByMobile", method = RequestMethod.POST)
-    @ApiOperation(value = "通过短信重置密码")
-    public Result<Object> resetByMobile(@RequestParam String mobile,
-                                        @RequestParam String password,
-                                        @RequestParam String passStrength) {
-
-        User u = userService.findByMobile(mobile);
-        String encryptPass = new BCryptPasswordEncoder().encode(password);
-        u.setPassword(encryptPass).setPassStrength(passStrength);
-        userService.update(u);
-        // 删除缓存
-        redisTemplate.delete(USER + u.getUsername());
-        return ResultUtil.success("重置密码成功");
-    }
-
-    @RequestMapping(value = "/regist", method = RequestMethod.POST)
-    @ApiOperation(value = "注册用户")
-    public Result<Object> regist(@Valid User u) {
-
-        // 校验是否已存在
-        checkUserInfo(u.getUsername(), u.getMobile(), u.getEmail());
-
-        String encryptPass = new BCryptPasswordEncoder().encode(u.getPassword());
-        u.setPassword(encryptPass).setType(CommonConstant.USER_TYPE_NORMAL);
-        User user = userService.save(u);
-
-        // 默认角色
-        List<Role> roleList = roleService.findByDefaultRole(true);
-        if (roleList != null && roleList.size() > 0) {
-            for (Role role : roleList) {
-                UserRole ur = new UserRole().setUserId(user.getId()).setRoleId(role.getId());
-                userRoleService.save(ur);
-            }
-        }
-        // 异步发送创建账号消息
-        addMessage.addSendMessage(user.getId());
-
-        return ResultUtil.data(user);
-    }
-
     @RequestMapping(value = "/info", method = RequestMethod.GET)
     @ApiOperation(value = "获取当前登录用户接口")
     public Result<User> getUserInfo() {
 
         User u = securityUtil.getCurrUser();
         // 清除持久上下文环境 避免后面语句导致持久化
-        entityManager.clear();
+        entityManager.detach(u);
         u.setPassword(null);
         return ResultUtil.data(u);
-    }
-
-    @RequestMapping(value = "/changeMobile", method = RequestMethod.POST)
-    @ApiOperation(value = "修改绑定手机")
-    public Result<Object> changeMobile(@RequestParam String mobile) {
-
-        User u = securityUtil.getCurrUser();
-        u.setMobile(mobile);
-        userService.update(u);
-        // 删除缓存
-        redisTemplate.delete(USER + u.getUsername());
-        return ResultUtil.success("修改手机号成功");
     }
 
     @RequestMapping(value = "/unlock", method = RequestMethod.POST)
@@ -183,23 +114,13 @@ public class UserController {
         return ResultUtil.data(null);
     }
 
-    @RequestMapping(value = "/resetPass", method = RequestMethod.POST)
-    @ApiOperation(value = "重置密码")
-    public Result<Object> resetPass(@RequestParam String[] ids) {
-
-        for (String id : ids) {
-            User u = userService.get(id);
-            u.setPassword(new BCryptPasswordEncoder().encode("123456"));
-            userService.update(u);
-            redisTemplate.delete(USER + u.getUsername());
-        }
-        return ResultUtil.success("操作成功");
-    }
-
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     @ApiOperation(value = "修改用户自己资料", notes = "用户名密码等不会修改 需要username更新缓存")
     @CacheEvict(key = "#u.username")
     public Result<Object> editOwn(User u) {
+
+        // 禁用词
+        StopWordsUtil.matchWord(u.getNickname());
 
         User old = securityUtil.getCurrUser();
         // 不能修改的字段
@@ -241,6 +162,31 @@ public class UserController {
         return ResultUtil.success("修改密码成功");
     }
 
+    @RequestMapping(value = "/changeMobile", method = RequestMethod.POST)
+    @ApiOperation(value = "修改绑定手机")
+    public Result<Object> changeMobile(@RequestParam String mobile) {
+
+        User u = securityUtil.getCurrUser();
+        u.setMobile(mobile);
+        userService.update(u);
+        // 删除缓存
+        redisTemplate.delete(USER + u.getUsername());
+        return ResultUtil.success("修改手机号成功");
+    }
+
+    @RequestMapping(value = "/resetPass", method = RequestMethod.POST)
+    @ApiOperation(value = "重置密码")
+    public Result<Object> resetPass(@RequestParam String[] ids) {
+
+        for (String id : ids) {
+            User u = userService.get(id);
+            u.setPassword(new BCryptPasswordEncoder().encode("123456"));
+            userService.update(u);
+            redisTemplate.delete(USER + u.getUsername());
+        }
+        return ResultUtil.success("操作成功");
+    }
+
     @RequestMapping(value = "/getByCondition", method = RequestMethod.GET)
     @ApiOperation(value = "多条件分页获取用户列表")
     public Result<Object> getByCondition(User user,
@@ -267,8 +213,8 @@ public class UserController {
     public Result<List<User>> getByCondition(@PathVariable String departmentId) {
 
         List<User> list = userService.findByDepartmentId(departmentId);
-        entityManager.clear();
         list.forEach(u -> {
+            entityManager.detach(u);
             u.setPassword(null);
         });
         return ResultUtil.data(list);
@@ -279,8 +225,8 @@ public class UserController {
     public Result<List<User>> searchByName(@PathVariable String username) throws UnsupportedEncodingException {
 
         List<User> list = userService.findByUsernameLikeAndStatus(URLDecoder.decode(username, "utf-8"), CommonConstant.STATUS_NORMAL);
-        entityManager.clear();
         list.forEach(u -> {
+            entityManager.detach(u);
             u.setPassword(null);
         });
         return ResultUtil.data(list);
@@ -292,11 +238,11 @@ public class UserController {
 
         List<User> list = userService.getAll();
         // 清除持久上下文环境 避免后面语句导致持久化
-        entityManager.clear();
-        for (User u : list) {
+        list.forEach(u -> {
+            entityManager.detach(u);
             u.setPassword(null);
-        }
-        return ResultUtil.data(list);
+        });
+        return  ResultUtil.data(list);
     }
 
     @RequestMapping(value = "/admin/add", method = RequestMethod.POST)
@@ -305,7 +251,7 @@ public class UserController {
                               @RequestParam(required = false) String[] roleIds) {
 
         // 校验是否已存在
-        checkUserInfo(u.getUsername(), u.getMobile(), u.getEmail());
+        NameUtil.checkUserInfo(u.getUsername(), u.getMobile(), u.getEmail());
 
         String encryptPass = new BCryptPasswordEncoder().encode(u.getPassword());
         u.setPassword(encryptPass);
@@ -461,7 +407,7 @@ public class UserController {
             u.setPassword(new BCryptPasswordEncoder().encode(u.getPassword()));
             // 验证部门id正确性
             if (StrUtil.isNotBlank(u.getDepartmentId())) {
-                Department department = departmentService.get(u.getDepartmentId());
+                Department department = departmentService.findById(u.getDepartmentId());
                 if (department == null) {
                     errors.add(count);
                     reasons.add("部门id不存在");
@@ -488,8 +434,8 @@ public class UserController {
         int successCount = users.size() - errors.size();
         String successMessage = "全部导入成功，共计 " + successCount + " 条数据";
         String failMessage = "导入成功 " + successCount + " 条，失败 " + errors.size() + " 条数据。<br>" +
-                "第 " + errors.toString() + " 行数据导入出错，错误原因分别为：<br>" + reasons.toString();
-        String message = "";
+                "第 " + errors + " 行数据导入出错，错误原因分别为：<br>" + reasons;
+        String message;
         if (errors.isEmpty()) {
             message = successMessage;
         } else {
@@ -498,25 +444,4 @@ public class UserController {
         return ResultUtil.success(message);
     }
 
-    /**
-     * 校验
-     * @param username 用户名 不校验传空字符或null 下同
-     * @param mobile   手机号
-     * @param email    邮箱
-     */
-    public void checkUserInfo(String username, String mobile, String email) {
-
-        // 禁用词
-        StopWordsUtil.matchWord(username);
-
-        if (StrUtil.isNotBlank(username) && userService.findByUsername(username) != null) {
-            throw new LegionException("该登录账号已被注册");
-        }
-        if (StrUtil.isNotBlank(email) && userService.findByEmail(email) != null) {
-            throw new LegionException("该邮箱已被注册");
-        }
-        if (StrUtil.isNotBlank(mobile) && userService.findByMobile(mobile) != null) {
-            throw new LegionException("该手机号已被注册");
-        }
-    }
 }

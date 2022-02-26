@@ -22,7 +22,16 @@ public interface LegionBaseService<E, ID extends Serializable> {
      * @param id
      * @return
      */
-    public default E get(ID id) {
+     public default E get(ID id) {
+        return getRepository().getById(id);
+    }
+
+    /**
+     * 根据ID获取 不存在则返回null
+     * @param id
+     * @return
+     */
+    public default E findById(ID id) {
         return getRepository().findById(id).orElse(null);
     }
 
@@ -87,11 +96,19 @@ public interface LegionBaseService<E, ID extends Serializable> {
     }
 
     /**
+     * 批量根据id删除
+     * @param ids
+     */
+    public default void deleteAllById(Iterable<ID> ids) {
+        getRepository().deleteAllById(ids);
+    }
+
+    /**
      * 批量删除
      * @param entities
      */
     public default void delete(Iterable<E> entities) {
-        getRepository().deleteInBatch(entities);
+        getRepository().deleteAll(entities);
     }
 
     /**

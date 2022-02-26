@@ -26,10 +26,12 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -38,6 +40,7 @@ import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * @author DaiMao
@@ -78,9 +81,7 @@ public class SecurityUtil {
 
 
     /**
-     * 获取当前登录用户
-     *
-     * @return
+     * -------------------ToB-------------------------
      */
     public static User getUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -93,12 +94,44 @@ public class SecurityUtil {
 
 
 
+    public User checkUserPassword(String username, String password) {
 
+        User user;
+        // 校验用户名
+        if (NameUtil.mobile(username)) {
+            user = userService.findByEmail(username);
+        } else if (NameUtil.email(username)) {
+            user = userService.findByEmail(username);
+        } else {
+            user = userService.findByUsername(username);
+        }
+        if (user == null) {
+            return null;
+        }
+        // 校验密码
+        Boolean isValid = new BCryptPasswordEncoder().matches(password, user.getPassword());
+        if (!isValid) {
+            return null;
+        }
+        return user;
+    }
 
     public String getToken(String username, Boolean saveLogin) {
 
         if (StrUtil.isBlank(username)) {
             throw new LegionException("username不能为空");
+        }
+        User user = userService.findByUsername(username);
+        return getToken(user, saveLogin);
+    }
+
+    public String getToken(User user, Boolean saveLogin) {
+
+        if (user == null) {
+            throw new LegionException("user不能为空");
+        }
+        if (CommonConstant.USER_STATUS_LOCK.equals(user.getStatus())) {
+            throw new LegionException("账户被禁用，请联系管理员");
         }
         Boolean saved = false;
         if (saveLogin == null || saveLogin) {
@@ -108,59 +141,47 @@ public class SecurityUtil {
             }
         }
         // 生成token
-        User u = userService.findByUsername(username);
-        List<String> list = new ArrayList<>();
-        // 缓存权限
-        if (tokenProperties.getStorePerms()) {
-            for (PermissionDTO p : u.getPermissions()) {
-                if (StrUtil.isNotBlank(p.getTitle()) && StrUtil.isNotBlank(p.getPath())) {
-                    list.add(p.getTitle());
-                }
-            }
-            for (RoleDTO r : u.getRoles()) {
-                list.add(r.getName());
-            }
-        }
-        // 登陆成功生成token
         String token;
+        TokenUser tokenUser;
         if (tokenProperties.getRedis()) {
             // redis
             token = IdUtil.simpleUUID();
-            TokenUser user = new TokenUser(u.getUsername(), list, saved);
+            tokenUser = new TokenUser(user, tokenProperties.getStorePerms(), saved);
             // 单设备登录 之前的token失效
             if (tokenProperties.getSdl()) {
-                String oldToken = redisTemplate.get(SecurityConstant.USER_TOKEN + u.getUsername());
+                String oldToken = redisTemplate.get(SecurityConstant.USER_TOKEN + user.getUsername());
                 if (StrUtil.isNotBlank(oldToken)) {
                     redisTemplate.delete(SecurityConstant.TOKEN_PRE + oldToken);
                 }
             }
+            // 是否记住账号/保存登录
             if (saved) {
-                redisTemplate.set(SecurityConstant.USER_TOKEN + u.getUsername(), token, tokenProperties.getSaveLoginTime(), TimeUnit.DAYS);
-                redisTemplate.set(SecurityConstant.TOKEN_PRE + token, new Gson().toJson(user), tokenProperties.getSaveLoginTime(), TimeUnit.DAYS);
+                redisTemplate.set(SecurityConstant.USER_TOKEN + user.getUsername(), token, tokenProperties.getSaveLoginTime(), TimeUnit.DAYS);
+                redisTemplate.set(SecurityConstant.TOKEN_PRE + token, new Gson().toJson(tokenUser), tokenProperties.getSaveLoginTime(), TimeUnit.DAYS);
             } else {
-                redisTemplate.set(SecurityConstant.USER_TOKEN + u.getUsername(), token, tokenProperties.getTokenExpireTime(), TimeUnit.MINUTES);
-                redisTemplate.set(SecurityConstant.TOKEN_PRE + token, new Gson().toJson(user), tokenProperties.getTokenExpireTime(), TimeUnit.MINUTES);
+                redisTemplate.set(SecurityConstant.USER_TOKEN + user.getUsername(), token, tokenProperties.getTokenExpireTime(), TimeUnit.MINUTES);
+                redisTemplate.set(SecurityConstant.TOKEN_PRE + token, new Gson().toJson(tokenUser), tokenProperties.getTokenExpireTime(), TimeUnit.MINUTES);
             }
         } else {
             // JWT不缓存权限 避免JWT长度过长
-            list = null;
-            // JWT
+            tokenUser = new TokenUser(user, false, null);
             token = SecurityConstant.TOKEN_SPLIT + Jwts.builder()
-                    //主题 放入用户名
-                    .setSubject(u.getUsername())
-                    //自定义属性 放入用户拥有请求权限
-                    .claim(SecurityConstant.AUTHORITIES, new Gson().toJson(list))
+                    // 主题 放入用户信息
+                    .setSubject(new Gson().toJson(tokenUser))
                     //失效时间
                     .setExpiration(new Date(System.currentTimeMillis() + tokenProperties.getTokenExpireTime() * 60 * 1000))
                     //签名算法和密钥
                     .signWith(SignatureAlgorithm.HS512, SecurityConstant.JWT_SIGN_KEY)
                     .compact();
         }
+        // 记录日志使用
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(tokenUser, null, null);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
         return token;
     }
 
     /**
-     * 获取当前登录用户
+     * 获取当前登录用户 包含所有信息
      * @return
      */
     public User getCurrUser() {
@@ -174,12 +195,33 @@ public class SecurityUtil {
     }
 
     /**
+     * 获取当前登录用户部分基本信息 id、username、nickname、mobile、email、departmentId、type、permissions（角色和菜单名）
+     * @return
+     */
+    public User getCurrUserSimple() {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated() || authentication.getName() == null
+                || authentication instanceof AnonymousAuthenticationToken) {
+            throw new LegionException("未检测到登录用户");
+        }
+        TokenUser tokenUser = (TokenUser) authentication.getPrincipal();
+        User user = new User().setUsername(tokenUser.getUsername()).setNickname(tokenUser.getNickname()).
+                setMobile(tokenUser.getMobile()).setEmail(tokenUser.getEmail()).setDepartmentId(tokenUser.getDepartmentId()).setType(tokenUser.getType());
+        if (tokenUser.getPermissions() != null && !tokenUser.getPermissions().isEmpty()) {
+            user.setPermissions(tokenUser.getPermissions().stream().map(e -> new PermissionDTO().setTitle(e)).collect(Collectors.toList()));
+        }
+        user.setId(tokenUser.getId());
+        return user;
+    }
+
+    /**
      * 获取当前用户数据权限 null代表具有所有权限 包含值为-1的数据代表无任何权限
      */
     public List<String> getDeparmentIds() {
 
         List<String> deparmentIds = new ArrayList<>();
-        User u = getCurrUser();
+        User u = getCurrUserSimple();
         // 读取缓存
         String key = "userRole::depIds:" + u.getId();
         String v = redisTemplate.get(key);
@@ -212,7 +254,7 @@ public class SecurityUtil {
                 } else {
                     // 递归获取自己与子级
                     List<String> ids = new ArrayList<>();
-                    getRecursion(u.getDepartmentId(), ids);
+                    getDepRecursion(u.getDepartmentId(), ids);
                     deparmentIds.addAll(ids);
                 }
             } else if (r.getDataType().equals(CommonConstant.DATA_TYPE_SAME)) {
@@ -243,7 +285,7 @@ public class SecurityUtil {
         return deparmentIds;
     }
 
-    private void getRecursion(String departmentId, List<String> ids) {
+    private void getDepRecursion(String departmentId, List<String> ids) {
 
         Department department = departmentService.get(departmentId);
         ids.add(department.getId());
@@ -251,7 +293,7 @@ public class SecurityUtil {
             // 获取其下级
             List<Department> departments = departmentService.findByParentIdAndStatusOrderBySortOrder(departmentId, CommonConstant.STATUS_NORMAL);
             departments.forEach(d -> {
-                getRecursion(d.getId(), ids);
+                getDepRecursion(d.getId(), ids);
             });
         }
     }
@@ -273,15 +315,35 @@ public class SecurityUtil {
         return authorities;
     }
 
+    /**
+     * -------------------App ToC-------------------------
+     */
+
     public String getAppToken(String username, Integer platform) {
 
         if (StrUtil.isBlank(username)) {
             throw new LegionException("username不能为空");
         }
+        Member member = memberService.findByUsername(username);
+        return getAppToken(member, platform);
+    }
+
+    public String getAppToken(Member member, Integer platform) {
+
+        if (member == null) {
+            throw new LegionException("member不能为空");
+        }
+        if (CommonConstant.USER_STATUS_LOCK.equals(member.getStatus())) {
+            throw new LegionException("账户被禁用，请联系管理员");
+        }
         // 生成token
-        String token = IdUtil.simpleUUID();
-        TokenMember member = new TokenMember(username, platform);
-        String key = SecurityConstant.MEMBER_TOKEN + member.getUsername() + ":" + platform;
+        String token;
+        TokenMember tokenMember;
+        if (appTokenProperties.getRedis()) {
+            // redis
+            token = IdUtil.simpleUUID();
+            tokenMember = new TokenMember(member, platform);
+            String key = SecurityConstant.MEMBER_TOKEN + tokenMember.getUsername() + ":" + platform;
         // 单平台登录 之前的token失效
         if (appTokenProperties.getSpl()) {
             String oldToken = redisTemplate.get(key);
@@ -290,12 +352,27 @@ public class SecurityUtil {
             }
         }
         redisTemplate.set(key, token, appTokenProperties.getTokenExpireTime(), TimeUnit.DAYS);
-        redisTemplate.set(SecurityConstant.TOKEN_MEMBER_PRE + token, new Gson().toJson(member), appTokenProperties.getTokenExpireTime(), TimeUnit.DAYS);
+            redisTemplate.set(SecurityConstant.TOKEN_MEMBER_PRE + token, new Gson().toJson(tokenMember), appTokenProperties.getTokenExpireTime(), TimeUnit.DAYS);
+        } else {
+            // JWT
+            tokenMember = new TokenMember(member, platform);
+            token = SecurityConstant.TOKEN_SPLIT + Jwts.builder()
+                    // 主题 放入会员信息
+                    .setSubject(new Gson().toJson(tokenMember))
+                    // 失效时间
+                    .setExpiration(new Date(System.currentTimeMillis() + appTokenProperties.getTokenExpireTime() * 60 * 1000))
+                    // 签名算法和密钥
+                    .signWith(SignatureAlgorithm.HS512, SecurityConstant.JWT_SIGN_KEY)
+                    .compact();
+        }
+        // 记录日志使用
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(tokenMember, null, null);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
         return token;
     }
 
     /**
-     * 获取当前登录会员
+     * 获取当前登录会员信息 包含所有
      * @return
      */
     public Member getCurrMember() {
@@ -309,20 +386,21 @@ public class SecurityUtil {
     }
 
     /**
-     * 通过会员名获取其拥有权限
-     * @param username
+     * 获取当前登录会员部分信息 id、username、nickname、mobile、email、type、permissions、platform
+     * @return
      */
-    public List<GrantedAuthority> getCurrMemberPerms(String username) {
+    public Member getCurrMemberSimple() {
 
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        Member member = memberService.findByUsername(username);
-        if (member == null || StrUtil.isBlank(member.getPermissions())) {
-            return authorities;
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated() || authentication.getName() == null
+                || authentication instanceof AnonymousAuthenticationToken) {
+            throw new LegionException("未检测到登录会员");
         }
-        String[] as = member.getPermissions().split(",");
-        for (String a : as) {
-            authorities.add(new SimpleGrantedAuthority(a));
-        }
-        return authorities;
+        TokenMember tokenMember = (TokenMember) authentication.getPrincipal();
+        Member member = new Member().setUsername(tokenMember.getUsername()).setNickname(tokenMember.getNickname())
+                .setMobile(tokenMember.getMobile()).setEmail(tokenMember.getEmail()).setType(tokenMember.getType())
+                .setPermissions(tokenMember.getPermissions()).setPlatform(tokenMember.getPlatform());
+        member.setId(tokenMember.getId());
+        return member;
     }
 }

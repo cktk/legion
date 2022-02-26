@@ -1,23 +1,23 @@
 package com.esmooc.legion.file.controller;
 
+import cn.hutool.core.util.StrUtil;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.constant.SettingConstant;
 import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
 import com.esmooc.legion.core.common.utils.PageUtil;
 import com.esmooc.legion.core.common.utils.ResultUtil;
+import com.esmooc.legion.core.common.utils.SecurityUtil;
 import com.esmooc.legion.core.common.vo.PageVo;
 import com.esmooc.legion.core.common.vo.Result;
 import com.esmooc.legion.core.common.vo.SearchVo;
 import com.esmooc.legion.core.entity.User;
 import com.esmooc.legion.core.service.SettingService;
-import com.esmooc.legion.core.service.UserService;
 import com.esmooc.legion.core.vo.OssSetting;
 import com.esmooc.legion.file.entity.File;
 import com.esmooc.legion.file.manage.FileManageFactory;
 import com.esmooc.legion.file.manage.impl.LocalFileManage;
 import com.esmooc.legion.file.service.FileService;
-import cn.hutool.core.util.StrUtil;
 import com.google.gson.Gson;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -35,12 +35,10 @@ import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.Map;
 
 
 /**
- * @author DaiMao
+ * @author Exrick
  */
 @Slf4j
 @Controller
@@ -60,10 +58,10 @@ public class FileController {
     private SettingService settingService;
 
     @Autowired
-    private UserService userService;
+    private RedisTemplateHelper redisTemplate;
 
     @Autowired
-    private RedisTemplateHelper redisTemplate;
+    private SecurityUtil securityUtil;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -73,32 +71,73 @@ public class FileController {
     @ResponseBody
     public Result<Page<File>> getFileList(File file,
                                           SearchVo searchVo,
-                                          PageVo pageVo) {
+                                          PageVo pageVo,
+                                          @RequestParam(required = false, defaultValue = "false") Boolean getCurrUser) {
 
+        if (getCurrUser) {
+            file.setCreateBy(securityUtil.getCurrUserSimple().getUsername());
+        }
         Page<File> page = fileService.findByCondition(file, searchVo, PageUtil.initPage(pageVo));
         OssSetting os = new Gson().fromJson(settingService.get(SettingConstant.LOCAL_OSS).getValue(), OssSetting.class);
-        Map<String, String> map = new HashMap<>(16);
         for (File e : page.getContent()) {
             if (e.getLocation() != null && CommonConstant.OSS_LOCAL.equals(e.getLocation())) {
                 String url = os.getHttp() + os.getEndpoint() + "/";
                 entityManager.detach(e);
                 e.setUrl(url + e.getId());
             }
-            if (StrUtil.isNotBlank(e.getCreateBy())) {
-                if (!map.containsKey(e.getCreateBy())) {
-                    User u = userService.findByUsername(e.getCreateBy());
-                    if (u != null && StrUtil.isNotBlank(u.getNickname())) {
-                        e.setNickname(u.getNickname());
-                        map.put(e.getCreateBy(), u.getNickname());
-                    }
-                } else {
-                    e.setNickname(map.get(e.getCreateBy()));
-                }
-            }
         }
-        // GC
-        map = null;
         return ResultUtil.data(page);
+    }
+
+    @RequestMapping(value = "/deleteUserFile", method = RequestMethod.POST)
+    @ApiOperation(value = "当前用户文件删除")
+    @ResponseBody
+    public Result<Object> deleteUserFile(@RequestParam String id) {
+
+        User user = securityUtil.getCurrUserSimple();
+        File file = fileService.get(id);
+        if (file.getLocation() == null) {
+            return ResultUtil.error("存储位置未知");
+        }
+        if (!user.getUsername().equals(file.getCreateBy())) {
+            return ResultUtil.error("你无权删除非本人文件");
+        }
+        // 特殊处理本地服务器
+        String key = file.getFKey();
+        if (CommonConstant.OSS_LOCAL.equals(file.getLocation())) {
+            key = file.getUrl();
+        }
+        try {
+            fileManageFactory.getFileManage(file.getLocation()).deleteFile(key);
+        } catch (Exception e) {
+            log.error("服务器删除文件失败，ID：" + file.getId() + " 存储位置：" + file.getLocation());
+        }
+        fileService.delete(id);
+        redisTemplate.delete("file::" + id);
+        return ResultUtil.data(null);
+    }
+
+    @RequestMapping(value = "/renameUserFile", method = RequestMethod.POST)
+    @ApiOperation(value = "用户文件重命名")
+    @ResponseBody
+    @CacheEvict(key = "#id")
+    public Result<Object> renameUserFile(@RequestParam String id,
+                                         @RequestParam String newName) {
+
+        User user = securityUtil.getCurrUserSimple();
+        File file = fileService.get(id);
+        if (file.getLocation() == null) {
+            return ResultUtil.error("存储位置未知");
+        }
+        if (!user.getUsername().equals(file.getCreateBy())) {
+            return ResultUtil.error("你无权删除非本人文件");
+        }
+        String oldName = file.getName();
+        if (!oldName.equals(newName)) {
+            file.setName(newName);
+            fileService.update(file);
+        }
+        return ResultUtil.data(null);
     }
 
     @RequestMapping(value = "/copy", method = RequestMethod.POST)
@@ -128,7 +167,7 @@ public class FileController {
     @ApiOperation(value = "文件重命名")
     @ResponseBody
     @CacheEvict(key = "#id")
-    public Result<Object> upload(@RequestParam String id,
+    public Result<Object> rename(@RequestParam String id,
                                  @RequestParam String newKey,
                                  @RequestParam String newName) throws Exception {
 
@@ -160,9 +199,6 @@ public class FileController {
 
         for (String id : ids) {
             File file = fileService.get(id);
-            if (file == null) {
-                return ResultUtil.error("文件不存在");
-            }
             if (file.getLocation() == null) {
                 return ResultUtil.error("存储位置未知");
             }
@@ -171,7 +207,11 @@ public class FileController {
             if (CommonConstant.OSS_LOCAL.equals(file.getLocation())) {
                 key = file.getUrl();
             }
-            fileManageFactory.getFileManage(file.getLocation()).deleteFile(key);
+            try {
+                fileManageFactory.getFileManage(file.getLocation()).deleteFile(key);
+            } catch (Exception e) {
+                log.error("服务器删除文件失败，ID：" + file.getId() + " 存储位置：" + file.getLocation());
+            }
             fileService.delete(id);
             redisTemplate.delete("file::" + id);
         }
@@ -186,7 +226,7 @@ public class FileController {
                      @RequestParam(required = false, defaultValue = "UTF-8") String charset,
                      HttpServletResponse response) throws IOException {
 
-        File file = fileService.get(id);
+        File file = fileService.findById(id);
         if (file == null) {
             throw new LegionException("文件ID：" + id + "不存在");
         }

@@ -14,13 +14,11 @@ import com.esmooc.legion.core.common.vo.Result;
 import com.esmooc.legion.core.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -53,10 +51,17 @@ public class CaptchaController {
 
     @RequestMapping(value = "/init", method = RequestMethod.GET)
     @ApiOperation(value = "初始化验证码")
-    public Result<Object> initCaptcha() {
+    @RateLimiter(rate = 1, ipLimit = true)
+    public Result<Object> initCaptcha(@ApiParam("仅生成数字") @RequestParam(required = false, defaultValue = "false") Boolean isDigit,
+                                      @ApiParam("验证码长度") @RequestParam(required = false, defaultValue = "4") Integer length) {
 
         String captchaId = IdUtil.simpleUUID();
-        String code = new CreateVerifyCode().randomStr(4);
+        String code;
+        if (isDigit) {
+            code = new CreateVerifyCode().randomDigit(length);
+        } else {
+            code = new CreateVerifyCode().randomStr(length);
+        }
         // 缓存验证码
         redisTemplate.set(captchaId, code, 2L, TimeUnit.MINUTES);
         return ResultUtil.data(captchaId);

@@ -72,6 +72,7 @@ public class FileServiceImpl implements FileService {
                 Path<String> nameField = root.get("name");
                 Path<String> fKeyField = root.get("fKey");
                 Path<String> typeField = root.get("type");
+                Path<String> categoryIdField = root.get("categoryId");
                 Path<String> createByField = root.get("createBy");
                 Path<Integer> locationField = root.get("location");
                 Path<Date> createTimeField = root.get("createTime");
@@ -95,6 +96,9 @@ public class FileServiceImpl implements FileService {
                 if (file.getLocation() != null) {
                     list.add(cb.equal(locationField, file.getLocation()));
                 }
+                if (StrUtil.isNotBlank(file.getCategoryId())) {
+                    list.add(cb.equal(categoryIdField, file.getCategoryId()));
+                }
 
                 // 创建时间
                 if (StrUtil.isNotBlank(searchVo.getStartDate()) && StrUtil.isNotBlank(searchVo.getEndDate())) {
@@ -108,5 +112,11 @@ public class FileServiceImpl implements FileService {
                 return null;
             }
         }, pageable);
+    }
+
+    @Override
+    public void deleteByCategoryId(String categoryId) {
+
+        fileDao.deleteByCategoryId(categoryId);
     }
 }

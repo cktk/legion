@@ -84,21 +84,12 @@ public class Oauth2Controller {
             return ResultUtil.error("回调地址redirect_uri不正确");
         }
         // 登录认证
-        User user;
-        if (NameUtil.mobile(username)) {
-            user = userService.findByMobile(username);
-        } else if (NameUtil.email(username)) {
-            user = userService.findByEmail(username);
-        } else {
-            user = userService.findByUsername(username);
-        }
+        User user = securityUtil.checkUserPassword(username, password);
         if (user == null) {
-            return ResultUtil.error("用户名不存在");
+            return ResultUtil.error("账号或密码错误");
         }
-        if (!new BCryptPasswordEncoder().matches(password, user.getPassword())) {
-            return ResultUtil.error("用户密码不正确");
-        }
-        String accessToken = securityUtil.getToken(user.getUsername(), true);
+
+        String accessToken = securityUtil.getToken(user, true);
         // 生成code 5分钟内有效
         String code = IdUtil.simpleUUID();
         // 存入用户及clientId信息
@@ -109,10 +100,6 @@ public class Oauth2Controller {
         map.put("redirect_uri", redirect_uri);
         map.put("state", state);
         map.put("accessToken", accessToken);
-        // 记录日志
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                new SecurityUserDetails(new User().setUsername(user.getUsername())), null, null);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
         return ResultUtil.data(map);
     }
 
@@ -222,7 +209,7 @@ public class Oauth2Controller {
             return ResultUtil.error("回调地址redirect_uri不正确");
         }
 
-        User user = securityUtil.getCurrUser();
+        User user = securityUtil.getCurrUserSimple();
 
         // 生成code 5分钟内有效
         String code = IdUtil.simpleUUID();
@@ -239,7 +226,7 @@ public class Oauth2Controller {
     @ApiOperation(value = "退出登录（内部信任站点使用）")
     public Result<Object> logout() {
 
-        User user = securityUtil.getCurrUser();
+        User user = securityUtil.getCurrUserSimple();
 
         // 删除当前用户登录accessToken
         String token = redisTemplate.get(SecurityConstant.USER_TOKEN + user.getUsername());
@@ -273,7 +260,7 @@ public class Oauth2Controller {
 
     private Client getClient(String client_id) {
 
-        Client client = clientService.get(client_id);
+        Client client = clientService.findById(client_id);
         if (client == null) {
             throw new LegionException("客户端client_id不存在");
         }

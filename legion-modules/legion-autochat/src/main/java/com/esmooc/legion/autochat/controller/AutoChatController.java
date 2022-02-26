@@ -141,14 +141,12 @@ public class AutoChatController extends LegionBaseController<AutoChat, String> {
     public Result<Object> evaluate(String messageId, String evaluateType) {
 
         AutoChat autoChat = autoChatService.get(messageId);
-        if (autoChat != null) {
             if ("good".equals(evaluateType)) {
                 autoChat.setGood(autoChat.getGood() + 1);
             } else {
                 autoChat.setBad(autoChat.getBad() + 1);
             }
             autoChatService.update(autoChat);
-        }
         return ResultUtil.success("操作成功");
     }
 }

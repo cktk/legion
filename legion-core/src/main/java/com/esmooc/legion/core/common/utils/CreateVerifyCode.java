@@ -19,7 +19,12 @@ public class CreateVerifyCode {
     /**
      * 随机字符
      */
-    public static final String STRING = "123456789";
+    public static final String STRING = "ABCDEFGHJKMNOPQRSTUVWXYZabcdefghjkmnopqrstuvwxyz1234567890";
+
+    /**
+     * 随机数字
+     */
+    public static final String DIGIT = "1234567890";
 
     /**
      * 图片的宽度
@@ -208,6 +213,23 @@ public class CreateVerifyCode {
         for (int i = 0; i < n; i++) {
             r = random.nextDouble() * len;
             str = str + STRING.charAt((int) r);
+        }
+        return str;
+    }
+
+    /**
+     * 得到随机数字
+     * @param n
+     * @return
+     */
+    public String randomDigit(int n) {
+
+        String str = "";
+        int len = DIGIT.length() - 1;
+        double r;
+        for (int i = 0; i < n; i++) {
+            r = random.nextDouble() * len;
+            str = str + DIGIT.charAt((int) r);
         }
         return str;
     }

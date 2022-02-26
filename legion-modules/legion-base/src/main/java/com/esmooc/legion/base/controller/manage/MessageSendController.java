@@ -59,11 +59,11 @@ public class MessageSendController extends LegionBaseController<MessageSend, Str
 
         Page<MessageSend> page = messageSendService.findByCondition(ms, PageUtil.initPage(pv));
         page.getContent().forEach(item -> {
-            User u = userService.get(item.getUserId());
+            User u = userService.findById(item.getUserId());
             if (u != null) {
                 item.setUsername(u.getUsername()).setNickname(u.getNickname());
             }
-            Message m = messageService.get(item.getMessageId());
+            Message m = messageService.findById(item.getMessageId());
             if (m != null) {
                 if (m.getIsTemplate()) {
                     Message message = messageSendService.getTemplateMessage(item.getMessageId(),
@@ -94,7 +94,7 @@ public class MessageSendController extends LegionBaseController<MessageSend, Str
     @ApiOperation(value = "编辑")
     public Result<Object> edit(MessageSend messageSend) {
 
-        if (messageService.get(messageSend.getMessageId()) != null) {
+        if (messageService.findById(messageSend.getMessageId()) != null) {
             messageSendService.update(messageSend);
         }
         return ResultUtil.success("操作成功");

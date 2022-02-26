@@ -5,9 +5,7 @@ import com.esmooc.legion.core.common.utils.SecurityUtil;
 import com.esmooc.legion.core.config.properties.IgnoredUrlsProperties;
 import com.esmooc.legion.core.config.properties.LegionAppTokenProperties;
 import com.esmooc.legion.core.config.properties.LegionTokenProperties;
-import com.esmooc.legion.core.config.security.jwt.AuthenticationFailHandler;
-import com.esmooc.legion.core.config.security.jwt.AuthenticationSuccessHandler;
-import com.esmooc.legion.core.config.security.jwt.JWTAuthenticationFilter;
+import com.esmooc.legion.core.config.security.jwt.TokenAuthenticationFilter;
 import com.esmooc.legion.core.config.security.jwt.RestAccessDeniedHandler;
 import com.esmooc.legion.core.config.security.permission.MyFilterSecurityInterceptor;
 import com.esmooc.legion.core.config.security.validate.EmailValidateFilter;
@@ -47,15 +45,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private IgnoredUrlsProperties ignoredUrlsProperties;
 
     @Autowired
-    private UserDetailsServiceImpl userDetailsService;
-
-    @Autowired
-    private AuthenticationSuccessHandler successHandler;
-
-    @Autowired
-    private AuthenticationFailHandler failHandler;
-
-    @Autowired
     private RestAccessDeniedHandler accessDeniedHandler;
 
     @Autowired
@@ -79,10 +68,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private SecurityUtil securityUtil;
 
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).passwordEncoder(new BCryptPasswordEncoder());
-    }
+
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -98,14 +84,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         registry.and()
                 // 表单登录方式
                 .formLogin()
-                .loginPage("/common/needLogin")
-                // 登录请求url
-                .loginProcessingUrl("/legion/login")
+                // 需登录
+                .loginPage("/legion/common/needLogin")
                 .permitAll()
-                // 成功处理类
-                .successHandler(successHandler)
-                // 失败
-                .failureHandler(failHandler)
                 .and()
                 // 允许网页iframe
                 .headers().frameOptions().disable()
@@ -140,6 +121,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 // 添加自定义权限过滤器
                 .addFilterBefore(myFilterSecurityInterceptor, FilterSecurityInterceptor.class)
                 // 添加JWT认证过滤器
-                .addFilter(new JWTAuthenticationFilter(authenticationManager(), tokenProperties, appTokenProperties, redisTemplate, securityUtil));
+                .addFilter(new TokenAuthenticationFilter(authenticationManager(), tokenProperties, appTokenProperties, redisTemplate, securityUtil));
     }
 }

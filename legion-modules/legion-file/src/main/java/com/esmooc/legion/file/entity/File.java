@@ -54,4 +54,6 @@ public class File extends LegionBaseEntity {
     @TableField(exist = false)
     @ApiModelProperty(value = "上传者用户名")
     private String nickname;
+    @ApiModelProperty(value = "类别id")
+    private String categoryId;
 }
