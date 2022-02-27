@@ -2,6 +2,7 @@ package com.esmooc.legion.core.common.utils;
 
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.extra.spring.SpringUtil;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.constant.SecurityConstant;
 import com.esmooc.legion.core.common.exception.LegionException;
@@ -48,15 +49,14 @@ import java.util.stream.Collectors;
 public class SecurityUtil {
 
     // 声明对象
-    public static SecurityUtil securityUtil;
+    private static UserService userService = SpringUtil.getBean(UserService.class);
+
     @Autowired
     private LegionTokenProperties tokenProperties;
     @Autowired
     private LegionAppTokenProperties appTokenProperties;
     @Autowired
     private MemberService memberService;
-    @Autowired
-    private UserService userService;
     @Autowired
     private IUserRoleService iUserRoleService;
     @Autowired
@@ -73,14 +73,10 @@ public class SecurityUtil {
                 || authentication instanceof AnonymousAuthenticationToken) {
             throw new LegionException("未检测到登录用户");
         }
-        return securityUtil.userService.findByUsername(authentication.getName());
+        return userService.findByUsername(authentication.getName());
     }
 
-    @PostConstruct // 初始化
-    public void init() {
-        securityUtil = this;
-        securityUtil.userService = this.userService;
-    }
+
 
     public User checkUserPassword(String username, String password) {
 

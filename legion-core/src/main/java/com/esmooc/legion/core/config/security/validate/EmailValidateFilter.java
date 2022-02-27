@@ -24,7 +24,6 @@ import java.io.IOException;
  *
  * @author DaiMao
  */
-@Slf4j
 @Configuration
 public class EmailValidateFilter extends OncePerRequestFilter {
 
@@ -63,7 +62,6 @@ public class EmailValidateFilter extends OncePerRequestFilter {
             }
             EmailValidate e = new Gson().fromJson(v, EmailValidate.class);
             if (!code.equals(e.getCode())) {
-                log.info("验证码错误：code:" + code + "，redisCode:" + e.getCode());
                 ResponseUtil.out(response, ResponseUtil.resultMap(false, 500, "邮件验证码输入错误"));
                 return;
             }

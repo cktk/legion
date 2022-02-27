@@ -1,7 +1,6 @@
 package com.esmooc.legion.activiti.controller.modeler;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -17,10 +16,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
 
+@Slf4j
 @WebFilter("/legion/act/*")
 public class JsonpCallbackFilter implements Filter {
 
-    private static Logger log = LoggerFactory.getLogger(JsonpCallbackFilter.class);
 
     @Override
     public void init(FilterConfig fConfig) throws ServletException {
@@ -34,9 +33,7 @@ public class JsonpCallbackFilter implements Filter {
         Map<String, String[]> parms = httpRequest.getParameterMap();
 
         if (parms.containsKey("callback")) {
-            if (log.isDebugEnabled()) {
                 log.debug("Wrapping response with JSONP callback '" + parms.get("callback")[0] + "'");
-            }
 
             OutputStream out = httpResponse.getOutputStream();
 

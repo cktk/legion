@@ -5,12 +5,11 @@ package com.esmooc.legion.activiti.controller.modeler;
 // (powered by FernFlower decompiler)
 //
 
+import lombok.extern.slf4j.Slf4j;
 import org.activiti.bpmn.model.AssociationDirection;
 import org.activiti.bpmn.model.GraphicInfo;
 import org.activiti.image.exception.ActivitiImageException;
 import org.activiti.image.util.ReflectUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -37,18 +36,8 @@ import java.text.AttributedString;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
+@Slf4j
 public class DefaultProcessDiagramCanvas {
-    protected static final Logger LOGGER = LoggerFactory.getLogger(org.activiti.image.impl.DefaultProcessDiagramCanvas.class);
-    protected static final int ARROW_WIDTH = 5;
-    protected static final int CONDITIONAL_INDICATOR_WIDTH = 16;
-    protected static final int DEFAULT_INDICATOR_WIDTH = 10;
-    protected static final int MARKER_WIDTH = 12;
-    protected static final int FONT_SIZE = 11;
-    protected static final int FONT_SPACING = 2;
-    protected static final int TEXT_PADDING = 3;
-    protected static final int ANNOTATION_TEXT_PADDING = 7;
-    protected static final int LINE_HEIGHT = 13;
     protected static Color TASK_BOX_COLOR = new Color(249, 249, 249);
     protected static Color SUBPROCESS_BOX_COLOR = new Color(255, 255, 255);
     protected static Color EVENT_COLOR = new Color(255, 255, 255);
@@ -268,7 +257,7 @@ public class DefaultProcessDiagramCanvas {
             SIGNAL_THROW_IMAGE = ImageIO.read(ReflectUtil.getResource("org/activiti/icons/signal-throw.png", this.customClassLoader));
             SIGNAL_CATCH_IMAGE = ImageIO.read(ReflectUtil.getResource("org/activiti/icons/signal.png", this.customClassLoader));
         } catch (IOException var4) {
-            LOGGER.warn("Could not load image for process diagram creation: {}", var4.getMessage());
+            log.warn("Could not load image for process diagram creation: {}", var4.getMessage());
         }
 
     }
