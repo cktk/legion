@@ -64,8 +64,6 @@ public class FileController {
     @Autowired
     private RedisTemplateHelper redisTemplate;
 
-    @Autowired
-    private SecurityUtil securityUtil;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -79,7 +77,7 @@ public class FileController {
                                           @RequestParam(required = false, defaultValue = "false") Boolean getCurrUser) {
 
         if (getCurrUser) {
-            file.setCreateBy(securityUtil.getCurrUserSimple().getUsername());
+            file.setCreateBy(SecurityUtil.getUser().getUsername());
         }
         Page<File> page = fileService.findByCondition(file, searchVo, PageUtil.initPage(pageVo));
         OssSetting os = new Gson().fromJson(settingService.get(SettingConstant.LOCAL_OSS).getValue(), OssSetting.class);
@@ -98,7 +96,7 @@ public class FileController {
     @ResponseBody
     public Result<Object> deleteUserFile(@RequestParam String id) {
 
-        User user = securityUtil.getCurrUserSimple();
+        User user = SecurityUtil.getUser();
         File file = fileService.get(id);
         if (file.getLocation() == null) {
             return ResultUtil.error("存储位置未知");
@@ -128,7 +126,7 @@ public class FileController {
     public Result<Object> renameUserFile(@RequestParam String id,
                                          @RequestParam String newName) {
 
-        User user = securityUtil.getCurrUserSimple();
+        User user = SecurityUtil.getUser();
         File file = fileService.get(id);
         if (file.getLocation() == null) {
             return ResultUtil.error("存储位置未知");

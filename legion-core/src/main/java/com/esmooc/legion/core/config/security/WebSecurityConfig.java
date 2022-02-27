@@ -64,8 +64,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private RedisTemplateHelper redisTemplate;
 
-    @Autowired
-    private SecurityUtil securityUtil;
+
 
 
     @Override
@@ -121,6 +120,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 // 添加自定义权限过滤器
                 .addFilterBefore(myFilterSecurityInterceptor, FilterSecurityInterceptor.class)
                 // 添加JWT认证过滤器
-                .addFilter(new TokenAuthenticationFilter(authenticationManager(), tokenProperties, appTokenProperties, redisTemplate, securityUtil));
+                .addFilter(new TokenAuthenticationFilter(authenticationManager(), tokenProperties, appTokenProperties, redisTemplate));
     }
 }

@@ -43,7 +43,6 @@ import java.util.stream.Collectors;
 /**
  * @author DaiMao
  */
-@Component
 public class SecurityUtil {
 
     // 声明对象
@@ -55,8 +54,11 @@ public class SecurityUtil {
     private static DepartmentService departmentService = SpringUtil.getBean(DepartmentService.class);
     private static RedisTemplateHelper redisTemplate = SpringUtil.getBean(RedisTemplateHelper.class);
 
+
     /**
-     * -------------------ToB-------------------------
+     * 获取当前登录用户部分基本信息
+     *
+     * @return
      */
     public static User getUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -68,8 +70,7 @@ public class SecurityUtil {
     }
 
 
-
-    public User checkUserPassword(String username, String password) {
+    public static User checkUserPassword(String username, String password) {
 
         User user;
         // 校验用户名
@@ -91,7 +92,7 @@ public class SecurityUtil {
         return user;
     }
 
-    public String getToken(String username, Boolean saveLogin) {
+    public static String getToken(String username, Boolean saveLogin) {
 
         if (StrUtil.isBlank(username)) {
             throw new LegionException("username不能为空");
@@ -100,7 +101,7 @@ public class SecurityUtil {
         return getToken(user, saveLogin);
     }
 
-    public String getToken(User user, Boolean saveLogin) {
+    public static String getToken(User user, Boolean saveLogin) {
 
         if (user == null) {
             throw new LegionException("user不能为空");
@@ -155,42 +156,7 @@ public class SecurityUtil {
         return token;
     }
 
-    /**
-     * 获取当前登录用户 包含所有信息
-     *
-     * @return
-     */
-    public User getCurrUser() {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated() || authentication.getName() == null
-                || authentication instanceof AnonymousAuthenticationToken) {
-            throw new LegionException("未检测到登录用户");
-        }
-        return userService.findByUsername(authentication.getName());
-    }
-
-    /**
-     * 获取当前登录用户部分基本信息 id、username、nickname、mobile、email、departmentId、type、permissions（角色和菜单名）
-     *
-     * @return
-     */
-    public static User getCurrUserSimple() {
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated() || authentication.getName() == null
-                || authentication instanceof AnonymousAuthenticationToken) {
-            throw new LegionException("未检测到登录用户");
-        }
-        TokenUser tokenUser = (TokenUser) authentication.getPrincipal();
-        User user = new User().setUsername(tokenUser.getUsername()).setNickname(tokenUser.getNickname()).
-                setMobile(tokenUser.getMobile()).setEmail(tokenUser.getEmail()).setDepartmentId(tokenUser.getDepartmentId()).setType(tokenUser.getType());
-        if (tokenUser.getPermissions() != null && !tokenUser.getPermissions().isEmpty()) {
-            user.setPermissions(tokenUser.getPermissions().stream().map(e -> new PermissionDTO().setTitle(e)).collect(Collectors.toList()));
-        }
-        user.setId(tokenUser.getId());
-        return user;
-    }
 
     /**
      * 获取当前用户数据权限 null代表具有所有权限 包含值为-1的数据代表无任何权限
@@ -198,7 +164,7 @@ public class SecurityUtil {
     public static List<String> getDeparmentIds() {
 
         List<String> deparmentIds = new ArrayList<>();
-        User u = getCurrUserSimple();
+        User u = getUser();
         // 读取缓存
         String key = "userRole::depIds:" + u.getId();
         String v = redisTemplate.get(key);
@@ -297,7 +263,7 @@ public class SecurityUtil {
      * -------------------App ToC-------------------------
      */
 
-    public String getAppToken(String username, Integer platform) {
+    public static String getAppToken(String username, Integer platform) {
 
         if (StrUtil.isBlank(username)) {
             throw new LegionException("username不能为空");
@@ -306,7 +272,7 @@ public class SecurityUtil {
         return getAppToken(member, platform);
     }
 
-    public String getAppToken(Member member, Integer platform) {
+    public static String getAppToken(Member member, Integer platform) {
 
         if (member == null) {
             throw new LegionException("member不能为空");
@@ -354,7 +320,7 @@ public class SecurityUtil {
      *
      * @return
      */
-    public Member getCurrMember() {
+    public static Member getCurrMember() {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated() || authentication.getName() == null
@@ -364,23 +330,4 @@ public class SecurityUtil {
         return memberService.findByUsername(authentication.getName());
     }
 
-    /**
-     * 获取当前登录会员部分信息 id、username、nickname、mobile、email、type、permissions、platform
-     *
-     * @return
-     */
-    public static Member getCurrMemberSimple() {
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated() || authentication.getName() == null
-                || authentication instanceof AnonymousAuthenticationToken) {
-            throw new LegionException("未检测到登录会员");
-        }
-        TokenMember tokenMember = (TokenMember) authentication.getPrincipal();
-        Member member = new Member().setUsername(tokenMember.getUsername()).setNickname(tokenMember.getNickname())
-                .setMobile(tokenMember.getMobile()).setEmail(tokenMember.getEmail()).setType(tokenMember.getType())
-                .setPermissions(tokenMember.getPermissions()).setPlatform(tokenMember.getPlatform());
-        member.setId(tokenMember.getId());
-        return member;
-    }
 }

@@ -74,8 +74,7 @@ public class WorkWechatController {
     private String callbackFeRelateUrl;
     @Autowired
     private SocialService socialService;
-    @Autowired
-    private SecurityUtil securityUtil;
+
     @Autowired
     private RedisTemplateHelper redisTemplate;
 
@@ -137,7 +136,7 @@ public class WorkWechatController {
         // 判断是否绑定账号
         if (StrUtil.isNotBlank(workwechat.getRelateUsername())) {
             // 已绑定 直接登录
-            String JWT = securityUtil.getToken(workwechat.getRelateUsername(), true);
+            String JWT = SecurityUtil.getToken(workwechat.getRelateUsername(), true);
             // 存入redis
             String JWTKey = IdUtil.simpleUUID();
             redisTemplate.set(JWTKey, JWT, 2L, TimeUnit.MINUTES);

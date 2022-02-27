@@ -112,8 +112,7 @@ public class ActProcessController {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private SecurityUtil securityUtil;
+
 
     @RequestMapping(value = "/getByCondition", method = RequestMethod.GET)
     @ApiOperation(value = "多条件分页获取流程列表")
@@ -124,7 +123,7 @@ public class ActProcessController {
                                          PageVo pageVo) {
 
         Page<ActProcess> page = actProcessService.findByCondition(showLatest, actProcess, searchVo, PageUtil.initPage(pageVo));
-        User user = securityUtil.getCurrUser();
+        User user =  SecurityUtil.getUser();
         Set<String> processes = actStarterService.findByUserId(user.getId());
         List<ActProcess> content = new ArrayList<>();
 

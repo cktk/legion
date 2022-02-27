@@ -42,8 +42,7 @@ public class FileCategoryController {
     @Autowired
     private FileService fileService;
 
-    @Autowired
-    private SecurityUtil securityUtil;
+
 
     @Autowired
     private RedisTemplateHelper redisTemplate;
@@ -52,7 +51,7 @@ public class FileCategoryController {
     @ApiOperation(value = "通过id获取")
     public Result<List<FileCategory>> getByParentId(@PathVariable String parentId) {
 
-        User user = securityUtil.getCurrUserSimple();
+        User user = SecurityUtil.getUser();
         List<FileCategory> list = fileCategoryService.findByParentIdAndCreateBy(parentId, user.getUsername());
         setInfo(list);
         return ResultUtil.data(list);
@@ -81,7 +80,7 @@ public class FileCategoryController {
         if (fileCategory.getId().equals(fileCategory.getParentId())) {
             return ResultUtil.error("上级节点不能为自己");
         }
-        User user = securityUtil.getCurrUserSimple();
+        User user = SecurityUtil.getUser();
         FileCategory old = fileCategoryService.get(fileCategory.getId());
         if (!user.getUsername().equals(old.getCreateBy())) {
             return ResultUtil.error("你无权编辑非本人文件");
@@ -105,7 +104,7 @@ public class FileCategoryController {
     public Result<Object> moveByIds(@RequestParam String[] ids,
                                     @RequestParam String categoryId) {
 
-        User user = securityUtil.getCurrUserSimple();
+        User user = SecurityUtil.getUser();
         if (!CommonConstant.PARENT_ID.equals(categoryId)) {
             FileCategory fileCategory = fileCategoryService.get(categoryId);
             if (!user.getUsername().equals(fileCategory.getCreateBy())) {
@@ -132,7 +131,7 @@ public class FileCategoryController {
     @ApiOperation(value = "批量通过id删除")
     public Result<Object> delByIds(@RequestParam String[] ids) {
 
-        User user = securityUtil.getCurrUserSimple();
+        User user = SecurityUtil.getUser();
         for (String id : ids) {
             deleteRecursion(id, ids, user.getUsername());
         }
@@ -173,7 +172,7 @@ public class FileCategoryController {
     @ApiOperation(value = "名称模糊搜索")
     public Result<List<FileCategory>> searchByTitle(@RequestParam String title) {
 
-        User user = securityUtil.getCurrUserSimple();
+        User user = SecurityUtil.getUser();
         List<FileCategory> list = fileCategoryService.findByTitleLikeAndCreateBy("%" + title + "%", user.getUsername());
         setInfo(list);
         return ResultUtil.data(list);

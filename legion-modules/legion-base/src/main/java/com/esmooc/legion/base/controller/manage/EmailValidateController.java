@@ -57,8 +57,7 @@ public class EmailValidateController {
     @Autowired
     private SettingService settingService;
 
-    @Autowired
-    private SecurityUtil securityUtil;
+
 
     public OtherSetting getOtherSetting() {
 
@@ -106,7 +105,7 @@ public class EmailValidateController {
             if (user != null) {
                 return ResultUtil.error("该邮箱已绑定账号");
             }
-            User u = securityUtil.getCurrUserSimple();
+            User u = SecurityUtil.getUser();
             e.setUsername(u.getUsername());
         } else if ("重置密码".equals(operation)) {
             if (user == null) {
@@ -138,7 +137,7 @@ public class EmailValidateController {
     @ApiOperation(value = "修改邮箱或重置密码")
     public Result<Object> editEmail(@RequestParam String email) {
 
-        User u = securityUtil.getCurrUser();
+        User u =  SecurityUtil.getUser();
         u.setEmail(email);
         userService.update(u);
         // 删除缓存

@@ -47,8 +47,7 @@ public class Oauth2Controller {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private SecurityUtil securityUtil;
+
 
     @Autowired
     private RedisTemplateHelper redisTemplate;
@@ -83,12 +82,12 @@ public class Oauth2Controller {
             return ResultUtil.error("回调地址redirect_uri不正确");
         }
         // 登录认证
-        User user = securityUtil.checkUserPassword(username, password);
+        User user = SecurityUtil.checkUserPassword(username, password);
         if (user == null) {
             return ResultUtil.error("账号或密码错误");
         }
 
-        String accessToken = securityUtil.getToken(user, true);
+        String accessToken = SecurityUtil.getToken(user, true);
         // 生成code 5分钟内有效
         String code = IdUtil.simpleUUID();
         // 存入用户及clientId信息
@@ -208,7 +207,7 @@ public class Oauth2Controller {
             return ResultUtil.error("回调地址redirect_uri不正确");
         }
 
-        User user = securityUtil.getCurrUserSimple();
+        User user = SecurityUtil.getUser();
 
         // 生成code 5分钟内有效
         String code = IdUtil.simpleUUID();
@@ -225,7 +224,7 @@ public class Oauth2Controller {
     @ApiOperation(value = "退出登录（内部信任站点使用）")
     public Result<Object> logout() {
 
-        User user = securityUtil.getCurrUserSimple();
+        User user = SecurityUtil.getUser();
 
         // 删除当前用户登录accessToken
         String token = redisTemplate.get(SecurityConstant.USER_TOKEN + user.getUsername());

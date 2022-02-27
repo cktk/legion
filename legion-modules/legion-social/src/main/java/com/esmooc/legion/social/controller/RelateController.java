@@ -40,8 +40,7 @@ public class RelateController {
     @Autowired
     private SocialService socialService;
 
-    @Autowired
-    private SecurityUtil securityUtil;
+
 
     @Autowired
     private RedisTemplateHelper redisTemplate;
@@ -56,7 +55,7 @@ public class RelateController {
 
         if (isLogin) {
             // 用户已登录
-            User user = securityUtil.getCurrUserSimple();
+            User user = SecurityUtil.getUser();
             username = user.getUsername();
         } else {
             // 用户未登录
@@ -94,7 +93,7 @@ public class RelateController {
         socialService.update(social);
 
         if (!isLogin) {
-            String JWT = securityUtil.getToken(username, true);
+            String JWT = SecurityUtil.getToken(username, true);
             // 存入redis
             String JWTKey = IdUtil.simpleUUID();
             redisTemplate.set(JWTKey, JWT, 2L, TimeUnit.MINUTES);

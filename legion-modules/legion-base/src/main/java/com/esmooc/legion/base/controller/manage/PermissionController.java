@@ -61,8 +61,7 @@ public class PermissionController {
     @Autowired
     private RedisTemplateHelper redisTemplate;
 
-    @Autowired
-    private SecurityUtil securityUtil;
+
 
     @Autowired
     private MySecurityMetadataSource mySecurityMetadataSource;
@@ -73,7 +72,7 @@ public class PermissionController {
 
         List<MenuVo> menuList;
         // 读取缓存
-        User u = securityUtil.getCurrUserSimple();
+        User u = SecurityUtil.getUser();
         String key = "permission::userMenuList:" + u.getId();
         String v = redisTemplate.get(key);
         if (StrUtil.isNotBlank(v)) {

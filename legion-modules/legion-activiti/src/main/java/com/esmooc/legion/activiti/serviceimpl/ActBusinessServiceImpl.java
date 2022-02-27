@@ -38,8 +38,7 @@ public class ActBusinessServiceImpl implements ActBusinessService {
     @Autowired
     private ActBusinessDao actBusinessDao;
 
-    @Autowired
-    private SecurityUtil securityUtil;
+
 
     @Override
     public ActBusinessDao getRepository() {
@@ -85,7 +84,7 @@ public class ActBusinessServiceImpl implements ActBusinessService {
                 }
 
                 // 用户
-                list.add(cb.equal(userIdField, securityUtil.getCurrUser().getId()));
+                list.add(cb.equal(userIdField,  SecurityUtil.getUser().getId()));
 
                 list.add(cb.notEqual(procDefIdField, ""));
 

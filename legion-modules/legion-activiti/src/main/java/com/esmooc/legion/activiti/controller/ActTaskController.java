@@ -104,8 +104,7 @@ public class ActTaskController {
     @Autowired
     private IRunIdentityService iRunIdentityService;
 
-    @Autowired
-    private SecurityUtil securityUtil;
+
 
     @Autowired
     private MessageUtil messageUtil;
@@ -121,7 +120,7 @@ public class ActTaskController {
         ActPage<TaskVo> page = new ActPage<TaskVo>();
         List<TaskVo> list = new ArrayList<>();
 
-        String userId = securityUtil.getCurrUser().getId();
+        String userId =  SecurityUtil.getUser().getId();
         TaskQuery query = taskService.createTaskQuery().taskCandidateOrAssigned(userId);
 
         // 多条件搜索
@@ -203,7 +202,7 @@ public class ActTaskController {
         ActPage<HistoricTaskVo> page = new ActPage<HistoricTaskVo>();
         List<HistoricTaskVo> list = new ArrayList<>();
 
-        String userId = securityUtil.getCurrUser().getId();
+        String userId =  SecurityUtil.getUser().getId();
         HistoricTaskInstanceQuery query = historyService.createHistoricTaskInstanceQuery().or().taskCandidateUser(userId).
                 taskAssignee(userId).endOr().finished();
 
@@ -401,7 +400,7 @@ public class ActTaskController {
         }
         // 记录实际审批人员
         iHistoryIdentityService.insert(SnowFlakeUtil.nextId().toString(),
-                ActivitiConstant.EXECUTOR_TYPE, securityUtil.getCurrUser().getId(), id, procInstId);
+                ActivitiConstant.EXECUTOR_TYPE,  SecurityUtil.getUser().getId(), id, procInstId);
         return ResultUtil.success("操作成功");
     }
 
@@ -467,7 +466,7 @@ public class ActTaskController {
             }
             // 记录实际审批人员
             iHistoryIdentityService.insert(SnowFlakeUtil.nextId().toString(),
-                    ActivitiConstant.EXECUTOR_TYPE, securityUtil.getCurrUser().getId(), id, pi.getId());
+                    ActivitiConstant.EXECUTOR_TYPE,  SecurityUtil.getUser().getId(), id, pi.getId());
         }
         String customCount = "";
         if (count > 0) {
@@ -542,7 +541,7 @@ public class ActTaskController {
         }
         // 记录实际审批人员
         iHistoryIdentityService.insert(SnowFlakeUtil.nextId().toString(),
-                ActivitiConstant.EXECUTOR_TYPE, securityUtil.getCurrUser().getId(), id, procInstId);
+                ActivitiConstant.EXECUTOR_TYPE,  SecurityUtil.getUser().getId(), id, procInstId);
         return ResultUtil.success("操作成功");
     }
 
@@ -581,7 +580,7 @@ public class ActTaskController {
                 ActivitiConstant.MESSAGE_BACK_CONTENT, sendMessage, sendSms, sendEmail);
         // 记录实际审批人员
         iHistoryIdentityService.insert(SnowFlakeUtil.nextId().toString(),
-                ActivitiConstant.EXECUTOR_TYPE, securityUtil.getCurrUser().getId(), id, procInstId);
+                ActivitiConstant.EXECUTOR_TYPE,  SecurityUtil.getUser().getId(), id, procInstId);
         return ResultUtil.success("操作成功");
     }
 
@@ -599,7 +598,7 @@ public class ActTaskController {
             tasks.forEach(t -> {
                 taskService.addComment(t.getId(), procInstId, StrUtil.isBlank(comment) ? "" : comment);
                 iHistoryIdentityService.insert(SnowFlakeUtil.nextId().toString(),
-                        ActivitiConstant.EXECUTOR_TYPE, securityUtil.getCurrUser().getId(), t.getId(), procInstId);
+                        ActivitiConstant.EXECUTOR_TYPE,  SecurityUtil.getUser().getId(), t.getId(), procInstId);
             });
             ProcessInstance pi = runtimeService.createProcessInstanceQuery().processInstanceId(procInstId).singleResult();
             // 删除流程实例
@@ -631,7 +630,7 @@ public class ActTaskController {
 
         taskService.addComment(id, procInstId, StrUtil.isBlank(comment) ? "" : comment);
         taskService.delegateTask(id, userId);
-        taskService.setOwner(id, securityUtil.getCurrUser().getId());
+        taskService.setOwner(id,  SecurityUtil.getUser().getId());
         // 异步发消息
         ProcessInstance pi = runtimeService.createProcessInstanceQuery().processInstanceId(procInstId).singleResult();
         ActBusiness actBusiness = actBusinessService.get(pi.getBusinessKey());

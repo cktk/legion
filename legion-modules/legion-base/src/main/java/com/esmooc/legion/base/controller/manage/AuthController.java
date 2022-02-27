@@ -79,8 +79,7 @@ public class AuthController {
     @Autowired
     private RedisTemplateHelper redisTemplate;
 
-    @Autowired
-    private SecurityUtil securityUtil;
+
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     @SystemLog(description = "账号登录", type = LogType.LOGIN)
@@ -96,7 +95,7 @@ public class AuthController {
             return ResultUtil.error("登录错误次数超过限制，请" + timeRest + "分钟后再试");
         }
 
-        User user = securityUtil.checkUserPassword(username, password);
+        User user = SecurityUtil.checkUserPassword(username, password);
         if (user == null) {
             // 记录密码错误次数
             String valueTime = redisTemplate.get(LOGIN_TIME_LIMIT + username);
@@ -118,7 +117,7 @@ public class AuthController {
             return ResultUtil.error("账号或密码错误");
         }
 
-        String accessToken = securityUtil.getToken(user, saveLogin);
+        String accessToken = SecurityUtil.getToken(user, saveLogin);
         return ResultUtil.data(accessToken);
     }
 
@@ -132,7 +131,7 @@ public class AuthController {
         if (user == null) {
             throw new LegionException("手机号不存在");
         }
-        String accessToken = securityUtil.getToken(user, saveLogin);
+        String accessToken = SecurityUtil.getToken(user, saveLogin);
         return ResultUtil.data(accessToken);
     }
 
@@ -192,9 +191,9 @@ public class AuthController {
                 return ResultUtil.data(AppToBConstant.SCAN_LOGIN_STATUS_CANCEL);
             }
             // 已确认 校验accessToken
-            User user = securityUtil.getCurrUser();
+            User user =  SecurityUtil.getUser();
             // 颁发新Token
-            String newAccessToken = securityUtil.getToken(user, true);
+            String newAccessToken = SecurityUtil.getToken(user, true);
             redisTemplate.set(checkToken, AppToBConstant.SCAN_LOGIN_STATUS_SUCCESS, 2L, TimeUnit.MINUTES);
             redisTemplate.set(GET_NEW_TOKEN_PRE + ":" + checkToken, newAccessToken, 2L, TimeUnit.MINUTES);
             return ResultUtil.data(AppToBConstant.SCAN_LOGIN_STATUS_SUCCESS);

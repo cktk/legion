@@ -35,8 +35,7 @@ public class MemberController {
     @Autowired
     private MemberService memberService;
 
-    @Autowired
-    private SecurityUtil securityUtil;
+
 
     @Autowired
     private EntityManager entityManager;
@@ -72,7 +71,7 @@ public class MemberController {
             isNew = true;
         }
         // 登录
-        String appToken = securityUtil.getAppToken(member.getUsername(), platform);
+        String appToken = SecurityUtil.getAppToken(member.getUsername(), platform);
         Map<String, Object> result = new HashMap<>(16);
         result.put("isNew", isNew);
         result.put("token", appToken);
@@ -83,7 +82,7 @@ public class MemberController {
     @ApiOperation(value = "获取当前登录会员信息接口")
     public Result<Member> getUserInfo() {
 
-        Member member = securityUtil.getCurrMember();
+        Member member = SecurityUtil.getCurrMember();
         // 清除持久上下文环境 避免后面语句导致持久化
         entityManager.detach(member);
         member.setPassword(null);

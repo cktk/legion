@@ -47,8 +47,7 @@ public class MessageSendController extends LegionBaseController<MessageSend, Str
 
     @Autowired
     private MessageSendService messageSendService;
-    @Autowired
-    private SecurityUtil securityUtil;
+
 
     @Override
     public MessageSendService getService() {
@@ -84,7 +83,7 @@ public class MessageSendController extends LegionBaseController<MessageSend, Str
     @ApiOperation(value = "多条件分页获取")
     public Result<Object> batchOperation(@Param("0全部已读 1全部删除已读") @PathVariable Integer type) {
 
-        User u = securityUtil.getCurrUser();
+        User u =  SecurityUtil.getUser();
         if (type == 0) {
             messageSendService.updateStatusByUserId(u.getId(), CommonConstant.MESSAGE_STATUS_READ);
         } else if (type == 1) {

@@ -45,17 +45,15 @@ public class TokenAuthenticationFilter extends BasicAuthenticationFilter {
 
     private RedisTemplateHelper redisTemplate;
 
-    private SecurityUtil securityUtil;
 
     public TokenAuthenticationFilter(AuthenticationManager authenticationManager,
                                      LegionTokenProperties tokenProperties,
                                      LegionAppTokenProperties appTokenProperties,
-                                     RedisTemplateHelper redisTemplate, SecurityUtil securityUtil) {
+                                     RedisTemplateHelper redisTemplate) {
         super(authenticationManager);
         this.tokenProperties = tokenProperties;
         this.appTokenProperties = appTokenProperties;
         this.redisTemplate = redisTemplate;
-        this.securityUtil = securityUtil;
     }
 
     public TokenAuthenticationFilter(AuthenticationManager authenticationManager, AuthenticationEntryPoint authenticationEntryPoint) {
@@ -117,7 +115,7 @@ public class TokenAuthenticationFilter extends BasicAuthenticationFilter {
                 }
             } else {
                 // 未缓存 读取权限数据
-                authorities = securityUtil.getCurrUserPerms(tokenUser.getUsername());
+                authorities = SecurityUtil.getCurrUserPerms(tokenUser.getUsername());
             }
             if (!tokenUser.getSaveLogin()) {
                 // 若未保存登录状态重新设置失效时间
@@ -135,7 +133,7 @@ public class TokenAuthenticationFilter extends BasicAuthenticationFilter {
                 // 获取用户
                 tokenUser = new Gson().fromJson(claims.getSubject(), TokenUser.class);
                 // JWT不缓存权限 读取权限数据 避免JWT长度过长
-                authorities = securityUtil.getCurrUserPerms(tokenUser.getUsername());
+                authorities = SecurityUtil.getCurrUserPerms(tokenUser.getUsername());
             } catch (ExpiredJwtException e) {
                 ResponseUtil.out(response, ResponseUtil.resultMap(false, 401, "登录已失效，请重新登录"));
             } catch (Exception e) {

@@ -67,8 +67,7 @@ public class DepartmentController {
     @Autowired
     private RedisTemplateHelper redisTemplate;
 
-    @Autowired
-    private SecurityUtil securityUtil;
+
 
     @RequestMapping(value = "/getByParentId/{parentId}", method = RequestMethod.GET)
     @ApiOperation(value = "通过parentId获取")
@@ -76,7 +75,7 @@ public class DepartmentController {
                                                   @ApiParam("是否开始数据权限过滤") @RequestParam(required = false, defaultValue = "true") Boolean openDataFilter) {
 
         List<Department> list;
-        User u = securityUtil.getCurrUserSimple();
+        User u = SecurityUtil.getUser();
         String key = "department::" + parentId + ":" + u.getId() + "_" + openDataFilter;
         String v = redisTemplate.get(key);
         if (StrUtil.isNotBlank(v)) {

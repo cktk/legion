@@ -34,8 +34,7 @@ public class LeaveController extends LegionBaseController<Leave, String> {
     @Autowired
     private ActBusinessService actBusinessService;
 
-    @Autowired
-    private SecurityUtil securityUtil;
+
 
     @Override
     public LeaveService getService() {
@@ -49,7 +48,7 @@ public class LeaveController extends LegionBaseController<Leave, String> {
 
         Leave le = leaveService.save(leave);
         // 保存至我的申请业务
-        String userId = securityUtil.getCurrUser().getId();
+        String userId =  SecurityUtil.getUser().getId();
         ActBusiness actBusiness = new ActBusiness();
         actBusiness.setUserId(userId);
         actBusiness.setTableId(le.getId());

@@ -81,8 +81,7 @@ public class ActProcessServiceImpl implements ActProcessService {
     @Autowired
     private ActProcessDao actProcessDao;
 
-    @Autowired
-    private SecurityUtil securityUtil;
+
 
     @Autowired
     private RuntimeService runtimeService;
@@ -220,7 +219,7 @@ public class ActProcessServiceImpl implements ActProcessService {
     @Override
     public String startProcess(ActBusiness actBusiness) {
 
-        String userId = securityUtil.getCurrUser().getId();
+        String userId =  SecurityUtil.getUser().getId();
         // 权限判断
         ActProcess actProcess = this.get(actBusiness.getProcDefId());
         if (actProcess == null) {
@@ -461,7 +460,7 @@ public class ActProcessServiceImpl implements ActProcessService {
         }
         // 判断获取部门负责人
         if (actNodeService.hasChooseDepHeader(nodeId)) {
-            User currUser = securityUtil.getCurrUser();
+            User currUser =  SecurityUtil.getUser();
             String depId = "";
             // 判断当前用户是否已是部门负责人
             if (departmentHeaderService.isDepartmentHeader(currUser.getId(), currUser.getDepartmentId())) {

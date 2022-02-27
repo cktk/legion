@@ -92,8 +92,7 @@ public class UserController {
     @Autowired
     private RedisTemplateHelper redisTemplate;
 
-    @Autowired
-    private SecurityUtil securityUtil;
+
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -102,7 +101,7 @@ public class UserController {
     @ApiOperation(value = "获取当前登录用户接口")
     public Result<User> getUserInfo() {
 
-        User u = securityUtil.getCurrUser();
+        User u =  SecurityUtil.getUser();
         // 清除持久上下文环境 避免后面语句导致持久化
         entityManager.detach(u);
         u.setPassword(null);
@@ -113,7 +112,7 @@ public class UserController {
     @ApiOperation(value = "解锁验证密码")
     public Result<Object> unLock(@RequestParam String password) {
 
-        User u = securityUtil.getCurrUser();
+        User u =  SecurityUtil.getUser();
         if (!new BCryptPasswordEncoder().matches(password, u.getPassword())) {
             return ResultUtil.error("密码不正确");
         }
@@ -128,7 +127,7 @@ public class UserController {
         // 禁用词
         StopWordsUtil.matchWord(u.getNickname());
 
-        User old = securityUtil.getCurrUser();
+        User old =  SecurityUtil.getUser();
         // 不能修改的字段
         u.setUsername(old.getUsername()).setPassword(old.getPassword()).setType(old.getType()).setStatus(old.getStatus());
         if (StrUtil.isBlank(u.getDepartmentId())) {
@@ -151,7 +150,7 @@ public class UserController {
                                      @ApiParam("新密码") @RequestParam String newPass,
                                      @ApiParam("密码强度") @RequestParam String passStrength) {
 
-        User user = securityUtil.getCurrUser();
+        User user =  SecurityUtil.getUser();
 
 
         if (!new BCryptPasswordEncoder().matches(password, user.getPassword())) {
@@ -173,7 +172,7 @@ public class UserController {
     @ApiOperation(value = "修改绑定手机")
     public Result<Object> changeMobile(@RequestParam String mobile) {
 
-        User u = securityUtil.getCurrUser();
+        User u =  SecurityUtil.getUser();
         u.setMobile(mobile);
         userService.update(u);
         // 删除缓存

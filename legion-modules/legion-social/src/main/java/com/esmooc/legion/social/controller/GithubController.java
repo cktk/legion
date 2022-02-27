@@ -67,8 +67,7 @@ public class GithubController {
     private String callbackFeRelateUrl;
     @Autowired
     private SocialService socialService;
-    @Autowired
-    private SecurityUtil securityUtil;
+
     @Autowired
     private RedisTemplateHelper redisTemplate;
 
@@ -131,7 +130,7 @@ public class GithubController {
         // 判断是否绑定账号
         if (StrUtil.isNotBlank(github.getRelateUsername())) {
             // 已绑定 直接登录
-            String JWT = securityUtil.getToken(github.getRelateUsername(), true);
+            String JWT = SecurityUtil.getToken(github.getRelateUsername(), true);
             // 存入redis
             String JWTKey = IdUtil.simpleUUID();
             redisTemplate.set(JWTKey, JWT, 2L, TimeUnit.MINUTES);

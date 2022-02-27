@@ -4,6 +4,7 @@ import com.esmooc.legion.core.common.annotation.RateLimiter;
 import com.esmooc.legion.core.common.lock.Callback;
 import com.esmooc.legion.core.common.lock.RedisLockTemplate;
 import com.esmooc.legion.core.common.utils.ResultUtil;
+import com.esmooc.legion.core.common.utils.SecurityUtil;
 import com.esmooc.legion.core.common.vo.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -35,12 +36,15 @@ public class TestController {
     @ApiOperation(value = "同步锁限流测试")
     @ResponseBody
     public Result<Object> test() {
+        log.info("getUser {}" ,SecurityUtil.getUser());
 
         redisLockTemplate.execute("订单流水号", 3, null, TimeUnit.SECONDS, new Callback() {
             @Override
             public Object onGetLock() {
                 // TODO 获得锁后要做的事
                 log.info("生成订单流水号");
+
+
                 return null;
             }
 
