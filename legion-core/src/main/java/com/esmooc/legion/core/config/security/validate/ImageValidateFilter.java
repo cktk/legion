@@ -47,8 +47,8 @@ public class ImageValidateFilter extends OncePerRequestFilter {
             }
         }
         if (flag) {
-            String captchaId = request.getParameter("captchaId");
-            String code = request.getParameter("code");
+            String captchaId = StrUtil.removeAllLineBreaks(request.getParameter("captchaId"));
+            String code = StrUtil.removeAllLineBreaks(request.getParameter("code"));
             if (StrUtil.isBlank(captchaId) || StrUtil.isBlank(code)) {
                 ResponseUtil.out(response, ResponseUtil.resultMap(false, 500, "请传入图形验证码所需参数captchaId或code"));
                 return;
@@ -60,7 +60,6 @@ public class ImageValidateFilter extends OncePerRequestFilter {
             }
 
             if (!redisCode.toLowerCase().equals(code.toLowerCase())) {
-                log.info("验证码错误：code:" + code + "，redisCode:" + redisCode);
                 ResponseUtil.out(response, ResponseUtil.resultMap(false, 500, "图形验证码输入错误"));
                 return;
             }

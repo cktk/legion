@@ -2,12 +2,7 @@ package com.esmooc.legion.activiti.controller.modeler;
 
 import lombok.extern.slf4j.Slf4j;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,15 +28,9 @@ public class JsonpCallbackFilter implements Filter {
         Map<String, String[]> parms = httpRequest.getParameterMap();
 
         if (parms.containsKey("callback")) {
-                log.debug("Wrapping response with JSONP callback '" + parms.get("callback")[0] + "'");
-
             OutputStream out = httpResponse.getOutputStream();
-
             GenericResponseWrapper wrapper = new GenericResponseWrapper(httpResponse);
-
             chain.doFilter(request, wrapper);
-
-            //handles the content-size truncation
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             outputStream.write(new String(parms.get("callback")[0] + "(").getBytes());
             outputStream.write(wrapper.getData());

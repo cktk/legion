@@ -48,8 +48,8 @@ public class SmsValidateFilter extends OncePerRequestFilter {
             }
         }
         if (flag) {
-            String mobile = request.getParameter("mobile");
-            String code = request.getParameter("code");
+            String mobile = StrUtil.removeAllLineBreaks(request.getParameter("mobile"));
+            String code = StrUtil.removeAllLineBreaks(request.getParameter("code"));
             if (StrUtil.isBlank(mobile) || StrUtil.isBlank(code)) {
                 ResponseUtil.out(response, ResponseUtil.resultMap(false, 500, "请传入短信验证码所需参数mobile或code"));
                 return;
@@ -60,8 +60,7 @@ public class SmsValidateFilter extends OncePerRequestFilter {
                 return;
             }
 
-            if (!redisCode.toLowerCase().equals(code.toLowerCase())) {
-                log.info("验证码错误：code:" + code + "，redisCode:" + redisCode);
+            if (!redisCode.equalsIgnoreCase(code.toLowerCase())) {
                 ResponseUtil.out(response, ResponseUtil.resultMap(false, 500, "短信验证码输入错误"));
                 return;
             }

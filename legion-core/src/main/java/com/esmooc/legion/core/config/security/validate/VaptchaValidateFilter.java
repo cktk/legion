@@ -61,7 +61,7 @@ public class VaptchaValidateFilter extends OncePerRequestFilter {
             }
         }
         if (flag) {
-            String token = request.getParameter("token");
+            String token = StrUtil.removeAllLineBreaks(request.getParameter("token"));
             if (StrUtil.isBlank(token)) {
                 ResponseUtil.out(response, ResponseUtil.resultMap(false, 500, "请传入Vaptcha验证码所需参数token"));
                 return;

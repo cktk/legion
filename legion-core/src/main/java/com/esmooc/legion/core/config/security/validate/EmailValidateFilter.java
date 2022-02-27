@@ -49,8 +49,8 @@ public class EmailValidateFilter extends OncePerRequestFilter {
             }
         }
         if (flag) {
-            String email = request.getParameter("email");
-            String code = request.getParameter("code");
+            String email = StrUtil.removeAllLineBreaks(request.getParameter("email"));
+            String code = StrUtil.removeAllLineBreaks(request.getParameter("code"));
             if (StrUtil.isBlank(email) || StrUtil.isBlank(code)) {
                 ResponseUtil.out(response, ResponseUtil.resultMap(false, 500, "请传入邮件验证码所需参数email或code"));
                 return;
