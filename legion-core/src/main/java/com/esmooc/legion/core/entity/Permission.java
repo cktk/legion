@@ -7,6 +7,7 @@ import com.esmooc.legion.core.common.constant.CommonConstant;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -24,6 +25,7 @@ import java.util.List;
 @Entity
 @DynamicInsert
 @DynamicUpdate
+@EqualsAndHashCode(callSuper=false)
 @Table(name = "t_permission")
 @TableName("t_permission")
 @ApiModel(value = "菜单权限")

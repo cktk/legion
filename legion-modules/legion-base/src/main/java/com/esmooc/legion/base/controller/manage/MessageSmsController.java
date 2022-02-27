@@ -26,8 +26,8 @@ import java.util.Map;
 @Slf4j
 @RestController
 @Api(tags = "短信管理")
+@SuppressWarnings("unchecked")
 @RequestMapping("/legion/sms")
-@Transactional
 public class MessageSmsController {
 
     @Autowired

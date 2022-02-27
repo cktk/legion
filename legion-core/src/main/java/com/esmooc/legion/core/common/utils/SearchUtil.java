@@ -1,11 +1,8 @@
 package com.esmooc.legion.core.common.utils;
 
-import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 
-import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -16,13 +13,9 @@ import java.util.regex.Pattern;
  * @Date 2020/4/1
  * @Version V1.0
  **/
+@SuppressWarnings("unchecked")
 public class SearchUtil {
 
-    //TODO 全局不构造
-    private static HashMap<String, String> IGNORE_KEYS = new HashMap<String, String>() {{
-        put("id", "忽略");
-
-    }};
 
     private final static String HUMPPATTERN ="[A-Z]";
     /**
@@ -105,38 +98,6 @@ public class SearchUtil {
     }
 
 
-    private static Map<String, Object> parseWhereSqlToMap(Object obj) {
-        Map<String, Object> map = BeanUtil.beanToMap(obj);
-        Map<String, Object> maps = BeanUtil.beanToMap(obj);
-        //TODO 现在传对象默认为 eq
-        map.forEach((k, v) -> {
-
-            if (v instanceof Date) {
-
-            } else if (v instanceof String) {
-                maps.put("eq_" + k, v);
-            } else if (v instanceof Boolean) {
-                maps.put("eq_" + k, v);
-            } else if (v instanceof Integer) {
-                maps.put("eq_" + k, v);
-            } else if (v instanceof Double) {
-                maps.put("eq_" + k, v);
-            } else if (v instanceof Byte) {
-                maps.put("eq_" + k, v);
-            }
-
-
-        });
-        return maps;
-    }
-
-    public static QueryWrapper parseWhereSql(Object... obj) {
-        Map<String, Object> map = BeanUtil.beanToMap(obj);
-        for (Object o : obj) {
-            map.putAll(parseWhereSqlToMap(o));
-        }
-        return parseWhereSql(map);
-    }
 
     /**
      * 驼峰转下划线

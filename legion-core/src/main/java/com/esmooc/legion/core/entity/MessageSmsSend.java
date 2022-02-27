@@ -141,7 +141,7 @@ public class MessageSmsSend extends LegionBaseEntity {
 
     @TableField(value = "code")
     @ApiModelProperty(value = "运营商返回的状态码")
-    private String code = SystemConstant.FLAG_N;
+    private String code ;
 
 
     /**
@@ -151,7 +151,7 @@ public class MessageSmsSend extends LegionBaseEntity {
     @ApiModelProperty(value = "运营商返回的原始数据")
     private String sendRes;
 
-    //
+    @Builder.Default
     @TableField(value = "status")
     @ApiModelProperty(value = "系统判断是否成功的状态")
     private String status = SystemConstant.FLAG_N;
