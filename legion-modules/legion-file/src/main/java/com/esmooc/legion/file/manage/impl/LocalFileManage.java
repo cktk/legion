@@ -4,6 +4,7 @@ import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.extra.spring.SpringUtil;
 import com.esmooc.legion.core.common.constant.SettingConstant;
 import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.core.entity.Setting;
@@ -113,7 +114,10 @@ public class LocalFileManage implements FileManage {
      */
     @Override
     public String renameFile(String url, String toKey) {
-
+        if (!StrUtil.startWith(url, getOssSetting().getFilePath(), true)) {
+            log.error("文件配置的存储路径{} 用户想要重命名文件的路径 {} ", getOssSetting().getFilePath(), url);
+            throw new LegionException("文件存储路径异常");
+        }
         File old = new File(url);
         FileUtil.rename(old, toKey, false, true);
         return old.getParentFile() + "/" + toKey;
@@ -129,6 +133,11 @@ public class LocalFileManage implements FileManage {
     @Override
     public String copyFile(String url, String toKey) {
 
+        if (!StrUtil.startWith(url, getOssSetting().getFilePath(), true)) {
+            log.error("文件配置的存储路径{} 用户想要吧文件拷贝到文件夹 {} ", getOssSetting().getFilePath(), url);
+            throw new LegionException("文件存储路径异常");
+        }
+
         File file = new File(url);
         String newUrl = file.getParentFile() + "/" + toKey;
         FileUtil.copy(file, new File(newUrl), true);
@@ -143,6 +152,10 @@ public class LocalFileManage implements FileManage {
     @Override
     public void deleteFile(String url) {
 
+        if (!StrUtil.startWith(url, getOssSetting().getFilePath(), true)) {
+            log.error("文件配置的存储路径{} 用户想要删除文件的路径 {} ", getOssSetting().getFilePath(), url);
+            throw new LegionException("文件存储路径异常");
+        }
         FileUtil.del(new File(url));
     }
 }
