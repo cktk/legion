@@ -1,5 +1,7 @@
 package com.esmooc.legion.system.system.util;
 
+import com.esmooc.legion.core.common.constant.SystemConstant;
+
 import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -12,32 +14,32 @@ import java.net.UnknownHostException;
 public class IpUtils {
     public static String getIpAddr(HttpServletRequest request) {
         if (request == null) {
-            return "unknown";
+            return SystemConstant.UNKNOWN;
         }
-        String ip = request.getHeader("x-forwarded-for");
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("Proxy-Client-IP");
+        String ip = request.getHeader(SystemConstant.X_FORWARDED_FOR);
+        if (ip == null || ip.length() == 0 || SystemConstant.UNKNOWN.equalsIgnoreCase(ip)) {
+            ip = request.getHeader(SystemConstant.PROXY_CLIENT_IP);
         }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("X-Forwarded-For");
+        if (ip == null || ip.length() == 0 || SystemConstant.UNKNOWN.equalsIgnoreCase(ip)) {
+            ip = request.getHeader(SystemConstant.X_FORWARDED_FOR_U);
         }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("WL-Proxy-Client-IP");
+        if (ip == null || ip.length() == 0 || SystemConstant.UNKNOWN.equalsIgnoreCase(ip)) {
+            ip = request.getHeader(SystemConstant.WL_Proxy_Client_IP);
         }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("X-Real-IP");
+        if (ip == null || ip.length() == 0 || SystemConstant.UNKNOWN.equalsIgnoreCase(ip)) {
+            ip = request.getHeader(SystemConstant.X_Real_IP);
         }
 
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+        if (ip == null || ip.length() == 0 || SystemConstant.UNKNOWN.equalsIgnoreCase(ip)) {
             ip = request.getRemoteAddr();
         }
 
-        return "0:0:0:0:0:0:0:1".equals(ip) ? "127.0.0.1" : ip;
+        return SystemConstant.IP_V6.equals(ip) ? SystemConstant.IP_V4 : ip;
     }
 
     public static boolean internalIp(String ip) {
         byte[] addr = textToNumericFormatV4(ip);
-        return internalIp(addr) || "127.0.0.1".equals(ip);
+        return internalIp(addr) || SystemConstant.IP_V4.equals(ip);
     }
 
     private static boolean internalIp(byte[] addr) {
@@ -145,7 +147,7 @@ public class IpUtils {
             return InetAddress.getLocalHost().getHostAddress();
         } catch (UnknownHostException e) {
         }
-        return "127.0.0.1";
+        return SystemConstant.IP_V4;
     }
 
     public static String getHostName() {
@@ -153,6 +155,6 @@ public class IpUtils {
             return InetAddress.getLocalHost().getHostName();
         } catch (UnknownHostException e) {
         }
-        return "未知";
+        return SystemConstant.UNKNOWN_ZH;
     }
 }
