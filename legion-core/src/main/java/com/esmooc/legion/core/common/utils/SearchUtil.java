@@ -24,6 +24,7 @@ public class SearchUtil {
 
     }};
 
+    private final static String HUMPPATTERN ="[A-Z]";
     /**
      * 解析sql在哪里
      * eq：相等<br />
@@ -144,7 +145,7 @@ public class SearchUtil {
      * @return
      */
     private static String humpToLine(String column) {
-        Pattern humpPattern = Pattern.compile("[A-Z]");
+        Pattern humpPattern = Pattern.compile(HUMPPATTERN);
         Matcher matcher = humpPattern.matcher(column);
         StringBuffer sb = new StringBuffer();
         while (matcher.find()) {
