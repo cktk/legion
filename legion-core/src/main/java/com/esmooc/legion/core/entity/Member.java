@@ -1,5 +1,6 @@
 package com.esmooc.legion.core.entity;
 
+import cn.hutool.core.lang.RegexPool;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.esmooc.legion.core.base.LegionBaseEntity;
 import com.esmooc.legion.core.common.constant.MemberConstant;
@@ -50,7 +51,7 @@ public class Member extends LegionBaseEntity {
     private String nickname;
 
     @ApiModelProperty(value = "手机")
-    @Pattern(regexp = NameUtil.regMobile, message = "11位手机号格式不正确")
+    @Pattern(regexp = RegexPool.MOBILE, message = "11位手机号格式不正确")
     private String mobile;
 
     @ApiModelProperty(value = "邮箱")

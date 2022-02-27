@@ -1,5 +1,6 @@
 package com.esmooc.legion.core.entity;
 
+import cn.hutool.core.lang.RegexPool;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.esmooc.legion.core.base.LegionBaseEntity;
@@ -44,7 +45,7 @@ public class User extends LegionBaseEntity {
 
     @ApiModelProperty(value = "登录名")
     @Column(unique = true, nullable = false)
-    @Pattern(regexp = NameUtil.regUsername, message = "登录账号不能包含特殊字符且长度不能>16")
+    @Pattern(regexp = RegexPool.GENERAL, message = "登录账号不能包含特殊字符且长度不能>16")
     private String username;
 
     @ApiModelProperty(value = "密码")
@@ -57,11 +58,11 @@ public class User extends LegionBaseEntity {
     private String nickname;
 
     @ApiModelProperty(value = "手机")
-    @Pattern(regexp = NameUtil.regMobile, message = "11位手机号格式不正确")
+    @Pattern(regexp = RegexPool.MOBILE, message = "11位手机号格式不正确")
     private String mobile;
 
     @ApiModelProperty(value = "邮箱")
-    @Pattern(regexp = NameUtil.regEmail, message = "邮箱格式不正确")
+    @Pattern(regexp =RegexPool.EMAIL, message = "邮箱格式不正确")
     private String email;
 
     @ApiModelProperty(value = "省市县地址")

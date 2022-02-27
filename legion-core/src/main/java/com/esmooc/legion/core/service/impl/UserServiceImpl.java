@@ -165,7 +165,7 @@ public class UserServiceImpl implements UserService {
                 }
 
                 // 数据权限
-                List<String> depIds = SecurityUtil.securityUtil.getDeparmentIds();
+                List<String> depIds = SecurityUtil.getDeparmentIds();
                 if (depIds != null && depIds.size() > 0) {
                     list.add(departmentIdField.in(depIds));
                 }

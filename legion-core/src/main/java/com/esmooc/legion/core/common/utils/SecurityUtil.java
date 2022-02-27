@@ -24,7 +24,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -34,7 +33,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashSet;
@@ -50,19 +48,12 @@ public class SecurityUtil {
 
     // 声明对象
     private static UserService userService = SpringUtil.getBean(UserService.class);
-
-    @Autowired
-    private LegionTokenProperties tokenProperties;
-    @Autowired
-    private LegionAppTokenProperties appTokenProperties;
-    @Autowired
-    private MemberService memberService;
-    @Autowired
-    private IUserRoleService iUserRoleService;
-    @Autowired
-    private DepartmentService departmentService;
-    @Autowired
-    private RedisTemplateHelper redisTemplate;
+    private static LegionTokenProperties tokenProperties = SpringUtil.getBean(LegionTokenProperties.class);
+    private static LegionAppTokenProperties appTokenProperties = SpringUtil.getBean(LegionAppTokenProperties.class);
+    private static MemberService memberService = SpringUtil.getBean(MemberService.class);
+    private static IUserRoleService iUserRoleService = SpringUtil.getBean(IUserRoleService.class);
+    private static DepartmentService departmentService = SpringUtil.getBean(DepartmentService.class);
+    private static RedisTemplateHelper redisTemplate = SpringUtil.getBean(RedisTemplateHelper.class);
 
     /**
      * -------------------ToB-------------------------
@@ -184,7 +175,7 @@ public class SecurityUtil {
      *
      * @return
      */
-    public User getCurrUserSimple() {
+    public static User getCurrUserSimple() {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated() || authentication.getName() == null
@@ -204,7 +195,7 @@ public class SecurityUtil {
     /**
      * 获取当前用户数据权限 null代表具有所有权限 包含值为-1的数据代表无任何权限
      */
-    public List<String> getDeparmentIds() {
+    public static List<String> getDeparmentIds() {
 
         List<String> deparmentIds = new ArrayList<>();
         User u = getCurrUserSimple();
@@ -271,7 +262,7 @@ public class SecurityUtil {
         return deparmentIds;
     }
 
-    private void getDepRecursion(String departmentId, List<String> ids) {
+    private  static void getDepRecursion(String departmentId, List<String> ids) {
 
         Department department = departmentService.get(departmentId);
         ids.add(department.getId());
@@ -289,7 +280,7 @@ public class SecurityUtil {
      *
      * @param username
      */
-    public List<GrantedAuthority> getCurrUserPerms(String username) {
+    public static List<GrantedAuthority> getCurrUserPerms(String username) {
 
         List<GrantedAuthority> authorities = new ArrayList<>();
         User user = userService.findByUsername(username);
@@ -378,7 +369,7 @@ public class SecurityUtil {
      *
      * @return
      */
-    public Member getCurrMemberSimple() {
+    public static Member getCurrMemberSimple() {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated() || authentication.getName() == null

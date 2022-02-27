@@ -67,7 +67,7 @@ public class AliSms implements Sms {
         messageSmsSend.setPhone(mobile); //批量发送短信
         messageSmsSend.setSendTime(new Date());
         try {
-            User user = SecurityUtil.securityUtil.getCurrUser();
+            User user = SecurityUtil.getUser();
             messageSmsSend.setSendUserId(user.getId());
             messageSmsSend.setSendUserName(user.getUsername());
         } catch (Exception e) {
