@@ -80,10 +80,7 @@ public interface SettingConstant {
      */
     String TENCENT_SMS = "TENCENT_SMS";
 
-    /**
-     * 中国移动泰安地区两癌短信平台
-     */
-    String CHINA_MOBILE_TA_SMS = "CHINA_MOBILE_TA_SMS";
+
 
     /**
      * 短信 通用
@@ -120,10 +117,6 @@ public interface SettingConstant {
      */
     String SMS_ACTIVITI = "SMS_ACTIVITI";
 
-    /**
-     * 短信两癌筛查
-     */
-    String SMS_SCREEN_ING = "SMS_SCREEN_ING";
     /**
      * 邮箱配置
      */

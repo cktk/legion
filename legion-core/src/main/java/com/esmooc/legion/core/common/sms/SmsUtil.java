@@ -49,8 +49,6 @@ public class SmsUtil {
                 return SettingConstant.SMS_RESET_PASS;
             case 6:
                 return SettingConstant.SMS_ACTIVITI;
-            case 7:
-                return SettingConstant.SMS_SCREEN_ING;
             default:
                 return SettingConstant.SMS_COMMON;
         }

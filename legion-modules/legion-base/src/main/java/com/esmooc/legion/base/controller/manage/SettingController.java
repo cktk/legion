@@ -104,7 +104,7 @@ public class SettingController {
 
         Setting setting = new Setting();
         //TODO 加短信运营商需要加
-        if (serviceName.equals(SettingConstant.CHINA_MOBILE_TA_SMS) || serviceName.equals(SettingConstant.ALI_SMS) || serviceName.equals(SettingConstant.TENCENT_SMS)) {
+        if (serviceName.equals(SettingConstant.ALI_SMS) || serviceName.equals(SettingConstant.TENCENT_SMS)) {
             setting = settingService.get(serviceName);
         }
         if (setting == null || StrUtil.isBlank(setting.getValue())) {
@@ -227,7 +227,7 @@ public class SettingController {
 
         String name = smsSetting.getServiceName();
         Setting setting = settingService.get(name);
-        if (name.equals(SettingConstant.CHINA_MOBILE_TA_SMS) || name.equals(SettingConstant.ALI_SMS) || name.equals(SettingConstant.TENCENT_SMS)) {
+        if ( name.equals(SettingConstant.ALI_SMS) || name.equals(SettingConstant.TENCENT_SMS)) {
             // 判断是否修改secrectKey 保留原secrectKey 避免保存***加密字符
             if (StrUtil.isNotBlank(setting.getValue()) && !smsSetting.getChanged()) {
                 String secrectKey = new Gson().fromJson(setting.getValue(), SmsSetting.class).getSecretKey();

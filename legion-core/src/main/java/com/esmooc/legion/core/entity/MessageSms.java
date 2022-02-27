@@ -1,1 +1,0 @@
-package com.esmooc.legion.core.entity;
