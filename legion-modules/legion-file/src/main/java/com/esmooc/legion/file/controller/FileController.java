@@ -146,7 +146,7 @@ public class FileController {
     @ApiOperation(value = "文件复制")
     @ResponseBody
     public Result<Object> copy(@RequestParam String id,
-                               @RequestParam String key) throws Exception {
+                               @RequestParam String key) {
 
         File file = fileService.get(id);
         if (file.getLocation() == null) {
@@ -171,7 +171,7 @@ public class FileController {
     @CacheEvict(key = "#id")
     public Result<Object> rename(@RequestParam String id,
                                  @RequestParam String newKey,
-                                 @RequestParam String newName) throws Exception {
+                                 @RequestParam String newName){
 
         File file = fileService.get(id);
         if (file.getLocation() == null) {

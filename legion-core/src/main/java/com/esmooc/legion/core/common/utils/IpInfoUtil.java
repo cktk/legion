@@ -3,6 +3,7 @@ package com.esmooc.legion.core.common.utils;
 
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
+import com.esmooc.legion.core.common.constant.SystemConstant;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import lombok.extern.slf4j.Slf4j;
@@ -77,7 +78,7 @@ public class IpInfoUtil {
     public String getIpCity(HttpServletRequest request) {
 
         String url = "https://apis.map.qq.com/ws/location/v1/ip?key=" + key + "&ip=" + getIpAddr(request);
-        String result = "未知";
+        String result = SystemConstant.UNKNOWN_ZH;
         try {
             String json = HttpUtil.get(url, 3000);
             JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();

@@ -31,7 +31,13 @@ spring:
   # 数据源
   datasource:
     # Druid StatViewServlet配置
-    druid:
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid: # 这里只需要配置一个数据源 作为主数据源  剩下数据源去数据库进行加载 t_datasource_conf
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://127.0.0.1:3306/legion?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=GMT%2B8&nullCatalogMeansCurrent=true&allowPublicKeyRetrieval=true
+      username: root
+      password: root
+      query-ds-sql: 'select * from t_datasource_conf where del_flag = 0'
       stat-view-servlet:
         # 默认true 内置监控页面首页/druid/index.html
         enabled: true
@@ -59,26 +65,6 @@ spring:
             multi-statement-allow: true
     dynamic:
       lazy: true #默认false非懒启动，系统加载到数据源立即初始化连接池
-      druid:
-        initial-size: 5
-        min-idle: 5
-        maxActive: 20
-        maxWait: 60000
-        timeBetweenEvictionRunsMillis: 60000
-        minEvictableIdleTimeMillis: 300000
-        testWhileIdle: true
-        testOnBorrow: false
-        testOnReturn: false
-        poolPreparedStatements: true
-        maxPoolPreparedStatementPerConnectionSize: 20
-        filters: stat,wall,slf4j
-        connectionProperties: druid.stat.mergeSql\=true;druid.stat.slowSqlMillis\=5000
-      datasource:
-        master:
-          url: jdbc:mysql://127.0.0.1:3306/legion?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=GMT%2B8&nullCatalogMeansCurrent=true&allowPublicKeyRetrieval=true
-          username: root
-          password: root
-          driverClassName: com.mysql.cj.jdbc.Driver
   jpa:
     # 显示sql
     show-sql: true
@@ -210,7 +196,7 @@ legion:
   maxUploadFile: 1024
   # 腾讯位置服务key配置 腾讯位置服务官网注册添加key
   qqlbs:
-    key: 你的腾讯位置服务key
+    key: 7QPBZ-5TXKO-HADWR-SSJ5R-F5HIE-FJFN6
   # 第三方社交登录配置
   social:
     # 前端回调登录地址

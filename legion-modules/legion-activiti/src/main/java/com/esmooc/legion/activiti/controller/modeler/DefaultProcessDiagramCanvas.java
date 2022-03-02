@@ -1,7 +1,7 @@
 package com.esmooc.legion.activiti.controller.modeler;
 
 //
-// Source code recreated from a .class file by IntelliJ IDEA
+// DruidDataSourceProperties code recreated from a .class file by IntelliJ IDEA
 // (powered by FernFlower decompiler)
 //
 
