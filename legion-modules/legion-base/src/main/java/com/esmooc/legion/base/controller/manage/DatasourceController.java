@@ -1,12 +1,8 @@
 package com.esmooc.legion.base.controller.manage;
 
-import com.baomidou.dynamic.datasource.DynamicRoutingDataSource;
-import com.baomidou.dynamic.datasource.creator.DefaultDataSourceCreator;
-import com.baomidou.dynamic.datasource.spring.boot.autoconfigure.DataSourceProperty;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.esmooc.legion.base.entity.DataSourceDTO;
 import com.esmooc.legion.base.entity.DatasourceConf;
 import com.esmooc.legion.base.service.DatasourceConfService;
 import com.esmooc.legion.core.common.annotation.SystemLog;
@@ -16,9 +12,6 @@ import com.esmooc.legion.core.common.vo.Result;
 import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

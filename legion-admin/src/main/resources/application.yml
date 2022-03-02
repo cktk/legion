@@ -150,6 +150,13 @@ legion:
     db:
       retry-times: 3  # 重试次数
       table-name: t_sequence #表名
+  xss:
+    #是否开启xss过滤
+    enabled: true
+    # 拦截路径
+    path-patterns: /**
+    #忽略路径
+    exclude-patterns:
   # 全局限流
   ratelimit:
     # 开启
@@ -265,6 +272,7 @@ ignored:
   # 无需登录认证的请求
   urls:
     - /legion/test/**
+    - /legion/ws/**
     - /legion/common/**
     - /legion/auth/**
     - /legion/app/v1/**
@@ -278,7 +286,6 @@ ignored:
     - /legion/email/sendResetCode/**
     - /legion/file/view/**
     - /legion/social/**
-    - /legion/ws/**
     - /legion/setting/notice
     - /druid/**
     - /doc.html
