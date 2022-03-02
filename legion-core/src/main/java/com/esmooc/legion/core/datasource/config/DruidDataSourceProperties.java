@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
  * 参考DruidDataSourceWrapper
  */
 @Data
-@Primary
+@Primary  //此添加的时候会多一个 所以这个地方让其优先选择使用我自己的
 @Component
 @ConfigurationProperties("spring.datasource.druid")
 public class DruidDataSourceProperties {
