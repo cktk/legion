@@ -73,7 +73,7 @@ public class LimitRaterInterceptor implements HandlerInterceptor {
             Boolean token1 = redisRaterLimiter.acquireByRedis(ip,
                     ipLimitProperties.getLimit(), ipLimitProperties.getTimeout());
             if (!token1) {
-                throw new LimitException("你手速怎么这么快，请点慢一点");
+              //  throw new LimitException("你手速怎么这么快，请点慢一点");
             }
         }
 

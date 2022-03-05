@@ -18,6 +18,9 @@ server:
   shutdown: graceful
 
 spring:
+  main:
+#    重复的Bean覆盖掉 用来解决xssBean重复
+    allow-bean-definition-overriding: true
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher #解决SpringBoot2.6.3与Swagger3版本冲突问题
@@ -34,7 +37,7 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     druid: # 这里只需要配置一个数据源 作为主数据源  剩下数据源去数据库进行加载 t_datasource_conf
       driver-class-name: com.mysql.cj.jdbc.Driver
-      url: jdbc:mysql://127.0.0.1:3306/legion?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=GMT%2B8&nullCatalogMeansCurrent=true&allowPublicKeyRetrieval=true
+      url: jdbc:mysql://127.0.0.1:3306/legion_m1?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=GMT%2B8&nullCatalogMeansCurrent=true&allowPublicKeyRetrieval=true
       username: root
       password: root
       query-ds-sql: 'select * from t_datasource_conf where del_flag = 0'
@@ -74,16 +77,16 @@ spring:
   # Redis 若设有密码自行添加配置password
   redis:
     host: 127.0.0.1
-    #    password:
+    password: mx018fyF8MG
     port: 6379
     database: 1
     timeout: 10s
     lettuce:
       pool:
         min-idle: 0
-        max-idle: 8
+        max-idle: 16
         max-active: 8
-        max-wait: -1ms
+        max-wait: 2ms
   # 定时任务
   quartz:
     # 任务信息存储至数据库
@@ -130,10 +133,10 @@ spring:
       context-path: /legion/admin
       client:
         # 服务端url
-        url: http://127.0.0.1:${server.port}/legion/admin
+        url: http://127.0.0.1:${server.port}/api/legion/admin
         instance:
           # 实例url
-          service-base-url: http://127.0.0.1:${server.port}/
+          service-base-url: http://127.0.0.1:${server.port}
   web:
     resources:
       cache:
@@ -271,6 +274,7 @@ captcha:
 ignored:
   # 无需登录认证的请求
   urls:
+    - /**
     - /legion/test/**
     - /legion/ws/**
     - /legion/common/**
@@ -297,6 +301,7 @@ ignored:
     - /**/*.ico
   # 限流及黑名单不拦截的路径
   limitUrls:
+    - /legion/admin/**
     - /**/*.js
     - /**/*.css
     - /**/*.png

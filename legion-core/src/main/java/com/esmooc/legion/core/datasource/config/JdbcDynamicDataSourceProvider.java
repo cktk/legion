@@ -57,41 +57,45 @@ public class JdbcDynamicDataSourceProvider extends AbstractJdbcDataSourceProvide
 	 */
 	@Override
 	protected Map<String, DataSourceProperty> executeStmt(Statement statement) throws SQLException {
-		ResultSet rs = statement.executeQuery(properties.getQueryDsSql());
-
 		Map<String, DataSourceProperty> map = new HashMap<>(8);
-		while (rs.next()) {
-			String name = rs.getString(DataSourceConstants.NAME);
-			String username = rs.getString(DataSourceConstants.DS_USER_NAME);
-			String password = rs.getString(DataSourceConstants.DS_USER_PWD);
-			Integer confType = rs.getInt(DataSourceConstants.DS_CONFIG_TYPE);
-			String dsType = rs.getString(DataSourceConstants.DS_TYPE);
 
-			DataSourceProperty property = new DataSourceProperty();
-			property.setUsername(username);
-			property.setPassword(stringEncryptor.decrypt(password));
+		try {
+			ResultSet rs = statement.executeQuery(properties.getQueryDsSql());
+			while (rs.next()) {
+				String name = rs.getString(DataSourceConstants.NAME);
+				String username = rs.getString(DataSourceConstants.DS_USER_NAME);
+				String password = rs.getString(DataSourceConstants.DS_USER_PWD);
+				Integer confType = rs.getInt(DataSourceConstants.DS_CONFIG_TYPE);
+				String dsType = rs.getString(DataSourceConstants.DS_TYPE);
 
-			String url;
-			// JDBC 配置形式
-			DsJdbcUrlEnum urlEnum = DsJdbcUrlEnum.get(dsType);
-			if (DsConfTypeEnum.JDBC.getType().equals(confType)) {
-				url = rs.getString(DataSourceConstants.DS_JDBC_URL);
+				DataSourceProperty property = new DataSourceProperty();
+				property.setUsername(username);
+				property.setPassword(stringEncryptor.decrypt(password));
+
+				String url;
+				// JDBC 配置形式
+				DsJdbcUrlEnum urlEnum = DsJdbcUrlEnum.get(dsType);
+				if (DsConfTypeEnum.JDBC.getType().equals(confType)) {
+					url = rs.getString(DataSourceConstants.DS_JDBC_URL);
+				} else {
+					String host = rs.getString(DataSourceConstants.DS_HOST);
+					String port = rs.getString(DataSourceConstants.DS_PORT);
+					String dsName = rs.getString(DataSourceConstants.DS_NAME);
+					url = String.format(urlEnum.getUrl(), host, port, dsName);
+				}
+
+				// Druid Config
+				DruidConfig druidConfig = new DruidConfig();
+				druidConfig.setValidationQuery(urlEnum.getValidationQuery());
+				property.setDruid(druidConfig);
+				property.setUrl(url);
+
+				map.put(name, property);
 			}
-			else {
-				String host = rs.getString(DataSourceConstants.DS_HOST);
-				String port = rs.getString(DataSourceConstants.DS_PORT);
-				String dsName = rs.getString(DataSourceConstants.DS_NAME);
-				url = String.format(urlEnum.getUrl(), host, port, dsName);
-			}
+		} catch (SQLException e) {
 
-			// Druid Config
-			DruidConfig druidConfig = new DruidConfig();
-			druidConfig.setValidationQuery(urlEnum.getValidationQuery());
-			property.setDruid(druidConfig);
-			property.setUrl(url);
-
-			map.put(name, property);
 		}
+
 
 		// 添加默认主数据源
 		DataSourceProperty property = new DataSourceProperty();
