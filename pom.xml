@@ -25,7 +25,7 @@
         <encoding>UTF-8</encoding>
         <!-- 依赖包版本 -->
         <spring.boot.version>2.6.3</spring.boot.version>
-        <spring.boot.admin.version>2.5.2</spring.boot.admin.version>
+        <spring.boot.admin.version>2.6.0</spring.boot.admin.version>
         <druid.version>1.2.8</druid.version>
         <jjwt.version>0.9.1</jjwt.version>
         <mysql.connector.version>8.0.26</mysql.connector.version>

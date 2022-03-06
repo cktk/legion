@@ -1,0 +1,13 @@
+server:
+  port: 10086
+
+
+
+
+
+spring:
+  boot:
+    admin:
+      client:
+        username: KHk8si50
+        password: uhhV1QDjVwrstKfU8Yo5

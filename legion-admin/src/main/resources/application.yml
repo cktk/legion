@@ -19,7 +19,7 @@ server:
 
 spring:
   main:
-#    重复的Bean覆盖掉 用来解决xssBean重复
+    #    重复的Bean覆盖掉 用来解决xssBean重复
     allow-bean-definition-overriding: true
   mvc:
     pathmatch:
@@ -79,7 +79,7 @@ spring:
     host: 127.0.0.1
     password: mx018fyF8MG
     port: 6379
-    database: 1
+    database: 2
     timeout: 10s
     lettuce:
       pool:
@@ -127,16 +127,18 @@ spring:
     time-zone: GMT+8
     serialization:
       fail-on-empty-beans: false
+
   boot:
     admin:
-      # 修改上下文路径
-      context-path: /legion/admin
       client:
-        # 服务端url
-        url: http://127.0.0.1:${server.port}/api/legion/admin
+        url: http://127.0.0.1:10086
+        username: admin
+        password: admin
         instance:
-          # 实例url
+          name: legion-admin
           service-base-url: http://127.0.0.1:${server.port}
+      monitor:
+        status-lifetime: 100000
   web:
     resources:
       cache:
@@ -274,15 +276,12 @@ captcha:
 ignored:
   # 无需登录认证的请求
   urls:
-    - /**
-    - /legion/test/**
     - /legion/ws/**
     - /legion/common/**
     - /legion/auth/**
     - /legion/app/v1/**
     - /legion/oauth2/**
     - /legion/actuator/**
-    - /legion/admin/**
     - /chat/**
     - /modeler/**
     - /legion/act/**
