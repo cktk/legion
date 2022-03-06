@@ -9,5 +9,5 @@ spring:
   boot:
     admin:
       client:
-        username: KHk8si50
-        password: uhhV1QDjVwrstKfU8Yo5
+        username: admin
+        password: admin
