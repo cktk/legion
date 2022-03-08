@@ -5,6 +5,10 @@ import com.baomidou.dynamic.datasource.DynamicRoutingDataSource;
 import com.baomidou.dynamic.datasource.creator.DataSourceCreator;
 import com.baomidou.dynamic.datasource.spring.boot.autoconfigure.DataSourceProperty;
 import com.baomidou.dynamic.datasource.spring.boot.autoconfigure.druid.DruidConfig;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.esmooc.legion.base.entity.DatasourceConf;
+import com.esmooc.legion.base.mapper.DatasourceConfMapper;
+import com.esmooc.legion.base.service.DatasourceConfService;
 import com.esmooc.legion.core.common.utils.SpringContextHolder;
 import com.esmooc.legion.core.datasource.util.DsConfTypeEnum;
 import com.esmooc.legion.core.datasource.util.DsJdbcUrlEnum;
@@ -12,32 +16,28 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jasypt.encryption.StringEncryptor;
 import org.springframework.stereotype.Service;
-import javax.annotation.Resource;
+
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.List;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.esmooc.legion.base.mapper.DatasourceConfMapper;
-import com.esmooc.legion.base.entity.DatasourceConf;
-import com.esmooc.legion.base.service.DatasourceConfService;
+
 /**
  * @Author 呆猫
- *
  * @Date: 2022/03/02/ 10:47
- * @Description: 
+ * @Description:
  */
 @Slf4j
 @Service
 @AllArgsConstructor
-public class DatasourceConfServiceImpl extends ServiceImpl<DatasourceConfMapper, DatasourceConf> implements DatasourceConfService{
+public class DatasourceConfServiceImpl extends ServiceImpl<DatasourceConfMapper, DatasourceConf> implements DatasourceConfService {
     private final StringEncryptor stringEncryptor;
 
     private final DataSourceCreator druidDataSourceCreator;
 
     /**
      * 保存数据源并且加密
+     *
      * @param conf
      * @return
      */
@@ -53,12 +53,17 @@ public class DatasourceConfServiceImpl extends ServiceImpl<DatasourceConfMapper,
 
         // 更新数据库配置
         conf.setPassword(stringEncryptor.encrypt(conf.getPassword()));
-        this.baseMapper.insert(conf);
+
+        log.info("添加数据源的时候数据源的ID {} conf", conf.getId());
+        this.save(conf);
+        log.info("------------------------------------------");
+        log.info("添加数据源的时候数据源完成后 {} conf", conf);
         return Boolean.TRUE;
     }
 
     /**
      * 更新数据源
+     *
      * @param conf 数据源信息
      * @return
      */
@@ -84,6 +89,7 @@ public class DatasourceConfServiceImpl extends ServiceImpl<DatasourceConfMapper,
 
     /**
      * 通过数据源名称删除
+     *
      * @param dsId 数据源ID
      * @return
      */
@@ -97,6 +103,7 @@ public class DatasourceConfServiceImpl extends ServiceImpl<DatasourceConfMapper,
 
     /**
      * 添加动态数据源
+     *
      * @param conf 数据源信息
      */
     @Override
@@ -120,6 +127,7 @@ public class DatasourceConfServiceImpl extends ServiceImpl<DatasourceConfMapper,
 
     /**
      * 校验数据源配置是否有效
+     *
      * @param conf 数据源信息
      * @return 有效/无效
      */
@@ -129,13 +137,11 @@ public class DatasourceConfServiceImpl extends ServiceImpl<DatasourceConfMapper,
         // JDBC 配置形式
         if (DsConfTypeEnum.JDBC.getType().equals(conf.getConfType())) {
             url = conf.getUrl();
-        }
-        else if (DsJdbcUrlEnum.MSSQL.getDbName().equals(conf.getDsType())) {
+        } else if (DsJdbcUrlEnum.MSSQL.getDbName().equals(conf.getDsType())) {
             // 主机形式 sql server 特殊处理
             DsJdbcUrlEnum urlEnum = DsJdbcUrlEnum.get(conf.getDsType());
             url = String.format(urlEnum.getUrl(), conf.getHost(), conf.getPort(), conf.getDsName());
-        }
-        else {
+        } else {
             DsJdbcUrlEnum urlEnum = DsJdbcUrlEnum.get(conf.getDsType());
             url = String.format(urlEnum.getUrl(), conf.getHost(), conf.getPort(), conf.getDsName());
         }
@@ -143,8 +149,7 @@ public class DatasourceConfServiceImpl extends ServiceImpl<DatasourceConfMapper,
         conf.setUrl(url);
 
         try (Connection connection = DriverManager.getConnection(url, conf.getUsername(), conf.getPassword())) {
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             log.error("数据源配置 {} , 获取链接失败", conf.getName(), e);
             return Boolean.FALSE;
         }

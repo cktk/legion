@@ -12,16 +12,15 @@ import com.esmooc.legion.core.common.vo.Result;
 import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+
 /**
  * @Author 呆猫
  * @Date: 2022/03/02/ 10:43
@@ -39,7 +38,8 @@ public class DatasourceController {
 
     /**
      * 分页查询
-     * @param page 分页对象
+     *
+     * @param page           分页对象
      * @param datasourceConf 数据源表
      * @return
      */
@@ -50,6 +50,7 @@ public class DatasourceController {
 
     /**
      * 查询全部数据源
+     *
      * @return
      */
     @GetMapping("/list")
@@ -59,6 +60,7 @@ public class DatasourceController {
 
     /**
      * 通过id查询数据源表
+     *
      * @param id id
      * @return R
      */
@@ -69,33 +71,37 @@ public class DatasourceController {
 
     /**
      * 新增数据源表
+     *
      * @param datasourceConf 数据源表
      * @return R
      */
-    @SystemLog(type = LogType.OPERATION,description = "新增数据源表")
+    @SystemLog(type = LogType.OPERATION, description = "新增数据源表")
     @PostMapping
-    public Result<Boolean> save(@RequestBody DatasourceConf datasourceConf) {
+    public Result<Boolean> save(DatasourceConf datasourceConf) {
+        datasourceConf.setId(null);
         return ResultUtil.data(datasourceConfService.saveDsByEnc(datasourceConf));
     }
 
     /**
      * 修改数据源表
+     *
      * @param conf 数据源表
      * @return R
      */
-    @SystemLog(type = LogType.OPERATION,description = "修改数据源表")
+    @SystemLog(type = LogType.OPERATION, description = "修改数据源表")
     @PutMapping
-    public Result<Boolean> updateById(@RequestBody DatasourceConf conf) {
+    public Result<Boolean> updateById(DatasourceConf conf) {
         return ResultUtil.data(datasourceConfService.updateDsByEnc(conf));
     }
 
     /**
      * 通过id删除数据源表
+     *
      * @param id id
      * @return R
      */
-    @SystemLog(description = "删除数据源表",type = LogType.OPERATION)
-    @DeleteMapping("/{id}")
+    @SystemLog(description = "删除数据源表", type = LogType.OPERATION)
+    @GetMapping("/del/{id}")
     public Result removeById(@PathVariable Long id) {
         return ResultUtil.data(datasourceConfService.removeByDsId(id));
     }

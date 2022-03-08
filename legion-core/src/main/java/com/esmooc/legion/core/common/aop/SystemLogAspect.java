@@ -192,6 +192,7 @@ public class SystemLogAspect {
         private LogService logService;
 
         public SaveSystemLogThread(Log esLog, LogService logService) {
+            esLog.setId(null);
             this.log = esLog;
             this.logService = logService;
         }

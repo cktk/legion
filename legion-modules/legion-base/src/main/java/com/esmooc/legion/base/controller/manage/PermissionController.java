@@ -62,7 +62,6 @@ public class PermissionController {
     private RedisTemplateHelper redisTemplate;
 
 
-
     @Autowired
     private MySecurityMetadataSource mySecurityMetadataSource;
 
@@ -158,7 +157,7 @@ public class PermissionController {
     @CacheEvict(key = "'menuList'")
     public Result<Permission> add(Permission permission) {
 
-        if (permission.getId().equals(permission.getParentId())) {
+        if (StrUtil.isNotBlank(permission.getId()) && permission.getId().equals(permission.getParentId())) {
             return ResultUtil.error("上级节点不能为自己");
         }
         // 判断拦截请求的操作权限按钮名是否已存在

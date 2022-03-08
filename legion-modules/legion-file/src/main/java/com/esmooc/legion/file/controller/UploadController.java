@@ -3,10 +3,8 @@ package com.esmooc.legion.file.controller;
 import cn.hutool.core.util.StrUtil;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.constant.SettingConstant;
-import com.esmooc.legion.core.common.limit.RedisRaterLimiter;
 import com.esmooc.legion.core.common.utils.Base64DecodeMultipartFile;
 import com.esmooc.legion.core.common.utils.CommonUtil;
-import com.esmooc.legion.core.common.utils.IpInfoUtil;
 import com.esmooc.legion.core.common.utils.ResultUtil;
 import com.esmooc.legion.core.common.vo.Result;
 import com.esmooc.legion.core.entity.Setting;
@@ -44,11 +42,6 @@ public class UploadController {
     @Value("${legion.maxUploadFile}")
     private Integer maxUploadFile;
 
-    @Autowired
-    private RedisRaterLimiter redisRaterLimiter;
-
-    @Autowired
-    private IpInfoUtil ipInfoUtil;
 
     @Autowired
     private FileManageFactory fileManageFactory;
