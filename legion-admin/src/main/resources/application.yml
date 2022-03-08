@@ -35,11 +35,11 @@ spring:
   datasource:
     # Druid StatViewServlet配置
     type: com.alibaba.druid.pool.DruidDataSource
-    druid: # 这里只需要配置一个数据源 作为主数据源  剩下数据源去数据库进行加载 t_datasource_conf
+    druid: # 这里只需要配置一个数据源 作为主数据源  剩下数据源去数据库进行加载 架构 t_datasource_conf
       driver-class-name: com.mysql.cj.jdbc.Driver
-      url: jdbc:mysql://127.0.0.1:3306/legion_m1?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=GMT%2B8&nullCatalogMeansCurrent=true&allowPublicKeyRetrieval=true
-      username: root
-      password: root
+      url: jdbc:mysql://${MYSQL_HOST:127.0.0.1}:${MYSQL_PROT:3306}/${MYSQL_SCHEMA:legion}?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=GMT%2B8&nullCatalogMeansCurrent=true&allowPublicKeyRetrieval=true
+      username: ${MYSQL_USER:root}
+      password: ${MYSQL_PWD:root}
       query-ds-sql: 'select * from t_datasource_conf where del_flag = 0'
       stat-view-servlet:
         # 默认true 内置监控页面首页/druid/index.html
@@ -47,8 +47,8 @@ spring:
         url-pattern: /druid/*
         # 允许清空统计数据
         reset-enable: true
-        login-username: root
-        login-password: root
+        login-username: ${MONITOR_USER:admin}
+        login-password: ${MONITOR_PWD:admin}
         # IP白名单 多个逗号分隔
         allow:
         # IP黑名单
@@ -76,10 +76,10 @@ spring:
       ddl-auto: none
   # Redis 若设有密码自行添加配置password
   redis:
-    host: 127.0.0.1
-    password: mx018fyF8MG
-    port: 6379
-    database: 2
+    host: ${REDIS_HOST:127.0.0.1}
+    password: ${REDIS_PWD:123456}
+    port: ${REDIS_PROT:6379}
+    database: ${REDIS_DATABASE:0}
     timeout: 10s
     lettuce:
       pool:
@@ -131,12 +131,12 @@ spring:
   boot:
     admin:
       client:
-        url: http://127.0.0.1:10086
-        username: admin
-        password: admin
+        url: http://${MONITOR_HOST:127.0.0.1}:${MONITOR_PORT:10086}
+        username: ${spring.datasource.druid.stat-view-servlet.login-username}
+        password: ${spring.datasource.druid.stat-view-servlet.login-password}
         instance:
           name: legion-admin
-          service-base-url: http://127.0.0.1:${server.port}
+          service-base-url: http://${LEGION_HOST:127.0.0.1}:${server.port}
       monitor:
         status-lifetime: 100000
   web:
@@ -333,17 +333,17 @@ knife4j:
 
 swagger:
   title: legion
-  description: miaoshu
-  version: 1
-  termsOfServiceUrl: http://www.langting.com
+  description: legion -描述
+  version: M1
+  termsOfServiceUrl: http://www.esmooc.com
   contact:
-    name: mao
-    url: http://www.langting.com
+    name: DaiMao
+    url: http://www.esmooc.com
     email: cktk@qq.com
   # 分组名
-  group: Admin
-  group2: App
-  group3: yewu
+  group: 系统业务
+  group2: 移动端
+  group3: 测试分组
 # Mybatis-plus
 mybatis-plus:
   mapper-locations: classpath*:mapper/**/*.xml
@@ -368,4 +368,4 @@ logging:
       # 最大保存天数
       max-history: 30
       # 每个文件最大大小
-      max-file-size: 500MB
+      max-file-size: 50MB
