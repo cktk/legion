@@ -1,18 +1,7 @@
-/*
- Navicat Premium Data Transfer
 
- Source Server         : A-本地
- Source Server Type    : MySQL
- Source Server Version : 80026
- Source Host           : localhost:3306
- Source Schema         : legion
+create database legion default character set utf8mb4 collate utf8mb4_general_ci;
 
- Target Server Type    : MySQL
- Target Server Version : 80026
- File Encoding         : 65001
-
- Date: 02/03/2022 11:39:57
-*/
+USE legion;
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;

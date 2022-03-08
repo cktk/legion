@@ -1,0 +1,74 @@
+version: '2'
+services:
+  legion-mysql:
+    build:
+      context: ./db
+    environment:
+      MYSQL_ROOT_HOST: "%"
+      MYSQL_ROOT_PASSWORD: root
+    restart: always
+    container_name: legion-mysql
+    image: legion-mysql:M1
+    volumes:
+      - ../legion-mysql:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    command: --lower_case_table_names=1
+
+
+
+  legion-redis:
+    container_name: legion-redis
+    image: redis:6.2.6
+    restart: always
+    command: [ "redis-server", "--appendonly", "yes", "--requirepass","123456" ]
+    ports:
+      - "6379:6379"
+
+
+
+  legion-monitor:
+    environment:
+      MONITOR_USER: admin
+      MONITOR_PWD: admin
+    build:
+      context: ./legion-monitor
+    restart: always
+    container_name: legion-monitor
+    hostname: legion-monitor
+    image: legion-monitor:M1
+    ports:
+      - "10086:10086"
+
+  legion-admin:
+    environment:
+      LEGION_HOST: legion-admin
+      MYSQL_HOST: legion-mysql
+      MYSQL_PROT: 3306
+      MYSQL_SCHEMA: legion
+      MYSQL_USER: root
+      MYSQL_PWD: root
+      REDIS_HOST: legion-redis
+      REDIS_PROT: 6379
+      REDIS_DATABASE: 0
+      REDIS_PWD: 123456
+      MONITOR_HOST: legion-monitor
+      MONITOR_PORT: 10086
+      MONITOR_USER: admin
+      MONITOR_PWD: admin
+    build:
+      context: ./legion-admin
+    restart: always
+    image: legion-admin:M1
+    container_name: legion-admin
+    ports:
+      - "8080:8080"
+
+  legion-ui:
+    build:
+      context: ../legion-ui/docker
+    restart: always
+    image: legion-ui:M1
+    container_name: legion-ui
+    ports:
+      - "9080:80"
