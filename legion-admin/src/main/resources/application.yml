@@ -130,8 +130,17 @@ spring:
 
   boot:
     admin:
+      # 修改上下文路径
+      context-path: /legion/admin
       client:
+        # 服务端url
         url: http://${MONITOR_HOST:127.0.0.1}:${MONITOR_PORT:10086}
+        instance:
+          # 实例url
+          service-base-url: http://127.0.0.1:${server.port}
+        username: ${spring.datasource.druid.stat-view-servlet.login-username}
+        password: ${spring.datasource.druid.stat-view-servlet.login-password}
+
   web:
     resources:
       cache:
