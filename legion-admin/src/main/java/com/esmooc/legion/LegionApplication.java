@@ -1,7 +1,6 @@
 package com.esmooc.legion;
 
 import com.esmooc.legion.core.datasource.annotation.EnableDynamicDataSource;
-import de.codecentric.boot.admin.server.config.EnableAdminServer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
@@ -25,8 +24,6 @@ import springfox.documentation.oas.annotations.EnableOpenApi;
 @EnableAsync
 // 启用自带定时任务
 @EnableScheduling
-// 启用Admin监控
-@EnableAdminServer
 //启用Swagger3
 @EnableOpenApi
 public class LegionApplication {

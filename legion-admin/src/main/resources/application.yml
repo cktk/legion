@@ -132,13 +132,7 @@ spring:
     admin:
       client:
         url: http://${MONITOR_HOST:127.0.0.1}:${MONITOR_PORT:10086}
-        username: ${spring.datasource.druid.stat-view-servlet.login-username}
-        password: ${spring.datasource.druid.stat-view-servlet.login-password}
-        instance:
-          name: legion-admin
-          service-base-url: http://${LEGION_HOST:127.0.0.1}:${server.port}
-      monitor:
-        status-lifetime: 100000
+
   web:
     resources:
       cache:
