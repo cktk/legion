@@ -132,7 +132,6 @@ spring:
     admin:
       client:
         url: http://${MONITOR_HOST:127.0.0.1}:${MONITOR_PORT:10086}
-
   web:
     resources:
       cache:
