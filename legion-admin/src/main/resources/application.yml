@@ -47,8 +47,8 @@ spring:
         url-pattern: /druid/*
         # 允许清空统计数据
         reset-enable: true
-        login-username: ${MONITOR_USER:admin}
-        login-password: ${MONITOR_PWD:admin}
+        login-username: ${DRUID_USER:admin}
+        login-password: ${DRUID_PWD:admin}
         # IP白名单 多个逗号分隔
         allow:
         # IP黑名单
@@ -138,8 +138,8 @@ spring:
         instance:
           # 实例url
           service-base-url: http://127.0.0.1:${server.port}
-        username: ${spring.datasource.druid.stat-view-servlet.login-username}
-        password: ${spring.datasource.druid.stat-view-servlet.login-password}
+        username: ${MONITOR_USER:admin}
+        password: ${MONITOR_PWD:admin}
 
   web:
     resources:

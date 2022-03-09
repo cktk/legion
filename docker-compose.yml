@@ -48,6 +48,8 @@ services:
       MYSQL_SCHEMA: legion
       MYSQL_USER: root
       MYSQL_PWD: root
+      DRUID_PWD: admin
+      DRUID_USER: admin
       REDIS_HOST: legion-redis
       REDIS_PROT: 6379
       REDIS_DATABASE: 0
