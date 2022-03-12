@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.esmooc.legion.your.mapper.QuestionsMapper">
+  <resultMap id="BaseResultMap" type="com.esmooc.legion.your.entity.Questions">
+    <!--@mbg.generated-->
+    <!--@Table questions-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="parent_id" jdbcType="BIGINT" property="parentId" />
+    <result column="questions_type" jdbcType="VARCHAR" property="questionsType" />
+    <result column="combination" jdbcType="VARCHAR" property="combination" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, title, parent_id, questions_type, combination
+  </sql>
+</mapper>

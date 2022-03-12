@@ -1,0 +1,52 @@
+jasypt:
+  encryptor:
+    password: legion
+
+knife4j:
+  enable: true
+
+spring:
+  datasource:
+    druid: # 这里只需要配置一个数据源 作为主数据源  剩下数据源去数据库进行加载 架构 t_datasource_conf
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://${MYSQL_HOST:127.0.0.1}:${MYSQL_PROT:3306}/${MYSQL_SCHEMA:legion}?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=GMT%2B8&nullCatalogMeansCurrent=true&allowPublicKeyRetrieval=true
+      username: ${MYSQL_USER:root}
+      password: ${MYSQL_PWD:root}
+      query-ds-sql: 'select * from t_datasource_conf where del_flag = 0'
+  redis:
+    host: ${REDIS_HOST:127.0.0.1}
+    password: ${REDIS_PWD:123456}
+    port: ${REDIS_PROT:6379}
+    database: ${REDIS_DATABASE:0}
+    timeout: 10s
+    lettuce:
+      pool:
+        min-idle: 0
+        max-idle: 16
+        max-active: 8
+        max-wait: 2ms
+# 日志
+logging:
+  # 输出级别
+  level:
+    root: info
+  file:
+    path: ./legion-logs
+  logback:
+    rollingpolicy:
+      # 最大保存天数
+      max-history: 1
+      # 每个文件最大大小
+      max-file-size: 50MB
+
+# 忽略url
+ignored:
+  # 无需登录认证的请求
+  urls:
+    - /**
+  limitUrls:
+    - /legion/admin/**
+    - /**/*.js
+    - /**/*.css
+    - /**/*.png
+    - /**/*.ico

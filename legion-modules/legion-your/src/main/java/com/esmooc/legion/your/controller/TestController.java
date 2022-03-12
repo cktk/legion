@@ -1,4 +1,4 @@
-package com.esmooc.legion.your;
+package com.esmooc.legion.your.controller;
 
 import com.esmooc.legion.core.common.annotation.RateLimiter;
 import com.esmooc.legion.core.common.lock.Callback;
@@ -6,6 +6,7 @@ import com.esmooc.legion.core.common.lock.RedisLockTemplate;
 import com.esmooc.legion.core.common.utils.ResultUtil;
 import com.esmooc.legion.core.common.utils.SecurityUtil;
 import com.esmooc.legion.core.common.vo.Result;
+import com.esmooc.legion.your.server.BookService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -25,25 +26,29 @@ import java.util.concurrent.TimeUnit;
 @Controller
 @Api(tags = "测试接口")
 @Transactional
-@RequestMapping(value = "/legion/test")
+@RequestMapping(value = "/test")
 public class TestController {
 
     @Autowired
     private RedisLockTemplate redisLockTemplate;
+
+
+    @Autowired
+    private BookService bookService;
+
 
     @RequestMapping(value = "/lockAndLimit", method = RequestMethod.GET)
     @RateLimiter(rate = 1, rateInterval = 5000)
     @ApiOperation(value = "同步锁限流测试")
     @ResponseBody
     public Result<Object> test() {
-        log.info("getUser {}" ,SecurityUtil.getUser());
 
         redisLockTemplate.execute("订单流水号", 3, null, TimeUnit.SECONDS, new Callback() {
             @Override
             public Object onGetLock() {
                 // TODO 获得锁后要做的事
                 log.info("生成订单流水号");
-
+                bookService.decrypt();
 
                 return null;
             }
@@ -58,5 +63,7 @@ public class TestController {
 
         return ResultUtil.data(null);
     }
+
+
 }
 

@@ -45,14 +45,6 @@ public class Swagger2Config {
     @Value("${swagger.termsOfServiceUrl:http://www.esmooc.com}")
     private String termsOfServiceUrl;
 
-    @Value("${swagger.group:Legion v1.0}")
-    private String group;
-
-    @Value("${swagger.group2:Legion2 v1.0}")
-    private String group2;
-
-    @Value("${swagger.group3:Legion2 v2.0}")
-    private String group3;
 
     @Value("${swagger.contact.name:DaiMao}")
     private String name;
@@ -60,7 +52,7 @@ public class Swagger2Config {
     @Value("${swagger.contact.url:http://esmooc.com}")
     private String url;
 
-    @Value("${swagger.contact.email:1012139570@qq.com}")
+    @Value("${swagger.contact.email:911362130@qq.com}")
     private String email;
 
     @Autowired
@@ -90,7 +82,7 @@ public class Swagger2Config {
                 new ApiKey("Authorization", "accessToken", "header"));
 
         return new Docket(DocumentationType.SWAGGER_2)
-                .groupName(group)
+                .groupName("1. 脚手架默认接口")
                 .apiInfo(apiInfo()).select()
                 // 扫描所有有注解的api，用这种方式更灵活
                 .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
@@ -108,7 +100,7 @@ public class Swagger2Config {
                 new ApiKey("Authorization", "appToken", "header"));
 
         return new Docket(DocumentationType.SWAGGER_2)
-                .groupName(group2)
+                .groupName("2 移动端接口")
                 .apiInfo(apiInfo()).select()
                 // 扫描所有有注解的api，用这种方式更灵活
                 .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
@@ -118,33 +110,7 @@ public class Swagger2Config {
                 .securityContexts(securityContexts());
     }
 
-    @Bean
-    public Docket createEduRestApi() {
-        List<SecurityScheme> securitySchemes = Collections.singletonList(
-                new ApiKey("Authorization", "appToken", "header"));
-        return new Docket(DocumentationType.SWAGGER_2)
-                .groupName(group3)
-                .apiInfo(apiInfo()).select()
-                .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
-                .paths(regex(".*/edu/.*"))
-                .build()
-                .securitySchemes(securitySchemes)
-                .securityContexts(securityContexts());
-    }
 
-    @Bean
-    public Docket createV2RestApi() {
-        List<SecurityScheme> securitySchemes = Collections.singletonList(
-                new ApiKey("Authorization", "appToken", "header"));
-        return new Docket(DocumentationType.SWAGGER_2)
-                .groupName("screen")
-                .apiInfo(apiInfo()).select()
-                .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
-                .paths(regex(".*/screening/.*"))
-                .build()
-                .securitySchemes(securitySchemes)
-                .securityContexts(securityContexts());
-    }
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
