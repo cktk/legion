@@ -1,6 +1,8 @@
 package com.esmooc.legion.config.swagger;
 
+import cn.hutool.extra.spring.SpringUtil;
 import com.esmooc.legion.core.config.properties.IgnoredUrlsProperties;
+import com.esmooc.legion.core.service.UserService;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,15 +57,11 @@ public class Swagger2Config {
     @Value("${swagger.contact.email:911362130@qq.com}")
     private String email;
 
-    @Autowired
-    private IgnoredUrlsProperties ignoredUrlsProperties;
 
     public List<SecurityContext> securityContexts() {
 
         Predicate<String> paths = ant("");
-        for (String url : ignoredUrlsProperties.getUrls()) {
-            paths = paths.or(ant(url));
-        }
+
 
         return Collections.singletonList(
                 SecurityContext.builder()

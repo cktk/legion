@@ -1,5 +1,6 @@
 package com.esmooc.legion.app.controller.admin;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.esmooc.legion.core.common.constant.MemberConstant;
 import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
