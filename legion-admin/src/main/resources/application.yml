@@ -23,7 +23,6 @@ spring:
       matching-strategy: ant_path_matcher #解决SpringBoot2.6.3与Swagger3版本冲突问题
   autoconfigure:
     exclude:
-      - org.activiti.spring.boot.SecurityAutoConfiguration
       - com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure
   lifecycle:
     # 配置优雅停机后的缓冲器 最大等待时间
@@ -85,19 +84,6 @@ spring:
             acquireTriggersWithinLock: true
             # “容忍”触发器经过下一次触发时间的毫秒数
             misfireThreshold: 10000
-  # 工作流
-  activiti:
-    async-executor-activate: false
-    check-process-definitions: false
-    db-identity-used: true
-    # 自动生成Activiti相关表 第一次生成后建议关闭提高运行速度
-    database-schema-update: false
-    history-level: none
-    # 扩展配置
-    legion:
-      # 流程图字体 默认宋体
-      activityFontName: Microsoft YaHei
-      labelFontName: Microsoft YaHei
   # 文件大小上传配置
   servlet:
     multipart:

@@ -40,11 +40,6 @@
         </dependency>
         <dependency>
             <groupId>com.esmooc</groupId>
-            <artifactId>legion-activiti</artifactId>
-            <version>M1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.esmooc</groupId>
             <artifactId>legion-social</artifactId>
             <version>M1</version>
         </dependency>

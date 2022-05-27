@@ -28,16 +28,16 @@ public class GenerateDatabaseDocuments {
     public static void generateDatabaseDocuments() {
         //数据源
         HikariConfig hikariConfig = new HikariConfig();
-//        hikariConfig.setDriverClassName("com.mysql.cj.jdbc.Driver");
-//        hikariConfig.setJdbcUrl("jdbc:mysql://**************:3306/legion");
-//        hikariConfig.setUsername("**************");
-//        hikariConfig.setPassword("**************");
+        hikariConfig.setDriverClassName("com.mysql.cj.jdbc.Driver");
+        hikariConfig.setJdbcUrl("jdbc:mysql://127.00.1:3306/legion");
+        hikariConfig.setUsername("root");
+        hikariConfig.setPassword("root");
 
         //oracle的配置
-        //hikariConfig.setDriverClassName("oracle.jdbc.driver.OracleDriver");
-        //hikariConfig.setJdbcUrl("jdbc:oracle:thin:@192.168.1.125:1521/orcl");
-        //hikariConfig.setUsername("ambase");
-        //hikariConfig.setPassword("ambase");
+//        hikariConfig.setDriverClassName("oracle.jdbc.driver.OracleDriver");
+//        hikariConfig.setJdbcUrl("jdbc:oracle:thin:@192.168.1.55:1521/LANGTING");
+//        hikariConfig.setUsername("langting");
+//        hikariConfig.setPassword("langting");
 
         //设置可以获取tables remarks信息
         hikariConfig.addDataSourceProperty("useInformationSchema", "true");
@@ -47,7 +47,7 @@ public class GenerateDatabaseDocuments {
         //生成配置
         EngineConfig engineConfig = EngineConfig.builder()
                 //生成文件路径
-//                .fileOutputDir("/Users/daimao")
+                .fileOutputDir("./doc")
                 //打开目录
                 .openOutputDir(true)
                 //文件类型

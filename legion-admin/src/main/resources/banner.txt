@@ -2,7 +2,7 @@
 ${AnsiColor.BRIGHT_BLUE}
           呆猫
 ${AnsiColor.BRIGHT_GREEN}
-TSMDC  Boot Version: 1.0.0
+Legion Boot Version: 1.0.0
 Spring Boot Version: ${spring-boot.version}${spring-boot.formatted-version}
 ${AnsiColor.BRIGHT_YELLOW}
 

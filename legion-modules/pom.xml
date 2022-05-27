@@ -13,7 +13,6 @@
     <packaging>pom</packaging>
     <modules>
         <module>legion-base</module>
-        <module>legion-activiti</module>
         <module>legion-social</module>
         <module>legion-generator</module>
         <module>legion-file</module>

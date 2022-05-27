@@ -1,5 +1,6 @@
 package com.esmooc.legion.your.controller;
 
+import com.alibaba.druid.sql.visitor.functions.If;
 import com.esmooc.legion.core.common.annotation.RateLimiter;
 import com.esmooc.legion.core.common.lock.Callback;
 import com.esmooc.legion.core.common.lock.RedisLockTemplate;
@@ -66,4 +67,31 @@ public class TestController {
 
 
 }
+
+
+//           sqlplus HIS/HIS@ORCL
+//
+//
+//        alter session set container= ORCL;
+//        create user HIS identified by HIS;
+//        grant dba,connect,resource,create view to HIS;
+//        grant select any table to HIS;
+//        grant update any table to HIS;
+//        grant insert any table to HIS;
+//        grant delete any table to HIS;
+//        grant create session to HIS;
+//        grant sysdba to HIS;
+//
+//
+//        create tablespace HIS datafile '/opt/oracle/oradata/ORACLE/ORCL/HIS.dbf' size 50M;
+//
+//        CREATE TEMPORARY TABLESPACE HIS_TMP TEMPFILE '/opt/oracle/oradata/ORACLE/ORCL/HIS_TMP.dbf' SIZE 2000M autoextend on next 500M maxsize 5000M;
+//
+//
+//        alter user his default tablespace his temporary tablespace his_tmp;
+//ALTER DATABASE DATAFILE '/opt/oracle/oradata/ORACLE/ORCL/HIS.dbf' AUTOEXTEND ON;
+//ALTER DATABASE DATAFILE '/opt/oracle/oradata/ORACLE/ORCL/HIS.dbf' AUTOEXTEND ON NEXT 200M ;
+
+
+
 
