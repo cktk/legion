@@ -1,5 +1,6 @@
 package com.esmooc.legion.base.controller.manage;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
 import com.esmooc.legion.core.common.utils.PageUtil;
@@ -63,16 +64,16 @@ public class RoleController {
     @ApiOperation(value = "获取全部角色")
     public Result<Object> roleGetAll() {
 
-        List<Role> list = roleService.getAll();
+        List<Role> list = roleService.list();
         return ResultUtil.data(list);
     }
 
     @RequestMapping(value = "/getAllByPage", method = RequestMethod.GET)
     @ApiOperation(value = "分页获取角色")
-    public Result<Page<Role>> getRoleByPage(String key, PageVo page) {
+    public Result<IPage<Role>> getRoleByPage(String key, PageVo page) {
 
-        Page<Role> list = roleService.findByCondition(key, PageUtil.initPage(page));
-        for (Role role : list.getContent()) {
+        IPage<Role> list = roleService.findByCondition(key, page);
+        for (Role role : list.getRecords()) {
             // 角色拥有权限
             List<RolePermission> permissions = rolePermissionService.findByRoleId(role.getId());
             role.setPermissions(permissions);
@@ -88,12 +89,12 @@ public class RoleController {
     public Result<Object> setDefault(@RequestParam String id,
                                      @RequestParam Boolean isDefault) {
 
-        Role role = roleService.get(id);
+        Role role = roleService.getById(id);
         if (role == null) {
             return ResultUtil.error("角色不存在");
         }
         role.setDefaultRole(isDefault);
-        roleService.update(role);
+        roleService.updateById(role);
         return ResultUtil.success("设置成功");
     }
 
@@ -109,7 +110,7 @@ public class RoleController {
             List<RolePermission> list = Arrays.asList(permIds).stream().map(e -> {
                 return new RolePermission().setRoleId(roleId).setPermissionId(e);
             }).collect(Collectors.toList());
-            rolePermissionService.saveOrUpdateAll(list);
+            rolePermissionService.saveOrUpdateBatch(list);
         }
         // 手动批量删除缓存
         redisTemplate.deleteByPattern("user:*");
@@ -124,9 +125,9 @@ public class RoleController {
                                       @RequestParam Integer dataType,
                                       @RequestParam(required = false) String[] depIds) {
 
-        Role r = roleService.get(roleId);
+        Role r = roleService.getById(roleId);
         r.setDataType(dataType);
-        roleService.update(r);
+        roleService.updateById(r);
         if (CommonConstant.DATA_TYPE_CUSTOM.equals(dataType)) {
             // 删除其关联数据权限
             roleDepartmentService.deleteByRoleId(roleId);
@@ -135,7 +136,7 @@ public class RoleController {
                 List<RoleDepartment> list = Arrays.asList(depIds).stream().map(e -> {
                     return new RoleDepartment().setRoleId(roleId).setDepartmentId(e);
                 }).collect(Collectors.toList());
-                roleDepartmentService.saveOrUpdateAll(list);
+                roleDepartmentService.saveOrUpdateBatch(list);
             }
         }
         // 手动删除相关缓存
@@ -148,19 +149,18 @@ public class RoleController {
     @ApiOperation(value = "保存数据")
     public Result<Role> save(Role role) {
 
-        Role r = roleService.save(role);
-        return ResultUtil.data(r);
+        return ResultUtil.ok(roleService.save(role));
     }
 
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     @ApiOperation(value = "更新数据")
     public Result<Role> edit(Role entity) {
 
-        Role r = roleService.update(entity);
+        roleService.updateById(entity);
         // 手动批量删除缓存
         redisTemplate.deleteByPattern("user:*");
         redisTemplate.deleteByPattern("userRole:*");
-        return ResultUtil.data(r);
+        return ResultUtil.data(entity);
     }
 
     @RequestMapping(value = "/delByIds", method = RequestMethod.POST)
@@ -174,7 +174,7 @@ public class RoleController {
             }
         }
         for (String id : ids) {
-            roleService.delete(id);
+            roleService.removeById(id);
             // 删除关联菜单权限
             rolePermissionService.deleteByRoleId(id);
             // 删除关联数据权限

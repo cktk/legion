@@ -1,8 +1,9 @@
-package com.esmooc.legion.base.dao;
+package com.esmooc.legion.base.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.esmooc.legion.base.entity.DictData;
 import org.apache.ibatis.annotations.Delete;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
@@ -14,6 +15,7 @@ import java.util.List;
  *
  * @author DaiMao
  */
+@Mapper
 public interface DictDataMapper extends BaseMapper<DictData> {
 
     /**

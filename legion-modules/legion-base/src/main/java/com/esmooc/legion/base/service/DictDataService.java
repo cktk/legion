@@ -1,8 +1,9 @@
 package com.esmooc.legion.base.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.esmooc.legion.base.entity.DictData;
-import com.esmooc.legion.core.base.LegionBaseService;
-
+import com.esmooc.legion.core.common.vo.PageVo;
 
 
 import java.util.List;
@@ -12,16 +13,16 @@ import java.util.List;
  *
  * @author DaiMao
  */
-public interface DictDataService extends LegionBaseService<DictData, String> {
+public interface DictDataService extends IService<DictData> {
 
     /**
      * 多条件获取
      *
-     * @param dictData
+     * @param dictDaIa
      * @param pageable
      * @return
      */
-    Page<DictData> findByCondition(DictData dictData, Pageable pageable);
+    IPage<DictData> findByCondition(DictData dictData, PageVo pageable);
 
     /**
      * 通过dictId获取启用字典 已排序

@@ -2,6 +2,10 @@ package com.esmooc.legion.base.controller.manage;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.metadata.OrderItem;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.plugins.pagination.PageDTO;
 import com.esmooc.legion.base.vo.RedisInfo;
 import com.esmooc.legion.base.vo.RedisVo;
 import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
@@ -52,8 +56,8 @@ public class RedisController {
 
     @RequestMapping(value = "/getAllByPage", method = RequestMethod.GET)
     @ApiOperation(value = "分页获取全部")
-    public Result<Page<RedisVo>> getAllByPage(@RequestParam(required = false) String key,
-                                              PageVo pageVo) {
+    public Result<IPage<RedisVo>> getAllByPage(@RequestParam(required = false) String key,
+                                               PageVo pageVo) {
 
         List<RedisVo> list = new ArrayList<>();
 
@@ -77,8 +81,12 @@ public class RedisController {
             list.add(redisVo);
             i++;
         }
-        Page<RedisVo> page = new PageImpl<RedisVo>(PageUtil.listToPage(pageVo, list), PageUtil.initPage(pageVo), size);
-        page.getContent().forEach(e -> {
+
+
+
+        IPage<RedisVo> page = PageUtil.initMpPage(pageVo);
+        page.setRecords(PageUtil.listToPage(pageVo, list));
+        page.getRecords().forEach(e -> {
             String value = "";
             try {
                 value = redisTemplate.get(e.getKey());

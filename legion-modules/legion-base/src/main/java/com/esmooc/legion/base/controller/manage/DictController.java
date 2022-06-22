@@ -61,12 +61,12 @@ public class DictController {
     @ApiOperation(value = "编辑")
     public Result<Object> edit(Dict dict) {
 
-        Dict old = dictService.get(dict.getId());
+        Dict old = dictService.getById(dict.getId());
         // 若type修改判断唯一
         if (!old.getType().equals(dict.getType()) && dictService.findByType(dict.getType()) != null) {
             return ResultUtil.error("字典类型Type已存在");
         }
-        dictService.update(dict);
+        dictService.updateById(dict);
         // 删除缓存
         redisTemplate.delete("dictData::" + dict.getType());
         return ResultUtil.success("编辑成功");
@@ -77,8 +77,8 @@ public class DictController {
     public Result<Object> delAllByIds(@RequestParam String[] ids) {
 
         for (String id : ids) {
-            Dict dict = dictService.get(id);
-            dictService.delete(id);
+            Dict dict = dictService.getById(id);
+            dictService.removeById(id);
             dictDataService.deleteByDictId(id);
             // 删除缓存
             redisTemplate.delete("dictData::" + dict.getType());

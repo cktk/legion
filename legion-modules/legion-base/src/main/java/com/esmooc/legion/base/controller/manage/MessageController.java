@@ -1,6 +1,7 @@
 package com.esmooc.legion.base.controller.manage;
 
 import cn.hutool.http.HtmlUtil;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.esmooc.legion.core.common.constant.ActivitiConstant;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.utils.PageUtil;
@@ -21,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -53,14 +55,14 @@ public class MessageController {
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
 
-    @RequestMapping(value = "/getByCondition", method = RequestMethod.GET)
+    @GetMapping(value = "/getByCondition")
     @ApiOperation(value = "多条件分页获取")
-    public Result<Page<Message>> getByCondition(Message message,
-                                                SearchVo searchVo,
-                                                PageVo pageVo) {
+    public Result<IPage<Message>> getByCondition(Message message,
+                                                 SearchVo searchVo,
+                                              PageVo pageVo) {
 
-        Page<Message> page = messageService.findByCondition(message, searchVo, PageUtil.initPage(pageVo));
-        page.forEach(e -> {
+        IPage<Message> page = messageService.findByCondition(message, searchVo,pageVo);
+        page.getRecords().forEach(e -> {
             e.setContentText(HtmlUtil.cleanHtmlTag(e.getContent()));
         });
         return ResultUtil.data(page);
@@ -70,7 +72,7 @@ public class MessageController {
     @ApiOperation(value = "通过id获取")
     public Result<Message> get(@PathVariable String id) {
 
-        Message message = messageService.get(id);
+        Message message = messageService.getById(id);
         message.setContentText(HtmlUtil.filter(message.getContent()));
         return ResultUtil.data(message);
     }
@@ -79,17 +81,18 @@ public class MessageController {
     @ApiOperation(value = "添加消息")
     public Result<Object> addMessage(Message message) {
 
-        Message m = messageService.save(message);
+         messageService.save(message);
+        Message m =message;
         // 保存消息发送表
         List<MessageSend> messageSends = new ArrayList<>();
         if (CommonConstant.MESSAGE_RANGE_ALL.equals(message.getRange())) {
             // 全体
-            List<User> allUser = userService.getAll();
+            List<User> allUser = userService.list();
             allUser.forEach(u -> {
                 MessageSend ms = new MessageSend().setMessageId(m.getId()).setUserId(u.getId());
                 messageSends.add(ms);
             });
-            sendService.saveOrUpdateAll(messageSends);
+            sendService.saveOrUpdateBatch(messageSends);
             // 推送
             messagingTemplate.convertAndSend("/topic/subscribe", "您收到了新的系统消息");
         } else if (CommonConstant.MESSAGE_RANGE_USER.equals(message.getRange())) {
@@ -98,7 +101,7 @@ public class MessageController {
                 MessageSend ms = new MessageSend().setMessageId(m.getId()).setUserId(id);
                 messageSends.add(ms);
             }
-            sendService.saveOrUpdateAll(messageSends);
+            sendService.saveOrUpdateBatch(messageSends);
             // 推送
             for (String id : message.getUserIds()) {
                 messagingTemplate.convertAndSendToUser(id, "/queue/subscribe", "您收到了新的消息");
@@ -110,9 +113,7 @@ public class MessageController {
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     @ApiOperation(value = "编辑消息")
     public Result<Object> editMessage(Message message) {
-
-        Message m = messageService.update(message);
-        return ResultUtil.success("编辑成功");
+        return ResultUtil.ok( messageService.updateById(message));
     }
 
     @RequestMapping(value = "/delByIds", method = RequestMethod.POST)
@@ -124,7 +125,7 @@ public class MessageController {
                     || ActivitiConstant.MESSAGE_TODO_ID.equals(id)) {
                 return ResultUtil.error("抱歉，无法删除工作流相关系统消息");
             }
-            messageService.delete(id);
+            messageService.removeById(id);
             // 删除发送表
             sendService.deleteByMessageId(id);
         }

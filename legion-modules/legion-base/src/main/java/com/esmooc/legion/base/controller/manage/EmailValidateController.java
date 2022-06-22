@@ -139,7 +139,7 @@ public class EmailValidateController {
 
         User u =  SecurityUtil.getUser();
         u.setEmail(email);
-        userService.update(u);
+        userService.updateById(u);
         // 删除缓存
         redisTemplate.delete("user::" + u.getUsername());
         return ResultUtil.success("修改邮箱成功");

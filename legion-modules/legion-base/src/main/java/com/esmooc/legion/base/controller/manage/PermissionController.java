@@ -121,7 +121,7 @@ public class PermissionController {
     @Cacheable(key = "'allList'")
     public Result<List<Permission>> getAllList() {
 
-        List<Permission> list = permissionService.getAll();
+        List<Permission> list = permissionService.list();
         // 0级
         List<Permission> list0 = list.stream().filter(e -> (CommonConstant.LEVEL_ZERO).equals(e.getLevel()))
                 .sorted(Comparator.comparing(Permission::getSortOrder)).collect(Collectors.toList());
@@ -169,14 +169,15 @@ public class PermissionController {
         }
         // 如果不是添加的一级 判断设置上级为父节点标识
         if (!CommonConstant.PARENT_ID.equals(permission.getParentId())) {
-            Permission parent = permissionService.get(permission.getParentId());
+            Permission parent = permissionService.getById(permission.getParentId());
             if (parent.getIsParent() == null || !parent.getIsParent()) {
                 parent.setIsParent(true);
-                permissionService.update(parent);
+                permissionService.updateById(parent);
             }
         }
-        Permission u = permissionService.save(permission);
-        // 重新加载权限
+      permissionService.save(permission);
+        Permission u =permission;
+                // 重新加载权限
         mySecurityMetadataSource.loadResourceDefine();
         // 手动删除缓存
         redisTemplate.deleteByPattern("permission:*");
@@ -193,7 +194,7 @@ public class PermissionController {
         // 判断拦截请求的操作权限按钮名是否已存在
         if (CommonConstant.PERMISSION_OPERATION.equals(permission.getType())) {
             // 若名称修改
-            Permission p = permissionService.get(permission.getId());
+            Permission p = permissionService.getById(permission.getId());
             if (!p.getTitle().equals(permission.getTitle())) {
                 List<Permission> list = permissionService.findByTitle(permission.getTitle());
                 if (list != null && list.size() > 0) {
@@ -201,16 +202,17 @@ public class PermissionController {
                 }
             }
         }
-        Permission old = permissionService.get(permission.getId());
+        Permission old = permissionService.getById(permission.getId());
         String oldParentId = old.getParentId();
-        Permission u = permissionService.update(permission);
+        permissionService.updateById(permission);
+        Permission u =permission;
         // 如果该节点不是一级节点 且修改了级别 判断上级还有无子节点
         if (!CommonConstant.PARENT_ID.equals(oldParentId) && !oldParentId.equals(permission.getParentId())) {
-            Permission parent = permissionService.get(oldParentId);
+            Permission parent = permissionService.getById(oldParentId);
             List<Permission> children = permissionService.findByParentIdOrderBySortOrder(parent.getId());
             if (parent != null && (children == null || children.isEmpty())) {
                 parent.setIsParent(false);
-                permissionService.update(parent);
+                permissionService.updateById(parent);
             }
         }
         // 重新加载权限
@@ -243,18 +245,18 @@ public class PermissionController {
             throw new LegionException("删除失败，包含正被用户使用关联的菜单");
         }
         // 获得其父节点
-        Permission p = permissionService.get(id);
+        Permission p = permissionService.getById(id);
         Permission parent = null;
         if (StrUtil.isNotBlank(p.getParentId())) {
-            parent = permissionService.findById(p.getParentId());
+            parent = permissionService.getById(p.getParentId());
         }
-        permissionService.delete(id);
+        permissionService.removeById(id);
         // 判断父节点是否还有子节点
         if (parent != null) {
             List<Permission> children = permissionService.findByParentIdOrderBySortOrder(parent.getId());
             if (children == null || children.isEmpty()) {
                 parent.setIsParent(false);
-                permissionService.update(parent);
+                permissionService.updateById(parent);
             }
         }
         // 递归删除
@@ -279,7 +281,7 @@ public class PermissionController {
     public void setInfo(Permission permission) {
 
         if (!CommonConstant.PARENT_ID.equals(permission.getParentId())) {
-            Permission parent = permissionService.get(permission.getParentId());
+            Permission parent = permissionService.getById(permission.getParentId());
             permission.setParentTitle(parent.getTitle());
         } else {
             permission.setParentTitle("一级菜单");

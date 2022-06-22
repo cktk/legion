@@ -1,5 +1,6 @@
 package com.esmooc.legion.base.controller.manage;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.esmooc.legion.core.common.utils.PageUtil;
 import com.esmooc.legion.core.common.utils.ResultUtil;
 import com.esmooc.legion.core.common.utils.StopWordsUtil;
@@ -36,9 +37,9 @@ public class StopWordController {
 
     @RequestMapping(value = "/getByCondition", method = RequestMethod.GET)
     @ApiOperation(value = "多条件分页获取")
-    public Result<Page<StopWord>> getByCondition(StopWord stopWord, SearchVo searchVo, PageVo pageVo) {
+    public Result<IPage<StopWord>> getByCondition(StopWord stopWord, SearchVo searchVo, PageVo pageVo) {
 
-        Page<StopWord> page = stopWordService.findByCondition(stopWord, searchVo, PageUtil.initPage(pageVo));
+        IPage<StopWord> page = stopWordService.findByCondition(stopWord, searchVo, pageVo);
         return ResultUtil.data(page);
     }
 
@@ -46,17 +47,17 @@ public class StopWordController {
     @ApiOperation(value = "保存数据")
     public Result<StopWord> save(StopWord stopWord) {
 
-        StopWord s = stopWordService.save(stopWord);
+      stopWordService.save(stopWord);
         StopWordsUtil.addWord(stopWord.getTitle());
-        return ResultUtil.data(s);
+        return ResultUtil.data(stopWord);
     }
 
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     @ApiOperation(value = "更新数据")
     public Result<StopWord> update(StopWord stopWord) {
 
-        StopWord old = stopWordService.get(stopWord.getId());
-        stopWordService.delete(stopWord.getId());
+        StopWord old = stopWordService.getById(stopWord.getId());
+        stopWordService.removeById(stopWord.getId());
         stopWord.setCreateBy(old.getCreateBy());
         stopWord.setCreateTime(new Date());
         stopWordService.save(stopWord);
@@ -71,8 +72,8 @@ public class StopWordController {
     public Result<Object> delByIds(@RequestParam String[] ids) {
 
         for (String id : ids) {
-            StopWord stopWord = stopWordService.get(id);
-            stopWordService.delete(id);
+            StopWord stopWord = stopWordService.getById(id);
+            stopWordService.removeById(id);
             StopWordsUtil.removeWord(stopWord.getTitle());
         }
         return ResultUtil.success("批量通过id删除数据成功");

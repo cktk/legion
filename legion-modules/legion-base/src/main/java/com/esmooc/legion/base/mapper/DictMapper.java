@@ -1,4 +1,4 @@
-package com.esmooc.legion.base.dao;
+package com.esmooc.legion.base.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.esmooc.legion.base.entity.Dict;

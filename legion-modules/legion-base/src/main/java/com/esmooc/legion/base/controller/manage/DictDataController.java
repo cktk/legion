@@ -1,5 +1,6 @@
 package com.esmooc.legion.base.controller.manage;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.esmooc.legion.base.entity.Dict;
 import com.esmooc.legion.base.entity.DictData;
 import com.esmooc.legion.base.service.DictDataService;
@@ -48,10 +49,10 @@ public class DictDataController {
 
     @RequestMapping(value = "/getByCondition", method = RequestMethod.GET)
     @ApiOperation(value = "多条件分页获取用户列表")
-    public Result<Page<DictData>> getByCondition(DictData dictData,
-                                                 PageVo pageVo) {
+    public Result<IPage<DictData>> getByCondition(DictData dictData,
+                                                  PageVo pageVo) {
 
-        Page<DictData> page = dictDataService.findByCondition(dictData, PageUtil.initPage(pageVo));
+        IPage<DictData> page = dictDataService.findByCondition(dictData, pageVo);
         return ResultUtil.data(page);
     }
 
@@ -68,7 +69,7 @@ public class DictDataController {
     @ApiOperation(value = "添加")
     public Result<Object> add(DictData dictData) {
 
-        Dict dict = dictService.get(dictData.getDictId());
+        Dict dict = dictService.getById(dictData.getDictId());
         if (dict == null) {
             return ResultUtil.error("字典类型id不存在");
         }
@@ -89,16 +90,16 @@ public class DictDataController {
     @ApiOperation(value = "编辑")
     public Result<Object> edit(DictData dictData) {
 
-        dictDataService.update(dictData);
+        dictDataService.updateById(dictData);
         // 删除缓存
-        Dict dict = dictService.get(dictData.getDictId());
+        Dict dict = dictService.getById(dictData.getDictId());
         String typeCode = dict.getType() + "_" + dictData.getValue();
         dictData.setTypeCode(typeCode);
         DictData data = dictDataService.findByTypeCode(typeCode);
         if (data != null) {
             return ResultUtil.error("类型编码重复");
         }
-        dictDataService.update(dictData);
+        dictDataService.updateById(dictData);
 
         redisTemplate.delete("dictData::" + dict.getType());
         return ResultUtil.success("编辑成功");
@@ -109,12 +110,12 @@ public class DictDataController {
     public Result<Object> delByIds(@RequestParam String[] ids) {
 
         for (String id : ids) {
-            DictData dictData = dictDataService.get(id);
+            DictData dictData = dictDataService.getById(id);
             if (dictData == null) {
                 return ResultUtil.error("数据不存在");
             }
-            Dict dict = dictService.get(dictData.getDictId());
-            dictDataService.delete(id);
+            Dict dict = dictService.getById(dictData.getDictId());
+            dictDataService.removeById(id);
             // 删除缓存
             redisTemplate.delete("dictData::" + dict.getType());
         }

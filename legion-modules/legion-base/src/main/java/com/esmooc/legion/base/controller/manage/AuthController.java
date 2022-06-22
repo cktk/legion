@@ -214,8 +214,8 @@ public class AuthController {
         String encryptPass = new BCryptPasswordEncoder().encode(u.getPassword());
         u.setPassword(encryptPass).setType(CommonConstant.USER_TYPE_NORMAL).setNickname(nickname);
 
-        User user = userService.save(u);
-
+         userService.save(u);
+        User user =u;
         // 默认角色
         List<Role> roleList = roleService.findByDefaultRole(true);
         if (roleList != null && roleList.size() > 0) {
@@ -239,7 +239,7 @@ public class AuthController {
         User u = userService.findByMobile(mobile);
         String encryptPass = new BCryptPasswordEncoder().encode(password);
         u.setPassword(encryptPass).setPassStrength(passStrength);
-        userService.update(u);
+        userService.updateById(u);
         // 删除缓存
         redisTemplate.delete(USER + u.getUsername());
         return ResultUtil.success("重置密码成功");
@@ -261,7 +261,7 @@ public class AuthController {
         String encryptPass = new BCryptPasswordEncoder().encode(password);
         u.setPassword(encryptPass);
         u.setPassStrength(passStrength);
-        userService.update(u);
+        userService.updateById(u);
         // 删除缓存
         redisTemplate.delete("user::" + u.getUsername());
         return ResultUtil.success("重置密码成功");

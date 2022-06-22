@@ -1,10 +1,15 @@
 package com.esmooc.legion.base.service.impl;
 
 import cn.hutool.core.util.StrUtil;
-import com.esmooc.legion.base.dao.DictDataMapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.esmooc.legion.base.mapper.DictDataMapper;
 import com.esmooc.legion.base.entity.DictData;
 import com.esmooc.legion.base.service.DictDataService;
 import com.esmooc.legion.core.common.constant.CommonConstant;
+import com.esmooc.legion.core.common.utils.PageUtil;
+import com.esmooc.legion.core.common.vo.PageVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -14,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,50 +29,20 @@ import java.util.List;
 @Slf4j
 @Service
 @Transactional
-public class DictDataServiceImpl implements DictDataService {
+public class DictDataServiceImpl  extends ServiceImpl<DictDataMapper, DictData>  implements DictDataService {
 
     @Autowired
     private DictDataMapper dictDataMapper;
 
-    @Override
-    public DictDataMapper getRepository() {
-        return dictDataMapper;
-    }
 
     @Override
-    public Page<DictData> findByCondition(DictData dictData, Pageable pageable) {
-
-        return dictDataMapper.findAll(new Specification<DictData>() {
-            @Nullable
-            @Override
-            public Predicate toPredicate(Root<DictData> root, CriteriaQuery<?> cq, CriteriaBuilder cb) {
-
-                Path<String> titleField = root.get("title");
-                Path<Integer> statusField = root.get("status");
-                Path<String> dictIdField = root.get("dictId");
-
-                List<Predicate> list = new ArrayList<>();
-
-                // 模糊搜素
-                if (StrUtil.isNotBlank(dictData.getTitle())) {
-                    list.add(cb.like(titleField, '%' + dictData.getTitle() + '%'));
-                }
-
-                // 状态
-                if (dictData.getStatus() != null) {
-                    list.add(cb.equal(statusField, dictData.getStatus()));
-                }
-
-                // 所属字典
-                if (StrUtil.isNotBlank(dictData.getDictId())) {
-                    list.add(cb.equal(dictIdField, dictData.getDictId()));
-                }
-
-                Predicate[] arr = new Predicate[list.size()];
-                cq.where(list.toArray(arr));
-                return null;
-            }
-        }, pageable);
+    public IPage<DictData> findByCondition(DictData dictData, PageVo pageable) {
+        QueryWrapper<DictData> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda()
+                .like(StrUtil.isNotBlank(dictData.getTitle()),DictData::getTitle ,dictData.getTitle() )
+                .eq(dictData.getStatus()!=null,DictData::getStatus ,dictData.getStatus() )
+                .eq(StrUtil.isNotBlank(dictData.getDictId()),DictData::getDictId ,dictData.getDictId() );
+        return this.page(PageUtil.initMpPage(pageable),queryWrapper);
     }
 
     @Override

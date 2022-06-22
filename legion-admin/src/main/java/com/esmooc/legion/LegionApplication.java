@@ -5,12 +5,10 @@ import cn.hutool.core.date.TimeInterval;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import springfox.documentation.oas.annotations.EnableOpenApi;
 
-import java.sql.SQLException;
 
 /**
  * @author DaiMao
@@ -19,8 +17,6 @@ import java.sql.SQLException;
 //@EnableDynamicDataSource
 
 @SpringBootApplication(proxyBeanMethods = false)
-// 启用JPA审计
-@EnableJpaAuditing
 // 启用缓存
 @EnableCaching
 // 启用异步

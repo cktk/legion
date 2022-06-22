@@ -9,11 +9,11 @@ spring:
   datasource:
       datasource:
         master:
-          url: jdbc:mysql://127.0.0.1:3306/legion1?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2B8
+          url: jdbc:mysql://127.0.0.1:3306/legion?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2B8
           username: root
           password: root
           driver-class-name: com.mysql.cj.jdbc.Driver
-      lazy: true #默认false非懒启动，系统加载到数据源立即初始化连接池
+      lazy: false #默认false非懒启动，系统加载到数据源立即初始化连接池
   redis:
     host: ${REDIS_HOST:127.0.0.1}
     password: ${REDIS_PWD:123456}

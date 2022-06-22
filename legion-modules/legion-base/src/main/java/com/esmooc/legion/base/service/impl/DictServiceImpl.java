@@ -1,6 +1,7 @@
 package com.esmooc.legion.base.service.impl;
 
-import com.esmooc.legion.base.dao.DictMapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.esmooc.legion.base.mapper.DictMapper;
 import com.esmooc.legion.base.entity.Dict;
 import com.esmooc.legion.base.service.DictService;
 import lombok.extern.slf4j.Slf4j;
@@ -18,15 +19,11 @@ import java.util.List;
 @Slf4j
 @Service
 @Transactional
-public class DictServiceImpl implements DictService {
+public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements DictService {
 
     @Autowired
     private DictMapper dictMapper;
 
-    @Override
-    public DictMapper getRepository() {
-        return dictMapper;
-    }
 
     @Override
     public List<Dict> findAllOrderBySortOrder() {
