@@ -1,17 +1,19 @@
 package com.esmooc.legion.autochat.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.esmooc.legion.autochat.entity.AutoChat;
-import com.esmooc.legion.core.base.LegionBaseService;
+import com.esmooc.legion.core.common.vo.PageVo;
 import com.esmooc.legion.core.common.vo.SearchVo;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+
+
 
 /**
  * 问答助手客服接口
  *
  * @author DaiMao
  */
-public interface AutoChatService extends LegionBaseService<AutoChat, String> {
+public interface AutoChatService extends IService<AutoChat> {
 
     /**
      * 多条件分页获取
@@ -21,7 +23,7 @@ public interface AutoChatService extends LegionBaseService<AutoChat, String> {
      * @param pageable
      * @return
      */
-    Page<AutoChat> findByCondition(AutoChat autoChat, SearchVo searchVo, Pageable pageable);
+    IPage<AutoChat> findByCondition(AutoChat autoChat, SearchVo searchVo, PageVo pageable);
 
     /**
      * 完全匹配

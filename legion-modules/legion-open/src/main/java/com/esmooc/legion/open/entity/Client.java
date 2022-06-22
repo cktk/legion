@@ -5,20 +5,15 @@ import com.esmooc.legion.core.base.LegionBaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
-
-import javax.persistence.Entity;
-import javax.persistence.Table;
 
 /**
  * @author DaiMao
  */
 @Data
-@Entity
-@DynamicInsert
-@DynamicUpdate
-@Table(name = "t_client")
+
+
+
+// "t_client")
 @TableName("t_client")
 @ApiModel(value = "第三方网站client信息")
 public class Client extends LegionBaseEntity {

@@ -1,6 +1,7 @@
 package com.esmooc.legion.core.service.impl;
 
-import com.esmooc.legion.core.dao.RoleDepartmentDao;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.esmooc.legion.core.mapper.RoleDepartmentMapper;
 import com.esmooc.legion.core.entity.RoleDepartment;
 import com.esmooc.legion.core.service.RoleDepartmentService;
 import lombok.extern.slf4j.Slf4j;
@@ -18,31 +19,27 @@ import java.util.List;
 @Slf4j
 @Service
 @Transactional
-public class RoleDepartmentServiceImpl implements RoleDepartmentService {
+public class RoleDepartmentServiceImpl extends ServiceImpl<RoleDepartmentMapper , RoleDepartment> implements RoleDepartmentService {
 
     @Autowired
-    private RoleDepartmentDao roleDepartmentDao;
+    private RoleDepartmentMapper roleDepartmentMapper;
 
-    @Override
-    public RoleDepartmentDao getRepository() {
-        return roleDepartmentDao;
-    }
 
     @Override
     public List<RoleDepartment> findByRoleId(String roleId) {
 
-        return roleDepartmentDao.findByRoleId(roleId);
+        return roleDepartmentMapper.findByRoleId(roleId);
     }
 
     @Override
     public void deleteByRoleId(String roleId) {
 
-        roleDepartmentDao.deleteByRoleId(roleId);
+        roleDepartmentMapper.deleteByRoleId(roleId);
     }
 
     @Override
     public void deleteByDepartmentId(String departmentId) {
 
-        roleDepartmentDao.deleteByDepartmentId(departmentId);
+        roleDepartmentMapper.deleteByDepartmentId(departmentId);
     }
 }

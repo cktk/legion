@@ -6,20 +6,11 @@ import com.esmooc.legion.core.common.constant.CommonConstant;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
-
-import javax.persistence.Entity;
-import javax.persistence.Table;
 
 /**
  * @author DaiMao
  */
 @Data
-@Entity
-@DynamicInsert
-@DynamicUpdate
-@Table(name = "t_quartz_job")
 @TableName("t_quartz_job")
 @ApiModel(value = "定时任务")
 public class QuartzJob extends LegionBaseEntity {

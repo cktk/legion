@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class RedisLockTemplate implements DistributedLockTemplate {
 
-    @Autowired
+    @Autowired(required = false)
     private RedissonClient redisson;
 
     @Override

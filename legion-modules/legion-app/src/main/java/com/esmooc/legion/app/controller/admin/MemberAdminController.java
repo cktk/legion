@@ -1,6 +1,7 @@
 package com.esmooc.legion.app.controller.admin;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.esmooc.legion.core.common.constant.MemberConstant;
 import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
@@ -18,7 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.data.domain.Page;
+
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -47,11 +48,11 @@ public class MemberAdminController {
 
     @RequestMapping(value = "/getByCondition", method = RequestMethod.GET)
     @ApiOperation(value = "多条件分页获取")
-    public Result<Page<Member>> getByCondition(Member member,
+    public Result<IPage<Member>> getByCondition(Member member,
                                                SearchVo searchVo,
                                                PageVo pageVo) {
 
-        Page<Member> page = memberService.findByCondition(member, searchVo, PageUtil.initPage(pageVo));
+        IPage<Member> page = memberService.findByCondition(member, searchVo, pageVo);
         return ResultUtil.data(page);
     }
 
@@ -67,8 +68,7 @@ public class MemberAdminController {
         // Username/UID 邀请码
         m.setUsername(uid.toString()).setInviteCode(Long.toString(uid, 32).toUpperCase());
 
-        Member member = memberService.save(m);
-        return ResultUtil.success("添加成功");
+        return ResultUtil.ok(memberService.save(m));
     }
 
     @RequestMapping(value = "/admin/edit", method = RequestMethod.POST)
@@ -76,7 +76,7 @@ public class MemberAdminController {
     @CacheEvict(key = "#m.username")
     public Result<Object> edit(@Valid Member m) {
 
-        Member old = memberService.get(m.getId());
+        Member old = memberService.getById(m.getId());
 
         m.setUsername(old.getUsername()).setPassword(old.getPassword());
         // 若修改了手机和邮箱判断是否唯一
@@ -84,8 +84,8 @@ public class MemberAdminController {
             return ResultUtil.error("该手机号已绑定其他账户");
         }
 
-        memberService.update(m);
-        return ResultUtil.success("修改成功");
+
+        return ResultUtil.ok(memberService.updateById(m));
     }
 
     @RequestMapping(value = "/admin/status", method = RequestMethod.POST)
@@ -93,13 +93,13 @@ public class MemberAdminController {
     public Result<Object> disable(@RequestParam String userId,
                                   @RequestParam Boolean enable) {
 
-        Member member = memberService.get(userId);
+        Member member = memberService.getById(userId);
         if (enable) {
             member.setStatus(MemberConstant.MEMBER_STATUS_NORMAL);
         } else {
             member.setStatus(MemberConstant.MEMBER_STATUS_LOCK);
         }
-        memberService.update(member);
+        memberService.updateById(member);
         //手动更新缓存
         redisTemplate.delete("member::" + member.getUsername());
         return ResultUtil.success("操作成功");
@@ -110,10 +110,10 @@ public class MemberAdminController {
     public Result<Object> delAllByIds(@RequestParam String[] ids) {
 
         for (String id : ids) {
-            Member m = memberService.get(id);
+            Member m = memberService.getById(id);
             // 删除相关缓存
             redisTemplate.delete("member::" + m.getUsername());
-            memberService.delete(id);
+            memberService.removeById(id);
         }
         return ResultUtil.success("批量通过id删除数据成功");
     }

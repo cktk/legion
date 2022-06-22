@@ -60,13 +60,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private EmailValidateFilter emailValidateFilter;
 
-    @Autowired
-    private RedisTemplateHelper redisTemplate;
-
-
-
-
-    @Override
+@Autowired(required=false)
+    private RedisTemplateHelper redisTemplate;    @Override
     protected void configure(HttpSecurity http) throws Exception {
 
         ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry = http

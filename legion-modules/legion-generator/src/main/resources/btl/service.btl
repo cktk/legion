@@ -5,8 +5,8 @@ import ${entity.entityPackage}.${entity.className};
 <%
 if(!entity.isTree){
 %>
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+
+
 import SearchVo;
 <%
 }

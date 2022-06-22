@@ -1,6 +1,7 @@
 package com.esmooc.legion.file.controller;
 
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.constant.SettingConstant;
 import com.esmooc.legion.core.common.exception.LegionException;
@@ -25,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.data.domain.Page;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,9 +34,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -65,26 +63,23 @@ public class FileController {
     private RedisTemplateHelper redisTemplate;
 
 
-    @PersistenceContext
-    private EntityManager entityManager;
 
     @RequestMapping(value = "/getByCondition", method = RequestMethod.GET)
     @ApiOperation(value = "多条件分页获取")
     @ResponseBody
-    public Result<Page<File>> getFileList(File file,
-                                          SearchVo searchVo,
-                                          PageVo pageVo,
-                                          @RequestParam(required = false, defaultValue = "false") Boolean getCurrUser) {
+    public Result<IPage<File>> getFileList(File file,
+                                           SearchVo searchVo,
+                                           PageVo pageVo,
+                                           @RequestParam(required = false, defaultValue = "false") Boolean getCurrUser) {
 
         if (getCurrUser) {
             file.setCreateBy(SecurityUtil.getUser().getUsername());
         }
-        Page<File> page = fileService.findByCondition(file, searchVo, PageUtil.initPage(pageVo));
+        IPage<File> page = fileService.findByCondition(file, searchVo, pageVo);
         OssSetting os = new Gson().fromJson(settingService.get(SettingConstant.LOCAL_OSS).getValue(), OssSetting.class);
-        for (File e : page.getContent()) {
+        for (File e : page.getRecords()) {
             if (e.getLocation() != null && CommonConstant.OSS_LOCAL.equals(e.getLocation())) {
                 String url = os.getHttp() + os.getEndpoint() + "/";
-                entityManager.detach(e);
                 e.setUrl(url + e.getId());
             }
         }
@@ -97,7 +92,7 @@ public class FileController {
     public Result<Object> deleteUserFile(@RequestParam String id) {
 
         User user = SecurityUtil.getUser();
-        File file = fileService.get(id);
+        File file = fileService.getById(id);
         if (file.getLocation() == null) {
             return ResultUtil.error("存储位置未知");
         }
@@ -114,7 +109,7 @@ public class FileController {
         } catch (Exception e) {
             log.error("服务器删除文件失败，ID：" + file.getId() + " 存储位置：" + file.getLocation());
         }
-        fileService.delete(id);
+        fileService.removeById(id);
         redisTemplate.delete("file::" + id);
         return ResultUtil.data(null);
     }
@@ -127,7 +122,7 @@ public class FileController {
                                          @RequestParam String newName) {
 
         User user = SecurityUtil.getUser();
-        File file = fileService.get(id);
+        File file = fileService.getById(id);
         if (file.getLocation() == null) {
             return ResultUtil.error("存储位置未知");
         }
@@ -137,7 +132,7 @@ public class FileController {
         String oldName = file.getName();
         if (!oldName.equals(newName)) {
             file.setName(newName);
-            fileService.update(file);
+            fileService.updateById(file);
         }
         return ResultUtil.data(null);
     }
@@ -148,7 +143,7 @@ public class FileController {
     public Result<Object> copy(@RequestParam String id,
                                @RequestParam String key) {
 
-        File file = fileService.get(id);
+        File file = fileService.getById(id);
         if (file.getLocation() == null) {
             return ResultUtil.error("存储位置未知");
         }
@@ -173,7 +168,7 @@ public class FileController {
                                  @RequestParam String newKey,
                                  @RequestParam String newName){
 
-        File file = fileService.get(id);
+        File file = fileService.getById(id);
         if (file.getLocation() == null) {
             return ResultUtil.error("存储位置未知");
         }
@@ -190,7 +185,7 @@ public class FileController {
         if (!oldKey.equals(newKey)) {
             file.setUrl(newUrl);
         }
-        fileService.update(file);
+        fileService.updateById(file);
         return ResultUtil.data(null);
     }
 
@@ -200,7 +195,7 @@ public class FileController {
     public Result<Object> delete(@RequestParam String[] ids) {
 
         for (String id : ids) {
-            File file = fileService.get(id);
+            File file = fileService.getById(id);
             if (file.getLocation() == null) {
                 return ResultUtil.error("存储位置未知");
             }
@@ -214,7 +209,7 @@ public class FileController {
             } catch (Exception e) {
                 log.error("服务器删除文件失败，ID：" + file.getId() + " 存储位置：" + file.getLocation());
             }
-            fileService.delete(id);
+            fileService.removeById(id);
             redisTemplate.delete("file::" + id);
         }
         return ResultUtil.data(null);
@@ -228,7 +223,7 @@ public class FileController {
                      @RequestParam(required = false, defaultValue = "UTF-8") String charset,
                      HttpServletResponse response) throws IOException {
 
-        File file = fileService.findById(id);
+        File file = fileService.getById(id);
         if (file == null) {
             throw new LegionException("文件ID：" + id + "不存在");
         }

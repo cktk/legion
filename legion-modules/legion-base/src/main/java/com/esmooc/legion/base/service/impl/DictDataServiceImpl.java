@@ -1,24 +1,19 @@
 package com.esmooc.legion.base.service.impl;
 
 import cn.hutool.core.util.StrUtil;
-import com.esmooc.legion.base.dao.DictDataDao;
+import com.esmooc.legion.base.dao.DictDataMapper;
 import com.esmooc.legion.base.entity.DictData;
 import com.esmooc.legion.base.service.DictDataService;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.lang.Nullable;
+
+
+
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,17 +28,17 @@ import java.util.List;
 public class DictDataServiceImpl implements DictDataService {
 
     @Autowired
-    private DictDataDao dictDataDao;
+    private DictDataMapper dictDataMapper;
 
     @Override
-    public DictDataDao getRepository() {
-        return dictDataDao;
+    public DictDataMapper getRepository() {
+        return dictDataMapper;
     }
 
     @Override
     public Page<DictData> findByCondition(DictData dictData, Pageable pageable) {
 
-        return dictDataDao.findAll(new Specification<DictData>() {
+        return dictDataMapper.findAll(new Specification<DictData>() {
             @Nullable
             @Override
             public Predicate toPredicate(Root<DictData> root, CriteriaQuery<?> cq, CriteriaBuilder cb) {
@@ -79,24 +74,24 @@ public class DictDataServiceImpl implements DictDataService {
     @Override
     public List<DictData> findByDictId(String dictId) {
 
-        return dictDataDao.findByDictIdAndStatusOrderBySortOrder(dictId, CommonConstant.STATUS_NORMAL);
+        return dictDataMapper.findByDictIdAndStatusOrderBySortOrder(dictId, CommonConstant.STATUS_NORMAL);
     }
 
     @Override
     public void deleteByDictId(String dictId) {
 
-        dictDataDao.deleteByDictId(dictId);
+        dictDataMapper.deleteByDictId(dictId);
     }
 
 
     @Override
     public DictData findByTypeCode(String typeCode) {
-        return dictDataDao.findByTypeCodeAndStatusOrderBySortOrder(typeCode, CommonConstant.STATUS_NORMAL);
+        return dictDataMapper.findByTypeCodeAndStatusOrderBySortOrder(typeCode, CommonConstant.STATUS_NORMAL);
     }
 
     @Override
     public List<DictData> findByType(String type) {
-        return dictDataDao.findByTypeAndStatusOrderBySortOrder(type, CommonConstant.STATUS_NORMAL);
+        return dictDataMapper.findByTypeAndStatusOrderBySortOrder(type, CommonConstant.STATUS_NORMAL);
 
     }
 }

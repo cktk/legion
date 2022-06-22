@@ -7,22 +7,13 @@ import com.esmooc.legion.core.common.constant.CommonConstant;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import java.util.List;
 
 /**
  * @author DaiMao
  */
 @Data
-@Entity
-@DynamicInsert
-@DynamicUpdate
-@Table(name = "t_role")
 @TableName("t_role")
 @ApiModel(value = "角色")
 public class Role extends LegionBaseEntity {
@@ -41,12 +32,10 @@ public class Role extends LegionBaseEntity {
     @ApiModelProperty(value = "备注")
     private String description;
 
-    @Transient
     @TableField(exist = false)
     @ApiModelProperty(value = "拥有权限")
     private List<RolePermission> permissions;
 
-    @Transient
     @TableField(exist = false)
     @ApiModelProperty(value = "拥有数据权限")
     private List<RoleDepartment> departments;

@@ -1,11 +1,13 @@
 package com.esmooc.legion.core.service.impl;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.esmooc.legion.core.common.constant.CommonConstant;
-import com.esmooc.legion.core.dao.UserDao;
-import com.esmooc.legion.core.dao.UserRoleDao;
+import com.esmooc.legion.core.mapper.UserMapper;
+import com.esmooc.legion.core.mapper.UserRoleMapper;
 import com.esmooc.legion.core.entity.User;
 import com.esmooc.legion.core.entity.UserRole;
 import com.esmooc.legion.core.service.UserRoleService;
+import com.esmooc.legion.core.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,31 +24,29 @@ import java.util.List;
 @Slf4j
 @Service
 @Transactional
-public class UserRoleServiceImpl implements UserRoleService {
+public class UserRoleServiceImpl  extends ServiceImpl<UserRoleMapper, UserRole> implements UserRoleService {
 
     @Autowired
-    private UserRoleDao userRoleDao;
+    private UserRoleMapper userRoleMapper;
+
 
     @Autowired
-    private UserDao userDao;
+    private UserService userService;
 
-    @Override
-    public UserRoleDao getRepository() {
-        return userRoleDao;
-    }
+
 
     @Override
     public List<UserRole> findByRoleId(String roleId) {
-        return userRoleDao.findByRoleId(roleId);
+        return userRoleMapper.findByRoleId(roleId);
     }
 
     @Override
     public List<User> findUserByRoleId(String roleId) {
 
-        List<UserRole> userRoleList = userRoleDao.findByRoleId(roleId);
+        List<UserRole> userRoleList = userRoleMapper.findByRoleId(roleId);
         List<User> list = new ArrayList<>();
         for (UserRole ur : userRoleList) {
-            User u = userDao.findById(ur.getUserId()).orElse(null);
+            User u = userService.getById(ur.getUserId());
             if (u != null && CommonConstant.USER_STATUS_NORMAL.equals(u.getStatus())) {
                 list.add(u);
             }
@@ -56,6 +56,6 @@ public class UserRoleServiceImpl implements UserRoleService {
 
     @Override
     public void deleteByUserId(String userId) {
-        userRoleDao.deleteByUserId(userId);
+        userRoleMapper.deleteByUserId(userId);
     }
 }

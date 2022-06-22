@@ -1,18 +1,19 @@
 package com.esmooc.legion.core.service;
 
 
-import com.esmooc.legion.core.base.LegionBaseService;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.esmooc.legion.core.common.vo.PageVo;
 import com.esmooc.legion.core.common.vo.SearchVo;
 import com.esmooc.legion.core.entity.Log;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+
 
 /**
  * 日志接口
  *
  * @author DaiMao
  */
-public interface LogService extends LegionBaseService<Log, String> {
+public interface LogService extends IService<Log> {
 
     /**
      * 分页搜索获取日志
@@ -23,7 +24,7 @@ public interface LogService extends LegionBaseService<Log, String> {
      * @param pageable
      * @return
      */
-    Page<Log> findByConfition(Integer type, String key, SearchVo searchVo, Pageable pageable);
+    IPage<Log> findByConfition(Integer type, String key, SearchVo searchVo, PageVo pageable);
 
     /**
      * 删除所有

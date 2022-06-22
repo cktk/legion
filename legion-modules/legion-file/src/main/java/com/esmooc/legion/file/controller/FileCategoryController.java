@@ -64,10 +64,10 @@ public class FileCategoryController {
         fileCategoryService.save(fileCategory);
         // 如果不是添加的一级 判断设置上级为父节点标识
         if (!CommonConstant.PARENT_ID.equals(fileCategory.getParentId())) {
-            FileCategory parent = fileCategoryService.get(fileCategory.getParentId());
+            FileCategory parent = fileCategoryService.getById(fileCategory.getParentId());
             if (parent.getIsParent() == null || !parent.getIsParent()) {
                 parent.setIsParent(true);
-                fileCategoryService.update(parent);
+                fileCategoryService.updateById(parent);
             }
         }
         return ResultUtil.success("添加成功");
@@ -81,19 +81,19 @@ public class FileCategoryController {
             return ResultUtil.error("上级节点不能为自己");
         }
         User user = SecurityUtil.getUser();
-        FileCategory old = fileCategoryService.get(fileCategory.getId());
+        FileCategory old = fileCategoryService.getById(fileCategory.getId());
         if (!user.getUsername().equals(old.getCreateBy())) {
             return ResultUtil.error("你无权编辑非本人文件");
         }
         String oldParentId = old.getParentId();
-        fileCategoryService.update(fileCategory);
+        fileCategoryService.updateById(fileCategory);
         // 如果该节点不是一级节点 且修改了级别 判断上级还有无子节点
         if (!CommonConstant.PARENT_ID.equals(oldParentId) && !oldParentId.equals(fileCategory.getParentId())) {
-            FileCategory parent = fileCategoryService.get(oldParentId);
+            FileCategory parent = fileCategoryService.getById(oldParentId);
             List<FileCategory> children = fileCategoryService.findByParentIdAndCreateBy(parent.getId(), user.getUsername());
             if (parent != null && (children == null || children.isEmpty())) {
                 parent.setIsParent(false);
-                fileCategoryService.update(parent);
+                fileCategoryService.updateById(parent);
             }
         }
         return ResultUtil.success("编辑成功");
@@ -106,13 +106,13 @@ public class FileCategoryController {
 
         User user = SecurityUtil.getUser();
         if (!CommonConstant.PARENT_ID.equals(categoryId)) {
-            FileCategory fileCategory = fileCategoryService.get(categoryId);
+            FileCategory fileCategory = fileCategoryService.getById(categoryId);
             if (!user.getUsername().equals(fileCategory.getCreateBy())) {
                 return ResultUtil.error("你无权移动至该文件夹");
             }
         }
         for (String id : ids) {
-            File file = fileService.get(id);
+            File file = fileService.getById(id);
             if (categoryId.equals(file.getCategoryId())) {
                 // 分类没变化 无需移动
                 continue;
@@ -141,22 +141,22 @@ public class FileCategoryController {
     public void deleteRecursion(String id, String[] ids, String username) {
 
         // 获得其父节点
-        FileCategory o = fileCategoryService.get(id);
+        FileCategory o = fileCategoryService.getById(id);
         if (username.equals(o.getCreateBy())) {
             throw new LegionException("你无权删除非本人文件");
         }
         FileCategory parent = null;
         if (StrUtil.isNotBlank(o.getParentId())) {
-            parent = fileCategoryService.findById(o.getParentId());
+            parent = fileCategoryService.getById(o.getParentId());
         }
-        fileCategoryService.delete(id);
+        fileCategoryService.removeById(id);
         fileService.deleteByCategoryId(id);
         // 判断父节点是否还有子节点
         if (parent != null) {
             List<FileCategory> children = fileCategoryService.findByParentIdAndCreateBy(parent.getId(), username);
             if (children == null || children.isEmpty()) {
                 parent.setIsParent(false);
-                fileCategoryService.update(parent);
+                fileCategoryService.updateById(parent);
             }
         }
         // 递归删除
@@ -183,7 +183,7 @@ public class FileCategoryController {
         // lambda表达式
         list.forEach(item -> {
             if (!CommonConstant.PARENT_ID.equals(item.getParentId())) {
-                FileCategory parent = fileCategoryService.get(item.getParentId());
+                FileCategory parent = fileCategoryService.getById(item.getParentId());
                 item.setParentTitle(parent.getTitle());
             } else {
                 item.setParentTitle("一级目录");

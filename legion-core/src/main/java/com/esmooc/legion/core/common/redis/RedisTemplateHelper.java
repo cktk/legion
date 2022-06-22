@@ -27,7 +27,7 @@ import java.util.function.Consumer;
 @Component
 public class RedisTemplateHelper {
 
-    @Autowired
+    @Autowired(required = false)
     private StringRedisTemplate redisTemplate;
 
     /**

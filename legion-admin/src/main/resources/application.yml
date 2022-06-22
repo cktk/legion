@@ -12,34 +12,36 @@ server:
   # 优雅停机 关闭容器后默认等待30秒继续执行没处理完的任务 避免数据不一致
   shutdown: graceful
 
+
 spring:
-  profiles:
-    active: dev
-  main:
-    #    重复的Bean覆盖掉 用来解决xssBean重复
-    allow-bean-definition-overriding: true
-  mvc:
-    pathmatch:
-      matching-strategy: ant_path_matcher #解决SpringBoot2.6.3与Swagger3版本冲突问题
-  autoconfigure:
-    exclude:
-      - com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure
-  lifecycle:
-    # 配置优雅停机后的缓冲器 最大等待时间
-    timeout-per-shutdown-phase: 10S
-  # 数据源
-  datasource:
-    # Druid StatViewServlet配置
-    type: com.alibaba.druid.pool.DruidDataSource
-    druid: # 这里只需要配置一个数据源 作为主数据源  剩下数据源去数据库进行加载 架构 t_datasource_conf
+  flyway:
+    enabled: true
+    # 最开始已经存在表结构，且不存在 flyway_schema_history 表时，需要设置为 true
+    baseline-on-migrate: true
+    clean-on-validation-error: true
+    # 迁移前校验 SQL 文件是否存在问题
+    validate-on-migrate: true
+    # 是否清空数据库
+    clean-disabled: true
+    # 校验路径下是否存在 SQL 文件
+    fail-on-missing-locations: false
+#    locations: classpath:db
+    init-sqls:
+      - SET @OLD_UNIQUE_CHECKS = @@UNIQUE_CHECKS, UNIQUE_CHECKS = 0;
+      - SET @OLD_FOREIGN_KEY_CHECKS = @@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS = 0;
+      - SET @OLD_SQL_MODE = @@SQL_MODE, SQL_MODE =
+        'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+      - CREATE SCHEMA IF NOT EXISTS `{schema}` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+  documentation:
+    druid:
       stat-view-servlet:
         # 默认true 内置监控页面首页/druid/index.html
         enabled: true
         url-pattern: /druid/*
         # 允许清空统计数据
         reset-enable: true
-        login-username: ${DRUID_USER:admin}
-        login-password: ${DRUID_PWD:admin}
+        login-username: root
+        login-password: root
         # IP白名单 多个逗号分隔
         allow:
         # IP黑名单
@@ -58,7 +60,36 @@ spring:
             # 允许多条sql同时执行
             multi-statement-allow: true
     dynamic:
-      lazy: true #默认false非懒启动，系统加载到数据源立即初始化连接池
+      druid:
+        initial-size: 5
+        min-idle: 5
+        maxActive: 20
+        maxWait: 60000
+        timeBetweenEvictionRunsMillis: 60000
+        minEvictableIdleTimeMillis: 300000
+        testWhileIdle: true
+        testOnBorrow: false
+        testOnReturn: false
+        poolPreparedStatements: true
+        maxPoolPreparedStatementPerConnectionSize: 20
+        filters: stat,wall,slf4j
+        connectionProperties: druid.stat.mergeSql\=true;druid.stat.slowSqlMillis\=5000
+  profiles:
+    active: dev
+  main:
+    #    重复的Bean覆盖掉 用来解决xssBean重复
+    allow-bean-definition-overriding: true
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher #解决SpringBoot2.6.3与Swagger3版本冲突问题
+  autoconfigure:
+    exclude:
+      #      - org.redisson.spring.starter.RedissonAutoConfiguration
+      #      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+      - com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure
+  lifecycle:
+    # 配置优雅停机后的缓冲器 最大等待时间
+    timeout-per-shutdown-phase: 10S
   jpa:
     # 显示sql
     show-sql: true

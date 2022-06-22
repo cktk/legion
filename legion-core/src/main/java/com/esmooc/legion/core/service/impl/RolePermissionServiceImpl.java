@@ -1,6 +1,7 @@
 package com.esmooc.legion.core.service.impl;
 
-import com.esmooc.legion.core.dao.RolePermissionDao;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.esmooc.legion.core.mapper.RolePermissionMapper;
 import com.esmooc.legion.core.entity.RolePermission;
 import com.esmooc.legion.core.service.RolePermissionService;
 import lombok.extern.slf4j.Slf4j;
@@ -18,31 +19,27 @@ import java.util.List;
 @Slf4j
 @Service
 @Transactional
-public class RolePermissionServiceImpl implements RolePermissionService {
+public class RolePermissionServiceImpl  extends ServiceImpl<RolePermissionMapper, RolePermission> implements RolePermissionService {
 
     @Autowired
-    private RolePermissionDao rolePermissionDao;
+    private RolePermissionMapper rolePermissionMapper;
 
-    @Override
-    public RolePermissionDao getRepository() {
-        return rolePermissionDao;
-    }
 
     @Override
     public List<RolePermission> findByPermissionId(String permissionId) {
 
-        return rolePermissionDao.findByPermissionId(permissionId);
+        return rolePermissionMapper.findByPermissionId(permissionId);
     }
 
     @Override
     public List<RolePermission> findByRoleId(String roleId) {
 
-        return rolePermissionDao.findByRoleId(roleId);
+        return rolePermissionMapper.findByRoleId(roleId);
     }
 
     @Override
     public void deleteByRoleId(String roleId) {
 
-        rolePermissionDao.deleteByRoleId(roleId);
+        rolePermissionMapper.deleteByRoleId(roleId);
     }
 }

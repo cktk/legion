@@ -9,22 +9,17 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 
 /**
  * @author DaiMao
  */
 @Data
 @Accessors(chain = true)
-@Entity
-@DynamicInsert
-@DynamicUpdate
-@Table(name = "t_file")
+
+
+
+// "t_file")
 @TableName("t_file")
 @ApiModel(value = "文件")
 public class File extends LegionBaseEntity {
@@ -50,7 +45,7 @@ public class File extends LegionBaseEntity {
     @ApiModelProperty(value = "存储位置 0本地 1七牛 2阿里 3腾讯 4MinIO")
     private Integer location;
 
-    @Transient
+    
     @TableField(exist = false)
     @ApiModelProperty(value = "上传者用户名")
     private String nickname;

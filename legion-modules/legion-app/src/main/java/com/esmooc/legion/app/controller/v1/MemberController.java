@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.persistence.EntityManager;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,8 +36,6 @@ public class MemberController {
 
 
 
-    @Autowired
-    private EntityManager entityManager;
 
     @RequestMapping(value = "/quickLogin", method = RequestMethod.POST)
     @ApiOperation(value = "手机号快捷登录/注册")
@@ -81,10 +78,7 @@ public class MemberController {
     @RequestMapping(value = "/info", method = RequestMethod.GET)
     @ApiOperation(value = "获取当前登录会员信息接口")
     public Result<Member> getUserInfo() {
-
         Member member = SecurityUtil.getCurrMember();
-        // 清除持久上下文环境 避免后面语句导致持久化
-        entityManager.detach(member);
         member.setPassword(null);
         return ResultUtil.data(member);
     }

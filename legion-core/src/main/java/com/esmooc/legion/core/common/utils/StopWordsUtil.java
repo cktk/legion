@@ -27,7 +27,7 @@ public class StopWordsUtil {
         if (wordTree == null) {
             // 初始加载数据
             wordTree = new WordTree();
-            stopWordService.getAll().forEach(e -> wordTree.addWord(e.getTitle()));
+            stopWordService.list().forEach(e -> wordTree.addWord(e.getTitle()));
         }
         return wordTree;
     }

@@ -123,7 +123,8 @@ public class DingdingController {
         Social dingding = socialService.findByOpenIdAndPlatform(openid, TYPE);
         if (dingding == null) {
             Social newding = new Social().setOpenId(openid).setUsername(nick).setPlatform(TYPE);
-            dingding = socialService.save(newding);
+             socialService.save(newding);
+             dingding=newding;
         }
 
         String url = "";

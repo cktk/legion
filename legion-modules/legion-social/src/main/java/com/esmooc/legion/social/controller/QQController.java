@@ -135,7 +135,9 @@ public class QQController {
         Social qq = socialService.findByOpenIdAndPlatform(openId, TYPE);
         if (qq == null) {
             Social newqq = new Social().setOpenId(openId).setUsername(q.getNickname()).setAvatar(q.getFigureurl_1()).setPlatform(TYPE);
-            qq = socialService.save(newqq);
+           socialService.save(newqq);
+           qq=newqq;
+
         }
 
         String url = "";

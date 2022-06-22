@@ -1,7 +1,9 @@
 package com.esmooc.legion.core.service.impl;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.esmooc.legion.core.common.utils.SecurityUtil;
-import com.esmooc.legion.core.dao.DepartmentDao;
+import com.esmooc.legion.core.entity.Setting;
+import com.esmooc.legion.core.mapper.DepartmentMapper;
 import com.esmooc.legion.core.entity.Department;
 import com.esmooc.legion.core.service.DepartmentService;
 import lombok.extern.slf4j.Slf4j;
@@ -19,16 +21,10 @@ import java.util.List;
 @Slf4j
 @Service
 @Transactional
-public class DepartmentServiceImpl implements DepartmentService {
+public class DepartmentServiceImpl extends ServiceImpl<DepartmentMapper, Department> implements DepartmentService {
 
     @Autowired
-    private DepartmentDao departmentDao;
-
-
-    @Override
-    public DepartmentDao getRepository() {
-        return departmentDao;
-    }
+    private DepartmentMapper departmentMapper;
 
     @Override
     public List<Department> findByParentIdOrderBySortOrder(String parentId, Boolean openDataFilter) {
@@ -36,15 +32,15 @@ public class DepartmentServiceImpl implements DepartmentService {
         // 数据权限
         List<String> depIds = SecurityUtil.getDeparmentIds();
         if (depIds != null && depIds.size() > 0 && openDataFilter) {
-            return departmentDao.findByParentIdAndIdInOrderBySortOrder(parentId, depIds);
+            return departmentMapper.findByParentIdAndIdInOrderBySortOrder(parentId, depIds);
         }
-        return departmentDao.findByParentIdOrderBySortOrder(parentId);
+        return departmentMapper.findByParentIdOrderBySortOrder(parentId);
     }
 
     @Override
     public List<Department> findByParentIdAndStatusOrderBySortOrder(String parentId, Integer status) {
 
-        return departmentDao.findByParentIdAndStatusOrderBySortOrder(parentId, status);
+        return departmentMapper.findByParentIdAndStatusOrderBySortOrder(parentId, status);
     }
 
     @Override
@@ -53,8 +49,8 @@ public class DepartmentServiceImpl implements DepartmentService {
         // 数据权限
         List<String> depIds = SecurityUtil.getDeparmentIds();
         if (depIds != null && depIds.size() > 0 && openDataFilter) {
-            return departmentDao.findByTitleLikeAndIdInOrderBySortOrder(title, depIds);
+            return departmentMapper.findByTitleLikeAndIdInOrderBySortOrder(title, depIds);
         }
-        return departmentDao.findByTitleLikeOrderBySortOrder(title);
+        return departmentMapper.findByTitleLikeOrderBySortOrder(title);
     }
 }

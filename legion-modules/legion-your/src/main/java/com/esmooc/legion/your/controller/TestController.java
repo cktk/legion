@@ -91,7 +91,3 @@ public class TestController {
 //        alter user his default tablespace his temporary tablespace his_tmp;
 //ALTER DATABASE DATAFILE '/opt/oracle/oradata/ORACLE/ORCL/HIS.dbf' AUTOEXTEND ON;
 //ALTER DATABASE DATAFILE '/opt/oracle/oradata/ORACLE/ORCL/HIS.dbf' AUTOEXTEND ON NEXT 200M ;
-
-
-
-

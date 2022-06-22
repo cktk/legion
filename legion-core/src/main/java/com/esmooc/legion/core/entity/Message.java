@@ -6,21 +6,12 @@ import com.esmooc.legion.core.base.LegionBaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 
 /**
  * @author DaiMao
  */
 @Data
-@Entity
-@DynamicInsert
-@DynamicUpdate
-@Table(name = "t_message")
 @TableName("t_message")
 @ApiModel(value = "消息")
 public class Message extends LegionBaseEntity {
@@ -42,17 +33,16 @@ public class Message extends LegionBaseEntity {
     @ApiModelProperty(value = "是否为模版消息")
     private Boolean isTemplate;
 
-    @Transient
     @TableField(exist = false)
     @ApiModelProperty(value = "纯文本内容")
     private String contentText;
 
-    @Transient
+    
     @TableField(exist = false)
     @ApiModelProperty(value = "发送范围")
     private Integer range;
 
-    @Transient
+    
     @TableField(exist = false)
     @ApiModelProperty(value = "发送指定用户id")
     private String[] userIds;

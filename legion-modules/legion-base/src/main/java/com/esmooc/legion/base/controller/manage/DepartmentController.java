@@ -1,15 +1,15 @@
 package com.esmooc.legion.base.controller.manage;
 
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONUtil;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
 import com.esmooc.legion.core.common.utils.CommonUtil;
-import com.esmooc.legion.core.common.utils.HibernateProxyTypeAdapter;
 import com.esmooc.legion.core.common.utils.ResultUtil;
 import com.esmooc.legion.core.common.utils.SecurityUtil;
 import com.esmooc.legion.core.common.vo.Result;
-import com.esmooc.legion.core.dao.mapper.DeleteMapper;
+import com.esmooc.legion.core.mapper.DeleteMapper;
 import com.esmooc.legion.core.entity.Department;
 import com.esmooc.legion.core.entity.DepartmentHeader;
 import com.esmooc.legion.core.entity.User;
@@ -85,8 +85,7 @@ public class DepartmentController {
         }
         list = departmentService.findByParentIdOrderBySortOrder(parentId, openDataFilter);
         setInfo(list);
-        redisTemplate.set(key,
-                new GsonBuilder().registerTypeAdapterFactory(HibernateProxyTypeAdapter.FACTORY).create().toJson(list), 15L, TimeUnit.DAYS);
+        redisTemplate.set(key, JSONUtil.toJsonStr(list), 15L, TimeUnit.DAYS);
         return ResultUtil.data(list);
     }
 
@@ -94,13 +93,13 @@ public class DepartmentController {
     @ApiOperation(value = "添加")
     public Result<Object> add(Department department) {
 
-        Department d = departmentService.save(department);
+         departmentService.save(department);
         // 如果不是添加的一级 判断设置上级为父节点标识
         if (!CommonConstant.PARENT_ID.equals(department.getParentId())) {
-            Department parent = departmentService.get(department.getParentId());
+            Department parent = departmentService.getById(department.getParentId());
             if (parent.getIsParent() == null || !parent.getIsParent()) {
                 parent.setIsParent(true);
-                departmentService.update(parent);
+                departmentService.updateById(parent);
             }
         }
         // 更新缓存
@@ -117,10 +116,11 @@ public class DepartmentController {
         if (department.getId().equals(department.getParentId())) {
             return ResultUtil.error("上级节点不能为自己");
         }
-        Department old = departmentService.get(department.getId());
+        Department old = departmentService.getById(department.getId());
         String oldParentId = old.getParentId();
         String oldTitle = old.getTitle();
-        Department d = departmentService.update(department);
+         departmentService.updateById(department);
+        Department d =department;
         // 先删除原数据
         departmentHeaderService.deleteByDepartmentId(department.getId());
         List<DepartmentHeader> headers = new ArrayList<>();
@@ -139,14 +139,14 @@ public class DepartmentController {
             }
         }
         // 批量保存
-        departmentHeaderService.saveOrUpdateAll(headers);
+        departmentHeaderService.saveOrUpdateBatch(headers);
         // 如果该节点不是一级节点 且修改了级别 判断上级还有无子节点
         if (!CommonConstant.PARENT_ID.equals(oldParentId) && !oldParentId.equals(department.getParentId())) {
-            Department parent = departmentService.get(oldParentId);
+            Department parent = departmentService.getById(oldParentId);
             List<Department> children = departmentService.findByParentIdOrderBySortOrder(parent.getId(), false);
             if (parent != null && (children == null || children.isEmpty())) {
                 parent.setIsParent(false);
-                departmentService.update(parent);
+                departmentService.updateById(parent);
             }
         }
         // 若修改了部门名称
@@ -181,12 +181,12 @@ public class DepartmentController {
             throw new LegionException("删除失败，包含正被用户使用关联的部门");
         }
         // 获得其父节点
-        Department dep = departmentService.get(id);
+        Department dep = departmentService.getById(id);
         Department parent = null;
         if (StrUtil.isNotBlank(dep.getParentId())) {
-            parent = departmentService.findById(dep.getParentId());
+            parent = departmentService.getById(dep.getParentId());
         }
-        departmentService.delete(id);
+        departmentService.removeById(id);
         // 删除关联数据权限
         roleDepartmentService.deleteByDepartmentId(id);
         // 删除关联部门负责人
@@ -198,7 +198,7 @@ public class DepartmentController {
             List<Department> children = departmentService.findByParentIdOrderBySortOrder(parent.getId(), false);
             if (children == null || children.isEmpty()) {
                 parent.setIsParent(false);
-                departmentService.update(parent);
+                departmentService.updateById(parent);
             }
         }
         // 递归删除
@@ -225,7 +225,7 @@ public class DepartmentController {
         // lambda表达式
         list.forEach(item -> {
             if (!CommonConstant.PARENT_ID.equals(item.getParentId())) {
-                Department parent = departmentService.get(item.getParentId());
+                Department parent = departmentService.getById(item.getParentId());
                 item.setParentTitle(parent.getTitle());
             } else {
                 item.setParentTitle("一级部门");

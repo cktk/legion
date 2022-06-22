@@ -1,7 +1,7 @@
 package com.esmooc.legion.file.service;
 
 
-import com.esmooc.legion.core.base.LegionBaseService;
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.esmooc.legion.file.entity.FileCategory;
 
 import java.util.List;
@@ -11,7 +11,7 @@ import java.util.List;
  *
  * @author Exrick
  */
-public interface FileCategoryService extends LegionBaseService<FileCategory, String> {
+public interface FileCategoryService extends IService<FileCategory> {
 
 
     /**

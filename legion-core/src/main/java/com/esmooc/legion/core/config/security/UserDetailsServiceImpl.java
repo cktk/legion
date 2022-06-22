@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    @Autowired
+    @Autowired(required=false)
     private RedisTemplateHelper redisTemplate;
 
     @Autowired

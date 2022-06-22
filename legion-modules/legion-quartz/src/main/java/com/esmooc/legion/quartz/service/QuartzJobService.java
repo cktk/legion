@@ -1,10 +1,10 @@
 package com.esmooc.legion.quartz.service;
 
 
-import com.esmooc.legion.core.base.LegionBaseService;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.esmooc.legion.core.common.vo.PageVo;
 import com.esmooc.legion.quartz.entity.QuartzJob;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -13,7 +13,7 @@ import java.util.List;
  *
  * @author DaiMao
  */
-public interface QuartzJobService extends LegionBaseService<QuartzJob, String> {
+public interface QuartzJobService extends IService<QuartzJob> {
 
     /**
      * 通过类名获取
@@ -30,5 +30,5 @@ public interface QuartzJobService extends LegionBaseService<QuartzJob, String> {
      * @param pageable
      * @return
      */
-    Page<QuartzJob> findByCondition(String key, Pageable pageable);
+    IPage<QuartzJob> findByCondition(String key, PageVo pageable);
 }

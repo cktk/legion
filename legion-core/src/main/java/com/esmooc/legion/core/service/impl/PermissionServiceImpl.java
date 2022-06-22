@@ -1,6 +1,8 @@
 package com.esmooc.legion.core.service.impl;
 
-import com.esmooc.legion.core.dao.PermissionDao;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.esmooc.legion.core.mapper.PermissionMapper;
 import com.esmooc.legion.core.entity.Permission;
 import com.esmooc.legion.core.service.PermissionService;
 import lombok.extern.slf4j.Slf4j;
@@ -18,37 +20,39 @@ import java.util.List;
 @Slf4j
 @Service
 @Transactional
-public class PermissionServiceImpl implements PermissionService {
+public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permission> implements PermissionService {
 
     @Autowired
-    private PermissionDao permissionDao;
+    private PermissionMapper permissionMapper;
 
-    @Override
-    public PermissionDao getRepository() {
-        return permissionDao;
-    }
 
     @Override
     public List<Permission> findByParentIdOrderBySortOrder(String parentId) {
 
-        return permissionDao.findByParentIdOrderBySortOrder(parentId);
+        QueryWrapper<Permission> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(Permission::getParentId, parentId).orderBy(true,true,Permission::getSortOrder );
+        return this.list(queryWrapper);
     }
 
     @Override
     public List<Permission> findByTypeAndStatusOrderBySortOrder(Integer type, Integer status) {
-
-        return permissionDao.findByTypeAndStatusOrderBySortOrder(type, status);
+        return  this.list(new QueryWrapper<Permission>().lambda().eq(Permission::getType, type)
+                .eq(Permission::getStatus,status).orderBy(true,true,Permission::getSortOrder));
     }
 
     @Override
     public List<Permission> findByTitle(String title) {
 
-        return permissionDao.findByTitle(title);
+        return  this.list(new QueryWrapper<Permission>().lambda()
+                .eq(Permission::getTitle,title));
+
     }
 
     @Override
     public List<Permission> findByTitleLikeOrderBySortOrder(String title) {
 
-        return permissionDao.findByTitleLikeOrderBySortOrder(title);
+        return  this.list(new QueryWrapper<Permission>().lambda()
+                .like(Permission::getTitle,title).orderBy(true,true, Permission::getTitle));
+
     }
 }

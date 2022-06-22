@@ -129,7 +129,8 @@ public class WorkWechatController {
         Social workwechat = socialService.findByOpenIdAndPlatform(userId, TYPE);
         if (workwechat == null) {
             Social neww = new Social().setOpenId(userId).setUsername(w.getName()).setAvatar(w.getAvatar()).setPlatform(TYPE);
-            workwechat = socialService.save(neww);
+             socialService.save(neww);
+            workwechat=neww;
         }
 
         String url = "";

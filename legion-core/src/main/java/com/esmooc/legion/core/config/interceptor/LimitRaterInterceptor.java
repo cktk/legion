@@ -85,16 +85,16 @@ public class LimitRaterInterceptor implements HandlerInterceptor {
             }
         }
 
-        // IP黑名单
-        OtherSetting os = getOtherSetting();
-        if (os != null && StrUtil.isNotBlank(os.getBlacklist())) {
-            String[] list = os.getBlacklist().split("\n");
-            for (String item : list) {
-                if (item.equals(ip)) {
-                    throw new LimitException("您的IP已被添加至黑名单，请滚");
-                }
-            }
-        }
+//        // IP黑名单
+//        OtherSetting os = getOtherSetting();
+//        if (os != null && StrUtil.isNotBlank(os.getBlacklist())) {
+//            String[] list = os.getBlacklist().split("\n");
+//            for (String item : list) {
+//                if (item.equals(ip)) {
+//                    throw new LimitException("您的IP已被添加至黑名单，请滚");
+//                }
+//            }
+//        }
 
         try {
             HandlerMethod handlerMethod = (HandlerMethod) handler;

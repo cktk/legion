@@ -1,7 +1,6 @@
 package com.esmooc.legion.base.service;
 
 import com.esmooc.legion.base.entity.Dict;
-import com.esmooc.legion.core.base.LegionBaseService;
 
 import java.util.List;
 

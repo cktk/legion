@@ -1,5 +1,10 @@
 # 主要使用的开源组件
 
+# 任务 
+
+干掉该死的JPA
+
+
 # Legion 使用的开源组件
 
 Legion 完全基于开源产品打造。以下我们从两个方面来阐述 Legion 使用了哪些开源产品和工具： 升级SpringBoot版本至SpringBoot2.6.3

@@ -1,10 +1,10 @@
 package com.esmooc.legion.core.service;
 
 
-import com.esmooc.legion.core.base.LegionBaseService;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.esmooc.legion.core.common.vo.PageVo;
 import com.esmooc.legion.core.entity.Role;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -13,7 +13,7 @@ import java.util.List;
  *
  * @author DaiMao
  */
-public interface RoleService extends LegionBaseService<Role, String> {
+public interface RoleService extends IService<Role> {
 
     /**
      * 获取默认角色
@@ -30,5 +30,5 @@ public interface RoleService extends LegionBaseService<Role, String> {
      * @param pageable
      * @return
      */
-    Page<Role> findByCondition(String key, Pageable pageable);
+    IPage<Role> findByCondition(String key, PageVo pageable);
 }

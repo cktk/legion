@@ -123,7 +123,8 @@ public class GithubController {
         Social github = socialService.findByOpenIdAndPlatform(gu.getId(), TYPE);
         if (github == null) {
             Social g = new Social().setOpenId(gu.getId()).setUsername(gu.getLogin()).setAvatar(gu.getAvatar_url()).setPlatform(TYPE);
-            github = socialService.save(g);
+            socialService.save(g);
+            github=g;
         }
 
         String url = "";

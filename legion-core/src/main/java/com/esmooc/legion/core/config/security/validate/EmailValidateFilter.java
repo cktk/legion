@@ -30,7 +30,7 @@ public class EmailValidateFilter extends OncePerRequestFilter {
     @Autowired
     private CaptchaProperties captchaProperties;
 
-    @Autowired
+@Autowired(required=false)
     private RedisTemplateHelper redisTemplate;
 
     @Autowired

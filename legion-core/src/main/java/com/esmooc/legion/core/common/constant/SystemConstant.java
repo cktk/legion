@@ -26,6 +26,6 @@ public interface SystemConstant {
     String X_Real_IP="X-Real-IP";
     String IP_V6="0:0:0:0:0:0:0:1";
     String IP_V4="127.0.0.1";
-
+     String KAPTCHA_SESSION_KEY = "KAPTCHA_SESSION_KEY:";
 
 }

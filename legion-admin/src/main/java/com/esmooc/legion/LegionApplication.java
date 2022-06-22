@@ -2,7 +2,6 @@ package com.esmooc.legion;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.date.TimeInterval;
-import com.esmooc.legion.core.datasource.annotation.EnableDynamicDataSource;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
@@ -11,11 +10,14 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import springfox.documentation.oas.annotations.EnableOpenApi;
 
+import java.sql.SQLException;
+
 /**
  * @author DaiMao
  */
 
-@EnableDynamicDataSource
+//@EnableDynamicDataSource
+
 @SpringBootApplication(proxyBeanMethods = false)
 // 启用JPA审计
 @EnableJpaAuditing
@@ -28,9 +30,11 @@ import springfox.documentation.oas.annotations.EnableOpenApi;
 //启用Swagger3
 @EnableOpenApi
 public class LegionApplication {
-    public static void main(String[] args) {
+
+    public static void main(String[] args)  {
         TimeInterval timer = DateUtil.timer();
         SpringApplication.run(LegionApplication.class, args);
         System.err.println("启动时间 "+ timer.intervalPretty());
+
     }
 }

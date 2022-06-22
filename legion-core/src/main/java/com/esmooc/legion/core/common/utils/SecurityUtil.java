@@ -18,7 +18,7 @@ import com.esmooc.legion.core.entity.User;
 import com.esmooc.legion.core.service.DepartmentService;
 import com.esmooc.legion.core.service.MemberService;
 import com.esmooc.legion.core.service.UserService;
-import com.esmooc.legion.core.service.mybatis.IUserRoleService;
+import com.esmooc.legion.core.service.IUserRoleService;
 import com.esmooc.legion.core.vo.PermissionDTO;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -31,14 +31,12 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 /**
  * @author DaiMao
@@ -230,7 +228,7 @@ public class SecurityUtil {
 
     private  static void getDepRecursion(String departmentId, List<String> ids) {
 
-        Department department = departmentService.get(departmentId);
+        Department department = departmentService.getById(departmentId);
         ids.add(department.getId());
         if (department.getIsParent() != null && department.getIsParent()) {
             // 获取其下级

@@ -258,7 +258,7 @@ public class Oauth2Controller {
 
     private Client getClient(String client_id) {
 
-        Client client = clientService.findById(client_id);
+        Client client = clientService.getById(client_id);
         if (client == null) {
             throw new LegionException("客户端client_id不存在");
         }

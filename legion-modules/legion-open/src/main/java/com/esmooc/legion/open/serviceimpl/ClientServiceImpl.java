@@ -2,9 +2,14 @@ package com.esmooc.legion.open.serviceimpl;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
+import com.esmooc.legion.core.common.utils.PageUtil;
+import com.esmooc.legion.core.common.vo.PageVo;
 import com.esmooc.legion.core.common.vo.SearchVo;
-import com.esmooc.legion.open.dao.ClientDao;
+import com.esmooc.legion.open.dao.ClientMapper;
 import com.esmooc.legion.open.entity.Client;
 import com.esmooc.legion.open.service.ClientService;
 import lombok.extern.slf4j.Slf4j;
@@ -12,18 +17,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.lang.Nullable;
+
+
+
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -38,83 +38,58 @@ import java.util.concurrent.TimeUnit;
 @Service
 @Transactional
 @CacheConfig(cacheNames = "client")
-public class ClientServiceImpl implements ClientService {
+public class ClientServiceImpl extends ServiceImpl<ClientMapper, Client> implements ClientService {
 
     @Autowired
-    private ClientDao clientDao;
+    private ClientMapper clientMapper;
 
     @Autowired
     private RedisTemplateHelper redisTemplate;
 
-    @Override
-    public ClientDao getRepository() {
-        return clientDao;
-    }
 
-    @Override
     @Cacheable(key = "#id")
     public Client get(String id) {
-
         // 避免缓存穿透
         String result = redisTemplate.get("client::" + id);
         if ("null".equals(result)) {
             return null;
         }
-        Client client = clientDao.findById(id).orElse(null);
+        Client client = this.getById(id);
         if (client == null) {
             redisTemplate.set("client::" + id, "null", 5L, TimeUnit.MINUTES);
         }
         return client;
     }
 
-    @Override
     @CacheEvict(key = "#client.id")
     public Client update(Client client) {
-
-        return clientDao.saveAndFlush(client);
+        if (this.updateById(client)){
+            return client;
+        }
+        return null;
     }
 
-    @Override
     @CacheEvict(key = "#id")
     public void delete(String id) {
 
-        clientDao.deleteById(id);
+        clientMapper.deleteById(id);
     }
 
     @Override
-    public Page<Client> findByCondition(Client client, SearchVo searchVo, Pageable pageable) {
+    public IPage<Client> findByCondition(Client client, SearchVo searchVo, PageVo pageable) {
 
-        return clientDao.findAll(new Specification<Client>() {
-            @Nullable
-            @Override
-            public Predicate toPredicate(Root<Client> root, CriteriaQuery<?> cq, CriteriaBuilder cb) {
+        QueryWrapper<Client> queryWrapper = new QueryWrapper<>();
 
-                Path<String> nameField = root.get("name");
-                Path<String> homeUriField = root.get("homeUri");
-                Path<Date> createTimeField = root.get("createTime");
+        queryWrapper.lambda()
+                .like(StrUtil.isNotBlank(client.getName()),Client::getName ,client.getName() ).or()
+                .like(StrUtil.isNotBlank(client.getHomeUri()),Client::getHomeUri ,client.getHomeUri() );
+        if (StrUtil.isNotBlank(searchVo.getStartDate()) && StrUtil.isNotBlank(searchVo.getEndDate())) {
+            Date start = DateUtil.parse(searchVo.getStartDate());
+            Date end = DateUtil.parse(searchVo.getEndDate());
+            queryWrapper.lambda().between(Client::getCreateTime, start, end);
+        }
+        return this.page(PageUtil.initMpPage(pageable),queryWrapper);
 
-                List<Predicate> list = new ArrayList<>();
-
-                //模糊搜素
-                if (StrUtil.isNotBlank(client.getName())) {
-                    list.add(cb.like(nameField, '%' + client.getName() + '%'));
-                }
-                if (StrUtil.isNotBlank(client.getHomeUri())) {
-                    list.add(cb.like(homeUriField, '%' + client.getHomeUri() + '%'));
-                }
-
-                //创建时间
-                if (StrUtil.isNotBlank(searchVo.getStartDate()) && StrUtil.isNotBlank(searchVo.getEndDate())) {
-                    Date start = DateUtil.parse(searchVo.getStartDate());
-                    Date end = DateUtil.parse(searchVo.getEndDate());
-                    list.add(cb.between(createTimeField, start, DateUtil.endOfDay(end)));
-                }
-
-                Predicate[] arr = new Predicate[list.size()];
-                cq.where(list.toArray(arr));
-                return null;
-            }
-        }, pageable);
     }
 
 }

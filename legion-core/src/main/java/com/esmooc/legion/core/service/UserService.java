@@ -1,13 +1,15 @@
 package com.esmooc.legion.core.service;
 
 
-import com.esmooc.legion.core.base.LegionBaseService;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.esmooc.legion.core.common.vo.PageVo;
 import com.esmooc.legion.core.common.vo.SearchVo;
 import com.esmooc.legion.core.entity.User;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+
+
 
 import java.util.List;
 
@@ -17,7 +19,7 @@ import java.util.List;
  * @author DaiMao
  */
 @CacheConfig(cacheNames = "user")
-public interface UserService extends LegionBaseService<User, String> {
+public interface UserService extends IService<User> {
 
     /**
      * 通过用户名获取用户
@@ -52,7 +54,7 @@ public interface UserService extends LegionBaseService<User, String> {
      * @param pageable
      * @return
      */
-    Page<User> findByCondition(User user, SearchVo searchVo, Pageable pageable);
+    IPage<User> findByCondition(User user, SearchVo searchVo, PageVo pageable);
 
     /**
      * 通过部门id获取

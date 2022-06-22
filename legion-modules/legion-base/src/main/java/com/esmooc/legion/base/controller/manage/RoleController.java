@@ -6,7 +6,7 @@ import com.esmooc.legion.core.common.utils.PageUtil;
 import com.esmooc.legion.core.common.utils.ResultUtil;
 import com.esmooc.legion.core.common.vo.PageVo;
 import com.esmooc.legion.core.common.vo.Result;
-import com.esmooc.legion.core.dao.mapper.DeleteMapper;
+import com.esmooc.legion.core.mapper.DeleteMapper;
 import com.esmooc.legion.core.entity.Role;
 import com.esmooc.legion.core.entity.RoleDepartment;
 import com.esmooc.legion.core.entity.RolePermission;
@@ -19,7 +19,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
+
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;

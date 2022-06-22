@@ -12,20 +12,12 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import java.util.Date;
 
 /**
@@ -33,20 +25,14 @@ import java.util.Date;
  */
 @Data
 @Accessors(chain = true)
-@Entity
-@DynamicInsert
-@DynamicUpdate
-@Table(name = "t_user_role")
 @TableName("t_user_role")
 @ApiModel(value = "用户角色")
 public class UserRole {
 
     private static final long serialVersionUID = 1L;
 
-    @Id
     @TableId(value = "id", type = IdType.AUTO)
     @ApiModelProperty(value = "唯一标识")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
 
     @ApiModelProperty(value = "创建者")
@@ -95,8 +81,6 @@ public class UserRole {
     @ApiModelProperty(value = "角色唯一id")
     @TableField(value = "role_id")
     private String roleId;
-
-    @Transient
     @TableField(exist = false, value = "role_name")
     @ApiModelProperty(value = "角色名")
     private String roleName;

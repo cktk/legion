@@ -7,22 +7,13 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 
 /**
  * @author DaiMao
  */
 @Data
 @Accessors(chain = true)
-@Entity
-@DynamicInsert
-@DynamicUpdate
-@Table(name = "t_social")
 @TableName("t_social")
 @ApiModel(value = "文件")
 public class Social extends LegionBaseEntity {
@@ -42,12 +33,12 @@ public class Social extends LegionBaseEntity {
     @ApiModelProperty(value = "绑定用户账号")
     private String relateUsername;
 
-    @Transient
+
     @TableField(exist = false)
     @ApiModelProperty(value = "是否绑定")
     private Boolean isRelated;
 
-    @Transient
+
     @TableField(exist = false)
     @ApiModelProperty(value = "绑定用户名")
     private String nickname;

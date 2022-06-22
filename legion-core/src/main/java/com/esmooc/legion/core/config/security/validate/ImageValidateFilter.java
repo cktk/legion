@@ -2,6 +2,7 @@ package com.esmooc.legion.core.config.security.validate;
 
 import cn.hutool.core.util.StrUtil;
 import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
+import com.esmooc.legion.core.common.utils.CaptchaUtils;
 import com.esmooc.legion.core.common.utils.ResponseUtil;
 import com.esmooc.legion.core.config.properties.CaptchaProperties;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +29,7 @@ public class ImageValidateFilter extends OncePerRequestFilter {
     @Autowired
     private CaptchaProperties captchaProperties;
 
-    @Autowired
+@Autowired(required=false)
     private RedisTemplateHelper redisTemplate;
 
     @Autowired
@@ -53,7 +54,7 @@ public class ImageValidateFilter extends OncePerRequestFilter {
                 ResponseUtil.out(response, ResponseUtil.resultMap(false, 500, "请传入图形验证码所需参数captchaId或code"));
                 return;
             }
-            String redisCode = redisTemplate.get(captchaId);
+            String redisCode = CaptchaUtils.getCode(request,redisTemplate,captchaId,true);
             if (StrUtil.isBlank(redisCode)) {
                 ResponseUtil.out(response, ResponseUtil.resultMap(false, 500, "验证码已过期，请重新获取"));
                 return;
@@ -63,8 +64,7 @@ public class ImageValidateFilter extends OncePerRequestFilter {
                 ResponseUtil.out(response, ResponseUtil.resultMap(false, 500, "图形验证码输入错误"));
                 return;
             }
-            // 已验证清除key
-            redisTemplate.delete(captchaId);
+
             // 验证成功 放行
             chain.doFilter(request, response);
             return;

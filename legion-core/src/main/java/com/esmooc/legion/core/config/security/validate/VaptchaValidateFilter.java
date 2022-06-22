@@ -45,7 +45,7 @@ public class VaptchaValidateFilter extends OncePerRequestFilter {
     @Autowired
     private PathMatcher pathMatcher;
 
-    @Autowired
+@Autowired(required=false)
     private RedisTemplateHelper redisTemplate;
 
     @Override

@@ -1,6 +1,6 @@
 package com.esmooc.legion.base.service.impl;
 
-import com.esmooc.legion.base.dao.DictDao;
+import com.esmooc.legion.base.dao.DictMapper;
 import com.esmooc.legion.base.entity.Dict;
 import com.esmooc.legion.base.service.DictService;
 import lombok.extern.slf4j.Slf4j;
@@ -21,28 +21,28 @@ import java.util.List;
 public class DictServiceImpl implements DictService {
 
     @Autowired
-    private DictDao dictDao;
+    private DictMapper dictMapper;
 
     @Override
-    public DictDao getRepository() {
-        return dictDao;
+    public DictMapper getRepository() {
+        return dictMapper;
     }
 
     @Override
     public List<Dict> findAllOrderBySortOrder() {
 
-        return dictDao.findAllOrderBySortOrder();
+        return dictMapper.findAllOrderBySortOrder();
     }
 
     @Override
     public Dict findByType(String type) {
 
-        return dictDao.findByType(type);
+        return dictMapper.findByType(type);
     }
 
     @Override
     public List<Dict> findByTitleOrTypeLike(String key) {
 
-        return dictDao.findByTitleOrTypeLike(key);
+        return dictMapper.findByTitleOrTypeLike(key);
     }
 }

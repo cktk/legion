@@ -7,12 +7,13 @@ knife4j:
 
 spring:
   datasource:
-    druid: # 这里只需要配置一个数据源 作为主数据源  剩下数据源去数据库进行加载 架构 t_datasource_conf
-      driver-class-name: com.mysql.cj.jdbc.Driver
-      url: jdbc:mysql://${MYSQL_HOST:127.0.0.1}:${MYSQL_PROT:3306}/${MYSQL_SCHEMA:legion}?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=GMT%2B8&nullCatalogMeansCurrent=true&allowPublicKeyRetrieval=true
-      username: ${MYSQL_USER:root}
-      password: ${MYSQL_PWD:root}
-      query-ds-sql: 'select * from t_datasource_conf where del_flag = 0'
+      datasource:
+        master:
+          url: jdbc:mysql://127.0.0.1:3306/legion1?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2B8
+          username: root
+          password: root
+          driver-class-name: com.mysql.cj.jdbc.Driver
+      lazy: true #默认false非懒启动，系统加载到数据源立即初始化连接池
   redis:
     host: ${REDIS_HOST:127.0.0.1}
     password: ${REDIS_PWD:123456}

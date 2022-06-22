@@ -13,14 +13,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -33,10 +27,6 @@ import java.util.List;
  */
 @Data
 @Accessors(chain = true)
-@Entity
-@DynamicInsert
-@DynamicUpdate
-@Table(name = "t_user")
 @TableName("t_user")
 @ApiModel(value = "用户")
 public class User extends LegionBaseEntity {
@@ -44,7 +34,6 @@ public class User extends LegionBaseEntity {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "登录名")
-    @Column(unique = true, nullable = false)
     @Pattern(regexp = RegexPool.GENERAL, message = "登录账号不能包含特殊字符且长度不能>16")
     private String username;
 
@@ -75,7 +64,6 @@ public class User extends LegionBaseEntity {
     private String sex;
 
     @ApiModelProperty(value = "密码强度")
-    @Column(length = 2)
     private String passStrength;
 
     @ApiModelProperty(value = "用户头像")
@@ -101,17 +89,14 @@ public class User extends LegionBaseEntity {
     @ApiModelProperty(value = "生日")
     private Date birth;
 
-    @Transient
     @TableField(exist = false)
     @ApiModelProperty(value = "用户拥有角色")
     private List<RoleDTO> roles;
 
-    @Transient
     @TableField(exist = false)
     @ApiModelProperty(value = "用户拥有的权限")
     private List<PermissionDTO> permissions;
 
-    @Transient
     @TableField(exist = false)
     @ApiModelProperty(value = "导入数据时使用")
     private Integer defaultRole;

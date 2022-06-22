@@ -125,7 +125,8 @@ public class WechatController {
         Social wechat = socialService.findByOpenIdAndPlatform(wu.getOpenid(), TYPE);
         if (wechat == null) {
             Social w = new Social().setOpenId(wu.getOpenid()).setUsername(wu.getNickname()).setAvatar(wu.getHeadimgurl()).setPlatform(TYPE);
-            wechat = socialService.save(w);
+            socialService.save(w);
+            wechat =w ;
         }
 
         String url = "";

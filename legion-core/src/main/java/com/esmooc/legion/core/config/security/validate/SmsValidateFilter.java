@@ -29,7 +29,7 @@ public class SmsValidateFilter extends OncePerRequestFilter {
     @Autowired
     private CaptchaProperties captchaProperties;
 
-    @Autowired
+@Autowired(required=false)
     private RedisTemplateHelper redisTemplate;
 
     @Autowired

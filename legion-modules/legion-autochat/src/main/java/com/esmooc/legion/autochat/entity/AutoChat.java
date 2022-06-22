@@ -7,24 +7,18 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+
 import java.math.BigDecimal;
 
 /**
  * @author DaiMao
  */
 @Data
-@Entity
-@DynamicInsert
-@DynamicUpdate
+
+
+
 @Accessors(chain = true)
-@Table(name = "t_auto_chat")
 @TableName("t_auto_chat")
 @ApiModel(value = "问答助手客服")
 public class AutoChat extends LegionBaseEntity {
@@ -53,10 +47,9 @@ public class AutoChat extends LegionBaseEntity {
     private Integer bad = 0;
 
     @ApiModelProperty(value = "排序值")
-    @Column(precision = 10, scale = 2)
     private BigDecimal sortOrder;
 
-    @Transient
+
     @TableField(exist = false)
     @ApiModelProperty(value = "回答纯文本")
     private String contentText;

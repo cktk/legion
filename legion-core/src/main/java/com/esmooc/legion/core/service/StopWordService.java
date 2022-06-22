@@ -1,17 +1,19 @@
 package com.esmooc.legion.core.service;
 
-import com.esmooc.legion.core.base.LegionBaseService;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.esmooc.legion.core.common.vo.PageVo;
 import com.esmooc.legion.core.common.vo.SearchVo;
 import com.esmooc.legion.core.entity.StopWord;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+
+
 
 /**
  * 禁用词管理接口
  *
  * @author DaiMao
  */
-public interface StopWordService extends LegionBaseService<StopWord, String> {
+public interface StopWordService extends IService<StopWord> {
 
     /**
      * 多条件分页获取
@@ -21,6 +23,6 @@ public interface StopWordService extends LegionBaseService<StopWord, String> {
      * @param pageable
      * @return
      */
-    Page<StopWord> findByCondition(StopWord stopWord, SearchVo searchVo, Pageable pageable);
+    IPage<StopWord> findByCondition(StopWord stopWord, SearchVo searchVo, PageVo pageable);
 
 }

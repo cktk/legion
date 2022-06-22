@@ -131,7 +131,8 @@ public class WeiboController {
         Social w = socialService.findByOpenIdAndPlatform(uid, TYPE);
         if (w == null) {
             Social newb = new Social().setOpenId(uid).setUsername(wb.getName()).setAvatar(wb.getProfile_image_url()).setPlatform(TYPE);
-            w = socialService.save(newb);
+            socialService.save(newb);
+            w=newb;
         }
 
         String url = "";

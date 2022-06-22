@@ -1,6 +1,7 @@
 package com.esmooc.legion.social.controller;
 
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.utils.PageUtil;
 import com.esmooc.legion.core.common.utils.ResultUtil;
@@ -16,7 +17,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
+
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -76,7 +77,7 @@ public class SocialController {
     public Result<Object> delByIds(@RequestParam String[] ids) {
 
         for (String id : ids) {
-            socialService.delete(id);
+            socialService.removeById(id);
         }
         return ResultUtil.success("解绑成功");
     }
@@ -87,8 +88,8 @@ public class SocialController {
                                    SearchVo searchVo,
                                    PageVo pv) {
 
-        Page<Social> socialPage = socialService.findByCondition(social, searchVo, PageUtil.initPage(pv));
-        socialPage.getContent().forEach(e -> {
+        IPage<Social> socialPage = socialService.findByCondition(social, searchVo, pv);
+        socialPage.getRecords().forEach(e -> {
             if (StrUtil.isNotBlank(e.getRelateUsername())) {
                 e.setIsRelated(true);
                 User u = userService.findByUsername(e.getRelateUsername());

@@ -1,23 +1,25 @@
 package com.esmooc.legion.core.service.impl;
 
 import cn.hutool.core.util.StrUtil;
-import com.esmooc.legion.core.dao.RoleDao;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.esmooc.legion.core.common.utils.PageUtil;
+import com.esmooc.legion.core.common.vo.PageVo;
+import com.esmooc.legion.core.entity.RolePermission;
+import com.esmooc.legion.core.mapper.RoleMapper;
 import com.esmooc.legion.core.entity.Role;
+import com.esmooc.legion.core.mapper.RolePermissionMapper;
 import com.esmooc.legion.core.service.RoleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.lang.Nullable;
+
+
+
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,45 +31,25 @@ import java.util.List;
 @Slf4j
 @Service
 @Transactional
-public class RoleServiceImpl implements RoleService {
+public class RoleServiceImpl extends ServiceImpl<RoleMapper,Role > implements RoleService {
 
     @Autowired
-    private RoleDao roleDao;
+    private RoleMapper roleMapper;
 
-    @Override
-    public RoleDao getRepository() {
-        return roleDao;
-    }
 
     @Override
     public List<Role> findByDefaultRole(Boolean defaultRole) {
-        return roleDao.findByDefaultRole(defaultRole);
+        return roleMapper.findByDefaultRole(defaultRole);
     }
 
     @Override
-    public Page<Role> findByCondition(String key, Pageable pageable) {
-
-        return roleDao.findAll(new Specification<Role>() {
-            @Nullable
-            @Override
-            public Predicate toPredicate(Root<Role> root, CriteriaQuery<?> cq, CriteriaBuilder cb) {
-
-                Path<String> nameField = root.get("name");
-                Path<String> descriptionField = root.get("description");
-
-                List<Predicate> list = new ArrayList<>();
-
-                // 模糊搜素
-                if (StrUtil.isNotBlank(key)) {
-                    Predicate p1 = cb.like(nameField, '%' + key + '%');
-                    Predicate p2 = cb.like(descriptionField, '%' + key + '%');
-                    list.add(cb.or(p1, p2));
-                }
-
-                Predicate[] arr = new Predicate[list.size()];
-                cq.where(list.toArray(arr));
-                return null;
-            }
-        }, pageable);
+    public IPage<Role> findByCondition(String key, PageVo pageable) {
+        QueryWrapper<Role> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda()
+                .like(Role::getName,key).or()
+                .like(Role::getDefaultRole,key).or()
+                .like(Role::getDataType,key).or()
+                .like(Role::getDescription,key).or();
+        return  this.page(PageUtil.initMpPage(pageable),queryWrapper);
     }
 }

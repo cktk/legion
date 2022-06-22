@@ -1,17 +1,19 @@
 package com.esmooc.legion.file.service;
 
-import com.esmooc.legion.core.base.LegionBaseService;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.esmooc.legion.core.common.vo.PageVo;
 import com.esmooc.legion.core.common.vo.SearchVo;
 import com.esmooc.legion.file.entity.File;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+
+
 
 /**
  * 文件管理接口
  *
  * @author DaiMao
  */
-public interface FileService extends LegionBaseService<File, String> {
+public interface FileService extends IService<File> {
 
     /**
      * 多条件获取列表
@@ -21,7 +23,7 @@ public interface FileService extends LegionBaseService<File, String> {
      * @param pageable
      * @return
      */
-    Page<File> findByCondition(File file, SearchVo searchVo, Pageable pageable);
+    IPage<File> findByCondition(File file, SearchVo searchVo, PageVo pageable);
 
     /**
      * 通过categoryId删除

@@ -35,6 +35,13 @@ public class ResultUtil<T> {
         return new ResultUtil<T>().setSuccessMsg(msg);
     }
 
+    public static <T> Result<T> ok(Boolean b) {
+        if (b){
+            return new ResultUtil<T>().setSuccessMsg("数据处理成功");
+        }
+        return new ResultUtil<T>().setErrorMsg("数据处理失败");
+    }
+
     public static <T> Result<T> success(Integer code, String msg) {
         return new ResultUtil<T>().setSuccessMsg(code, msg);
     }

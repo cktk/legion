@@ -10,13 +10,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.Date;
@@ -26,10 +21,6 @@ import java.util.Date;
  */
 @Data
 @Accessors(chain = true)
-@Entity
-@DynamicInsert
-@DynamicUpdate
-@Table(name = "app_member")
 @TableName("app_member")
 @ApiModel(value = "会员（注册用户）")
 public class Member extends LegionBaseEntity {
@@ -37,7 +28,6 @@ public class Member extends LegionBaseEntity {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "用户名")
-    @Column(unique = true, nullable = false)
     private String username;
 
     @ApiModelProperty(value = "邀请码")

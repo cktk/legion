@@ -1,10 +1,11 @@
 package com.esmooc.legion.core.service.impl;
 
-import com.esmooc.legion.core.dao.DepartmentHeaderDao;
-import com.esmooc.legion.core.dao.UserDao;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.esmooc.legion.core.entity.DepartmentHeader;
 import com.esmooc.legion.core.entity.User;
+import com.esmooc.legion.core.mapper.DepartmentHeaderMapper;
 import com.esmooc.legion.core.service.DepartmentHeaderService;
+import com.esmooc.legion.core.service.UserService;
 import com.esmooc.legion.core.vo.UserVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,28 +23,20 @@ import java.util.List;
 @Slf4j
 @Service
 @Transactional
-public class DepartmentHeaderServiceImpl implements DepartmentHeaderService {
-
-
-    @Autowired
-    private DepartmentHeaderDao departmentHeaderDao;
+public class DepartmentHeaderServiceImpl extends ServiceImpl<DepartmentHeaderMapper, DepartmentHeader> implements DepartmentHeaderService {
 
     @Autowired
-    private UserDao userDao;
-
-    @Override
-    public DepartmentHeaderDao getRepository() {
-        return departmentHeaderDao;
-    }
-
+    private DepartmentHeaderMapper departmentHeaderMapper;
+    @Autowired
+    private UserService userService;
 
     @Override
     public List<UserVo> findHeaderByDepartmentId(String departmentId, Integer type) {
 
         List<UserVo> list = new ArrayList<>();
-        List<DepartmentHeader> headers = departmentHeaderDao.findByDepartmentIdAndType(departmentId, type);
+        List<DepartmentHeader> headers = departmentHeaderMapper.findByDepartmentIdAndType(departmentId, type);
         headers.forEach(e -> {
-            User u = userDao.getOne(e.getUserId());
+            User u = userService.getById(e.getUserId());
             if (u != null) {
                 list.add(new UserVo().setId(u.getId()).setUsername(u.getUsername()).setNickname(u.getNickname()));
             }
@@ -54,25 +47,25 @@ public class DepartmentHeaderServiceImpl implements DepartmentHeaderService {
     @Override
     public List<DepartmentHeader> findByDepartmentIdIn(List<String> departmentIds) {
 
-        return departmentHeaderDao.findByDepartmentIdIn(departmentIds);
+        return departmentHeaderMapper.findByDepartmentIdIn(departmentIds);
     }
 
     @Override
     public void deleteByDepartmentId(String departmentId) {
 
-        departmentHeaderDao.deleteByDepartmentId(departmentId);
+        departmentHeaderMapper.deleteByDepartmentId(departmentId);
     }
 
     @Override
     public void deleteByUserId(String userId) {
 
-        departmentHeaderDao.deleteByUserId(userId);
+        departmentHeaderMapper.deleteByUserId(userId);
     }
 
     @Override
     public Boolean isDepartmentHeader(String userId, String departmentId) {
 
-        List<DepartmentHeader> headers = departmentHeaderDao.findByUserIdAndDepartmentId(userId, departmentId);
+        List<DepartmentHeader> headers = departmentHeaderMapper.findByUserIdAndDepartmentId(userId, departmentId);
         if (headers != null && !headers.isEmpty()) {
             return true;
         }

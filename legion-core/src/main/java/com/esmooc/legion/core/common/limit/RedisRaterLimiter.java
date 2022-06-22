@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class RedisRaterLimiter {
 
-    @Autowired
+    @Autowired(required = false)
     private RedissonClient redisson;
 
     private RateLimiter guavaRateLimiter = RateLimiter.create(Double.MAX_VALUE);
