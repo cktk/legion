@@ -36,8 +36,7 @@ import java.util.List;
 public class StopWordServiceImpl  extends ServiceImpl<StopWordMapper,StopWord > implements StopWordService {
 
     private static WordTree wordTree;
-    @Autowired
-    private StopWordService stopWordService;
+
 
 
     public WordTree getInstance() {
@@ -45,7 +44,7 @@ public class StopWordServiceImpl  extends ServiceImpl<StopWordMapper,StopWord > 
         if (wordTree == null) {
             // 初始加载数据
             wordTree = new WordTree();
-            stopWordService.list().forEach(e -> wordTree.addWord(e.getTitle()));
+            this.list().forEach(e -> wordTree.addWord(e.getTitle()));
         }
         return wordTree;
     }

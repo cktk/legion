@@ -23,18 +23,23 @@ public class Department extends LegionBaseEntity {
 
     private static final long serialVersionUID = 1L;
 
+    @TableField(value = "title")
     @ApiModelProperty(value = "部门名称")
     private String title;
 
+    @TableField(value = "parent_id")
     @ApiModelProperty(value = "父id")
     private String parentId;
 
+    @TableField(value = "is_parent")
     @ApiModelProperty(value = "是否为父节点(含子节点) 默认false")
     private Boolean isParent = false;
 
+    @TableField(value = "sort_order")
     @ApiModelProperty(value = "排序值")
     private BigDecimal sortOrder;
 
+    @TableField(value = "`status`")
     @ApiModelProperty(value = "是否启用 0启用 -1禁用")
     private Integer status = CommonConstant.STATUS_NORMAL;
 

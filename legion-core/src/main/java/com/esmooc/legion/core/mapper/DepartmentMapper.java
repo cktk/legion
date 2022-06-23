@@ -31,7 +31,7 @@ public interface DepartmentMapper extends BaseMapper<Department> {
      * @return
      */
     @Select("select * from t_department where  parent_id =#{parentId} and id in #{departmentIds} order by sort_order")
-    List<Department> findByParentIdAndIdInOrderBySortOrder(@Param("parentId") String parentId,@Param("departmentIds")   List<String> departmentIds);
+    List<Department> findByParentIdAndIdInOrderBySortOrder(@Param("parentId") String parentId, @Param("departmentIds") List<String> departmentIds);
 
     /**
      * 通过父id和状态获取 升序
@@ -41,8 +41,8 @@ public interface DepartmentMapper extends BaseMapper<Department> {
      * @return
      */
 
-
-    List<Department> findByParentIdAndStatusOrderBySortOrder(@Param("parentId") String parentId,@Param("status")    Integer status);
+    @Select("select * from t_department parent_id =#{parentId} and status =#{status} order by sort_order")
+    List<Department> findByParentIdAndStatusOrderBySortOrder(@Param("parentId") String parentId, @Param("status") Integer status);
 
     /**
      * 部门名模糊搜索 升序
@@ -51,7 +51,7 @@ public interface DepartmentMapper extends BaseMapper<Department> {
      * @return
      */
     @Select("select * from t_department where  title like CONCAT('%',#{title},'%')    order by sort_order")
-    List<Department> findByTitleLikeOrderBySortOrder(@Param("title")   String title);
+    List<Department> findByTitleLikeOrderBySortOrder(@Param("title") String title);
 
     /**
      * 部门名模糊搜索 升序 数据权限
@@ -61,6 +61,6 @@ public interface DepartmentMapper extends BaseMapper<Department> {
      * @return
      */
     @Select("select * from t_department where  title like CONCAT('%',#{title},'%')   and id in #{departmentIds} order by sort_order")
-    List<Department> findByTitleLikeAndIdInOrderBySortOrder(@Param("title")  String title,@Param("departmentIds")  List<String> departmentIds);
+    List<Department> findByTitleLikeAndIdInOrderBySortOrder(@Param("title") String title, @Param("departmentIds") List<String> departmentIds);
 
 }

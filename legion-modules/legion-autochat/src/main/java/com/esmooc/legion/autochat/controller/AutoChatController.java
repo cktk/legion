@@ -3,7 +3,7 @@ package com.esmooc.legion.autochat.controller;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HtmlUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.esmooc.legion.autochat.dao.AutoChatMapper;
+import com.esmooc.legion.autochat.mapper.AutoChatMapper;
 import com.esmooc.legion.autochat.entity.AutoChat;
 import com.esmooc.legion.autochat.service.AutoChatService;
 import com.esmooc.legion.autochat.vo.AssociateVo;

@@ -1,4 +1,4 @@
-package com.esmooc.legion.open.serviceimpl;
+package com.esmooc.legion.open.service.impl;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
@@ -9,7 +9,7 @@ import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
 import com.esmooc.legion.core.common.utils.PageUtil;
 import com.esmooc.legion.core.common.vo.PageVo;
 import com.esmooc.legion.core.common.vo.SearchVo;
-import com.esmooc.legion.open.dao.ClientMapper;
+import com.esmooc.legion.open.mapper.ClientMapper;
 import com.esmooc.legion.open.entity.Client;
 import com.esmooc.legion.open.service.ClientService;
 import lombok.extern.slf4j.Slf4j;
@@ -24,9 +24,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**

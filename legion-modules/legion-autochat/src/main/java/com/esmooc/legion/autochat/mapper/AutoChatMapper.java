@@ -1,4 +1,4 @@
-package com.esmooc.legion.autochat.dao;
+package com.esmooc.legion.autochat.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.esmooc.legion.autochat.entity.AutoChat;

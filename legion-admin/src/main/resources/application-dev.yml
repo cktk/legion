@@ -7,13 +7,21 @@ knife4j:
 
 spring:
   datasource:
+    dynamic:
+      primary: master
       datasource:
         master:
-          url: jdbc:mysql://127.0.0.1:3306/legion?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2B8
-          username: root
-          password: root
           driver-class-name: com.mysql.cj.jdbc.Driver
-      lazy: false #默认false非懒启动，系统加载到数据源立即初始化连接池
+          url: jdbc:mysql://${MYSQL_HOST:127.0.0.1}:${MYSQL_PROT:3306}/${MYSQL_SCHEMA:legion}?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=GMT%2B8&nullCatalogMeansCurrent=true&allowPublicKeyRetrieval=true
+          username: ${MYSQL_USER:root}
+          password: ${MYSQL_PWD:root}
+#          query-ds-sql: 'select * from t_datasource_conf where del_flag = 0'
+          init:
+            schema: db/master/schema.sql # 配置则生效,自动初始化表结构
+            data: db/master/data.sql # 配置则生效,自动初始化数据
+            continue-on-error: true # 默认true,初始化失败是否继续
+            separator: ";"          # sql默认分号分隔符，一般无需更改
+
   redis:
     host: ${REDIS_HOST:127.0.0.1}
     password: ${REDIS_PWD:123456}

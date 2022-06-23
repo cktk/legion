@@ -5,7 +5,7 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.esmooc.legion.autochat.dao.AutoChatMapper;
+import com.esmooc.legion.autochat.mapper.AutoChatMapper;
 import com.esmooc.legion.autochat.entity.AutoChat;
 import com.esmooc.legion.autochat.service.AutoChatService;
 import com.esmooc.legion.core.common.utils.PageUtil;
@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 

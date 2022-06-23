@@ -1,4 +1,4 @@
-package com.esmooc.legion.open.dao;
+package com.esmooc.legion.open.mapper;
 
 
 

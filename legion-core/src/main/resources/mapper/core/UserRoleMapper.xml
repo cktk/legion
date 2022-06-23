@@ -3,19 +3,22 @@
 <mapper namespace="com.esmooc.legion.core.mapper.UserRoleMapper">
     <resultMap id="BaseResultMap" type="com.esmooc.legion.core.entity.UserRole">
         <!--@mbg.generated-->
-        <!--@Table legion.t_user_role-->
-        <id column="id" jdbcType="BIGINT" property="id"/>
-        <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
-        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
-        <result column="del_flag" jdbcType="BOOLEAN" property="delFlag"/>
-        <result column="update_by" jdbcType="VARCHAR" property="updateBy"/>
-        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
-        <result column="role_id" jdbcType="BIGINT" property="roleId"/>
-        <result column="user_id" jdbcType="BIGINT" property="userId"/>
+        <!--@Table t_user_role-->
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="create_by" jdbcType="VARCHAR" property="createBy" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="del_flag" jdbcType="BOOLEAN" property="delFlag" />
+        <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+        <result column="role_id" jdbcType="BIGINT" property="roleId" />
+        <result column="user_id" jdbcType="BIGINT" property="userId" />
+        <result column="update_id" jdbcType="VARCHAR" property="updateId" />
+        <result column="create_id" jdbcType="VARCHAR" property="createId" />
     </resultMap>
     <sql id="Base_Column_List">
         <!--@mbg.generated-->
-        id, create_by, create_time, del_flag, update_by, update_time, role_id, user_id
+        id, create_by, create_time, del_flag, update_by, update_time, role_id, user_id, update_id,
+        create_id
     </sql>
 
     <select id="findByUserId" resultType="com.esmooc.legion.core.entity.Role">
