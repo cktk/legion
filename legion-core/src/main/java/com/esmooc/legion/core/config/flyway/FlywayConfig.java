@@ -11,7 +11,15 @@ import javax.sql.DataSource;
 import java.util.Map;
 
 
-
+/**
+ * @author 呆猫
+ * @version 1.0
+ * @date 2022年06月23日 16:41
+ * @about :
+ * ------------🌈-💨------------
+ * 美 好 生 活 从 维 护 代 码 开 始
+ * ----------------------------
+ */
 @Configuration
 @EnableTransactionManagement
 public class FlywayConfig {
