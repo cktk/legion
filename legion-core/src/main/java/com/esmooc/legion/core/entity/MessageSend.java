@@ -21,15 +21,19 @@ public class MessageSend extends LegionBaseEntity {
 
     private static final long serialVersionUID = 1L;
 
+    @TableField(value = "message_id")
     @ApiModelProperty(value = "关联消息id")
     private String messageId;
 
+    @TableField(value = "user_id")
     @ApiModelProperty(value = "关联用户id")
     private String userId;
 
+    @TableField(value = "params")
     @ApiModelProperty(value = "消息参数")
     private String params;
 
+    @TableField(value = "`status`")
     @ApiModelProperty(value = "状态 0默认未读 1已读 2回收站")
     private Integer status = CommonConstant.MESSAGE_STATUS_UNREAD;
 

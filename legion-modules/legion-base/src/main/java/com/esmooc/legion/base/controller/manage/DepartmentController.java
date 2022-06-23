@@ -79,8 +79,7 @@ public class DepartmentController {
         String key = "department::" + parentId + ":" + u.getId() + "_" + openDataFilter;
         String v = redisTemplate.get(key);
         if (StrUtil.isNotBlank(v)) {
-            list = new Gson().fromJson(v, new TypeToken<List<Department>>() {
-            }.getType());
+            list = JSONUtil.toList(v, Department.class);
             return ResultUtil.data(list);
         }
         list = departmentService.findByParentIdOrderBySortOrder(parentId, openDataFilter);

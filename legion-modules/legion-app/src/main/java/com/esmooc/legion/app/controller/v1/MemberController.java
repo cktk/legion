@@ -8,7 +8,7 @@ import com.esmooc.legion.core.common.utils.ResultUtil;
 import com.esmooc.legion.core.common.utils.SecurityUtil;
 import com.esmooc.legion.core.common.utils.SnowFlakeUtil;
 import com.esmooc.legion.core.common.vo.Result;
-import com.esmooc.legion.core.entity.Member;
+import com.esmooc.legion.core.entity.AppMember;
 import com.esmooc.legion.core.service.MemberService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -51,24 +51,24 @@ public class MemberController {
         String inviteBy = null;
         if (StrUtil.isNotBlank(inviteCode)) {
             Long uid = Long.parseLong(inviteCode, 32);
-            Member inviter = memberService.findByUsername(uid.toString());
+            AppMember inviter = memberService.findByUsername(uid.toString());
             if (inviter == null) {
                 return ResultUtil.error("邀请码不正确");
             }
             inviteBy = inviter.getUsername();
         }
-        Member member = memberService.findByMobile(mobile);
-        if (member == null) {
+        AppMember appMember = memberService.findByMobile(mobile);
+        if (appMember == null) {
             // 先注册
             String nickname = mobile.substring(0, 3) + "****" + mobile.substring(7, 11);
             Long uid = SnowFlakeUtil.nextId();
-            member = new Member().setUsername(uid.toString()).setInviteCode(Long.toString(uid, 32).toUpperCase()).
+            appMember = new AppMember().setUsername(uid.toString()).setInviteCode(Long.toString(uid, 32).toUpperCase()).
                     setMobile(mobile).setNickname(nickname).setPlatform(platform).setInviteBy(inviteBy);
-            memberService.save(member);
+            memberService.save(appMember);
             isNew = true;
         }
         // 登录
-        String appToken = SecurityUtil.getAppToken(member.getUsername(), platform);
+        String appToken = SecurityUtil.getAppToken(appMember.getUsername(), platform);
         Map<String, Object> result = new HashMap<>(16);
         result.put("isNew", isNew);
         result.put("token", appToken);
@@ -77,9 +77,9 @@ public class MemberController {
 
     @RequestMapping(value = "/info", method = RequestMethod.GET)
     @ApiOperation(value = "获取当前登录会员信息接口")
-    public Result<Member> getUserInfo() {
-        Member member = SecurityUtil.getCurrMember();
-        member.setPassword(null);
-        return ResultUtil.data(member);
+    public Result<AppMember> getUserInfo() {
+        AppMember appMember = SecurityUtil.getCurrMember();
+        appMember.setPassword(null);
+        return ResultUtil.data(appMember);
     }
 }

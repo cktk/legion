@@ -3,7 +3,7 @@ package com.esmooc.legion.file.mapper;
 
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.esmooc.legion.file.entity.File;
+import com.esmooc.legion.file.entity.LegionFile;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -14,12 +14,12 @@ import org.apache.ibatis.annotations.Mapper;
  * @author DaiMao
  */
 @Mapper
-public interface FileMapper extends BaseMapper<File> {
+public interface FileMapper extends BaseMapper<LegionFile> {
     /**
      * 通过categoryId删除
      *
      * @param categoryId
      */
-    @Delete("delete from File f where f.categoryId = ?1")
+    @Delete("delete from File f where f.category_id = #{categoryId}")
     void deleteByCategoryId(String categoryId);
 }

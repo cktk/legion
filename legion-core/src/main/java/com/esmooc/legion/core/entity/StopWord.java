@@ -1,5 +1,6 @@
 package com.esmooc.legion.core.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.esmooc.legion.core.base.LegionBaseEntity;
 import io.swagger.annotations.ApiModel;
@@ -18,6 +19,7 @@ public class StopWord extends LegionBaseEntity {
 
     private static final long serialVersionUID = 1L;
 
+    @TableField(value = "title")
     @ApiModelProperty(value = "名称")
     private String title;
 }

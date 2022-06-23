@@ -3,7 +3,7 @@ FROM pig4cloud/java:8-jre
 MAINTAINER cktk@qq.com
 
 ENV TZ=Asia/Shanghai
-ENV JAVA_OPTS="-Xms256m -Xmx512m -Djava.security.egd=file:/dev/./urandom"
+ENV JAVA_OPTS="-Xms256m -Xmx512m -Djava.security.egd=legionFile:/dev/./urandom"
 
 RUN ln -sf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 

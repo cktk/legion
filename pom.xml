@@ -50,6 +50,7 @@
         <postgresql.version>42.3.6</postgresql.version>
         <jsoup.version>1.15.1</jsoup.version>
         <flyway.version>6.4.4</flyway.version>
+        <tinypinyin.version>2.0.3.RELEASE</tinypinyin.version>
     </properties>
 
     <dependencyManagement>
@@ -213,6 +214,11 @@
                 <version>${flyway.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>io.github.biezhi</groupId>
+                <artifactId>TinyPinyin</artifactId>
+                <version>${tinypinyin.version}</version>
+            </dependency>
         </dependencies>
 
     </dependencyManagement>

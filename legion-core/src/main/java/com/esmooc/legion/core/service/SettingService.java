@@ -12,7 +12,7 @@ import org.springframework.cache.annotation.Cacheable;
  *
  * @author DaiMao
  */
-@CacheConfig(cacheNames = "setting")
+//@CacheConfig(cacheNames = "setting")
 public interface SettingService extends IService<Setting> {
 
     /**
@@ -21,7 +21,7 @@ public interface SettingService extends IService<Setting> {
      * @param id
      * @return
      */
-    @Cacheable(key = "#id")
+//    @Cacheable(key = "#id")
     Setting get(String id);
 
     /**
@@ -30,7 +30,7 @@ public interface SettingService extends IService<Setting> {
      * @param setting
      * @return
      */
-    @CacheEvict(key = "#setting.id")
+//    @CacheEvict(key = "#setting.id")
     Setting saveOrUpdateById(Setting setting);
 }
 

@@ -17,6 +17,10 @@ public interface SystemConstant {
 
     //表示  false
     String FLAG_N = "0";
+
+
+
+
     String UNKNOWN="unknown";
     String UNKNOWN_ZH="未知";
     String X_FORWARDED_FOR="x-forwarded-for";

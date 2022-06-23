@@ -1,17 +1,15 @@
 package com.esmooc.legion.app.controller.admin;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.esmooc.legion.core.common.constant.MemberConstant;
 import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
-import com.esmooc.legion.core.common.utils.PageUtil;
 import com.esmooc.legion.core.common.utils.ResultUtil;
 import com.esmooc.legion.core.common.utils.SnowFlakeUtil;
 import com.esmooc.legion.core.common.vo.PageVo;
 import com.esmooc.legion.core.common.vo.Result;
 import com.esmooc.legion.core.common.vo.SearchVo;
-import com.esmooc.legion.core.entity.Member;
+import com.esmooc.legion.core.entity.AppMember;
 import com.esmooc.legion.core.service.MemberService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -48,17 +46,17 @@ public class MemberAdminController {
 
     @RequestMapping(value = "/getByCondition", method = RequestMethod.GET)
     @ApiOperation(value = "多条件分页获取")
-    public Result<IPage<Member>> getByCondition(Member member,
-                                               SearchVo searchVo,
-                                               PageVo pageVo) {
+    public Result<IPage<AppMember>> getByCondition(AppMember appMember,
+                                                   SearchVo searchVo,
+                                                   PageVo pageVo) {
 
-        IPage<Member> page = memberService.findByCondition(member, searchVo, pageVo);
+        IPage<AppMember> page = memberService.findByCondition(appMember, searchVo, pageVo);
         return ResultUtil.data(page);
     }
 
     @RequestMapping(value = "/admin/add", method = RequestMethod.POST)
     @ApiOperation(value = "添加用户")
-    public Result<Object> add(@Valid Member m) {
+    public Result<Object> add(@Valid AppMember m) {
 
         if (memberService.findByMobile(m.getMobile()) != null) {
             throw new LegionException("该手机号已被注册");
@@ -74,9 +72,9 @@ public class MemberAdminController {
     @RequestMapping(value = "/admin/edit", method = RequestMethod.POST)
     @ApiOperation(value = "管理员修改资料", notes = "需要通过id获取原用户信息 需要username更新缓存")
     @CacheEvict(key = "#m.username")
-    public Result<Object> edit(@Valid Member m) {
+    public Result<Object> edit(@Valid AppMember m) {
 
-        Member old = memberService.getById(m.getId());
+        AppMember old = memberService.getById(m.getId());
 
         m.setUsername(old.getUsername()).setPassword(old.getPassword());
         // 若修改了手机和邮箱判断是否唯一
@@ -93,15 +91,15 @@ public class MemberAdminController {
     public Result<Object> disable(@RequestParam String userId,
                                   @RequestParam Boolean enable) {
 
-        Member member = memberService.getById(userId);
+        AppMember appMember = memberService.getById(userId);
         if (enable) {
-            member.setStatus(MemberConstant.MEMBER_STATUS_NORMAL);
+            appMember.setStatus(MemberConstant.MEMBER_STATUS_NORMAL);
         } else {
-            member.setStatus(MemberConstant.MEMBER_STATUS_LOCK);
+            appMember.setStatus(MemberConstant.MEMBER_STATUS_LOCK);
         }
-        memberService.updateById(member);
+        memberService.updateById(appMember);
         //手动更新缓存
-        redisTemplate.delete("member::" + member.getUsername());
+        redisTemplate.delete("appMember::" + appMember.getUsername());
         return ResultUtil.success("操作成功");
     }
 
@@ -110,7 +108,7 @@ public class MemberAdminController {
     public Result<Object> delAllByIds(@RequestParam String[] ids) {
 
         for (String id : ids) {
-            Member m = memberService.getById(id);
+            AppMember m = memberService.getById(id);
             // 删除相关缓存
             redisTemplate.delete("member::" + m.getUsername());
             memberService.removeById(id);

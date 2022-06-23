@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.esmooc.legion.core.base.LegionBaseEntity;
 import com.esmooc.legion.core.common.constant.CommonConstant;
-import com.esmooc.legion.core.vo.UserVo;
+import com.esmooc.legion.core.entity.vo.UserVo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

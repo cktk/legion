@@ -121,7 +121,7 @@ spring:
   # 文件大小上传配置
   servlet:
     multipart:
-      max-file-size: -1
+      max-legionFile-size: -1
       max-request-size: -1
   jackson:
     time-zone: GMT+8
@@ -262,7 +262,7 @@ captcha:
     - /api/legion/auth/smsLogin # 短信登录接口
     - /api/legion/auth/resetByMobile # 手机重置密码
     - /api/legion/user/changeMobile # 更换绑定手机
-    - /api/legion/app/v1/member/quickLogin # 会员快捷登录注册接口
+    - /api/legion/app/v1/appMember/quickLogin # 会员快捷登录注册接口
   # Vaptcha验证码验证
   vaptcha:
     - /api/legion/common/captcha/sendRegistSms/** # 发送注册短信
@@ -289,7 +289,7 @@ ignored:
     - /legion/act/**
     - /legion/dictData/getByType/**
     - /legion/email/sendResetCode/**
-    - /legion/file/view/**
+    - /legion/legionFile/view/**
     - /legion/social/**
     - /legion/setting/notice
     - /druid/**
@@ -364,11 +364,11 @@ logging:
   # 输出级别
   level:
     root: info
-  file:
+  legionFile:
     path: legion-logs
   logback:
     rollingpolicy:
       # 最大保存天数
       max-history: 30
       # 每个文件最大大小
-      max-file-size: 50MB
+      max-legionFile-size: 50MB

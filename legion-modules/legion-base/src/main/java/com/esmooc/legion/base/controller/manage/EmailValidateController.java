@@ -16,7 +16,7 @@ import com.esmooc.legion.core.entity.Setting;
 import com.esmooc.legion.core.entity.User;
 import com.esmooc.legion.core.service.SettingService;
 import com.esmooc.legion.core.service.UserService;
-import com.esmooc.legion.core.vo.OtherSetting;
+import com.esmooc.legion.core.entity.vo.OtherSetting;
 import com.google.gson.Gson;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

@@ -9,8 +9,8 @@ import com.esmooc.legion.core.common.utils.ResultUtil;
 import com.esmooc.legion.core.common.vo.Result;
 import com.esmooc.legion.core.entity.Setting;
 import com.esmooc.legion.core.service.SettingService;
-import com.esmooc.legion.core.vo.OssSetting;
-import com.esmooc.legion.file.entity.File;
+import com.esmooc.legion.core.entity.vo.OssSetting;
+import com.esmooc.legion.file.entity.LegionFile;
 import com.esmooc.legion.file.manage.FileManageFactory;
 import com.esmooc.legion.file.service.FileService;
 import com.google.gson.Gson;
@@ -74,7 +74,7 @@ public class UploadController {
         }
         String result = "";
         String fKey = CommonUtil.renamePic(file.getOriginalFilename());
-        File f = new File();
+        LegionFile f = new LegionFile();
         try {
             InputStream inputStream = file.getInputStream();
             // 上传至第三方云服务或服务器

@@ -2,7 +2,7 @@ package com.esmooc.legion.core.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.esmooc.legion.core.entity.DepartmentHeader;
-import com.esmooc.legion.core.vo.UserVo;
+import com.esmooc.legion.core.entity.vo.UserVo;
 
 import java.util.List;
 

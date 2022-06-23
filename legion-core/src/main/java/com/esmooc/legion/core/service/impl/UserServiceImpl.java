@@ -17,14 +17,13 @@ import com.esmooc.legion.core.entity.Role;
 import com.esmooc.legion.core.entity.User;
 import com.esmooc.legion.core.mapper.UserRoleMapper;
 import com.esmooc.legion.core.service.UserService;
-import com.esmooc.legion.core.vo.PermissionDTO;
-import com.esmooc.legion.core.vo.RoleDTO;
+import com.esmooc.legion.core.entity.vo.PermissionDTO;
+import com.esmooc.legion.core.entity.vo.RoleDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;

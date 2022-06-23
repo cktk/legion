@@ -58,8 +58,8 @@ public interface UserMapper extends BaseMapper<User> {
      * @param status
      * @return
      */
-    @Select("select u from User u where u.username like CONCAT('%',#{param1},'%')   or u.nickname like %?1% and u.status = ?2")
-    List<User> findByUsernameLikeAndStatus(String key, Integer status);
+    @Select("select u from t_user u where u.username like CONCAT('%',#{key},'%')   or u.nickname like %?1% and u.status = #{status}")
+    List<User> findByUsernameLikeAndStatus(@Param("key") String key, @Param("status") Integer status);
 
     /**
      * 更新部门名称
@@ -67,6 +67,6 @@ public interface UserMapper extends BaseMapper<User> {
      * @param departmentId
      * @param departmentTitle
      */
-    @Update("update User u set u.departmentTitle=#{departmentTitle} where u.departmentId=#{departmentId}")
+    @Update("update t_user u set u.department_title=#{departmentTitle} where u.department_id=#{departmentId}")
     void updateDepartmentTitle(@Param("departmentId") String departmentId, @Param("departmentTitle") String departmentTitle);
 }

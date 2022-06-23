@@ -7,7 +7,7 @@ import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.core.entity.MessageSmsSend;
 import com.esmooc.legion.core.entity.Setting;
 import com.esmooc.legion.core.service.SettingService;
-import com.esmooc.legion.core.vo.SmsSetting;
+import com.esmooc.legion.core.entity.vo.SmsSetting;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

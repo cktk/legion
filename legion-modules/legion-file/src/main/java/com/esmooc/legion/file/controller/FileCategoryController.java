@@ -9,7 +9,7 @@ import com.esmooc.legion.core.common.utils.ResultUtil;
 import com.esmooc.legion.core.common.utils.SecurityUtil;
 import com.esmooc.legion.core.common.vo.Result;
 import com.esmooc.legion.core.entity.User;
-import com.esmooc.legion.file.entity.File;
+import com.esmooc.legion.file.entity.LegionFile;
 import com.esmooc.legion.file.entity.FileCategory;
 import com.esmooc.legion.file.service.FileCategoryService;
 import com.esmooc.legion.file.service.FileService;
@@ -52,7 +52,7 @@ public class FileCategoryController {
     public Result<List<FileCategory>> getByParentId(@PathVariable String parentId) {
 
         User user = SecurityUtil.getUser();
-        List<FileCategory> list = fileCategoryService.findByParentIdAndCreateBy(parentId, user.getUsername());
+        List<FileCategory> list = fileCategoryService.findByParentIdAndCreateBy(parentId, user.getId());
         setInfo(list);
         return ResultUtil.data(list);
     }
@@ -65,7 +65,7 @@ public class FileCategoryController {
         // 如果不是添加的一级 判断设置上级为父节点标识
         if (!CommonConstant.PARENT_ID.equals(fileCategory.getParentId())) {
             FileCategory parent = fileCategoryService.getById(fileCategory.getParentId());
-            if (parent.getIsParent() == null || !parent.getIsParent()) {
+            if (parent.getIsParent() || !parent.getIsParent()) {
                 parent.setIsParent(true);
                 fileCategoryService.updateById(parent);
             }
@@ -90,7 +90,7 @@ public class FileCategoryController {
         // 如果该节点不是一级节点 且修改了级别 判断上级还有无子节点
         if (!CommonConstant.PARENT_ID.equals(oldParentId) && !oldParentId.equals(fileCategory.getParentId())) {
             FileCategory parent = fileCategoryService.getById(oldParentId);
-            List<FileCategory> children = fileCategoryService.findByParentIdAndCreateBy(parent.getId(), user.getUsername());
+            List<FileCategory> children = fileCategoryService.findByParentIdAndCreateBy(parent.getId(), user.getId());
             if (parent != null && (children == null || children.isEmpty())) {
                 parent.setIsParent(false);
                 fileCategoryService.updateById(parent);
@@ -112,17 +112,17 @@ public class FileCategoryController {
             }
         }
         for (String id : ids) {
-            File file = fileService.getById(id);
-            if (categoryId.equals(file.getCategoryId())) {
+            LegionFile legionFile = fileService.getById(id);
+            if (categoryId.equals(legionFile.getCategoryId())) {
                 // 分类没变化 无需移动
                 continue;
             }
-            if (!user.getUsername().equals(file.getCreateBy())) {
+            if (!user.getUsername().equals(legionFile.getCreateBy())) {
                 return ResultUtil.error("你无权编辑非本人文件");
             }
-            file.setCategoryId(categoryId);
-            fileService.save(file);
-            redisTemplate.delete("file::" + id);
+            legionFile.setCategoryId(categoryId);
+            fileService.save(legionFile);
+            redisTemplate.delete("LegionFile::" + id);
         }
         return ResultUtil.success("批量移动文件成功");
     }
@@ -133,16 +133,16 @@ public class FileCategoryController {
 
         User user = SecurityUtil.getUser();
         for (String id : ids) {
-            deleteRecursion(id, ids, user.getUsername());
+            deleteRecursion(id, ids, user.getId());
         }
         return ResultUtil.success("批量通过id删除数据成功");
     }
 
-    public void deleteRecursion(String id, String[] ids, String username) {
+    public void deleteRecursion(String id, String[] ids, String userId) {
 
         // 获得其父节点
         FileCategory o = fileCategoryService.getById(id);
-        if (username.equals(o.getCreateBy())) {
+        if (userId.equals(o.getCreateId())) {
             throw new LegionException("你无权删除非本人文件");
         }
         FileCategory parent = null;
@@ -153,17 +153,17 @@ public class FileCategoryController {
         fileService.deleteByCategoryId(id);
         // 判断父节点是否还有子节点
         if (parent != null) {
-            List<FileCategory> children = fileCategoryService.findByParentIdAndCreateBy(parent.getId(), username);
+            List<FileCategory> children = fileCategoryService.findByParentIdAndCreateBy(parent.getId(), userId);
             if (children == null || children.isEmpty()) {
                 parent.setIsParent(false);
                 fileCategoryService.updateById(parent);
             }
         }
         // 递归删除
-        List<FileCategory> objs = fileCategoryService.findByParentIdAndCreateBy(id, username);
+        List<FileCategory> objs = fileCategoryService.findByParentIdAndCreateBy(id, userId);
         for (FileCategory obj : objs) {
             if (!CommonUtil.judgeIds(obj.getId(), ids)) {
-                deleteRecursion(obj.getId(), ids, username);
+                deleteRecursion(obj.getId(), ids, userId);
             }
         }
     }
@@ -173,13 +173,12 @@ public class FileCategoryController {
     public Result<List<FileCategory>> searchByTitle(@RequestParam String title) {
 
         User user = SecurityUtil.getUser();
-        List<FileCategory> list = fileCategoryService.findByTitleLikeAndCreateBy("%" + title + "%", user.getUsername());
+        List<FileCategory> list = fileCategoryService.findByTitleLikeAndCreateBy( title, user.getId());
         setInfo(list);
         return ResultUtil.data(list);
     }
 
     public void setInfo(List<FileCategory> list) {
-
         // lambda表达式
         list.forEach(item -> {
             if (!CommonConstant.PARENT_ID.equals(item.getParentId())) {

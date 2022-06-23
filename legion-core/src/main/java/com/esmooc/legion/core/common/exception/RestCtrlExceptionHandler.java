@@ -85,6 +85,12 @@ public class RestCtrlExceptionHandler {
         return ResultUtil.error(500, result);
     }
 
+    /**
+     * 处理限制异常
+     * 限流异常
+     * @param e e
+     * @return {@link Result}<{@link Object}>
+     */
     @ExceptionHandler(LimitException.class)
     @ResponseStatus(value = HttpStatus.OK)
     public Result<Object> handleLimitException(LimitException e) {
@@ -92,7 +98,6 @@ public class RestCtrlExceptionHandler {
         String errorMsg = "Limit exception";
         if (e != null) {
             errorMsg = e.getMsg();
-            log.warn(e.getMsg(), e);
         }
         return ResultUtil.error(500, errorMsg);
     }

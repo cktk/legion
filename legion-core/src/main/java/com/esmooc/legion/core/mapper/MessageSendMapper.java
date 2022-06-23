@@ -19,7 +19,7 @@ public interface MessageSendMapper extends BaseMapper<MessageSend> {
      *
      * @param messageId
      */
-    @Select("delete from t_message_send m where m.messageId = ?1")
+    @Select("delete from t_message_send m where m.message_id = #{messageId}")
     void deleteByMessageId(String messageId);
 
     /**
@@ -28,7 +28,7 @@ public interface MessageSendMapper extends BaseMapper<MessageSend> {
      * @param userId
      * @param status
      */
-    @Update("update t_message_send m set m.status=#{status} where m.userId=#{userId}")
+    @Update("update t_message_send m set m.status=#{status} where m.user_id=#{userId}")
     void updateStatusByUserId(@Param("userId") String userId, @Param("status") Integer status);
 
     /**
@@ -37,6 +37,6 @@ public interface MessageSendMapper extends BaseMapper<MessageSend> {
      * @param userId
      * @param status
      */
-    @Delete("delete from t_message_send m where m.userId = #{userId} and m.status=#{status}")
+    @Delete("delete from t_message_send m where m.user_id = #{userId} and m.status=#{status}")
     void deleteByUserId(@Param("userId")  String userId,  @Param("status")  Integer status);
 }

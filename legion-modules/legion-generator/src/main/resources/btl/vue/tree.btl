@@ -562,7 +562,7 @@ import { init${apiName}, load${apiName}, add${apiName}, edit${apiName}, delete${
 <%
 if(fileUpload){
 %>
-import fileUpload from "@/views/my-components/legion/file-upload";
+import fileUpload from "@/views/my-components/legion/legionFile-upload";
 <%
 }
 %>

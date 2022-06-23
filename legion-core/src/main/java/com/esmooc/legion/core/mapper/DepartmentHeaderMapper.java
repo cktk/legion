@@ -38,7 +38,7 @@ public interface DepartmentHeaderMapper extends BaseMapper<DepartmentHeader> {
      *
      * @param departmentId
      */
-    @Select("delete from t_department_header d where d.departmentId =  #{departmentId}")
+    @Select("delete from t_department_header d where d.department_id =  #{departmentId}")
     void deleteByDepartmentId( @Param("departmentId") String departmentId);
 
     /**
@@ -46,7 +46,7 @@ public interface DepartmentHeaderMapper extends BaseMapper<DepartmentHeader> {
      *
      * @param userId
      */
-    @Select("delete from t_department_header d where d.userId = #{userId}")
+    @Select("delete from t_department_header d where d.user_id = #{userId}")
     void deleteByUserId(@Param("userId") String userId);
 
     /**

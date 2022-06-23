@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.esmooc.legion.core.common.vo.PageVo;
 import com.esmooc.legion.core.common.vo.SearchVo;
-import com.esmooc.legion.core.entity.Member;
+import com.esmooc.legion.core.entity.AppMember;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 
@@ -18,17 +18,17 @@ import org.springframework.cache.annotation.Cacheable;
  * @date 2022/06/22
  */
 @CacheConfig(cacheNames = "member")
-public interface MemberService extends IService<Member> {
+public interface MemberService extends IService<AppMember> {
 
     /**
      * 多条件分页获取
      *
-     * @param member
+     * @param appMember
      * @param searchVo
      * @param pageable
      * @return
      */
-    IPage<Member> findByCondition(Member member, SearchVo searchVo, PageVo pageable);
+    IPage<AppMember> findByCondition(AppMember appMember, SearchVo searchVo, PageVo pageable);
 
     /**
      * 通过用户名获取用户
@@ -37,7 +37,7 @@ public interface MemberService extends IService<Member> {
      * @return
      */
     @Cacheable(key = "#username")
-    Member findByUsername(String username);
+    AppMember findByUsername(String username);
 
     /**
      * 通过手机获取用户
@@ -45,5 +45,5 @@ public interface MemberService extends IService<Member> {
      * @param mobile
      * @return
      */
-    Member findByMobile(String mobile);
+    AppMember findByMobile(String mobile);
 }

@@ -1,6 +1,6 @@
 package com.esmooc.legion.core.common.vo;
 
-import com.esmooc.legion.core.entity.Member;
+import com.esmooc.legion.core.entity.AppMember;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
@@ -32,15 +32,15 @@ public class TokenMember implements UserDetails, Serializable {
 
     private Integer platform;
 
-    public TokenMember(Member member, Integer platform) {
+    public TokenMember(AppMember appMember, Integer platform) {
 
-        this.id = member.getId();
-        this.username = member.getUsername();
-        this.nickname = member.getNickname();
-        this.mobile = member.getMobile();
-        this.email = member.getEmail();
-        this.type = member.getType();
-        this.permissions = member.getPermissions();
+        this.id = appMember.getId();
+        this.username = appMember.getUsername();
+        this.nickname = appMember.getNickname();
+        this.mobile = appMember.getMobile();
+        this.email = appMember.getEmail();
+        this.type = appMember.getType();
+        this.permissions = appMember.getPermissions();
 
         this.platform = platform;
     }

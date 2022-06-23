@@ -28,7 +28,6 @@ import java.time.Duration;
 @Slf4j
 @Configuration
 //如果synchronize在配置文件中并且值为true
-@ConditionalOnProperty(name = "redis.enable", havingValue = "true")
 public class RedisCacheConfig extends CachingConfigurerSupport {
 
     @Value("${legion.cache.timeToLive:-1}")

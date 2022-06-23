@@ -12,14 +12,14 @@ import com.esmooc.legion.core.common.vo.TokenUser;
 import com.esmooc.legion.core.config.properties.LegionAppTokenProperties;
 import com.esmooc.legion.core.config.properties.LegionTokenProperties;
 import com.esmooc.legion.core.entity.Department;
-import com.esmooc.legion.core.entity.Member;
+import com.esmooc.legion.core.entity.AppMember;
 import com.esmooc.legion.core.entity.Role;
 import com.esmooc.legion.core.entity.User;
 import com.esmooc.legion.core.service.DepartmentService;
 import com.esmooc.legion.core.service.MemberService;
 import com.esmooc.legion.core.service.UserService;
 import com.esmooc.legion.core.service.IUserRoleService;
-import com.esmooc.legion.core.vo.PermissionDTO;
+import com.esmooc.legion.core.entity.vo.PermissionDTO;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import io.jsonwebtoken.Jwts;
@@ -230,7 +230,7 @@ public class SecurityUtil {
 
         Department department = departmentService.getById(departmentId);
         ids.add(department.getId());
-        if (department.getIsParent() != null && department.getIsParent()) {
+        if (department.getIsParent() && department.getIsParent()) {
             // 获取其下级
             List<Department> departments = departmentService.findByParentIdAndStatusOrderBySortOrder(departmentId, CommonConstant.STATUS_NORMAL);
             departments.forEach(d -> {
@@ -266,16 +266,16 @@ public class SecurityUtil {
         if (StrUtil.isBlank(username)) {
             throw new LegionException("username不能为空");
         }
-        Member member = memberService.findByUsername(username);
-        return getAppToken(member, platform);
+        AppMember appMember = memberService.findByUsername(username);
+        return getAppToken(appMember, platform);
     }
 
-    public static String getAppToken(Member member, Integer platform) {
+    public static String getAppToken(AppMember appMember, Integer platform) {
 
-        if (member == null) {
+        if (appMember == null) {
             throw new LegionException("member不能为空");
         }
-        if (CommonConstant.USER_STATUS_LOCK.equals(member.getStatus())) {
+        if (CommonConstant.USER_STATUS_LOCK.equals(appMember.getStatus())) {
             throw new LegionException("账户被禁用，请联系管理员");
         }
         // 生成token
@@ -284,7 +284,7 @@ public class SecurityUtil {
         if (appTokenProperties.getRedis()) {
             // redis
             token = IdUtil.simpleUUID();
-            tokenMember = new TokenMember(member, platform);
+            tokenMember = new TokenMember(appMember, platform);
             String key = SecurityConstant.MEMBER_TOKEN + tokenMember.getUsername() + ":" + platform;
             // 单平台登录 之前的token失效
             if (appTokenProperties.getSpl()) {
@@ -297,7 +297,7 @@ public class SecurityUtil {
             redisTemplate.set(SecurityConstant.TOKEN_MEMBER_PRE + token, new Gson().toJson(tokenMember), appTokenProperties.getTokenExpireTime(), TimeUnit.DAYS);
         } else {
             // JWT
-            tokenMember = new TokenMember(member, platform);
+            tokenMember = new TokenMember(appMember, platform);
             token = SecurityConstant.TOKEN_SPLIT + Jwts.builder()
                     // 主题 放入会员信息
                     .setSubject(new Gson().toJson(tokenMember))
@@ -318,7 +318,7 @@ public class SecurityUtil {
      *
      * @return
      */
-    public static Member getCurrMember() {
+    public static AppMember getCurrMember() {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated() || authentication.getName() == null

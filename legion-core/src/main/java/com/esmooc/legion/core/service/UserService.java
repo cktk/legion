@@ -18,7 +18,7 @@ import java.util.List;
  *
  * @author DaiMao
  */
-@CacheConfig(cacheNames = "user")
+//@CacheConfig(cacheNames = "user")
 public interface UserService extends IService<User> {
 
     /**
@@ -27,7 +27,7 @@ public interface UserService extends IService<User> {
      * @param username
      * @return
      */
-    @Cacheable(key = "#username")
+//    @Cacheable(key = "#username")
     User findByUsername(String username);
 
     /**

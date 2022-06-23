@@ -18,17 +18,17 @@ public interface FileCategoryService extends IService<FileCategory> {
      * 通过父id和创建人获取
      *
      * @param parentId
-     * @param createBy
+     * @param createById
      * @return
      */
-    List<FileCategory> findByParentIdAndCreateBy(String parentId, String createBy);
+    List<FileCategory> findByParentIdAndCreateBy(String parentId, String createById);
 
     /**
      * 通过名称和创建人模糊搜索
      *
      * @param title
-     * @param createBy
+     * @param createById
      * @return
      */
-    List<FileCategory> findByTitleLikeAndCreateBy(String title, String createBy);
+    List<FileCategory> findByTitleLikeAndCreateBy(String title, String createById);
 }

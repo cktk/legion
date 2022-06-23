@@ -216,7 +216,7 @@ import { add${apiName} } from "@/api/index";
 <%
 if(fileUpload){
 %>
-import fileUpload from "@/views/my-components/legion/file-upload";
+import fileUpload from "@/views/my-components/legion/legionFile-upload";
 <%
 }
 %>

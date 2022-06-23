@@ -163,10 +163,10 @@ public class LegionVueGenerator {
             if ("password".equals(f.getType())) {
                 password = true;
             }
-            if ("dict".equals(f.getType())) {
+            if ("Dict".equals(f.getType())) {
                 dict = true;
             }
-            if ("dict".equals(f.getSearchType())) {
+            if ("Dict".equals(f.getSearchType())) {
                 searchDict = true;
             }
             if ("customList".equals(f.getType())) {
@@ -183,7 +183,7 @@ public class LegionVueGenerator {
         tableTemplate.binding("uploadThumb", uploadThumb);
         tableTemplate.binding("editor", editor);
         tableTemplate.binding("password", password);
-        tableTemplate.binding("dict", dict);
+        tableTemplate.binding("Dict", dict);
         tableTemplate.binding("customList", customList);
         tableTemplate.binding("searchDict", searchDict);
         tableTemplate.binding("searchCustomList", searchCustomList);

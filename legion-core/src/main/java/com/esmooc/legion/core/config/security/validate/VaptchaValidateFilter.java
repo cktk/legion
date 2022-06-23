@@ -9,7 +9,7 @@ import com.esmooc.legion.core.common.utils.ResponseUtil;
 import com.esmooc.legion.core.config.properties.CaptchaProperties;
 import com.esmooc.legion.core.entity.Setting;
 import com.esmooc.legion.core.service.SettingService;
-import com.esmooc.legion.core.vo.VaptchaSetting;
+import com.esmooc.legion.core.entity.vo.VaptchaSetting;
 import com.google.gson.Gson;
 import com.google.gson.JsonParser;
 import lombok.extern.slf4j.Slf4j;

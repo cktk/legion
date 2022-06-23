@@ -2,8 +2,8 @@ package com.esmooc.legion.core.common.vo;
 
 import cn.hutool.core.util.StrUtil;
 import com.esmooc.legion.core.entity.User;
-import com.esmooc.legion.core.vo.PermissionDTO;
-import com.esmooc.legion.core.vo.RoleDTO;
+import com.esmooc.legion.core.entity.vo.PermissionDTO;
+import com.esmooc.legion.core.entity.vo.RoleDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;

@@ -145,13 +145,13 @@
                         ctx.util.chooseImage({
                             // multiple: true, // 是否可多选
                             success(e) {
-                                let file;
+                                let legionFile;
                                 if (e.files) { // 如果有 h5 上传的图
-                                    file = e.files[0];
+                                    legionFile = e.files[0];
                                 } else if (e.images) { // 如果有 app 上传的图
-                                    file = e.images[0];
+                                    legionFile = e.images[0];
                                 }
-                                handleImage(ctx, file)
+                                handleImage(ctx, legionFile)
                             },
                         });
                     }
@@ -183,12 +183,12 @@
         }
     }
 
-    function handleImage(ctx, file) {
+    function handleImage(ctx, legionFile) {
         // 先展示图片
         ctx.appendMessage({
             type: 'image',
             content: {
-                picUrl: URL.createObjectURL(file)
+                picUrl: URL.createObjectURL(legionFile)
             },
             position: 'right'
         });

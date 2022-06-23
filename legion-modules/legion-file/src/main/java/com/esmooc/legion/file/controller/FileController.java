@@ -6,7 +6,6 @@ import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.constant.SettingConstant;
 import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
-import com.esmooc.legion.core.common.utils.PageUtil;
 import com.esmooc.legion.core.common.utils.ResultUtil;
 import com.esmooc.legion.core.common.utils.SecurityUtil;
 import com.esmooc.legion.core.common.vo.PageVo;
@@ -14,8 +13,8 @@ import com.esmooc.legion.core.common.vo.Result;
 import com.esmooc.legion.core.common.vo.SearchVo;
 import com.esmooc.legion.core.entity.User;
 import com.esmooc.legion.core.service.SettingService;
-import com.esmooc.legion.core.vo.OssSetting;
-import com.esmooc.legion.file.entity.File;
+import com.esmooc.legion.core.entity.vo.OssSetting;
+import com.esmooc.legion.file.entity.LegionFile;
 import com.esmooc.legion.file.manage.FileManageFactory;
 import com.esmooc.legion.file.manage.impl.LocalFileManage;
 import com.esmooc.legion.file.service.FileService;
@@ -67,17 +66,17 @@ public class FileController {
     @RequestMapping(value = "/getByCondition", method = RequestMethod.GET)
     @ApiOperation(value = "多条件分页获取")
     @ResponseBody
-    public Result<IPage<File>> getFileList(File file,
-                                           SearchVo searchVo,
-                                           PageVo pageVo,
-                                           @RequestParam(required = false, defaultValue = "false") Boolean getCurrUser) {
+    public Result<IPage<LegionFile>> getFileList(LegionFile legionFile,
+                                                 SearchVo searchVo,
+                                                 PageVo pageVo,
+                                                 @RequestParam(required = false, defaultValue = "false") Boolean getCurrUser) {
 
         if (getCurrUser) {
-            file.setCreateBy(SecurityUtil.getUser().getUsername());
+            legionFile.setCreateBy(SecurityUtil.getUser().getUsername());
         }
-        IPage<File> page = fileService.findByCondition(file, searchVo, pageVo);
+        IPage<LegionFile> page = fileService.findByCondition(legionFile, searchVo, pageVo);
         OssSetting os = new Gson().fromJson(settingService.get(SettingConstant.LOCAL_OSS).getValue(), OssSetting.class);
-        for (File e : page.getRecords()) {
+        for (LegionFile e : page.getRecords()) {
             if (e.getLocation() != null && CommonConstant.OSS_LOCAL.equals(e.getLocation())) {
                 String url = os.getHttp() + os.getEndpoint() + "/";
                 e.setUrl(url + e.getId());
@@ -92,25 +91,25 @@ public class FileController {
     public Result<Object> deleteUserFile(@RequestParam String id) {
 
         User user = SecurityUtil.getUser();
-        File file = fileService.getById(id);
-        if (file.getLocation() == null) {
+        LegionFile legionFile = fileService.getById(id);
+        if (legionFile.getLocation() == null) {
             return ResultUtil.error("存储位置未知");
         }
-        if (!user.getUsername().equals(file.getCreateBy())) {
+        if (!user.getUsername().equals(legionFile.getCreateBy())) {
             return ResultUtil.error("你无权删除非本人文件");
         }
         // 特殊处理本地服务器
-        String key = file.getFKey();
-        if (CommonConstant.OSS_LOCAL.equals(file.getLocation())) {
-            key = file.getUrl();
+        String key = legionFile.getFKey();
+        if (CommonConstant.OSS_LOCAL.equals(legionFile.getLocation())) {
+            key = legionFile.getUrl();
         }
         try {
-            fileManageFactory.getFileManage(file.getLocation()).deleteFile(key);
+            fileManageFactory.getFileManage(legionFile.getLocation()).deleteFile(key);
         } catch (Exception e) {
-            log.error("服务器删除文件失败，ID：" + file.getId() + " 存储位置：" + file.getLocation());
+            log.error("服务器删除文件失败，ID：" + legionFile.getId() + " 存储位置：" + legionFile.getLocation());
         }
         fileService.removeById(id);
-        redisTemplate.delete("file::" + id);
+        redisTemplate.delete("LegionFile::" + id);
         return ResultUtil.data(null);
     }
 
@@ -122,17 +121,17 @@ public class FileController {
                                          @RequestParam String newName) {
 
         User user = SecurityUtil.getUser();
-        File file = fileService.getById(id);
-        if (file.getLocation() == null) {
+        LegionFile legionFile = fileService.getById(id);
+        if (legionFile.getLocation() == null) {
             return ResultUtil.error("存储位置未知");
         }
-        if (!user.getUsername().equals(file.getCreateBy())) {
+        if (!user.getUsername().equals(legionFile.getCreateBy())) {
             return ResultUtil.error("你无权删除非本人文件");
         }
-        String oldName = file.getName();
+        String oldName = legionFile.getName();
         if (!oldName.equals(newName)) {
-            file.setName(newName);
-            fileService.updateById(file);
+            legionFile.setName(newName);
+            fileService.updateById(legionFile);
         }
         return ResultUtil.data(null);
     }
@@ -143,20 +142,20 @@ public class FileController {
     public Result<Object> copy(@RequestParam String id,
                                @RequestParam String key) {
 
-        File file = fileService.getById(id);
-        if (file.getLocation() == null) {
+        LegionFile legionFile = fileService.getById(id);
+        if (legionFile.getLocation() == null) {
             return ResultUtil.error("存储位置未知");
         }
 
         String toKey = "副本_" + key;
         // 特殊处理本地服务器
-        if (CommonConstant.OSS_LOCAL.equals(file.getLocation())) {
-            key = file.getUrl();
+        if (CommonConstant.OSS_LOCAL.equals(legionFile.getLocation())) {
+            key = legionFile.getUrl();
         }
-        String newUrl = fileManageFactory.getFileManage(file.getLocation()).copyFile(key, toKey);
-        File newFile = new File().setName(file.getName()).setFKey(toKey).setSize(file.getSize()).setType(file.getType())
-                .setLocation(file.getLocation()).setUrl(newUrl);
-        fileService.save(newFile);
+        String newUrl = fileManageFactory.getFileManage(legionFile.getLocation()).copyFile(key, toKey);
+        LegionFile newLegionFile = new LegionFile().setName(legionFile.getName()).setFKey(toKey).setSize(legionFile.getSize()).setType(legionFile.getType())
+                .setLocation(legionFile.getLocation()).setUrl(newUrl);
+        fileService.save(newLegionFile);
         return ResultUtil.data(null);
     }
 
@@ -168,24 +167,24 @@ public class FileController {
                                  @RequestParam String newKey,
                                  @RequestParam String newName){
 
-        File file = fileService.getById(id);
-        if (file.getLocation() == null) {
+        LegionFile legionFile = fileService.getById(id);
+        if (legionFile.getLocation() == null) {
             return ResultUtil.error("存储位置未知");
         }
-        String newUrl = "", oldKey = file.getFKey();
+        String newUrl = "", oldKey = legionFile.getFKey();
         if (!oldKey.equals(newKey)) {
             // 特殊处理本地服务器
-            if (CommonConstant.OSS_LOCAL.equals(file.getLocation())) {
-                oldKey = file.getUrl();
+            if (CommonConstant.OSS_LOCAL.equals(legionFile.getLocation())) {
+                oldKey = legionFile.getUrl();
             }
-            newUrl = fileManageFactory.getFileManage(file.getLocation()).renameFile(oldKey, newKey);
+            newUrl = fileManageFactory.getFileManage(legionFile.getLocation()).renameFile(oldKey, newKey);
         }
-        file.setName(newName);
-        file.setFKey(newKey);
+        legionFile.setName(newName);
+        legionFile.setFKey(newKey);
         if (!oldKey.equals(newKey)) {
-            file.setUrl(newUrl);
+            legionFile.setUrl(newUrl);
         }
-        fileService.updateById(file);
+        fileService.updateById(legionFile);
         return ResultUtil.data(null);
     }
 
@@ -195,22 +194,22 @@ public class FileController {
     public Result<Object> delete(@RequestParam String[] ids) {
 
         for (String id : ids) {
-            File file = fileService.getById(id);
-            if (file.getLocation() == null) {
+            LegionFile legionFile = fileService.getById(id);
+            if (legionFile.getLocation() == null) {
                 return ResultUtil.error("存储位置未知");
             }
             // 特殊处理本地服务器
-            String key = file.getFKey();
-            if (CommonConstant.OSS_LOCAL.equals(file.getLocation())) {
-                key = file.getUrl();
+            String key = legionFile.getFKey();
+            if (CommonConstant.OSS_LOCAL.equals(legionFile.getLocation())) {
+                key = legionFile.getUrl();
             }
             try {
-                fileManageFactory.getFileManage(file.getLocation()).deleteFile(key);
+                fileManageFactory.getFileManage(legionFile.getLocation()).deleteFile(key);
             } catch (Exception e) {
-                log.error("服务器删除文件失败，ID：" + file.getId() + " 存储位置：" + file.getLocation());
+                log.error("服务器删除文件失败，ID：" + legionFile.getId() + " 存储位置：" + legionFile.getLocation());
             }
             fileService.removeById(id);
-            redisTemplate.delete("file::" + id);
+            redisTemplate.delete("LegionFile::" + id);
         }
         return ResultUtil.data(null);
     }
@@ -223,24 +222,24 @@ public class FileController {
                      @RequestParam(required = false, defaultValue = "UTF-8") String charset,
                      HttpServletResponse response) throws IOException {
 
-        File file = fileService.getById(id);
-        if (file == null) {
+        LegionFile legionFile = fileService.getById(id);
+        if (legionFile == null) {
             throw new LegionException("文件ID：" + id + "不存在");
         }
         if (StrUtil.isBlank(filename)) {
-            filename = file.getFKey();
+            filename = legionFile.getFKey();
         }
 
         if (!preview) {
             response.addHeader("Content-Disposition", "attachment; filename=" + URLEncoder.encode(filename, "UTF-8"));
         }
-        response.setContentLengthLong(file.getSize());
-        response.setContentType(file.getType() + ";charset=" + charset);
+        response.setContentLengthLong(legionFile.getSize());
+        response.setContentType(legionFile.getType() + ";charset=" + charset);
         response.addHeader("Accept-Ranges", "bytes");
-        if (file.getSize() != null && file.getSize() > 0) {
-            response.addHeader("Content-Range", "bytes " + 0 + "-" + (file.getSize() - 1) + "/" + file.getSize());
+        if (legionFile.getSize() != null && legionFile.getSize() > 0) {
+            response.addHeader("Content-Range", "bytes " + 0 + "-" + (legionFile.getSize() - 1) + "/" + legionFile.getSize());
         }
         response.setBufferSize(10 * 1024 * 1024);
-        LocalFileManage.view(file.getUrl(), response);
+        LocalFileManage.view(legionFile.getUrl(), response);
     }
 }

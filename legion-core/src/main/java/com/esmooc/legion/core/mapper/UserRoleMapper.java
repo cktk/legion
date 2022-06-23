@@ -30,7 +30,7 @@ public interface UserRoleMapper extends BaseMapper<UserRole> {
      *
      * @param userId
      */
-    @Delete("delete from UserRole u where u.userId = ?1")
+    @Delete("delete from t_user_role u where u.userId = #{userId}")
     boolean deleteByUserId(String userId);
 
     /**

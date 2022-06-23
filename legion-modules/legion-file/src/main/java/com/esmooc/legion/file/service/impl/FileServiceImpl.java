@@ -9,8 +9,8 @@ import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
 import com.esmooc.legion.core.common.utils.PageUtil;
 import com.esmooc.legion.core.common.vo.PageVo;
 import com.esmooc.legion.core.common.vo.SearchVo;
+import com.esmooc.legion.file.entity.LegionFile;
 import com.esmooc.legion.file.mapper.FileMapper;
-import com.esmooc.legion.file.entity.File;
 import com.esmooc.legion.file.service.FileService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +33,7 @@ import java.util.concurrent.TimeUnit;
 @Service
 @Transactional
 @CacheConfig(cacheNames = "file")
-public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements FileService {
+public class FileServiceImpl extends ServiceImpl<FileMapper, LegionFile> implements FileService {
 
     @Autowired
     private FileMapper fileMapper;
@@ -44,35 +44,35 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
 
 
     @Cacheable(key = "#id")
-    public File get(String id) {
+    public LegionFile get(String id) {
 
         // 避免缓存穿透
-        String result = redisTemplate.get("file::" + id);
+        String result = redisTemplate.get("LegionFile::" + id);
         if ("null".equals(result)) {
             return null;
         }
-        File file = this.getById(id);
-        if (file == null) {
-            redisTemplate.set("file::" + id, "null", 5L, TimeUnit.MINUTES);
+        LegionFile legionFile = this.getById(id);
+        if (legionFile == null) {
+            redisTemplate.set("LegionFile::" + id, "null", 5L, TimeUnit.MINUTES);
         }
-        return file;
+        return legionFile;
     }
 
     @Override
-    public IPage<File> findByCondition(File file, SearchVo searchVo, PageVo pageable) {
-        QueryWrapper<File> queryWrapper = new QueryWrapper<>();
+    public IPage<LegionFile> findByCondition(LegionFile legionFile, SearchVo searchVo, PageVo pageable) {
+        QueryWrapper<LegionFile> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda()
-                .like(StrUtil.isNotBlank(file.getName()),File::getName ,file.getName() ).or()
-                .like(StrUtil.isNotBlank(file.getFKey()),File::getFKey ,file.getFKey() ).or()
-                .like(StrUtil.isNotBlank(file.getType()),File::getType ,file.getType() ).or()
-                .like(StrUtil.isNotBlank(file.getCreateBy()),File::getCreateBy ,file.getCreateBy() ).or()
-                .eq(file.getLocation()!=null,File::getLocation ,file.getLocation() ).or()
-                .like(StrUtil.isNotBlank(file.getCategoryId()),File::getCategoryId ,file.getCategoryId() );
+                .like(StrUtil.isNotBlank(legionFile.getName()), LegionFile::getName , legionFile.getName() ).or()
+                .like(StrUtil.isNotBlank(legionFile.getFKey()), LegionFile::getFKey , legionFile.getFKey() ).or()
+                .like(StrUtil.isNotBlank(legionFile.getType()), LegionFile::getType , legionFile.getType() ).or()
+                .like(StrUtil.isNotBlank(legionFile.getCreateBy()), LegionFile::getCreateBy , legionFile.getCreateBy() ).or()
+                .eq(legionFile.getLocation()!=null, LegionFile::getLocation , legionFile.getLocation() ).or()
+                .like(StrUtil.isNotBlank(legionFile.getCategoryId()), LegionFile::getCategoryId , legionFile.getCategoryId() );
 
         if (StrUtil.isNotBlank(searchVo.getStartDate()) && StrUtil.isNotBlank(searchVo.getEndDate())) {
             Date start = DateUtil.parse(searchVo.getStartDate());
             Date end = DateUtil.parse(searchVo.getEndDate());
-            queryWrapper.lambda().between(File::getCreateTime, start, end);
+            queryWrapper.lambda().between(LegionFile::getCreateTime, start, end);
         }
         return this.page(PageUtil.initMpPage(pageable),queryWrapper);
 

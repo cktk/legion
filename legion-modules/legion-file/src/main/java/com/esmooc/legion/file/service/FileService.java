@@ -4,8 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.esmooc.legion.core.common.vo.PageVo;
 import com.esmooc.legion.core.common.vo.SearchVo;
-import com.esmooc.legion.file.entity.File;
-
+import com.esmooc.legion.file.entity.LegionFile;
 
 
 /**
@@ -13,17 +12,17 @@ import com.esmooc.legion.file.entity.File;
  *
  * @author DaiMao
  */
-public interface FileService extends IService<File> {
+public interface FileService extends IService<LegionFile> {
 
     /**
      * 多条件获取列表
      *
-     * @param file
+     * @param legionFile
      * @param searchVo
      * @param pageable
      * @return
      */
-    IPage<File> findByCondition(File file, SearchVo searchVo, PageVo pageable);
+    IPage<LegionFile> findByCondition(LegionFile legionFile, SearchVo searchVo, PageVo pageable);
 
     /**
      * 通过categoryId删除

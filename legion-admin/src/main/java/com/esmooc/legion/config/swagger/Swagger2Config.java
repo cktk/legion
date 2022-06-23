@@ -1,11 +1,7 @@
 package com.esmooc.legion.config.swagger;
 
-import cn.hutool.extra.spring.SpringUtil;
-import com.esmooc.legion.core.config.properties.IgnoredUrlsProperties;
-import com.esmooc.legion.core.service.UserService;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -96,7 +92,6 @@ public class Swagger2Config {
 
         List<SecurityScheme> securitySchemes = Collections.singletonList(
                 new ApiKey("Authorization", "appToken", "header"));
-
         return new Docket(DocumentationType.SWAGGER_2)
                 .groupName("2 移动端接口")
                 .apiInfo(apiInfo()).select()

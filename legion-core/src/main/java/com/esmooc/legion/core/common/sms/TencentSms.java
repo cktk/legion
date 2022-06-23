@@ -12,7 +12,7 @@ import com.esmooc.legion.core.entity.Setting;
 import com.esmooc.legion.core.entity.User;
 import com.esmooc.legion.core.service.SettingService;
 import com.esmooc.legion.core.service.MessageSmsSendService;
-import com.esmooc.legion.core.vo.SmsSetting;
+import com.esmooc.legion.core.entity.vo.SmsSetting;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;

@@ -11,7 +11,7 @@ import com.esmooc.legion.core.config.properties.LegionIpLimitProperties;
 import com.esmooc.legion.core.config.properties.LegionLimitProperties;
 import com.esmooc.legion.core.entity.Setting;
 import com.esmooc.legion.core.service.SettingService;
-import com.esmooc.legion.core.vo.OtherSetting;
+import com.esmooc.legion.core.entity.vo.OtherSetting;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

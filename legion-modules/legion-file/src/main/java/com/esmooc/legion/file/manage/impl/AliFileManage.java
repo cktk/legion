@@ -7,7 +7,7 @@ import com.esmooc.legion.core.common.constant.SettingConstant;
 import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.core.entity.Setting;
 import com.esmooc.legion.core.service.SettingService;
-import com.esmooc.legion.core.vo.OssSetting;
+import com.esmooc.legion.core.entity.vo.OssSetting;
 import com.esmooc.legion.file.manage.FileManage;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;

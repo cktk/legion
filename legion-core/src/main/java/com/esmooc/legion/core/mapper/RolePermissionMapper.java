@@ -39,6 +39,6 @@ public interface RolePermissionMapper extends BaseMapper<RolePermission> {
      *
      * @param roleId
      */
-    @Delete("delete from RolePermission r where r.roleId = ?1")
+    @Delete("delete from t_role_permission r where r.roleId = #{roleId}")
     Boolean deleteByRoleId(String roleId);
 }

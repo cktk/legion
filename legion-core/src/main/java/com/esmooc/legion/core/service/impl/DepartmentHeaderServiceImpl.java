@@ -6,7 +6,7 @@ import com.esmooc.legion.core.entity.User;
 import com.esmooc.legion.core.mapper.DepartmentHeaderMapper;
 import com.esmooc.legion.core.service.DepartmentHeaderService;
 import com.esmooc.legion.core.service.UserService;
-import com.esmooc.legion.core.vo.UserVo;
+import com.esmooc.legion.core.entity.vo.UserVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

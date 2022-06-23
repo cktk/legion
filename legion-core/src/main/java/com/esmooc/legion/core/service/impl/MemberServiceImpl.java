@@ -1,16 +1,13 @@
 package com.esmooc.legion.core.service.impl;
 
-import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.StrUtil;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.esmooc.legion.core.common.utils.PageUtil;
 import com.esmooc.legion.core.common.vo.PageVo;
 import com.esmooc.legion.core.common.vo.SearchVo;
-import com.esmooc.legion.core.mapper.MembeMapper;
-import com.esmooc.legion.core.entity.Member;
+import com.esmooc.legion.core.entity.AppMember;
+import com.esmooc.legion.core.mapper.AppMemberMapper;
 import com.esmooc.legion.core.service.MemberService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 /**
  * 会员接口实现
  *
@@ -33,28 +26,28 @@ import java.util.List;
 @Slf4j
 @Service
 @Transactional
-public class MemberServiceImpl extends ServiceImpl<MembeMapper, Member> implements MemberService {
+public class MemberServiceImpl extends ServiceImpl<AppMemberMapper, AppMember> implements MemberService {
 
     @Autowired
-    private MembeMapper membeMapper;
+    private AppMemberMapper appMemberMapper;
 
     @Override
-    public IPage<Member> findByCondition(Member member, SearchVo searchVo, PageVo pageable) {
+    public IPage<AppMember> findByCondition(AppMember appMember, SearchVo searchVo, PageVo pageable) {
 
-     return this.page(PageUtil.initMpPage(pageable), Wrappers.query(member));
+     return this.page(PageUtil.initMpPage(pageable), Wrappers.query(appMember));
 
     }
 
     @Override
-    public Member findByUsername(String username) {
+    public AppMember findByUsername(String username) {
 
-        return membeMapper.findByUsername(username);
+        return appMemberMapper.findByUsername(username);
     }
 
     @Override
-    public Member findByMobile(String mobile) {
+    public AppMember findByMobile(String mobile) {
 
-        return membeMapper.findByMobile(mobile);
+        return appMemberMapper.findByMobile(mobile);
     }
 
 }

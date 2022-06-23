@@ -18,7 +18,7 @@ import com.esmooc.legion.core.common.vo.Result;
 import com.esmooc.legion.core.common.vo.SearchVo;
 import com.esmooc.legion.core.entity.Setting;
 import com.esmooc.legion.core.service.SettingService;
-import com.esmooc.legion.core.vo.AutoChatSetting;
+import com.esmooc.legion.core.entity.vo.AutoChatSetting;
 import com.google.gson.Gson;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
