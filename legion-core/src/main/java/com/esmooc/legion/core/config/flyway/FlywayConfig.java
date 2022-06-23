@@ -18,6 +18,7 @@ public class FlywayConfig {
     @Autowired
     private DataSource dataSource;
 
+    private static final String SQL_LOCATION = "classpath:db/";
 
     @Bean
     public void migrate() {
@@ -28,6 +29,7 @@ public class FlywayConfig {
             System.out.println("正在执行多数据源生成数据库文件 " + k);
             Flyway flyway = Flyway.configure()
                     .dataSource(v)
+                    .locations(SQL_LOCATION+k)
                     .baselineOnMigrate(true)
                     .load();
             flyway.migrate();

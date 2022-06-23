@@ -91,13 +91,6 @@ spring:
   lifecycle:
     # 配置优雅停机后的缓冲器 最大等待时间
     timeout-per-shutdown-phase: 10S
-  jpa:
-    # 显示sql
-    show-sql: true
-    # 自动生成表结构 关闭设为  none create update
-    hibernate:
-      ddl-auto: none
-  # Redis 若设有密码自行添加配置password
   # 定时任务
   quartz:
     # 任务信息存储至数据库
@@ -305,27 +298,6 @@ ignored:
     - /**/*.css
     - /**/*.png
     - /**/*.ico
-
-# Actuator
-management:
-  health:
-    # 暂未用到ES 关闭其健康检查
-    elasticsearch:
-      enabled: false
-  endpoint:
-    health:
-      show-details: always
-      status:
-        http-mapping:
-          DOWN: 200
-          OUT_OF_SERVICE: 200
-          FATAL: 200
-          UNKNOWN: 200
-  endpoints:
-    web:
-      base-path: /legion/actuator/
-      exposure:
-        include: '*'
 
 swagger:
   title: legion
