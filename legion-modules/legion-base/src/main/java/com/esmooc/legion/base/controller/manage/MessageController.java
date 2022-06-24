@@ -2,9 +2,7 @@ package com.esmooc.legion.base.controller.manage;
 
 import cn.hutool.http.HtmlUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.esmooc.legion.core.common.constant.ActivitiConstant;
 import com.esmooc.legion.core.common.constant.CommonConstant;
-import com.esmooc.legion.core.common.utils.PageUtil;
 import com.esmooc.legion.core.common.utils.ResultUtil;
 import com.esmooc.legion.core.common.vo.PageVo;
 import com.esmooc.legion.core.common.vo.Result;
@@ -121,10 +119,6 @@ public class MessageController {
     public Result<Object> delMessage(@RequestParam String[] ids) {
 
         for (String id : ids) {
-            if (ActivitiConstant.MESSAGE_PASS_ID.equals(id) || ActivitiConstant.MESSAGE_BACK_ID.equals(id) || ActivitiConstant.MESSAGE_DELEGATE_ID.equals(id)
-                    || ActivitiConstant.MESSAGE_TODO_ID.equals(id)) {
-                return ResultUtil.error("抱歉，无法删除工作流相关系统消息");
-            }
             messageService.removeById(id);
             // 删除发送表
             sendService.deleteByMessageId(id);

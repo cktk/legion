@@ -7,6 +7,7 @@ import com.esmooc.legion.core.common.utils.PageUtil;
 import com.esmooc.legion.core.common.utils.ResultUtil;
 import com.esmooc.legion.core.common.vo.PageVo;
 import com.esmooc.legion.core.common.vo.Result;
+import com.esmooc.legion.core.config.datascope.DataScopeTypeEnum;
 import com.esmooc.legion.core.mapper.DeleteMapper;
 import com.esmooc.legion.core.entity.Role;
 import com.esmooc.legion.core.entity.RoleDepartment;
@@ -128,7 +129,7 @@ public class RoleController {
         Role r = roleService.getById(roleId);
         r.setDataType(dataType);
         roleService.updateById(r);
-        if (CommonConstant.DATA_TYPE_CUSTOM.equals(dataType)) {
+        if (DataScopeTypeEnum.CUSTOM.getType()==dataType) {
             // 删除其关联数据权限
             roleDepartmentService.deleteByRoleId(roleId);
             // 批量分配新数据权限

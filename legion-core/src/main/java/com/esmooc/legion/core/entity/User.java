@@ -115,4 +115,8 @@ public class User extends LegionBaseEntity {
     @TableField(exist = false)
     @ApiModelProperty(value = "导入数据时使用")
     private Integer defaultRole;
+
+    @TableField(value = "tenant_id",exist = false)
+    @ApiModelProperty(value = "所属租户")
+    private Long tenantId;
 }

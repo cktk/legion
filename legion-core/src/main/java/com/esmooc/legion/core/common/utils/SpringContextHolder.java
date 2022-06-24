@@ -15,8 +15,13 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 
 /**
- * @author lengleng
- * @date 2018/6/27 Spring 工具类
+ * @author 呆猫
+ * @version 1.0
+ * @date 2022年06月24日 15:10
+ * @about : spring 工具类
+ * ------------🌈-💨------------
+ * 美 好 生 活 从 维 护 代 码 开 始
+ * ----------------------------
  */
 @Slf4j
 @Service

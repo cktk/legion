@@ -18,14 +18,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -170,7 +165,7 @@ public class DictAdminController {
     @Transactional(rollbackFor = Exception.class)
     @ApiOperation(value = "4   通过id删除字典表 系统内置不允许删除 ", notes = "通过id删除字典表")
     @DeleteMapping()
-    public Result<Dict> removeById(Long[] ids) {
+    public Result<Dict> removeById(@RequestParam String[] ids) {
         QueryWrapper<Dict> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().in(Dict::getId, ids);
         List<Dict> datas = dictService.list(queryWrapper);
@@ -178,7 +173,7 @@ public class DictAdminController {
             if (SystemConstant.FLAG_Y.equals(data.getSystemFlag())) {
                 throw new LegionException("系统内置字典不允许删除");
             }
-            if (SystemConstant.FLAG_Y.equals(data.isParent())) {
+            if (data.isParent()) {
                 List<Dict> dictData = dictService.findByTypeAll(data.getType());
                 if (dictData != null && dictData.size() > 0) {
                     throw new LegionException("请先删除字典子项");
@@ -205,8 +200,8 @@ public class DictAdminController {
      */
     @ApiOperation(value = "6 查询所有-通过TYPE查询所有子类 ", notes = "分页查询")
     @GetMapping("/{type}")
-    public Result<List<Dict>> findByTypeAll(@PathVariable("type") String type) {
-        return ResultUtil.data(dictService.findByTypeAll(type));
+    public Result<IPage<Dict>> findByTypeAll(@PathVariable("type") String type,PageVo pageVo) {
+        return ResultUtil.data(dictService.findByTypeAll(type,pageVo));
     }
 
 

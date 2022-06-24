@@ -71,6 +71,16 @@ public class DictServiceImpl extends ServiceImpl<SysDictMapper, Dict> implements
                 .orderByDesc(Dict::getSortOrder);
         return this.list(queryWrapper);
     }
+    @Override
+    public IPage<Dict> findByTypeAll(String type,PageVo pageVo) {
+        QueryWrapper<Dict> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(Dict::getType, type)
+                .eq(Dict::getStatus, SystemConstant.FLAG_Y)
+                .eq(Dict::isParent, false)
+                .orderByDesc(Dict::getSortOrder);
+        return this.page(PageUtil.initMpPage(pageVo),queryWrapper);
+    }
+
 
     /**
      * 通过字典的唯一code 查询字典项

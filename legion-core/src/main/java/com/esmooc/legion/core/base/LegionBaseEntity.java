@@ -24,7 +24,6 @@ import java.util.Date;
  * @author DaiMao
  */
 @Data
-@JsonIgnoreProperties(value = { "delFlag" })
 public abstract class LegionBaseEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -72,9 +71,9 @@ public abstract class LegionBaseEntity implements Serializable {
     private Date updateTime;
 
 
-    @JsonIgnore
-    @TableField(value = "del_flag")
     @TableLogic()
     @ApiModelProperty(value = "删除标志 默认0")
-    private Integer delFlag = CommonConstant.STATUS_NORMAL;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @TableField(value = "del_flag", fill = FieldFill.INSERT)
+    private String delFlag ;
 }

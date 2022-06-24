@@ -2,3 +2,25 @@ INSERT INTO `t_dict` (`id`, `type`, `code`, `is_parent`, `description`, `remarks
 INSERT INTO `t_dict` (`id`, `type`, `code`, `is_parent`, `description`, `remarks`, `label`, `value`, `system_flag`, `status`, `pinyin`, `sort_order`, `del_flag`, `update_by`, `update_time`, `update_id`, `create_by`, `create_time`, `create_id`) VALUES (2, 'PH001', '1', 0, '系统类', '系统类字典', '系统类', 'PH001_1', '0', 1, '', 0, 0, 'admin', '2022-06-24 11:40:49', '0', 'admin', '2022-06-24 11:41:15', '0');
 INSERT INTO `t_dict` (`id`, `type`, `code`, `is_parent`, `description`, `remarks`, `label`, `value`, `system_flag`, `status`, `pinyin`, `sort_order`, `del_flag`, `update_by`, `update_time`, `update_id`, `create_by`, `create_time`, `create_id`) VALUES (3, 'PH001', '0', 0, '业务类', '系统类字典', '业务类', 'PH001_0', '0', 1, '', 0, 0, 'admin', '2022-06-24 11:40:52', '0', 'admin', '2022-06-24 11:41:18', '0');
 INSERT INTO `t_dict` (`id`, `type`, `code`, `is_parent`, `description`, `remarks`, `label`, `value`, `system_flag`, `status`, `pinyin`, `sort_order`, `del_flag`, `update_by`, `update_time`, `update_id`, `create_by`, `create_time`, `create_id`) VALUES (4, 'UUII', '', 1, '123', '123', '', '', '', 1, '', 1, 0, NULL, NULL, NULL, 'admin', '2022-06-24 11:57:08', '682265633886208');
+
+alter table app_member  modify del_flag varchar(1) null;
+alter table t_auto_chat  modify del_flag varchar(1) null;
+alter table t_client  modify del_flag varchar(1) null;
+alter table t_department  modify del_flag varchar(1) null;
+alter table t_department_header  modify del_flag varchar(1) null;
+alter table t_dict  modify del_flag varchar(1) null;
+alter table t_file  modify del_flag varchar(1) null;
+alter table t_file_category  modify del_flag varchar(1) null;
+alter table t_log  modify del_flag varchar(1) null;
+alter table t_message  modify del_flag varchar(1) null;
+alter table t_message_send  modify del_flag varchar(1) null;
+alter table t_permission  modify del_flag varchar(1) null;
+alter table t_quartz_job  modify del_flag varchar(1) null;
+alter table t_role  modify del_flag varchar(1) null;
+alter table t_role_department  modify del_flag varchar(1) null;
+alter table t_role_permission  modify del_flag varchar(1) null;
+alter table t_setting  modify del_flag varchar(1) null;
+alter table t_social  modify del_flag varchar(1) null;
+alter table t_stop_word  modify del_flag varchar(1) null;
+alter table t_user modify del_flag varchar(1) null;
+alter table t_user_role  modify del_flag varchar(1) null;

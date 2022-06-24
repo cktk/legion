@@ -276,7 +276,6 @@ public class UserController {
 
     @RequestMapping(value = "/admin/edit", method = RequestMethod.POST)
     @ApiOperation(value = "管理员修改资料", notes = "需要通过id获取原用户信息 需要username更新缓存")
-    @CacheEvict(key = "#u.username")
     public Result<Object> edit(User u,
                                @RequestParam(required = false) String[] roleIds) {
 
@@ -313,9 +312,6 @@ public class UserController {
             userRoleService.saveOrUpdateBatch(userRoles);
         }
         // 手动删除缓存
-        redisTemplate.delete("userRole::" + u.getId());
-        redisTemplate.delete("userRole::depIds:" + u.getId());
-        redisTemplate.delete("permission::userMenuList:" + u.getId());
         return ResultUtil.success("修改成功");
     }
 

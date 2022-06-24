@@ -140,6 +140,13 @@ spring:
           max-age: 30D
 
 legion:
+  mybatis: true
+  tenant:
+    scope-tables:
+      - t_test
+    column: tenant_id
+    tables:
+      - t_test
   xsequence: #发号器相关配置
     #    snowflake:
     #      datacenterId : #数据中心 1-31

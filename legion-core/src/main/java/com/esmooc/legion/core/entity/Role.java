@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.esmooc.legion.core.base.LegionBaseEntity;
 import com.esmooc.legion.core.common.constant.CommonConstant;
+import com.esmooc.legion.core.config.datascope.DataScopeTypeEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -30,7 +31,7 @@ public class Role extends LegionBaseEntity {
 
     @TableField(value = "data_type")
     @ApiModelProperty(value = "数据权限类型 0全部默认 1自定义 2本部门及以下 3本部门 4仅本人")
-    private Integer dataType = CommonConstant.DATA_TYPE_ALL;
+    private Integer dataType = DataScopeTypeEnum.ALL.getType();
 
     @TableField(value = "description")
     @ApiModelProperty(value = "备注")

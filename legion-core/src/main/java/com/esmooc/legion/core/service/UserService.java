@@ -27,7 +27,6 @@ public interface UserService extends IService<User> {
      * @param username
      * @return
      */
-//    @Cacheable(key = "#username")
     User findByUsername(String username);
 
     /**

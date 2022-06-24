@@ -20,8 +20,8 @@
     <result column="status" jdbcType="INTEGER" property="status" />
     <result column="type" jdbcType="INTEGER" property="type" />
     <result column="username" jdbcType="VARCHAR" property="username" />
-    <result column="del_flag" jdbcType="BOOLEAN" property="delFlag" />
-    <result column="department_id" jdbcType="BIGINT" property="departmentId" />
+    <result column="del_flag" jdbcType="VARCHAR" property="delFlag" />
+    <result column="department_id" jdbcType="VARCHAR" property="departmentId" />
     <result column="street" jdbcType="VARCHAR" property="street" />
     <result column="pass_strength" jdbcType="VARCHAR" property="passStrength" />
     <result column="department_title" jdbcType="VARCHAR" property="departmentTitle" />
@@ -31,8 +31,8 @@
   </resultMap>
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
-    id, create_by, create_time, update_by, update_time, address, avatar, description, 
-    email, mobile, nickname, `password`, sex, `status`, `type`, username, del_flag, department_id, 
+    id, create_by, create_time, update_by, update_time, address, avatar, description,
+    email, mobile, nickname, `password`, sex, `status`, `type`, username, del_flag, department_id,
     street, pass_strength, department_title, birth, update_id, create_id
   </sql>
 </mapper>

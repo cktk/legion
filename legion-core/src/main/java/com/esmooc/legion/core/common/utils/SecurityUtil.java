@@ -9,6 +9,7 @@ import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
 import com.esmooc.legion.core.common.vo.TokenMember;
 import com.esmooc.legion.core.common.vo.TokenUser;
+import com.esmooc.legion.core.config.datascope.DataScopeTypeEnum;
 import com.esmooc.legion.core.config.properties.LegionAppTokenProperties;
 import com.esmooc.legion.core.config.properties.LegionTokenProperties;
 import com.esmooc.legion.core.entity.Department;
@@ -164,19 +165,13 @@ public class SecurityUtil {
         List<String> deparmentIds = new ArrayList<>();
         User u = getUser();
         // 读取缓存
-        String key = "userRole::depIds:" + u.getId();
-        String v = redisTemplate.get(key);
-        if (StrUtil.isNotBlank(v)) {
-            deparmentIds = new Gson().fromJson(v, new TypeToken<List<String>>() {
-            }.getType());
-            return deparmentIds;
-        }
+
         // 当前用户拥有角色
         List<Role> roles = iUserRoleService.findByUserId(u.getId());
         // 判断有无全部数据的角色
         Boolean flagAll = false;
         for (Role r : roles) {
-            if (r.getDataType() == null || r.getDataType().equals(CommonConstant.DATA_TYPE_ALL)) {
+            if (r.getDataType() == null || r.getDataType().equals(DataScopeTypeEnum.ALL.getType())) {
                 flagAll = true;
                 break;
             }
@@ -187,30 +182,30 @@ public class SecurityUtil {
         }
         // 每个角色判断 求并集
         for (Role r : roles) {
-            if (r.getDataType().equals(CommonConstant.DATA_TYPE_UNDER)) {
+            if (r.getDataType().equals(DataScopeTypeEnum.OWN_CHILD_LEVEL.getType())) {
                 // 本部门及以下
                 if (StrUtil.isBlank(u.getDepartmentId())) {
                     // 用户无部门
-                    deparmentIds.add("-1");
+//                    deparmentIds.add("-1");
                 } else {
                     // 递归获取自己与子级
                     List<String> ids = new ArrayList<>();
                     getDepRecursion(u.getDepartmentId(), ids);
                     deparmentIds.addAll(ids);
                 }
-            } else if (r.getDataType().equals(CommonConstant.DATA_TYPE_SAME)) {
+            } else if (r.getDataType().equals(DataScopeTypeEnum.OWN_LEVEL.getType())) {
                 // 本部门
                 if (StrUtil.isBlank(u.getDepartmentId())) {
                     // 用户无部门
-                    deparmentIds.add("-1");
+//                    deparmentIds.add("-1");
                 } else {
                     deparmentIds.add(u.getDepartmentId());
                 }
-            } else if (r.getDataType().equals(CommonConstant.DATA_TYPE_CUSTOM)) {
+            } else if (r.getDataType().equals(DataScopeTypeEnum.CUSTOM.getType())) {
                 // 自定义
                 List<String> depIds = iUserRoleService.findDepIdsByUserId(u.getId());
                 if (depIds == null || depIds.size() == 0) {
-                    deparmentIds.add("-1");
+//                    deparmentIds.add("-1");
                 } else {
                     deparmentIds.addAll(depIds);
                 }
@@ -222,7 +217,6 @@ public class SecurityUtil {
         deparmentIds.clear();
         deparmentIds.addAll(set);
         // 缓存
-        redisTemplate.set(key, new Gson().toJson(deparmentIds), 15L, TimeUnit.DAYS);
         return deparmentIds;
     }
 

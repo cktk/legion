@@ -18,7 +18,6 @@ package com.esmooc.legion.core.xss;
 
 import com.esmooc.legion.core.xss.config.XssProperties;
 import com.esmooc.legion.core.xss.core.DefaultXssCleaner;
-import com.esmooc.legion.core.xss.core.FormXssClean;
 import com.esmooc.legion.core.xss.core.JacksonXssClean;
 import com.esmooc.legion.core.xss.core.XssCleanInterceptor;
 import com.esmooc.legion.core.xss.core.XssCleaner;
@@ -54,10 +53,10 @@ public class XssAutoConfiguration implements WebMvcConfigurer {
 		return new DefaultXssCleaner(properties);
 	}
 
-	@Bean
-	public FormXssClean formXssClean(XssProperties properties, XssCleaner xssCleaner) {
-		return new FormXssClean(properties, xssCleaner);
-	}
+//	@Bean
+//	public FormXssClean formXssClean(XssProperties properties, XssCleaner xssCleaner) {
+//		return new FormXssClean(properties, xssCleaner);
+//	}
 
 	@Bean
 	public Jackson2ObjectMapperBuilderCustomizer xssJacksonCustomizer(XssProperties properties,

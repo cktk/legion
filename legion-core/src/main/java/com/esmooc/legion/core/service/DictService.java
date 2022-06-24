@@ -41,7 +41,7 @@ public interface DictService extends IService<Dict> {
      * @return
      */
     List<Dict> findByType(String dictType);
-
+    IPage<Dict> findByTypeAll(String type, PageVo pageVo);
     /**
      * 通过字典的唯一code 查询字典项
      * @param value
@@ -64,5 +64,7 @@ public interface DictService extends IService<Dict> {
     IPage<Dict> search(PageVo pageVo, String key);
 
     List<Dict>  search(String type, String key);
+
+
 
 }

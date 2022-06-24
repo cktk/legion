@@ -32,25 +32,7 @@ public interface CommonConstant {
      */
     Integer USER_TYPE_ADMIN = 1;
 
-    /**
-     * 全部数据权限
-     */
-    Integer DATA_TYPE_ALL = 0;
 
-    /**
-     * 自定义数据权限
-     */
-    Integer DATA_TYPE_CUSTOM = 1;
-
-    /**
-     * 本部门及以下
-     */
-    Integer DATA_TYPE_UNDER = 2;
-
-    /**
-     * 本部门
-     */
-    Integer DATA_TYPE_SAME = 3;
 
     /**
      * 正常状态
@@ -62,10 +44,6 @@ public interface CommonConstant {
      */
     Integer STATUS_DISABLE = -1;
 
-    /**
-     * 删除标志
-     */
-    Integer DEL_FLAG = 1;
 
     /**
      * 限流前缀
@@ -211,4 +189,24 @@ public interface CommonConstant {
      * 部门负责人类型 副负责人
      */
     Integer HEADER_TYPE_VICE = 1;
+
+    /**
+     * header 中租户ID
+     */
+    String TENANT_ID = "TENANT-ID";
+
+    /**
+     * header 中版本信息
+     */
+    String VERSION = "VERSION";
+
+    /**
+     * 租户ID
+     */
+    Long TENANT_ID_0 = 0L;
+
+    /**
+     * 角色前缀
+     */
+    String ROLE = "ROLE_";
 }

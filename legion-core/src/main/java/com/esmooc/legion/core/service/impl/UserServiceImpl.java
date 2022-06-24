@@ -36,10 +36,11 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @Transactional
-public class UserServiceImpl   extends ServiceImpl<UserMapper ,User > implements UserService {
+public class UserServiceImpl  extends ServiceImpl<UserMapper ,User > implements UserService {
 
     @Autowired
     private UserMapper usermapper;
+
 
     @Autowired
     private UserRoleMapper userRoleMapper;
@@ -51,9 +52,9 @@ public class UserServiceImpl   extends ServiceImpl<UserMapper ,User > implements
 
     @Override
     public User findByUsername(String username) {
-
-        User user = usermapper.findByUsername(username);
-        return userToDTO(user);
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(User::getUsername,username);
+        return userToDTO(this.getOne(queryWrapper));
     }
 
     @Override
@@ -104,7 +105,7 @@ public class UserServiceImpl   extends ServiceImpl<UserMapper ,User > implements
                 .like(StrUtil.isNotBlank(user.getMobile()),User::getMobile,user.getMobile()).or()
                 .like(StrUtil.isNotBlank(user.getEmail()),User::getEmail,user.getEmail()).or()
                 .like(StrUtil.isNotBlank(user.getId()),User::getId,user.getId())
-                .eq(StrUtil.isNotBlank(user.getDepartmentId()),User::getDepartmentId,user.getDepartmentId())
+                .eq(user.getDepartmentId()==null,User::getDepartmentId,user.getDepartmentId())
                 .eq(user.getType()!=null,User::getType,user.getType())
                 .eq(user.getStatus()!=null,User::getStatus,user.getStatus())
                 .eq(StrUtil.isNotBlank(user.getSex()),User::getSex,user.getSex());

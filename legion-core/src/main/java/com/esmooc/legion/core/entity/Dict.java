@@ -56,7 +56,6 @@ public class Dict extends LegionBaseEntity implements Serializable {
      */
     @TableField(value = "is_parent")
     @ApiModelProperty(value = "是否为父项")
-    @NotEmpty(message = "是否为父项不能为空")
     private boolean parent;
 
 
@@ -115,7 +114,6 @@ public class Dict extends LegionBaseEntity implements Serializable {
      */
     @TableField(value = "sort_order")
     @ApiModelProperty(value="排序")
-    @NotEmpty(message = "排序不能为空")
-    private int SortOrder;
+    private int sortOrder;
 
 }

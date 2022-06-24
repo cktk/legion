@@ -1,6 +1,5 @@
 package com.esmooc.legion.core.common.exception;
 
-import cn.hutool.core.util.StrUtil;
 import com.esmooc.legion.core.common.utils.ResultUtil;
 import com.esmooc.legion.core.common.vo.Result;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +21,8 @@ import javax.validation.ConstraintViolationException;
 @RestControllerAdvice
 public class RestCtrlExceptionHandler {
 
-    @ExceptionHandler(LegionException.class)
+
+    @ExceptionHandler(value = LegionException.class)
     @ResponseStatus(value = HttpStatus.OK)
     public Result<Object> handleLegionException(LegionException e) {
 
@@ -88,6 +88,7 @@ public class RestCtrlExceptionHandler {
     /**
      * 处理限制异常
      * 限流异常
+     *
      * @param e e
      * @return {@link Result}<{@link Object}>
      */
@@ -141,18 +142,5 @@ public class RestCtrlExceptionHandler {
         return ResultUtil.error(500, errorMsg);
     }
 
-    @ExceptionHandler(Exception.class)
-    @ResponseStatus(value = HttpStatus.OK)
-    public Result<Object> handleException(Exception e) {
 
-        String errorMsg = "Exception";
-        if (e != null) {
-            errorMsg = e.getMessage();
-            log.error(errorMsg);
-            if (StrUtil.isBlank(errorMsg)) {
-                errorMsg = e.toString();
-            }
-        }
-        return ResultUtil.error(500, errorMsg);
-    }
 }
