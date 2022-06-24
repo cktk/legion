@@ -1,12 +1,11 @@
 package com.esmooc.legion.your.controller;
 
-import com.alibaba.druid.sql.visitor.functions.If;
 import com.esmooc.legion.core.common.annotation.RateLimiter;
 import com.esmooc.legion.core.common.lock.Callback;
 import com.esmooc.legion.core.common.lock.RedisLockTemplate;
 import com.esmooc.legion.core.common.utils.ResultUtil;
-import com.esmooc.legion.core.common.utils.SecurityUtil;
 import com.esmooc.legion.core.common.vo.Result;
+import com.esmooc.legion.your.entity.Book;
 import com.esmooc.legion.your.server.BookService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -14,10 +13,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -36,6 +38,13 @@ public class TestController {
 
     @Autowired
     private BookService bookService;
+
+    @PostMapping
+    @ResponseBody
+    public Book testBook(@RequestBody Book book) {
+        System.out.println(book);
+        return book;
+    }
 
 
     @RequestMapping(value = "/lockAndLimit", method = RequestMethod.GET)

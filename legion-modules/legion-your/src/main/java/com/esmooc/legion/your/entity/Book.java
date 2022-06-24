@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.esmooc.legion.core.base.LegionBaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -15,7 +16,7 @@ import lombok.NoArgsConstructor;
  * @Author 呆猫
  *
  * @Date: 2022/03/11/ 13:27
- * @Description: 
+ * @Description:
  */
 @ApiModel(value="book")
 @Data
@@ -23,10 +24,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @TableName(value = "book")
-public class Book {
+public class Book  extends LegionBaseEntity {
     @TableId(value = "id", type = IdType.INPUT)
     @ApiModelProperty(value="")
-    private Long id;
+    private String id;
 
     @TableField(value = "title")
     @ApiModelProperty(value="")

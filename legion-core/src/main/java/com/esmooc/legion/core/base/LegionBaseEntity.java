@@ -7,6 +7,9 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedBy;
@@ -21,6 +24,7 @@ import java.util.Date;
  * @author DaiMao
  */
 @Data
+@JsonIgnoreProperties(value = { "delFlag" })
 public abstract class LegionBaseEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -29,19 +33,23 @@ public abstract class LegionBaseEntity implements Serializable {
     private String id;
 
     @CreatedBy
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @ApiModelProperty(value = "创建者")
     @TableField(value = "create_by", fill = FieldFill.INSERT)
     private String createBy;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @ApiModelProperty(value = "更新者")
     @TableField(value = "update_by", fill = FieldFill.UPDATE)
     private String updateBy;
 
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @ApiModelProperty(value = "创建者ID")
     @TableField(value = "create_id", fill = FieldFill.INSERT)
     private Long createId;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @CreatedDate
     @ApiModelProperty(value = "创建时间")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -49,11 +57,13 @@ public abstract class LegionBaseEntity implements Serializable {
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
-
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @ApiModelProperty(value = "更新者ID")
     @TableField(value = "update_id", fill = FieldFill.UPDATE)
     private Long updateId;
 
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @LastModifiedDate
     @ApiModelProperty(value = "更新时间")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -61,6 +71,8 @@ public abstract class LegionBaseEntity implements Serializable {
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
 
+
+    @JsonIgnore
     @TableField(value = "del_flag")
     @TableLogic()
     @ApiModelProperty(value = "删除标志 默认0")
