@@ -1,6 +1,8 @@
 package com.esmooc.legion.core.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.esmooc.legion.core.common.vo.PageVo;
 import com.esmooc.legion.core.entity.Dict;
 
 import java.util.List;
@@ -42,12 +44,12 @@ public interface DictService extends IService<Dict> {
 
     /**
      * 通过字典的唯一code 查询字典项
-     * @param typeCode
+     * @param value
      * @return
      */
-    Dict findByCode(String typeCode);
+    Dict findByValue(String value);
 
-    Dict findByCodeAll(String typeCode);
+    List<Dict> findByValueAll(String value);
 
 
     /**
@@ -59,5 +61,8 @@ public interface DictService extends IService<Dict> {
      */
     Dict switchs(Long id, boolean status);
 
-    List<Dict>  findByTitleOrTypeLike(String key);
+    IPage<Dict> search(PageVo pageVo, String key);
+
+    List<Dict>  search(String type, String key);
+
 }

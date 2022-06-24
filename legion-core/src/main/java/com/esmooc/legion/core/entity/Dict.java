@@ -6,11 +6,15 @@ import com.esmooc.legion.core.base.LegionBaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
+import java.security.acl.Group;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+
+import javax.validation.constraints.NotEmpty;
+import javax.validation.groups.Default;
 
 /**
  * @author 呆猫
@@ -37,20 +41,22 @@ public class Dict extends LegionBaseEntity implements Serializable {
      */
     @TableField(value = "type")
     @ApiModelProperty(value="字典类型")
+    @NotEmpty(message = "字典type不能为空")
     private String type;
 
     /**
      * 字典值唯一类型
      */
     @TableField(value = "code")
-    @ApiModelProperty(value="字典值唯一类型")
+    @ApiModelProperty(value="字典值")
     private String code;
 
     /**
      * 是否是父节点
      */
     @TableField(value = "is_parent")
-    @ApiModelProperty(value = "是否为父项 默认false")
+    @ApiModelProperty(value = "是否为父项")
+    @NotEmpty(message = "是否为父项不能为空")
     private boolean parent;
 
 
@@ -59,6 +65,7 @@ public class Dict extends LegionBaseEntity implements Serializable {
      */
     @TableField(value = "description")
     @ApiModelProperty(value="描述")
+    @NotEmpty(message = "描述不能为空")
     private String description;
 
     /**
@@ -79,14 +86,15 @@ public class Dict extends LegionBaseEntity implements Serializable {
      * 字典项
      */
     @TableField(value = "value")
-    @ApiModelProperty(value="字典项")
+    @ApiModelProperty(value="字典项 全局唯一 如果添加的时候为空的话则用type_code组成")
     private String value;
 
     /**
      * 是否是系统内置
      */
     @TableField(value = "system_flag")
-    @ApiModelProperty(value="是否是系统内置")
+    @ApiModelProperty(value="字典类型")
+    @NotEmpty(message = "字典类型不能为空")
     private String systemFlag;
 
     /**
@@ -95,6 +103,7 @@ public class Dict extends LegionBaseEntity implements Serializable {
     @TableField(value = "`status`")
     @ApiModelProperty(value="是否禁用")
     private Boolean status;
+
     /**
      * 拼音
      */
@@ -106,6 +115,7 @@ public class Dict extends LegionBaseEntity implements Serializable {
      */
     @TableField(value = "sort_order")
     @ApiModelProperty(value="排序")
+    @NotEmpty(message = "排序不能为空")
     private int SortOrder;
 
 }
