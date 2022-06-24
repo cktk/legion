@@ -210,4 +210,13 @@ public class DictAdminController {
     }
 
 
+    /**
+     */
+    @ApiOperation(value = "6 通过id查询详情 ", notes = "")
+    @GetMapping()
+    public Result<Dict> getById(String id) {
+        return ResultUtil.data(dictService.getById(id));
+    }
+
+
 }
