@@ -29,7 +29,7 @@ public class RestCtrlExceptionHandler {
         String errorMsg = "Legion exception";
         if (e != null) {
             errorMsg = e.getMsg();
-            log.error(e.toString(), e);
+            log.error(errorMsg);
         }
         return ResultUtil.error(500, errorMsg);
     }
@@ -98,6 +98,7 @@ public class RestCtrlExceptionHandler {
         String errorMsg = "Limit exception";
         if (e != null) {
             errorMsg = e.getMsg();
+            log.error(errorMsg);
         }
         return ResultUtil.error(500, errorMsg);
     }
@@ -109,7 +110,7 @@ public class RestCtrlExceptionHandler {
         String errorMsg = "CaptchaException exception";
         if (e != null) {
             errorMsg = e.getMsg();
-            log.warn(e.getMsg(), e);
+            log.error(errorMsg);
         }
 
         return ResultUtil.error(500, errorMsg);
@@ -122,7 +123,7 @@ public class RestCtrlExceptionHandler {
         String errorMsg = "请求参数不正确   ";
         if (e != null) {
             errorMsg = errorMsg + e.getMessage();
-            log.error("错误详情{},{}", e.getMessage(), e);
+            log.error(errorMsg);
         }
 
         return ResultUtil.error(415, errorMsg);
@@ -135,7 +136,7 @@ public class RestCtrlExceptionHandler {
         String errorMsg = "AccessDeniedException exception";
         if (e != null) {
             errorMsg = e.getMessage();
-            log.warn(e.getMessage(), e);
+            log.error(errorMsg);
         }
         return ResultUtil.error(500, errorMsg);
     }
@@ -147,7 +148,7 @@ public class RestCtrlExceptionHandler {
         String errorMsg = "Exception";
         if (e != null) {
             errorMsg = e.getMessage();
-            log.error(e.toString(), e);
+            log.error(errorMsg);
             if (StrUtil.isBlank(errorMsg)) {
                 errorMsg = e.toString();
             }
