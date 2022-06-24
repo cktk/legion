@@ -11,7 +11,11 @@
     <result column="remarks" jdbcType="VARCHAR" property="remarks" />
     <result column="label" jdbcType="VARCHAR" property="label" />
     <result column="value" jdbcType="VARCHAR" property="value" />
-    <result column="system_flag" jdbcType="CHAR" property="systemFlag" />
+    <result column="system_flag" jdbcType="VARCHAR" property="systemFlag" />
+    <result column="is_parent" jdbcType="BOOLEAN" property="parent" />
+    <result column="pinyin" jdbcType="VARCHAR" property="pinyin" />
+    <result column="sort_order" jdbcType="VARCHAR" property="SortOrder" />
+    <result column="status" jdbcType="BOOLEAN" property="status" />
     <result column="del_flag" jdbcType="BOOLEAN" property="delFlag" />
     <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
@@ -19,13 +23,10 @@
     <result column="create_by" jdbcType="VARCHAR" property="createBy" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="create_id" jdbcType="VARCHAR" property="createId" />
-    <result column="is_parent" jdbcType="BOOLEAN" property="parent" />
-    <result column="pinyin" jdbcType="VARCHAR" property="pinyin" />
-    <result column="sort_order" jdbcType="VARCHAR" property="SortOrder" />
   </resultMap>
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
-    id, `type`, `code`,pinyin, description, remarks, `label`, `value`, system_flag,
+    id, `type`, status,`code`,pinyin, description, remarks, `label`, `value`, system_flag,
     del_flag, update_by, update_time, update_id, create_by, create_time, create_id,is_parent,sort_order
   </sql>
 </mapper>

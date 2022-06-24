@@ -30,12 +30,12 @@ public class DictServiceImpl extends ServiceImpl<SysDictMapper, Dict> implements
      * @return
      */
     @Override
-    public List<Dict> findParentTypeAll(String type) {
+    public Dict findParentTypeAll(String type) {
         QueryWrapper<Dict> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(Dict::getType, type)
                 .eq(Dict::isParent, true)
                 .orderByDesc(Dict::getSortOrder);
-        return this.list(queryWrapper);
+        return this.getOne(queryWrapper);
     }
 
     /**

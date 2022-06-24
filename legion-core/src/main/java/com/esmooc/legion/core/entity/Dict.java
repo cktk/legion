@@ -87,13 +87,14 @@ public class Dict extends LegionBaseEntity implements Serializable {
      */
     @TableField(value = "system_flag")
     @ApiModelProperty(value="是否是系统内置")
-    private Boolean systemFlag;
+    private String systemFlag;
+
     /**
-     * 是否是系统内置
+     * 是否禁用
      */
     @TableField(value = "`status`")
     @ApiModelProperty(value="是否禁用")
-    private String status;
+    private Boolean status;
     /**
      * 拼音
      */
@@ -106,7 +107,5 @@ public class Dict extends LegionBaseEntity implements Serializable {
     @TableField(value = "sort_order")
     @ApiModelProperty(value="排序")
     private int SortOrder;
-
-
 
 }

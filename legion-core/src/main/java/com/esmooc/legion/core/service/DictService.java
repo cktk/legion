@@ -22,7 +22,7 @@ public interface DictService extends IService<Dict> {
      * @param type
      * @return
      */
-    List<Dict> findParentTypeAll(String type);
+    Dict findParentTypeAll(String type);
 
 
 
@@ -46,6 +46,7 @@ public interface DictService extends IService<Dict> {
      * @return
      */
     Dict findByCode(String typeCode);
+
     Dict findByCodeAll(String typeCode);
 
 

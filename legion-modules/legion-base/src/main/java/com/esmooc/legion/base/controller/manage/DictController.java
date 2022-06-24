@@ -138,8 +138,8 @@ public class DictController {
         // 先判断保存父类还是子类
         if (dict.isParent()) {
             //保存父类
-            List<Dict> dictList = dictService.findParentTypeAll(dict.getType());
-            if (dictList==null || dictList.size() < 1) {
+            Dict dictList = dictService.findParentTypeAll(dict.getType());
+            if (dictList==null) {
                 dict.setCode("");
                 dict.setLabel("");
                 dict.setValue("");
@@ -148,6 +148,12 @@ public class DictController {
             }
 
         } else {
+
+            Dict pDict = dictService.findParentTypeAll(dict.getType());
+            if (pDict==null){
+                return ResultUtil.error("字典类型Type不存在 请先添加父类");
+            }
+
             Dict typeCode = dictService.findByCode(dict.getCode());
             if (typeCode != null) {
                 dict.setStatus(SystemConstant.FLAG_N);
