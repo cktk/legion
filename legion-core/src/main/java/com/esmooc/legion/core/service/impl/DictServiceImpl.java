@@ -97,7 +97,7 @@ public class DictServiceImpl extends ServiceImpl<SysDictMapper, Dict> implements
     }
 
     @Override
-    public Dict switchs(Long id, String status) {
+    public Dict switchs(Long id, boolean status) {
 
 
         Dict dictData = this.getById(id);
@@ -105,11 +105,11 @@ public class DictServiceImpl extends ServiceImpl<SysDictMapper, Dict> implements
         if (dictData == null) {
             throw new IllegalArgumentException("字典不存在");
         }
-        if (SystemConstant.FLAG_Y.equals(dictData.isParent())) {
+        if (dictData.isParent()) {
             //通过父类查询所有子类
             List<Dict> data = findByType(dictData.getType());
-            if (SystemConstant.FLAG_N.equals(status)) {
-                data.forEach(e -> e.setStatus(SystemConstant.FLAG_N));
+            if (!status) {
+                data.forEach(e -> e.setStatus(false));
             } else {
                 //如果是启用呢
                 throw new IllegalArgumentException("不允许批量启用");
@@ -124,7 +124,7 @@ public class DictServiceImpl extends ServiceImpl<SysDictMapper, Dict> implements
             //查找是否还有相同的启用了
             Dict oldDict = findByCode(dictData.getCode());
             if (oldDict==null) {
-                dictData.setStatus(SystemConstant.FLAG_Y);
+                dictData.setStatus(true);
                  this.updateById(dictData);
                  return dictData;
             }
@@ -135,7 +135,7 @@ public class DictServiceImpl extends ServiceImpl<SysDictMapper, Dict> implements
             }
             throw new IllegalArgumentException("状态不对 请检查是否有两个相同的配置同时启用了");
         }
-        dictData.setStatus(SystemConstant.FLAG_N);
+        dictData.setStatus(false);
          this.updateById(dictData);
 
          return dictData;

@@ -57,7 +57,7 @@ public interface DictService extends IService<Dict> {
      * @param status
      * @return
      */
-    Dict switchs(Long id, String status);
+    Dict switchs(Long id, boolean status);
 
     List<Dict>  findByTitleOrTypeLike(String key);
 }

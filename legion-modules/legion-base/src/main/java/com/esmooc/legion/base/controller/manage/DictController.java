@@ -101,7 +101,7 @@ public class DictController {
 
         QueryWrapper<Dict> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda()
-                .eq(StrUtil.isNotBlank(dict.getStatus()), Dict::getStatus, dict.getStatus())
+                .eq(dict.getStatus()!=null, Dict::getStatus, dict.getStatus())
                 .eq(Dict::isParent, true)
                 .eq(dict.getSystemFlag()!=null, Dict::getSystemFlag, dict.getSystemFlag())
                 .like(StrUtil.isNotBlank(dict.getLabel()), Dict::getLabel, dict.getLabel()).or()
@@ -126,7 +126,7 @@ public class DictController {
     @ApiOperation(value = "启用和禁用", notes = "启用禁用")
     @PutMapping("/switch/{id}/{status}")
     public Result<Dict> switchs(@PathVariable("id") Long id,
-                                @PathVariable("status") String status) {
+                                @PathVariable("status") boolean status) {
         return ResultUtil.data(dictService.switchs(id, status));
     }
 
@@ -134,7 +134,7 @@ public class DictController {
     @PostMapping("/add")
     @ApiOperation(value = "添加")
     public Result<Dict> add( Dict dict) {
-        dict.setStatus(SystemConstant.FLAG_Y);
+        dict.setStatus(true);
         // 先判断保存父类还是子类
         if (dict.isParent()) {
             //保存父类
@@ -156,7 +156,7 @@ public class DictController {
 
             Dict typeCode = dictService.findByCode(dict.getCode());
             if (typeCode != null) {
-                dict.setStatus(SystemConstant.FLAG_N);
+                dict.setStatus(false);
             }
         }
 
