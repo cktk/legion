@@ -13,7 +13,7 @@ spring:
         master:
           lazy: true
           driver-class-name: com.mysql.cj.jdbc.Driver
-          url: jdbc:mysql://${MYSQL_HOST:127.0.0.1}:${MYSQL_PROT:3306}/${MYSQL_SCHEMA:legion10}?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=GMT%2B8&nullCatalogMeansCurrent=true&allowPublicKeyRetrieval=true
+          url: jdbc:mysql://${MYSQL_HOST:127.0.0.1}:${MYSQL_PROT:3306}/${MYSQL_SCHEMA:legion}?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=GMT%2B8&nullCatalogMeansCurrent=true&allowPublicKeyRetrieval=true
           username: ${MYSQL_USER:root}
           password: ${MYSQL_PWD:root}
   redis:
