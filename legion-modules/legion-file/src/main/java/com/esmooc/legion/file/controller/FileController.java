@@ -5,13 +5,12 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.constant.SettingConstant;
 import com.esmooc.legion.core.common.exception.LegionException;
-import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
 import com.esmooc.legion.core.common.utils.ResultUtil;
-import com.esmooc.legion.core.common.utils.SecurityUtil;
+import com.esmooc.legion.core.config.security.service.PigxUser;
+import com.esmooc.legion.core.config.security.util.SecurityUtil;
 import com.esmooc.legion.core.common.vo.PageVo;
 import com.esmooc.legion.core.common.vo.Result;
 import com.esmooc.legion.core.common.vo.SearchVo;
-import com.esmooc.legion.core.entity.User;
 import com.esmooc.legion.core.service.SettingService;
 import com.esmooc.legion.core.entity.vo.OssSetting;
 import com.esmooc.legion.file.entity.LegionFile;
@@ -26,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -59,7 +59,7 @@ public class FileController {
     private SettingService settingService;
 
     @Autowired
-    private RedisTemplateHelper redisTemplate;
+    private RedisTemplate<String,String> redisTemplate;
 
 
 
@@ -90,7 +90,7 @@ public class FileController {
     @ResponseBody
     public Result<Object> deleteUserFile(@RequestParam String id) {
 
-        User user = SecurityUtil.getUser();
+        PigxUser user = SecurityUtil.getUser();
         LegionFile legionFile = fileService.getById(id);
         if (legionFile.getLocation() == null) {
             return ResultUtil.error("存储位置未知");
@@ -120,7 +120,7 @@ public class FileController {
     public Result<Object> renameUserFile(@RequestParam String id,
                                          @RequestParam String newName) {
 
-        User user = SecurityUtil.getUser();
+        PigxUser user = SecurityUtil.getUser();
         LegionFile legionFile = fileService.getById(id);
         if (legionFile.getLocation() == null) {
             return ResultUtil.error("存储位置未知");

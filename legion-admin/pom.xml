@@ -15,54 +15,10 @@
         <!-- 引入功能模块 -->
         <dependency>
             <groupId>com.esmooc</groupId>
-            <artifactId>legion-base</artifactId>
+            <artifactId>legion-core</artifactId>
             <version>M1</version>
         </dependency>
-        <dependency>
-            <groupId>com.esmooc</groupId>
-            <artifactId>legion-file</artifactId>
-            <version>M1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.esmooc</groupId>
-            <artifactId>legion-generator</artifactId>
-            <version>M1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.esmooc</groupId>
-            <artifactId>legion-quartz</artifactId>
-            <version>M1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.esmooc</groupId>
-            <artifactId>legion-open</artifactId>
-            <version>M1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.esmooc</groupId>
-            <artifactId>legion-social</artifactId>
-            <version>M1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.esmooc</groupId>
-            <artifactId>legion-autochat</artifactId>
-            <version>M1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.esmooc</groupId>
-            <artifactId>legion-app</artifactId>
-            <version>M1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.esmooc</groupId>
-            <artifactId>legion-your</artifactId>
-            <version>M1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.esmooc</groupId>
-            <artifactId>legion-system</artifactId>
-            <version>M1</version>
-        </dependency>
+
 
     </dependencies>
 

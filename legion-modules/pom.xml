@@ -13,13 +13,10 @@
     <packaging>pom</packaging>
     <modules>
         <module>legion-base</module>
-        <module>legion-social</module>
         <module>legion-generator</module>
         <module>legion-file</module>
         <module>legion-quartz</module>
-        <module>legion-open</module>
         <module>legion-your</module>
-        <module>legion-app</module>
         <module>legion-autochat</module>
         <module>legion-system</module>
     </modules>

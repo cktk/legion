@@ -28,22 +28,22 @@ public class FileCategoryServiceImpl extends ServiceImpl<FileCategoryMapper, Fil
 
 
     @Override
-    public List<FileCategory> findByParentIdAndCreateBy(String parentId, String createBy) {
+    public List<FileCategory> findByParentIdAndCreateBy(String parentId, Long createBy) {
         QueryWrapper<FileCategory> queryWrapper = new QueryWrapper<>();
 
         queryWrapper.lambda().eq(FileCategory::getParentId,parentId)
-                .eq(StrUtil.isNotBlank(createBy),FileCategory::getCreateId,createBy).orderByAsc(FileCategory::getSortOrder);
+                .eq(createBy!=null,FileCategory::getCreateId,createBy).orderByAsc(FileCategory::getSortOrder);
         return this.list(queryWrapper);
     }
 
     @Override
-    public List<FileCategory> findByTitleLikeAndCreateBy(String title, String createBy) {
+    public List<FileCategory> findByTitleLikeAndCreateBy(String title, Long createBy) {
 
 
         QueryWrapper<FileCategory> queryWrapper = new QueryWrapper<>();
 
         queryWrapper.lambda().like(FileCategory::getParentId,title)
-                .eq(StrUtil.isNotBlank(createBy),FileCategory::getCreateId,createBy).orderByAsc(FileCategory::getSortOrder);
+                .eq(createBy!=null,FileCategory::getCreateId,createBy).orderByAsc(FileCategory::getSortOrder);
         return this.list(queryWrapper);
     }
 }

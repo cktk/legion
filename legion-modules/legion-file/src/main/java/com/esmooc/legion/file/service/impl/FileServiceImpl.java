@@ -5,7 +5,7 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
+import org.springframework.data.redis.core.RedisTemplate;
 import com.esmooc.legion.core.common.utils.PageUtil;
 import com.esmooc.legion.core.common.vo.PageVo;
 import com.esmooc.legion.core.common.vo.SearchVo;
@@ -18,6 +18,7 @@ import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 
 
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,7 +40,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, LegionFile> impleme
     private FileMapper fileMapper;
 
     @Autowired
-    private RedisTemplateHelper redisTemplate;
+    private RedisTemplate<String,String> redisTemplate;
 
 
 
@@ -47,13 +48,13 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, LegionFile> impleme
     public LegionFile get(String id) {
 
         // 避免缓存穿透
-        String result = redisTemplate.get("LegionFile::" + id);
+        String result = redisTemplate.opsForValue().get("LegionFile::" + id);
         if ("null".equals(result)) {
             return null;
         }
         LegionFile legionFile = this.getById(id);
         if (legionFile == null) {
-            redisTemplate.set("LegionFile::" + id, "null", 5L, TimeUnit.MINUTES);
+            redisTemplate.opsForValue().set("LegionFile::" + id, "null", 5L, TimeUnit.MINUTES);
         }
         return legionFile;
     }

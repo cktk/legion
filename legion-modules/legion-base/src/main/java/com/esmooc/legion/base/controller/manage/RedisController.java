@@ -8,7 +8,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.plugins.pagination.PageDTO;
 import com.esmooc.legion.base.vo.RedisInfo;
 import com.esmooc.legion.base.vo.RedisVo;
-import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
+import org.springframework.data.redis.core.RedisTemplate;
 import com.esmooc.legion.core.common.utils.PageUtil;
 import com.esmooc.legion.core.common.utils.ResultUtil;
 import com.esmooc.legion.core.common.vo.PageVo;
@@ -52,7 +52,7 @@ public class RedisController {
     private static final int maxSize = 100000;
 
     @Autowired
-    private RedisTemplateHelper redisTemplate;
+    private  RedisTemplate<String,String> redisTemplate;
 
     @RequestMapping(value = "/getAllByPage", method = RequestMethod.GET)
     @ApiOperation(value = "分页获取全部")
@@ -66,7 +66,7 @@ public class RedisController {
         } else {
             key = "*";
         }
-        Set<String> keys = redisTemplate.scan(key);
+        Set<String> keys = redisTemplate.keys("*");
         int size = keys.size();
         // 限制10万个
         if (size > maxSize) {
@@ -89,7 +89,7 @@ public class RedisController {
         page.getRecords().forEach(e -> {
             String value = "";
             try {
-                value = redisTemplate.get(e.getKey());
+                value = redisTemplate.opsForValue().get(e.getKey());
                 if (value.length() > 150) {
                     value = value.substring(0, 150) + "...";
                 }
@@ -107,7 +107,7 @@ public class RedisController {
     public Result<Object> getByKey(@PathVariable String key) {
 
         Map<String, Object> map = new HashMap<>();
-        String value = redisTemplate.get(key);
+        String value = redisTemplate.opsForValue().get(key);
         Long expireTime = redisTemplate.getExpire(key, TimeUnit.SECONDS);
         map.put("value", value);
         map.put("expireTime", expireTime);
@@ -121,9 +121,9 @@ public class RedisController {
                                @RequestParam Long expireTime) {
 
         if (expireTime < 0) {
-            redisTemplate.set(key, value);
+            redisTemplate.opsForValue().set(key, value);
         } else if (expireTime > 0) {
-            redisTemplate.set(key, value, expireTime, TimeUnit.SECONDS);
+            redisTemplate.opsForValue().set(key, value, expireTime, TimeUnit.SECONDS);
         }
         return ResultUtil.success("保存成功");
     }
@@ -142,7 +142,7 @@ public class RedisController {
     @ApiOperation(value = "全部删除")
     public Result<Object> delAll() {
 
-        redisTemplate.deleteByPattern("*");
+        redisTemplate.delete("*");
         return ResultUtil.success("删除成功");
     }
 

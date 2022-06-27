@@ -6,7 +6,7 @@ import cn.hutool.crypto.digest.DigestAlgorithm;
 import cn.hutool.crypto.digest.Digester;
 import cn.hutool.http.HttpUtil;
 import com.esmooc.legion.core.common.constant.SettingConstant;
-import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
+import org.springframework.data.redis.core.RedisTemplate;
 import com.google.gson.JsonParser;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -32,7 +32,7 @@ public class VaptchaController {
     public static final String CHAR = "0123456789abcdef";
 
     @Autowired
-    private RedisTemplateHelper redisTemplate;
+    private  RedisTemplate<String,String> redisTemplate;
 
     public static String getRandomStr() {
 
@@ -51,7 +51,7 @@ public class VaptchaController {
 
         response.setHeader("X-Content-Type-Options", "");
         // 获取offline_key
-        String offline_key = redisTemplate.get(vid);
+        String offline_key = redisTemplate.opsForValue().get(vid);
         if (StrUtil.isBlank(offline_key)) {
             // 校验是否进入离线模式
             String offCheck = HttpUtil.get(SettingConstant.CHANNEL_URL + vid);
@@ -60,7 +60,7 @@ public class VaptchaController {
                 return "Vapthca未进入离线模式";
             } else {
                 offline_key = JsonParser.parseString(offCheck).getAsJsonObject().get("offline_key").getAsString();
-                redisTemplate.set(vid, offline_key, 3L, TimeUnit.MINUTES);
+                redisTemplate.opsForValue().set(vid, offline_key, 3L, TimeUnit.MINUTES);
             }
         }
         if ("get".equals(offline_action)) {
@@ -69,13 +69,13 @@ public class VaptchaController {
             if (StrUtil.isBlank(knock)) {
                 knock = IdUtil.simpleUUID();
             }
-            redisTemplate.set(knock, imageId, 3L, TimeUnit.MINUTES);
+            redisTemplate.opsForValue().set(knock, imageId, 3L, TimeUnit.MINUTES);
             // 拼接并返回
             String result = callback + "({\"code\": \"" + SettingConstant.VALIDATE_SUCCESS + "\", \"imgid\": \""
                     + imageId + "\", \"knock\": \"" + knock + "\"})";
             return result;
         } else {
-            String imageId = redisTemplate.get(knock);
+            String imageId = redisTemplate.opsForValue().get(knock);
             redisTemplate.delete(knock);
             if (StrUtil.isBlank(imageId)) {
                 String result = callback + "({\"code\": \"" + SettingConstant.VALIDATE_FAIL + "\", \"msg\": \"knock过期\", \"token\": \"\"})";
@@ -88,7 +88,7 @@ public class VaptchaController {
             if (validateResult) {
                 // 校验成功则生成token
                 String uuid = IdUtil.simpleUUID();
-                redisTemplate.set(knock, uuid, 3L, TimeUnit.MINUTES);
+                redisTemplate.opsForValue().set(knock, uuid, 3L, TimeUnit.MINUTES);
                 token = SettingConstant.OFFLINE_MODE + knock + uuid;
                 result = callback + "({\"code\": \"" + SettingConstant.VALIDATE_SUCCESS + "\", \"msg\": \"success\", \"token\": \"" + token + "\"})";
             } else {

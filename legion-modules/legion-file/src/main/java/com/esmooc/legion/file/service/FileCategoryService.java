@@ -21,7 +21,7 @@ public interface FileCategoryService extends IService<FileCategory> {
      * @param createById
      * @return
      */
-    List<FileCategory> findByParentIdAndCreateBy(String parentId, String createById);
+    List<FileCategory> findByParentIdAndCreateBy(String parentId, Long createById);
 
     /**
      * 通过名称和创建人模糊搜索
@@ -30,5 +30,5 @@ public interface FileCategoryService extends IService<FileCategory> {
      * @param createById
      * @return
      */
-    List<FileCategory> findByTitleLikeAndCreateBy(String title, String createById);
+    List<FileCategory> findByTitleLikeAndCreateBy(String title, Long createById);
 }

@@ -1,0 +1,7 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+    com.esmooc.legion.core.common.data.mybatis.MybatisPlusConfiguration,\
+    com.esmooc.legion.core.common.security.component.KiteTokenEnhancer,\
+    com.esmooc.legion.core.common.security.serializer.KiteTokenStoreAutoConfiguration,\
+    com.esmooc.legion.core.auth.config.WebSecurityConfigurer,\
+    com.esmooc.legion.core.auth.config.AuthorizationServerConfig
+

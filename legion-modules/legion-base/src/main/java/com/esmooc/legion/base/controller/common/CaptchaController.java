@@ -4,19 +4,20 @@ import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import com.esmooc.legion.core.common.annotation.RateLimiter;
 import com.esmooc.legion.core.common.constant.CommonConstant;
-import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
+
 import com.esmooc.legion.core.common.sms.SmsUtil;
 import com.esmooc.legion.core.common.utils.CommonUtil;
 import com.esmooc.legion.core.common.utils.CreateVerifyCode;
 import com.esmooc.legion.core.common.utils.IpInfoUtil;
 import com.esmooc.legion.core.common.utils.ResultUtil;
 import com.esmooc.legion.core.common.vo.Result;
-import com.esmooc.legion.core.service.UserService;
+import com.esmooc.legion.core.config.security.service.PigxUserDetailsService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -44,13 +45,13 @@ public class CaptchaController {
     private SmsUtil smsUtil;
 
     @Autowired
-    private RedisTemplateHelper redisTemplate;
+    private RedisTemplate<String,String> redisTemplate;
 
     @Autowired
     private IpInfoUtil ipInfoUtil;
 
     @Autowired
-    private UserService userService;
+    private PigxUserDetailsService  pigxUserDetailsService;
 
 
     @GetMapping(value = "/init")
@@ -67,7 +68,7 @@ public class CaptchaController {
             code = new CreateVerifyCode().randomStr(length);
         }
         // 缓存验证码
-        redisTemplate.set(captchaId, code, 2L, TimeUnit.MINUTES);
+        redisTemplate.opsForValue().set(captchaId, code, 2L, TimeUnit.MINUTES);
         return ResultUtil.data(captchaId);
     }
 
@@ -77,7 +78,7 @@ public class CaptchaController {
                             HttpServletResponse response) throws IOException {
 
         // 得到验证码 生成指定验证码
-        String code = redisTemplate.get(captchaId);
+        String code = redisTemplate.opsForValue().get(captchaId);
         CreateVerifyCode vCode = new CreateVerifyCode(116, 36, 4, 10, code);
         response.setContentType("image/png");
         vCode.write(response.getOutputStream());
@@ -109,9 +110,9 @@ public class CaptchaController {
     @ApiOperation(value = "发送修改手机短信验证码")
     public Result<Object> sendEditMobileSmsCode(@PathVariable String mobile, HttpServletRequest request) {
 
-        if (userService.findByMobile(mobile) != null) {
-            return ResultUtil.error("该手机号已绑定账户");
-        }
+//        if (pigxUserDetailsService.(mobile) != null) {
+//            return ResultUtil.error("该手机号已绑定账户");
+//        }
         return sendSms(mobile, 0, 0, request);
     }
 
@@ -122,25 +123,25 @@ public class CaptchaController {
      */
     public Result<Object> sendSms(String mobile, Integer range, Integer templateType, HttpServletRequest request) {
 
-        if (range == 1 && userService.findByMobile(mobile) == null) {
-            return ResultUtil.error("手机号未注册");
-        } else if (range == 2 && userService.findByMobile(mobile) != null) {
-            return ResultUtil.error("手机号已注册");
-        }
+//        if (range == 1 && userService.findByMobile(mobile) == null) {
+//            return ResultUtil.error("手机号未注册");
+//        } else if (range == 2 && userService.findByMobile(mobile) != null) {
+//            return ResultUtil.error("手机号已注册");
+//        }
         // IP限流 1分钟限1个请求
         String key = "sendSms:" + ipInfoUtil.getIpAddr(request);
-        String value = redisTemplate.get(key);
+        String value = redisTemplate.opsForValue().get(key);
         if (StrUtil.isNotBlank(value)) {
             return ResultUtil.error("您发送的太频繁啦，请稍后再试");
         }
         // 生成6位数验证码
         String code = CommonUtil.getRandomNum();
         // 缓存验证码
-        redisTemplate.set(CommonConstant.PRE_SMS + mobile, code, 5L, TimeUnit.MINUTES);
+        redisTemplate.opsForValue().set(CommonConstant.PRE_SMS + mobile, code, 5L, TimeUnit.MINUTES);
         // 发送验证码
         smsUtil.sendCode(mobile, code, templateType);
         // 请求成功 标记限流
-        redisTemplate.set(key, "sended", 1L, TimeUnit.MINUTES);
+        redisTemplate.opsForValue().set(key, "sended", 1L, TimeUnit.MINUTES);
         return ResultUtil.success("发送短信验证码成功");
     }
 }

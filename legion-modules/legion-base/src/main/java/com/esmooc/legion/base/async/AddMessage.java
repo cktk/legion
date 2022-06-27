@@ -31,7 +31,7 @@ public class AddMessage {
      * @param userId
      */
     @Async
-    public void addSendMessage(String userId) {
+    public void addSendMessage(Long userId) {
 
         // 获取需要创建账号发送的消息
         List<Message> messages = messageService.findByCreateSend(true);

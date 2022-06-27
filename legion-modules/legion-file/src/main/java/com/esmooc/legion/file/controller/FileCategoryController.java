@@ -3,12 +3,11 @@ package com.esmooc.legion.file.controller;
 import cn.hutool.core.util.StrUtil;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.exception.LegionException;
-import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
 import com.esmooc.legion.core.common.utils.CommonUtil;
 import com.esmooc.legion.core.common.utils.ResultUtil;
-import com.esmooc.legion.core.common.utils.SecurityUtil;
+import com.esmooc.legion.core.config.security.service.PigxUser;
+import com.esmooc.legion.core.config.security.util.SecurityUtil;
 import com.esmooc.legion.core.common.vo.Result;
-import com.esmooc.legion.core.entity.User;
 import com.esmooc.legion.file.entity.LegionFile;
 import com.esmooc.legion.file.entity.FileCategory;
 import com.esmooc.legion.file.service.FileCategoryService;
@@ -17,6 +16,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -45,13 +45,13 @@ public class FileCategoryController {
 
 
     @Autowired
-    private RedisTemplateHelper redisTemplate;
+    private RedisTemplate<String,String> redisTemplate;
 
     @RequestMapping(value = "/getByParentId/{parentId}", method = RequestMethod.GET)
     @ApiOperation(value = "通过id获取")
     public Result<List<FileCategory>> getByParentId(@PathVariable String parentId) {
 
-        User user = SecurityUtil.getUser();
+        PigxUser user = SecurityUtil.getUser();
         List<FileCategory> list = fileCategoryService.findByParentIdAndCreateBy(parentId, user.getId());
         setInfo(list);
         return ResultUtil.data(list);
@@ -80,7 +80,7 @@ public class FileCategoryController {
         if (fileCategory.getId().equals(fileCategory.getParentId())) {
             return ResultUtil.error("上级节点不能为自己");
         }
-        User user = SecurityUtil.getUser();
+        PigxUser user = SecurityUtil.getUser();
         FileCategory old = fileCategoryService.getById(fileCategory.getId());
         if (!user.getUsername().equals(old.getCreateBy())) {
             return ResultUtil.error("你无权编辑非本人文件");
@@ -104,7 +104,7 @@ public class FileCategoryController {
     public Result<Object> moveByIds(@RequestParam String[] ids,
                                     @RequestParam String categoryId) {
 
-        User user = SecurityUtil.getUser();
+        PigxUser user = SecurityUtil.getUser();
         if (!CommonConstant.PARENT_ID.equals(categoryId)) {
             FileCategory fileCategory = fileCategoryService.getById(categoryId);
             if (!user.getUsername().equals(fileCategory.getCreateBy())) {
@@ -131,14 +131,14 @@ public class FileCategoryController {
     @ApiOperation(value = "批量通过id删除")
     public Result<Object> delByIds(@RequestParam String[] ids) {
 
-        User user = SecurityUtil.getUser();
+        PigxUser user = SecurityUtil.getUser();
         for (String id : ids) {
             deleteRecursion(id, ids, user.getId());
         }
         return ResultUtil.success("批量通过id删除数据成功");
     }
 
-    public void deleteRecursion(String id, String[] ids, String userId) {
+    public void deleteRecursion(String id, String[] ids, Long userId) {
 
         // 获得其父节点
         FileCategory o = fileCategoryService.getById(id);
@@ -172,7 +172,7 @@ public class FileCategoryController {
     @ApiOperation(value = "名称模糊搜索")
     public Result<List<FileCategory>> searchByTitle(@RequestParam String title) {
 
-        User user = SecurityUtil.getUser();
+        PigxUser user = SecurityUtil.getUser();
         List<FileCategory> list = fileCategoryService.findByTitleLikeAndCreateBy( title, user.getId());
         setInfo(list);
         return ResultUtil.data(list);

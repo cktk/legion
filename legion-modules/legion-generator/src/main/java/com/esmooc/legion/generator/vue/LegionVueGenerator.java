@@ -2,7 +2,6 @@ package com.esmooc.legion.generator.vue;
 
 import cn.hutool.core.util.StrUtil;
 import com.esmooc.legion.core.common.exception.LegionException;
-import com.esmooc.legion.core.common.limit.RedisRaterLimiter;
 import com.esmooc.legion.core.common.utils.IpInfoUtil;
 import com.esmooc.legion.core.common.utils.ResultUtil;
 import com.esmooc.legion.core.common.vo.Result;
@@ -42,8 +41,6 @@ import java.util.Map;
 @RequestMapping(value = "/legion/generate")
 public class LegionVueGenerator {
 
-    @Autowired
-    private RedisRaterLimiter redisRaterLimiter;
 
     @Autowired
     private IpInfoUtil ipInfoUtil;

@@ -1,32 +1,25 @@
 package com.esmooc.legion.your.controller;
 
 import com.esmooc.legion.core.common.annotation.RateLimiter;
-import com.esmooc.legion.core.common.lock.Callback;
-import com.esmooc.legion.core.common.lock.RedisLockTemplate;
 import com.esmooc.legion.core.common.utils.PageUtil;
 import com.esmooc.legion.core.common.utils.ResultUtil;
 import com.esmooc.legion.core.common.vo.PageVo;
 import com.esmooc.legion.core.common.vo.Result;
-import com.esmooc.legion.core.config.datascope.DataScope;
 import com.esmooc.legion.core.entity.Test;
 import com.esmooc.legion.core.service.TestService;
-import com.esmooc.legion.your.entity.Book;
 import com.esmooc.legion.your.server.BookService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -40,8 +33,6 @@ import java.util.concurrent.TimeUnit;
 @RequestMapping(value = "/test")
 public class TestController {
 
-    @Autowired
-    private RedisLockTemplate redisLockTemplate;
 
 
     @Autowired
@@ -71,7 +62,7 @@ public class TestController {
     @ApiOperation(value = "同步锁限流测试")
     public Result<Object> test() {
 
-        redisLockTemplate.execute("订单流水号", 3, null, TimeUnit.SECONDS, new Callback() {
+    /*    redisLockTemplate.execute("订单流水号", 3, null, TimeUnit.SECONDS, new Callback() {
             @Override
             public Object onGetLock() {
                 // TODO 获得锁后要做的事
@@ -88,7 +79,7 @@ public class TestController {
                 return null;
             }
         });
-
+*/
         return ResultUtil.data(null);
     }
 

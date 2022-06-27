@@ -34,7 +34,7 @@ logging:
   level:
     root: info
   file:
-    path: ./legion-logs
+    path: ~/log/legion-logs
   logback:
     rollingpolicy:
       # 最大保存天数

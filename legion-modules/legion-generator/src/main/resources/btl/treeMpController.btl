@@ -36,7 +36,7 @@ public class ${entity.className}Controller {
     private I${entity.className}Service i${entity.className}Service;
 
     @Autowired
-    private RedisTemplateHelper redisTemplate;
+    private RedisTemplate<String,String> redisTemplate;
 
     @RequestMapping(value = "/getByParentId/{parentId}", method = RequestMethod.GET)
     @ApiOperation(value = "通过id获取")

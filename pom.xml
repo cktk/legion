@@ -29,7 +29,6 @@
         <jjwt.version>0.9.1</jjwt.version>
         <mysql.connector.version>8.0.29</mysql.connector.version>
         <mybatis.plus.version>3.5.1</mybatis.plus.version>
-        <redission.version>3.17.0</redission.version>
         <gson.version>2.9.0</gson.version>
         <knife4j.version>3.0.3</knife4j.version>
         <hutool.version>5.8.1</hutool.version>
@@ -46,7 +45,6 @@
         <dynamic.version>3.5.1</dynamic.version>
         <extentreports.testng.version>1.2.3</extentreports.testng.version>
         <selenuim.version>4.1.4</selenuim.version>
-        <jedis.version>4.2.3</jedis.version>
         <postgresql.version>42.3.6</postgresql.version>
         <jsoup.version>1.15.1</jsoup.version>
         <flyway.version>6.4.4</flyway.version>
@@ -94,12 +92,7 @@
                 <artifactId>mybatis-plus-boot-starter</artifactId>
                 <version>${mybatis.plus.version}</version>
             </dependency>
-            <!-- Redission -->
-            <dependency>
-                <groupId>org.redisson</groupId>
-                <artifactId>redisson-spring-boot-starter</artifactId>
-                <version>${redission.version}</version>
-            </dependency>
+
 
 
             <dependency>
@@ -181,11 +174,7 @@
                 <version>${tencentcloud.version}</version>
             </dependency>
 
-            <dependency>
-                <groupId>redis.clients</groupId>
-                <artifactId>jedis</artifactId>
-                <version>${jedis.version}</version>
-            </dependency>
+
 
             <!-- 多数据源 -->
             <dependency>

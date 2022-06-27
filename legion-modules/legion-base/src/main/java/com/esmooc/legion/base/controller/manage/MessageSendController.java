@@ -5,15 +5,16 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.utils.PageUtil;
 import com.esmooc.legion.core.common.utils.ResultUtil;
-import com.esmooc.legion.core.common.utils.SecurityUtil;
+import com.esmooc.legion.core.config.security.service.PigxUser;
+import com.esmooc.legion.core.config.security.util.SecurityUtil;
 import com.esmooc.legion.core.common.vo.PageVo;
 import com.esmooc.legion.core.common.vo.Result;
 import com.esmooc.legion.core.entity.Message;
 import com.esmooc.legion.core.entity.MessageSend;
-import com.esmooc.legion.core.entity.User;
+import com.esmooc.legion.core.entity.SysUser;
 import com.esmooc.legion.core.service.MessageSendService;
 import com.esmooc.legion.core.service.MessageService;
-import com.esmooc.legion.core.service.UserService;
+import com.esmooc.legion.core.service.SysUserService;
 import com.google.gson.Gson;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -46,7 +47,7 @@ import java.util.List;
 public class MessageSendController  {
 
     @Autowired
-    private UserService userService;
+    private SysUserService sysUserService;
 
     @Autowired
     private MessageService messageService;
@@ -101,7 +102,7 @@ public class MessageSendController  {
 
         IPage<MessageSend> page = messageSendService.findByCondition(ms,pv);
         page.getRecords().forEach(item -> {
-            User u = userService.getById(item.getUserId());
+            SysUser u = sysUserService.getById(item.getUserId());
             if (u != null) {
                 item.setUsername(u.getUsername()).setNickname(u.getNickname());
             }
@@ -122,8 +123,7 @@ public class MessageSendController  {
     @RequestMapping(value = "/all/{type}", method = RequestMethod.GET)
     @ApiOperation(value = "多条件分页获取")
     public Result<Object> batchOperation(@Param("0全部已读 1全部删除已读") @PathVariable Integer type) {
-
-        User u =  SecurityUtil.getUser();
+        PigxUser u = SecurityUtil.getUser();
         if (type == 0) {
             messageSendService.updateStatusByUserId(u.getId(), CommonConstant.MESSAGE_STATUS_READ);
         } else if (type == 1) {

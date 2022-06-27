@@ -9,10 +9,10 @@ import com.esmooc.legion.core.common.vo.Result;
 import com.esmooc.legion.core.common.vo.SearchVo;
 import com.esmooc.legion.core.entity.Message;
 import com.esmooc.legion.core.entity.MessageSend;
-import com.esmooc.legion.core.entity.User;
+import com.esmooc.legion.core.entity.SysUser;
 import com.esmooc.legion.core.service.MessageSendService;
 import com.esmooc.legion.core.service.MessageService;
-import com.esmooc.legion.core.service.UserService;
+import com.esmooc.legion.core.service.SysUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -48,7 +48,7 @@ public class MessageController {
     private MessageSendService sendService;
 
     @Autowired
-    private UserService userService;
+    private SysUserService sysUserService;
 
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
@@ -85,9 +85,9 @@ public class MessageController {
         List<MessageSend> messageSends = new ArrayList<>();
         if (CommonConstant.MESSAGE_RANGE_ALL.equals(message.getRange())) {
             // 全体
-            List<User> allUser = userService.list();
+            List<SysUser> allUser = sysUserService.list();
             allUser.forEach(u -> {
-                MessageSend ms = new MessageSend().setMessageId(m.getId()).setUserId(u.getId());
+                MessageSend ms = new MessageSend().setMessageId(m.getId()).setUserId(u.getUserId());
                 messageSends.add(ms);
             });
             sendService.saveOrUpdateBatch(messageSends);
@@ -95,14 +95,14 @@ public class MessageController {
             messagingTemplate.convertAndSend("/topic/subscribe", "您收到了新的系统消息");
         } else if (CommonConstant.MESSAGE_RANGE_USER.equals(message.getRange())) {
             // 指定用户
-            for (String id : message.getUserIds()) {
+            for (Long id : message.getUserIds()) {
                 MessageSend ms = new MessageSend().setMessageId(m.getId()).setUserId(id);
                 messageSends.add(ms);
             }
             sendService.saveOrUpdateBatch(messageSends);
             // 推送
-            for (String id : message.getUserIds()) {
-                messagingTemplate.convertAndSendToUser(id, "/queue/subscribe", "您收到了新的消息");
+            for (Long id : message.getUserIds()) {
+                messagingTemplate.convertAndSendToUser(String.valueOf(id), "/queue/subscribe", "您收到了新的消息");
             }
         }
         return ResultUtil.success("添加成功");
