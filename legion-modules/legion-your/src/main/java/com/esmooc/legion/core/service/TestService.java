@@ -1,7 +1,7 @@
 package com.esmooc.legion.core.service;
 
-import com.esmooc.legion.core.entity.Test;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.esmooc.legion.core.entity.Test;
     /**
  * @author 呆猫
  * @version 1.0
@@ -11,7 +11,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * 美 好 生 活 从 维 护 代 码 开 始
  * ----------------------------
  */
-    
+
 public interface TestService extends IService<Test>{
 
 

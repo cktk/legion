@@ -12,7 +12,6 @@ import org.beetl.core.GroupTemplate;
 import org.beetl.core.Template;
 import org.beetl.core.resource.ClasspathResourceLoader;
 
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;

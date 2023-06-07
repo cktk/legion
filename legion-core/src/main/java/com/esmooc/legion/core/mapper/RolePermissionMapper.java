@@ -1,12 +1,9 @@
 package com.esmooc.legion.core.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-
 import com.esmooc.legion.core.entity.RolePermission;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Select;
-
-
 
 import java.util.List;
 

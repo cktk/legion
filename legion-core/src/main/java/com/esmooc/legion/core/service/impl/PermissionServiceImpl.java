@@ -2,8 +2,8 @@ package com.esmooc.legion.core.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.esmooc.legion.core.mapper.PermissionMapper;
 import com.esmooc.legion.core.entity.Permission;
+import com.esmooc.legion.core.mapper.PermissionMapper;
 import com.esmooc.legion.core.service.PermissionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

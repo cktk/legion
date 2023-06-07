@@ -8,8 +8,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
-
-import org.springframework.data.annotation.Transient;import java.math.BigDecimal;
+import java.math.BigDecimal;
 
 /**
  * @author Exrick

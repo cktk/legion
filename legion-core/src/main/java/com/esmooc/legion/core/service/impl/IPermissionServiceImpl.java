@@ -1,8 +1,8 @@
 package com.esmooc.legion.core.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.esmooc.legion.core.mapper.PermissionMapper;
 import com.esmooc.legion.core.entity.Permission;
+import com.esmooc.legion.core.mapper.PermissionMapper;
 import com.esmooc.legion.core.service.IPermissionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

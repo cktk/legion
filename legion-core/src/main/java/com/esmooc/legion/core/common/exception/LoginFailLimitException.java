@@ -1,6 +1,5 @@
 package com.esmooc.legion.core.common.exception;
 
-import lombok.Data;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 
 /**

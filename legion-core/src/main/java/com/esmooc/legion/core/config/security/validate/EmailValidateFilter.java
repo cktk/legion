@@ -7,7 +7,6 @@ import com.esmooc.legion.core.common.utils.ResponseUtil;
 import com.esmooc.legion.core.common.vo.EmailValidate;
 import com.esmooc.legion.core.config.properties.CaptchaProperties;
 import com.google.gson.Gson;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.PathMatcher;

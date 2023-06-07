@@ -3,14 +3,10 @@ package com.esmooc.legion.core.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.esmooc.legion.core.common.utils.SecurityUtil;
-import com.esmooc.legion.core.entity.Setting;
-import com.esmooc.legion.core.mapper.DepartmentMapper;
 import com.esmooc.legion.core.entity.Department;
+import com.esmooc.legion.core.mapper.DepartmentMapper;
 import com.esmooc.legion.core.service.DepartmentService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

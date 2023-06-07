@@ -3,7 +3,6 @@ package com.esmooc.legion.core.entity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.esmooc.legion.core.base.LegionBaseEntity;
-import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.config.datascope.DataScopeTypeEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

@@ -2,6 +2,7 @@ package com.esmooc.legion.core.config.tenant;
 
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+
 import java.util.function.Supplier;
 /**
  * 租户运行时代理<br/>

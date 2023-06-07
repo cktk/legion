@@ -515,7 +515,8 @@ import customList from "@/views/my-components/legion/custom-list";
 <%
 }
 %>
-import { shortcuts } from "@/libs/shortcuts";
+import {shortcuts} from "@/libs/shortcuts";
+
 export default {
   name: "${vueName}",
   components: {

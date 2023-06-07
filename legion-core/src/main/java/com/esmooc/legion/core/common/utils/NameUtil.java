@@ -7,9 +7,6 @@ import com.esmooc.legion.core.common.exception.LegionException;
 import com.esmooc.legion.core.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 /**
  * 用户名验证工具类
  *

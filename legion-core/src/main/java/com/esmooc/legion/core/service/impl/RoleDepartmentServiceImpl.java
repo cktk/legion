@@ -1,8 +1,8 @@
 package com.esmooc.legion.core.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.esmooc.legion.core.mapper.RoleDepartmentMapper;
 import com.esmooc.legion.core.entity.RoleDepartment;
+import com.esmooc.legion.core.mapper.RoleDepartmentMapper;
 import com.esmooc.legion.core.service.RoleDepartmentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

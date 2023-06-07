@@ -3,13 +3,10 @@ package com.esmooc.legion.file.service.impl;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.esmooc.legion.file.mapper.FileCategoryMapper;
 import com.esmooc.legion.file.entity.FileCategory;
+import com.esmooc.legion.file.mapper.FileCategoryMapper;
 import com.esmooc.legion.file.service.FileCategoryService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

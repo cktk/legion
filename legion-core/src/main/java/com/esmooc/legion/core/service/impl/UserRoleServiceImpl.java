@@ -2,10 +2,9 @@ package com.esmooc.legion.core.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.esmooc.legion.core.common.constant.CommonConstant;
-import com.esmooc.legion.core.mapper.UserMapper;
-import com.esmooc.legion.core.mapper.UserRoleMapper;
 import com.esmooc.legion.core.entity.User;
 import com.esmooc.legion.core.entity.UserRole;
+import com.esmooc.legion.core.mapper.UserRoleMapper;
 import com.esmooc.legion.core.service.UserRoleService;
 import com.esmooc.legion.core.service.UserService;
 import lombok.extern.slf4j.Slf4j;

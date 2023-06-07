@@ -14,9 +14,9 @@ import com.esmooc.legion.core.config.security.permission.MySecurityMetadataSourc
 import com.esmooc.legion.core.entity.Permission;
 import com.esmooc.legion.core.entity.RolePermission;
 import com.esmooc.legion.core.entity.User;
+import com.esmooc.legion.core.service.IPermissionService;
 import com.esmooc.legion.core.service.PermissionService;
 import com.esmooc.legion.core.service.RolePermissionService;
-import com.esmooc.legion.core.service.IPermissionService;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import io.swagger.annotations.Api;

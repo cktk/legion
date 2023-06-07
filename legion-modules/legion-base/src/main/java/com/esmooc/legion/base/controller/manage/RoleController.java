@@ -1,18 +1,16 @@
 package com.esmooc.legion.base.controller.manage;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.esmooc.legion.core.common.constant.CommonConstant;
 import com.esmooc.legion.core.common.redis.RedisTemplateHelper;
-import com.esmooc.legion.core.common.utils.PageUtil;
 import com.esmooc.legion.core.common.utils.ResultUtil;
 import com.esmooc.legion.core.common.vo.PageVo;
 import com.esmooc.legion.core.common.vo.Result;
 import com.esmooc.legion.core.config.datascope.DataScopeTypeEnum;
-import com.esmooc.legion.core.mapper.DeleteMapper;
 import com.esmooc.legion.core.entity.Role;
 import com.esmooc.legion.core.entity.RoleDepartment;
 import com.esmooc.legion.core.entity.RolePermission;
 import com.esmooc.legion.core.entity.UserRole;
+import com.esmooc.legion.core.mapper.DeleteMapper;
 import com.esmooc.legion.core.service.RoleDepartmentService;
 import com.esmooc.legion.core.service.RolePermissionService;
 import com.esmooc.legion.core.service.RoleService;
@@ -21,7 +19,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;

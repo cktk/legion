@@ -303,6 +303,8 @@ import { get${apiName}List, delete${apiName} } from "@/api/index";
 // 根据你的实际添加编辑组件位置路径修改
 import add from "./add.vue";
 import edit from "./edit.vue";
+import {shortcuts} from "@/libs/shortcuts";
+
 <%
 if(searchDict){
 %>
@@ -317,7 +319,6 @@ import customList from "@/views/my-components/legion/custom-list";
 <%
 }
 %>
-import { shortcuts } from "@/libs/shortcuts";
 export default {
   name: "${vueName}",
   components: {
